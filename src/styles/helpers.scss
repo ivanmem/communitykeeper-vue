@@ -1,0 +1,41 @@
+.pointer {
+  cursor: pointer;
+}
+
+.overflow-block {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.page-block {
+  background: var(--vkui--color_background);
+  border-radius: var(--vkui--size_border_radius_paper--regular);
+  -webkit-box-shadow: var(--page-block-shadow);
+  box-shadow: var(--page-block-shadow);
+}
+
+.opacity {
+  background: transparent;
+}
+
+.zoom50 {
+  zoom: 0.5;
+}
+
+.zoom75 {
+  zoom: 0.75;
+}
+
+.a-popup {
+  position: relative;
+  width: max-content;
+  z-index: 1;
+  padding: 20px;
+  background: var(--vkui--color_background);
+  box-shadow: inset 0 0 0 var(--vkui_internal--thin_border)
+    var(--vkui--color_field_border_alpha);
+  border: 1px solid var(--separator_common);
+  border-radius: var(--vkui--size_border_radius_paper--regular);
+}

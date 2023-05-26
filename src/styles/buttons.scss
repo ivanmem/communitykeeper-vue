@@ -1,0 +1,69 @@
+@import "src/styles/helpers";
+@import "src/styles/icons";
+
+@mixin button-pseudo-classes {
+  &:hover,
+  &[data-pseudo-hover] {
+    opacity: 0.8;
+  }
+
+  &:active,
+  &[data-pseudo-active] {
+    opacity: 0.6;
+  }
+
+  &:disabled,
+  &[data-pseudo-disabled] {
+    cursor: auto;
+    opacity: 0.3;
+  }
+}
+
+.a-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  color: inherit;
+  background: var(--vkui--color_background_secondary_alpha);
+  border-radius: var(--vkui--size_border_radius--regular, 8px);
+  border: 0.5px solid var(--vkui--color_background_contrast_secondary_alpha);
+  cursor: pointer;
+
+  @include button-pseudo-classes;
+
+  &[data-type="accent"] {
+    color: var(--vkui--color_background_content);
+    background-color: var(--vkui--color_background_accent_themed);
+  }
+
+  &[data-size="middle"] {
+    min-height: 26px;
+  }
+}
+
+.a-button__block {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.a-button__mini {
+  font-size: 10px;
+}
+
+.a-button__icon {
+  margin: 0 5px 0 0;
+  color: currentColor;
+}
+
+.a-button__inline {
+  display: inline-block;
+}
+
+.a-button__opacity {
+  @extend .a-icon;
+  @extend .pointer;
+
+  background: transparent;
+  border: none;
+}
