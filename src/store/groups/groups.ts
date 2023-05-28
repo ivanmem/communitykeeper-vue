@@ -81,6 +81,9 @@ export const useGroups = defineStore("groups", {
 
       this.localGroupsArray.push(localGroup);
     },
+    removeLocalGroup(id: number) {
+      this.localGroupsArray = this.localGroupsArray.filter(x => x.id !== id);
+    },
     async loadGroupCounters(group: IGroup) {
       group.counters = await useVk().api!.addRequestToQueue<
         any,

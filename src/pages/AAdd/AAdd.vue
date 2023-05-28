@@ -45,7 +45,6 @@ const isGroupAdded = computed(
     </label>
     <AButton
       style="width: 250px"
-      :disabled="isGroupAdded"
       icon="Icon16Link"
       @click="addGroup"
     >
