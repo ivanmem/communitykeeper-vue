@@ -2,9 +2,11 @@ import { defineStore } from "pinia";
 import { VKAPI } from "vkontakte-api";
 import bridge from "@vkontakte/vk-bridge";
 import { chunkString } from "../../helpers/chunkString";
+import { watchEffect } from "vue";
 
 interface VkState {
   api?: VKAPI;
+  webAppConfig?: Record<string, any>;
 }
 
 export const useVk = defineStore("vk", {
@@ -13,12 +15,39 @@ export const useVk = defineStore("vk", {
   },
   actions: {
     async init() {
+      bridge.subscribe((e) => {
+        if (e.detail.type === "VKWebAppUpdateConfig") {
+          useVk().webAppConfig = e.detail.data;
+          return;
+        }
+      });
+
+      watchEffect(async () => {
+        const webAppConfig = useVk().webAppConfig;
+        if (!webAppConfig || !bridge.supports("VKWebAppResizeWindow")) {
+          return;
+        }
+
+        const { viewport_height: height, viewport_width: width } =
+          webAppConfig;
+        if (!width || !height) {
+          return;
+        }
+
+        await bridge.send("VKWebAppResizeWindow", {
+          width,
+          height: Math.max(500, height - 200),
+        });
+      });
+
+      await bridge.send("VKWebAppInit", {});
+
       const token: any = await bridge.send("VKWebAppGetAuthToken", {
         scope: "groups",
         app_id: 51658481,
       });
-      this.api = new VKAPI({
-        rps: 3,
+      useVk().api = new VKAPI({
+        rps: 2.5,
         accessToken: token.access_token,
         lang: "ru",
         v: "5.122",
@@ -34,7 +63,6 @@ export const useVk = defineStore("vk", {
         keys.push(this.getChunkKey(key, i));
       }
       const result = await bridge.send("VKWebAppStorageGet", { keys });
-      console.log({ result });
       const chunks: string[] = [];
       for (const { value } of result.keys) {
         if (value === "") {
@@ -45,7 +73,6 @@ export const useVk = defineStore("vk", {
         chunks.push(value);
       }
 
-      console.log({ chunks });
       result.keys.forEach((x) => x.value);
       const compressData = chunks.join("");
       return compressData; //await decompressStr(compressData);
@@ -60,7 +87,6 @@ export const useVk = defineStore("vk", {
           key: this.getChunkKey(key, i),
           value: chunk ?? "",
         };
-        console.log({ data });
         await bridge.send("VKWebAppStorageSet", data);
       }
     },

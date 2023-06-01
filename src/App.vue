@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { onMounted } from "vue";
-import bridge from "@vkontakte/vk-bridge";
 import { useRoute } from "vue-router";
 import copy from "copy-to-clipboard";
 import AButton from "./components/AButton/AButton.vue";
@@ -16,13 +14,12 @@ const vkStore = useVk();
 const appStore = useApp();
 const { currentClasses } = useColorScheme();
 
-onMounted(async () => {
-  await bridge.send("VKWebAppInit", {});
+const { Icon24Linked } = icons;
+
+(async () => {
   await vkStore.init();
   await groupsStore.init();
-});
-
-const { Icon24Linked } = icons;
+})();
 </script>
 
 <template>

@@ -35,24 +35,24 @@ export function useColorScheme() {
 
   function bridgeListener(e: VKBridgeEvent<AnyReceiveMethodName>) {
     const { type, data } = e.detail;
-
     if (type !== "VKWebAppUpdateConfig") {
       return;
     }
 
     initialAppearance = resolveAppearance(data as VKBridgeConfigData);
-
-    if (initialAppearance) {
-      currentClasses.value = generateVKUITokensClassName(
-        currentPlatform,
-        initialAppearance
-      );
-      document!.documentElement.style.setProperty(
-        "color-scheme",
-        initialAppearance
-      );
-      darkColorScheme.value = initialAppearance === "dark";
+    if (!initialAppearance) {
+      return;
     }
+
+    currentClasses.value = generateVKUITokensClassName(
+      currentPlatform,
+      initialAppearance
+    );
+    document!.documentElement.style.setProperty(
+      "color-scheme",
+      initialAppearance
+    );
+    darkColorScheme.value = initialAppearance === "dark";
   }
 
   bridge.subscribe(bridgeListener);
