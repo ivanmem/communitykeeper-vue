@@ -1,3 +1,27 @@
+.vkui--vkBase--light,
+.vkui--vkCom--light,
+.vkui--vkIOS--light,
+:root {
+  --border-color: var(--light-color-600);
+  --accent-color: var(--dark-color-600);
+  --separator_common: var(--steel_gray_100);
+  --counter_primary_background: #447bba;
+  --counter_primary_text: #fff;
+}
+
+.vkui--vkCom--dark,
+:root {
+  --border-color: var(--dark-color-600);
+  --accent-color: var(--light-color-600);
+  --separator_common: var(--gray_750);
+  --counter_primary_background: #fff;
+  --counter_primary_text: #222;
+}
+
+.vkui--vkBase--dark,
+.vkui--vkBase--light,
+.vkui--vkCom--dark,
+.vkui--vkCom--light,
 :root {
   --light-color: #e1e3e6;
   --light-color-800: #dee0e1;
@@ -159,16 +183,4 @@
   --lavender_700: #5965b3;
   --lavender_800: #404980;
   --lavender_900: #262b4d;
-
-  --border-color: var(--dark-color-600);
-  --accent-color: var(--light-color-600);
-  --separator_common: var(--gray_750);
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --border-color: var(--light-color-600);
-    --accent-color: var(--dark-color-600);
-    --separator_common: var(--steel_gray_100);
-  }
 }

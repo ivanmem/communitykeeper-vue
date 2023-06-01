@@ -2,27 +2,34 @@
 import { IGroup, ILocalGroup } from "../../store/groups/types";
 import AButton from "../../components/AButton/AButton.vue";
 import { getGroupState } from "./getGroupState";
+import { openLink } from "../../helpers/openLink";
+import AGroupCounters from "./AGroupCounters.vue";
 
 const props = defineProps<{
   group: IGroup;
   localGroup: ILocalGroup;
 }>();
-const win = window;
 </script>
 
 <template>
-  <AButton
-    class="a-group-link a-button__block"
-    @click="win.open(`https://vk.com/public${props.localGroup.id}`, '_blank')"
-  >
-    <b>{{ group.name }}</b>
-    <span class="a-group-link__help"
-      >{{ getGroupState(group).text.join(", ") }}, {{ group.counters }}</span
+  <div class="a-button__root">
+    <AButton
+      class="a-group-link a-button__block"
+      @click="openLink(`//vk.com/public${localGroup.id}`)"
     >
-  </AButton>
+      <b>{{ group.name }}</b>
+      <span class="a-group-link__help">
+        {{ getGroupState(group).text.join(", ") }}
+      </span>
+    </AButton>
+    <AGroupCounters :local-group="localGroup" :group="group" />
+  </div>
 </template>
 
 <style lang="scss">
+.a-button__root {
+}
+
 .a-group-link {
   display: flex;
   flex-direction: column;

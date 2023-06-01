@@ -1,3 +1,8 @@
+import Icon28PictureOutline from "@vkontakte/icons/src/svg/28/picture_outline_28.svg?component";
+import Icon28Attachments from "@vkontakte/icons/src/svg/28/attachments_28.svg?component";
+import Icon28Video from "@vkontakte/icons/src/svg/28/video_28.svg?component";
+import Icon28ArticleOutline from "@vkontakte/icons/src/svg/28/articles_outline_28.svg?component";
+
 import Icon24Back from "@vkontakte/icons/src/svg/24/back_24.svg?component";
 import Icon24MenuOutline from "@vkontakte/icons/src/svg/24/menu_outline_24.svg?component";
 import Icon24Linked from "@vkontakte/icons/src/svg/24/linked_24.svg?component";
@@ -9,7 +14,7 @@ import Icon24ArticleBoxOutline from "@vkontakte/icons/src/svg/24/article_box_out
 import Icon24LightbulbStarOutline from "@vkontakte/icons/src/svg/24/lightbulb_star_outline_24.svg?component";
 import Icon24Filter from "@vkontakte/icons/src/svg/24/filter_24.svg?component";
 
-import AddSquareOutline16 from "@vkontakte/icons/src/svg/16/add_square_outline_16.svg?component";
+import Icon16AddSquareOutline from "@vkontakte/icons/src/svg/16/add_square_outline_16.svg?component";
 import Icon16Link from "@vkontakte/icons/src/svg/16/link_16.svg?component";
 import Icon16Attach from "@vkontakte/icons/src/svg/16/attach_16.svg?component";
 import Icon16Pen from "@vkontakte/icons/src/svg/16/pen_16.svg?component";
@@ -26,6 +31,11 @@ import Icon12Cards from "@vkontakte/icons/src/svg/12/cards_2_12.svg?component";
 import { ref } from "vue";
 
 export const icons = {
+  Icon28PictureOutline,
+  Icon28Attachments,
+  Icon28Video,
+  Icon28ArticleOutline,
+
   Icon24Back,
   Icon24MenuOutline,
   Icon24Linked,
@@ -36,13 +46,15 @@ export const icons = {
   Icon24ArticleBoxOutline,
   Icon24LightbulbStarOutline,
   Icon24Filter,
-  AddSquareOutline16,
+
+  Icon16AddSquareOutline,
   Icon16Link,
   Icon16Attach,
   Icon16Pen,
   Icon16WarningTriangle,
   Icon16WrenchOutline,
   Icon16KeyOutline,
+
   Icon12ErrorCircle,
   Icon12Tag,
   Icon12Articles,
