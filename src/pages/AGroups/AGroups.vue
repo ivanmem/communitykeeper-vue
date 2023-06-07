@@ -20,10 +20,7 @@ const { store, groupsOrder, showFilters } = groupSearch;
     <AGroupsSearch :group-search="groupSearch" />
     <div class="a-groups__groups">
       <div v-for="group of groupsOrder">
-        <AGroupLink
-          :group="group"
-          :local-group="store.getLocalGroupById(group.id)"
-        />
+        <AGroupLink :group="group" />
       </div>
     </div>
   </div>

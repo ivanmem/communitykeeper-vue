@@ -1,14 +1,18 @@
 <script lang="ts" setup>
-import { IGroup, ILocalGroup } from "../../store/groups/types";
+import { IGroup } from "../../store/groups/types";
 import AButton from "../../components/AButton/AButton.vue";
 import { getGroupState } from "./getGroupState";
 import { openLink } from "../../helpers/openLink";
 import AGroupCounters from "./AGroupCounters.vue";
+import { computed } from "vue";
+import { useGroups } from "../../store/groups/groups";
 
 const props = defineProps<{
   group: IGroup;
-  localGroup: ILocalGroup;
 }>();
+const localGroup = computed(
+  () => useGroups().getLocalGroupById(props.group.id)!
+)!;
 </script>
 
 <template>

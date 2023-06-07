@@ -10,7 +10,7 @@ export function getGroupState(group: IGroup) {
     group.photo_200 === "https://vk.com/images/deactivated_kis_200.png" ||
     group.deactivated;
   const text = [];
-  if (isNullOrUndefined(groupsService.filters.folder)) {
+  if (isNullOrUndefined(groupsService.filters.folder) && localGroup) {
     text.push(localGroup.folder);
   }
 

@@ -33,3 +33,8 @@ export interface IGroupCounters {
   clips?: number;
   clips_followers?: number;
 }
+
+export interface IGroupsExport {
+  /** @description ключ - название папки; значение - список ID групп. */
+  groupIdsDictByFolderName: Record<string, number[]>;
+}

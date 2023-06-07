@@ -2,6 +2,9 @@ import Icon28PictureOutline from "@vkontakte/icons/src/svg/28/picture_outline_28
 import Icon28Attachments from "@vkontakte/icons/src/svg/28/attachments_28.svg?component";
 import Icon28Video from "@vkontakte/icons/src/svg/28/video_28.svg?component";
 import Icon28ArticleOutline from "@vkontakte/icons/src/svg/28/articles_outline_28.svg?component";
+import Icon28DownloadOutline from "@vkontakte/icons/src/svg/28/download_outline_28.svg?component";
+import Icon28UploadOutline from "@vkontakte/icons/src/svg/28/upload_outline_28.svg?component";
+import Icon28DeleteOutline from "@vkontakte/icons/src/svg/28/delete_outline_28.svg?component";
 
 import Icon24Back from "@vkontakte/icons/src/svg/24/back_24.svg?component";
 import Icon24MenuOutline from "@vkontakte/icons/src/svg/24/menu_outline_24.svg?component";
@@ -13,6 +16,9 @@ import Icon24CrownOutline from "@vkontakte/icons/src/svg/24/crown_outline_24.svg
 import Icon24ArticleBoxOutline from "@vkontakte/icons/src/svg/24/article_box_outline_24.svg?component";
 import Icon24LightbulbStarOutline from "@vkontakte/icons/src/svg/24/lightbulb_star_outline_24.svg?component";
 import Icon24Filter from "@vkontakte/icons/src/svg/24/filter_24.svg?component";
+import Icon24DownloadOutline from "@vkontakte/icons/src/svg/24/download_outline_24.svg?component";
+import Icon24UploadOutline from "@vkontakte/icons/src/svg/24/upload_outline_24.svg?component";
+import Icon24DeleteOutline from "@vkontakte/icons/src/svg/24/delete_outline_24.svg?component";
 
 import Icon16AddSquareOutline from "@vkontakte/icons/src/svg/16/add_square_outline_16.svg?component";
 import Icon16Link from "@vkontakte/icons/src/svg/16/link_16.svg?component";
@@ -35,6 +41,9 @@ export const icons = {
   Icon28Attachments,
   Icon28Video,
   Icon28ArticleOutline,
+  Icon28DownloadOutline,
+  Icon28UploadOutline,
+  Icon28DeleteOutline,
 
   Icon24Back,
   Icon24MenuOutline,
@@ -46,6 +55,9 @@ export const icons = {
   Icon24ArticleBoxOutline,
   Icon24LightbulbStarOutline,
   Icon24Filter,
+  Icon24DownloadOutline,
+  Icon24UploadOutline,
+  Icon24DeleteOutline,
 
   Icon16AddSquareOutline,
   Icon16Link,

@@ -29,6 +29,7 @@
   border-radius: var(--vkui--size_border_radius--regular, 8px);
   border: 0.5px solid var(--vkui--color_background_contrast_secondary_alpha);
   cursor: pointer;
+  min-height: 26px;
 
   @include button-pseudo-classes;
 

@@ -11,6 +11,10 @@ class GroupHelper {
     const search = filters?.search.trim().toLowerCase();
     return groups.filter((group) => {
       const localGroup = groupsService.getLocalGroupById(group.id);
+      if (!localGroup) {
+        return false;
+      }
+
       if (
         filters.folder &&
         filters.folder.trim().toLowerCase() !=

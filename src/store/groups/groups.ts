@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
-import { IGroup, IGroupCounters, ILocalGroup } from "./types";
+import { IGroup, IGroupCounters, IGroupsExport, ILocalGroup } from "./types";
 import { keyBy, toNumber, uniq } from "lodash";
 import { useVk } from "../vk/vk";
+import { saveAs } from "file-saver";
 
 export interface FiltersType {
   folder: string | undefined;
@@ -59,14 +60,33 @@ export const useGroups = defineStore("groups", {
           fields: "counters",
         },
       });
-      console.log({ groups });
       groups.forEach((group) => this.groupsMap.set(group.id, group));
       for (let group of this.groups) {
         await this.loadGroupCounters(group);
       }
     },
-    getLocalGroupById(id: number): ILocalGroup {
+    getLocalGroupById(id: number): ILocalGroup | undefined {
       return this.localGroups[id];
+    },
+    getExport(): IGroupsExport {
+      return { groupIdsDictByFolderName: this.groupIdsDictByFolderName };
+    },
+    downloadExport() {
+      const exportJson = JSON.stringify(this.getExport());
+      // Создаем новый Blob-объект (данные в двоичном виде)
+      const blob = new Blob([exportJson], { type: "application/json" });
+      // Сохраняем файл на компьютере пользователя
+      saveAs(blob, "catalog-export.json");
+    },
+    saveImport(data: IGroupsExport) {
+      Object.keys(data.groupIdsDictByFolderName).forEach((folder) => {
+        data.groupIdsDictByFolderName[folder].forEach((id) => {
+          this.addLocalGroup({
+            id,
+            folder,
+          });
+        });
+      });
     },
     getGroupById(id: number): IGroup {
       return this.groupsMap.get(id)!;
@@ -82,7 +102,10 @@ export const useGroups = defineStore("groups", {
       this.localGroupsArray.push(localGroup);
     },
     removeLocalGroup(id: number) {
-      this.localGroupsArray = this.localGroupsArray.filter(x => x.id !== id);
+      this.localGroupsArray = this.localGroupsArray.filter((x) => x.id !== id);
+    },
+    removeLocalGroups() {
+      this.localGroupsArray = [];
     },
     async loadGroupCounters(group: IGroup) {
       group.counters = await useVk().api!.addRequestToQueue<
@@ -119,10 +142,19 @@ export const useGroups = defineStore("groups", {
       return uniq(this.localGroupsArray.map((x) => x.folder));
     },
     groups(): IGroup[] {
-      return Array.from(this.groupsMap.values());
+      return Array.from(this.groupsMap.values()).filter(
+        (x) => this.localGroups[x.id]
+      );
     },
     localGroups(): Record<number | string, ILocalGroup> {
       return keyBy(this.localGroupsArray, (x) => x.id);
+    },
+    groupIdsDictByFolderName(): Record<string, number[]> {
+      return this.localGroupsArray.reduce((dict, value) => {
+        dict[value.folder] ??= [];
+        dict[value.folder].push(value.id);
+        return dict;
+      }, {} as Record<string, number[]>);
     },
   },
 });

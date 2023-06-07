@@ -25,7 +25,8 @@ const addGroup = async () => {
 };
 
 const saveChanges = () => {
-  return store.saveCurrentLocalGroups();
+  store.saveCurrentLocalGroups();
+  window.alert("Данные сохранены.");
 };
 
 const isGroupAdded = computed(
@@ -43,11 +44,7 @@ const isGroupAdded = computed(
       <span>Папка</span>
       <input v-model="newGroup.folder" />
     </label>
-    <AButton
-      style="width: 250px"
-      icon="Icon16Link"
-      @click="addGroup"
-    >
+    <AButton style="width: 250px" icon="Icon16Link" @click="addGroup">
       <span>Добавить</span>
     </AButton>
     <AButton style="width: 250px" icon="Icon16Link" @click="saveChanges">
