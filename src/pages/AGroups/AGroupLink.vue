@@ -4,19 +4,55 @@ import AButton from "../../components/AButton/AButton.vue";
 import { getGroupState } from "./getGroupState";
 import { openLink } from "../../helpers/openLink";
 import AGroupCounters from "./AGroupCounters.vue";
-import { computed } from "vue";
+import { computed, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "../../store/groups/groups";
+import { useElementVisibility } from "@vueuse/core";
+import { sleep } from "../../helpers/sleep";
 
 const props = defineProps<{
   group: IGroup;
+  index: number;
 }>();
 const localGroup = computed(
   () => useGroups().getLocalGroupById(props.group.id)!
 )!;
+const target = ref<HTMLDivElement | null>(null);
+const targetIsVisible = useElementVisibility(target);
+const isDeactivated = ref(false);
+let isLoaded = ref(false);
+
+watch(
+  targetIsVisible,
+  async () => {
+    if (!targetIsVisible.value || isLoaded.value) {
+      return;
+    }
+
+    isLoaded.value = true;
+    // таким образом загрузка будет по порядку
+    await sleep(props.index * 2);
+
+    if (isDeactivated.value) {
+      return;
+    }
+
+    if (!targetIsVisible.value) {
+      isLoaded.value = false;
+      return;
+    }
+
+    await useGroups().loadGroupCounters(props.group);
+  },
+  { immediate: true }
+);
+
+onDeactivated(() => {
+  isDeactivated.value = true;
+});
 </script>
 
 <template>
-  <div class="a-button__root">
+  <div ref="target" class="a-button__root">
     <AButton
       class="a-group-link a-button__block"
       @click="openLink(`//vk.com/public${localGroup.id}`)"

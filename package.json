@@ -1,7 +1,7 @@
 {
   "name": "local-vk-groups-catalog-vue",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -24,10 +24,11 @@
     "vite-svg-loader": "4.0.0",
     "vkontakte-api": "3.0.3",
     "vue": "3.3.4",
-    "vue-router": "4.2.1"
+    "vue-router": "4.2.1",
+    "vue-virtual-scroller": "2.0.0-beta.8"
   },
   "devDependencies": {
-    "@types/file-saver": "^2.0.5",
+    "@types/file-saver": "2.0.5",
     "@types/lodash": "4.14.195",
     "@vitejs/plugin-basic-ssl": "1.0.1",
     "@vitejs/plugin-vue": "4.2.3",

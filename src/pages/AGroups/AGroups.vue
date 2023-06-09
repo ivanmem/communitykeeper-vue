@@ -3,6 +3,7 @@ import { useGroupSearch } from "./useGroupSearch";
 import { useAppCaption } from "../../hooks/useAppCaption";
 import AGroupsSearch from "./AGroupsSearch.vue";
 import AGroupLink from "./AGroupLink.vue";
+import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 
 useAppCaption("Группы");
 
@@ -18,11 +19,23 @@ const { store, groupsOrder, showFilters } = groupSearch;
     @touchstart="showFilters = false"
   >
     <AGroupsSearch :group-search="groupSearch" />
-    <div class="a-groups__groups">
-      <div v-for="group of groupsOrder">
-        <AGroupLink :group="group" />
-      </div>
-    </div>
+    <DynamicScroller
+      class="a-groups__groups"
+      :items="groupsOrder"
+      :min-item-size="52"
+      key-field="id"
+    >
+      <template v-slot="{ item, index, active }">
+        <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :size-dependencies="[item.counters]"
+          :data-index="index"
+        >
+          <AGroupLink :key="item.id" :group="item" :index="index" />
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
   </div>
 </template>
 

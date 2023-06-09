@@ -13,9 +13,7 @@ const groupsStore = useGroups();
 const vkStore = useVk();
 const appStore = useApp();
 const { currentClasses } = useColorScheme();
-
 const { Icon24Linked } = icons;
-
 (async () => {
   await vkStore.init();
   await groupsStore.init();

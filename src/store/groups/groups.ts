@@ -3,6 +3,7 @@ import { IGroup, IGroupCounters, IGroupsExport, ILocalGroup } from "./types";
 import { keyBy, toNumber, uniq } from "lodash";
 import { useVk } from "../vk/vk";
 import { saveAs } from "file-saver";
+import { isGroupBanned } from "../../helpers/isGroupBanned";
 
 export interface FiltersType {
   folder: string | undefined;
@@ -57,13 +58,9 @@ export const useGroups = defineStore("groups", {
         method: "groups.getById",
         params: {
           group_ids: ids.join(),
-          fields: "counters",
         },
       });
       groups.forEach((group) => this.groupsMap.set(group.id, group));
-      for (let group of this.groups) {
-        await this.loadGroupCounters(group);
-      }
     },
     getLocalGroupById(id: number): ILocalGroup | undefined {
       return this.localGroups[id];
@@ -108,6 +105,10 @@ export const useGroups = defineStore("groups", {
       this.localGroupsArray = [];
     },
     async loadGroupCounters(group: IGroup) {
+      if (group.counters || isGroupBanned(group)) {
+        return group;
+      }
+
       group.counters = await useVk().api!.addRequestToQueue<
         any,
         IGroupCounters

@@ -28,8 +28,7 @@ export const useVk = defineStore("vk", {
           return;
         }
 
-        const { viewport_height: height, viewport_width: width } =
-          webAppConfig;
+        const { viewport_height: height, viewport_width: width } = webAppConfig;
         if (!width || !height) {
           return;
         }
@@ -47,7 +46,7 @@ export const useVk = defineStore("vk", {
         app_id: 51658481,
       });
       useVk().api = new VKAPI({
-        rps: 2.5,
+        rps: 2,
         accessToken: token.access_token,
         lang: "ru",
         v: "5.122",
