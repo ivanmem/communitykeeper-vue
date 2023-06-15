@@ -6,7 +6,7 @@ import { saveAs } from "file-saver";
 import { isGroupBanned } from "../../helpers/isGroupBanned";
 
 export interface FiltersType {
-  folder: string | undefined;
+  folder: string;
   search: string;
 }
 
@@ -22,7 +22,7 @@ export const useGroups = defineStore("groups", {
     return {
       localGroupsArray: [],
       groupsMap: new Map(),
-      filters: { folder: undefined, search: "" },
+      filters: { folder: '', search: "" },
       isInit: false,
     };
   },

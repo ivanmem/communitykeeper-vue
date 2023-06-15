@@ -69,6 +69,9 @@ const { Icon24Filter } = icons;
           class="a-select"
           style="min-width: 100%"
         >
+          <option value="" >
+           -- Не выбрано --
+          </option>
           <option v-for="folder of store.folders" :key="folder" :value="folder">
             {{ folder }}
           </option>
