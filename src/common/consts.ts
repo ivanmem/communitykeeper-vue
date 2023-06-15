@@ -19,6 +19,9 @@ import Icon24Filter from "@vkontakte/icons/src/svg/24/filter_24.svg?component";
 import Icon24DownloadOutline from "@vkontakte/icons/src/svg/24/download_outline_24.svg?component";
 import Icon24UploadOutline from "@vkontakte/icons/src/svg/24/upload_outline_24.svg?component";
 import Icon24DeleteOutline from "@vkontakte/icons/src/svg/24/delete_outline_24.svg?component";
+import Icon24AddSquareOutline from "@vkontakte/icons/src/svg/24/add_square_outline_24.svg?component";
+import Icon24GearOutline from "@vkontakte/icons/src/svg/24/gear_outline_24.svg?component";
+import Icon24MemoryCard from "@vkontakte/icons/src/svg/24/memory_card_24.svg?component";
 
 import Icon16AddSquareOutline from "@vkontakte/icons/src/svg/16/add_square_outline_16.svg?component";
 import Icon16Link from "@vkontakte/icons/src/svg/16/link_16.svg?component";
@@ -27,6 +30,10 @@ import Icon16Pen from "@vkontakte/icons/src/svg/16/pen_16.svg?component";
 import Icon16WarningTriangle from "@vkontakte/icons/src/svg/16/warning_triangle_16.svg?component";
 import Icon16WrenchOutline from "@vkontakte/icons/src/svg/16/wrench_outline_16.svg?component";
 import Icon16KeyOutline from "@vkontakte/icons/src/svg/16/key_outline_16.svg?component";
+import Icon16DeleteOutline from "@vkontakte/icons/src/svg/16/delete_outline_16.svg?component";
+import Icon16MoreVertical from "@vkontakte/icons/src/svg/16/more_vertical_16.svg?component";
+import Icon16FolderOutline from "@vkontakte/icons/src/svg/16/folder_outline_16.svg?component";
+
 import Icon12ErrorCircle from "@vkontakte/icons/src/svg/12/error_circle_12.svg?component";
 import Icon12Tag from "@vkontakte/icons/src/svg/12/tag_12.svg?component";
 import Icon12Articles from "@vkontakte/icons/src/svg/12/articles_12.svg?component";
@@ -34,6 +41,7 @@ import Icon12Flash from "@vkontakte/icons/src/svg/12/flash_12.svg?component";
 import Icon12Question from "@vkontakte/icons/src/svg/12/question_12.svg?component";
 import Icon12View from "@vkontakte/icons/src/svg/12/view_12.svg?component";
 import Icon12Cards from "@vkontakte/icons/src/svg/12/cards_2_12.svg?component";
+
 import { ref } from "vue";
 
 export const icons = {
@@ -58,6 +66,9 @@ export const icons = {
   Icon24DownloadOutline,
   Icon24UploadOutline,
   Icon24DeleteOutline,
+  Icon24AddSquareOutline,
+  Icon24GearOutline,
+  Icon24MemoryCard,
 
   Icon16AddSquareOutline,
   Icon16Link,
@@ -66,6 +77,9 @@ export const icons = {
   Icon16WarningTriangle,
   Icon16WrenchOutline,
   Icon16KeyOutline,
+  Icon16DeleteOutline,
+  Icon16MoreVertical,
+  Icon16FolderOutline,
 
   Icon12ErrorCircle,
   Icon12Tag,

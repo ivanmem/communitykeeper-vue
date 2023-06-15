@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@floating-ui/vue": "1.0.1",
+    "@imengyu/vue3-context-menu": "^1.2.10",
     "@vkontakte/icons": "2.42.0",
     "@vkontakte/vk-bridge": "2.7.4",
     "@vkontakte/vkui": "5.5.2",

@@ -4,18 +4,17 @@ import AButton from "../../components/AButton/AButton.vue";
 import { getGroupState } from "./getGroupState";
 import { openLink } from "../../helpers/openLink";
 import AGroupCounters from "./AGroupCounters.vue";
-import { computed, onDeactivated, ref, watch } from "vue";
+import { h, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "../../store/groups/groups";
 import { useElementVisibility } from "@vueuse/core";
 import { sleep } from "../../helpers/sleep";
+import { icons } from "../../common/consts";
+import { showContextMenu } from "../../helpers/showContextMenu";
 
 const props = defineProps<{
   group: IGroup;
   index: number;
 }>();
-const localGroup = computed(
-  () => useGroups().getLocalGroupById(props.group.id)!
-)!;
 const target = ref<HTMLDivElement | null>(null);
 const targetIsVisible = useElementVisibility(target);
 const isDeactivated = ref(false);
@@ -49,20 +48,44 @@ watch(
 onDeactivated(() => {
   isDeactivated.value = true;
 });
+
+const onOpenContextMenu = (e: MouseEvent) => {
+  showContextMenu(e, [
+    {
+      label: "Удалить",
+      icon: h(icons.Icon16DeleteOutline),
+      onClick: () => {
+        useGroups().removeLocalGroup(props.group.id);
+      },
+    },
+  ]);
+};
 </script>
 
 <template>
-  <div ref="target" class="a-button__root">
+  <div
+    ref="target"
+    class="a-button__root"
+    @click.right.prevent.stop="onOpenContextMenu"
+  >
     <AButton
       class="a-group-link a-button__block"
-      @click="openLink(`//vk.com/public${localGroup.id}`)"
+      @click="openLink(`//vk.com/public${group.id}`)"
     >
-      <b>{{ group.name }}</b>
-      <span class="a-group-link__help">
-        {{ getGroupState(group).text.join(", ") }}
-      </span>
+      <div class="a-group-link__div">
+        <b>{{ group.name }}</b>
+        <span class="a-group-link__help">
+          {{ getGroupState(group).text.join(", ") }}
+        </span>
+      </div>
+
+      <AButton
+        icon="Icon16MoreVertical"
+        class="a-group-link__context-menu"
+        @click.stop="onOpenContextMenu"
+      ></AButton>
     </AButton>
-    <AGroupCounters :local-group="localGroup" :group="group" />
+    <AGroupCounters :group="group" />
   </div>
 </template>
 
@@ -72,7 +95,6 @@ onDeactivated(() => {
 
 .a-group-link {
   display: flex;
-  flex-direction: column;
   text-decoration: none;
   padding: 8px var(--vkui--size_base_padding_horizontal--regular);
   font-family: var(--vkui--font_family_base);
@@ -83,6 +105,24 @@ onDeactivated(() => {
   align-items: flex-start;
   text-align: left;
   align-content: flex-start;
+}
+
+.a-group-link__div {
+  display: flex;
+  flex-direction: column;
+}
+
+.a-group-link__context-menu {
+  display: flex;
+  margin-left: auto;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 26px;
+
+  .a-button__icon {
+    margin: 0;
+  }
 }
 
 .a-group-link__help {

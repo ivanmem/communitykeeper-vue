@@ -2,12 +2,11 @@
 import { openLink } from "../../helpers/openLink";
 import AButton from "../../components/AButton/AButton.vue";
 import { useGroupCounters } from "./useGroupCounters";
-import { IGroup, ILocalGroup } from "../../store/groups/types";
+import { IGroup } from "../../store/groups/types";
 import { toRef } from "vue";
 
 const props = defineProps<{
   group: IGroup;
-  localGroup: ILocalGroup;
 }>();
 const groupRef = toRef(() => props.group);
 const counters = useGroupCounters(groupRef);

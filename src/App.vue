@@ -46,11 +46,11 @@ const { Icon24Linked } = icons;
         <AButton icon="Icon24ArticleBoxOutline" to="/">
           <span> Группы </span>
         </AButton>
-        <AButton icon="Icon24CrownOutline" to="/add">
+        <AButton icon="Icon24AddSquareOutline" to="/add">
           <span> Добавить </span>
         </AButton>
-        <AButton icon="Icon24CrownOutline" to="/backup">
-          <span> Бэкап </span>
+        <AButton icon="Icon24GearOutline" to="/settings">
+          <span> Настройки </span>
         </AButton>
         <AButton icon="Icon24LightbulbStarOutline" to="/about">
           <span> О приложении </span>

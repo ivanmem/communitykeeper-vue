@@ -4,6 +4,7 @@ import { keyBy, toNumber, uniq } from "lodash";
 import { useVk } from "../vk/vk";
 import { saveAs } from "file-saver";
 import { isGroupBanned } from "../../helpers/isGroupBanned";
+import { getGroupsByLinksOrIds } from "../../helpers/getGroupsByIds";
 
 export interface FiltersType {
   folder: string;
@@ -15,6 +16,11 @@ interface GroupsState {
   groupsMap: Map<number, IGroup>;
   filters: FiltersType;
   isInit: boolean;
+  config: IGroupsConfig;
+}
+
+export interface IGroupsConfig {
+  autoSave: boolean;
 }
 
 export const useGroups = defineStore("groups", {
@@ -22,8 +28,9 @@ export const useGroups = defineStore("groups", {
     return {
       localGroupsArray: [],
       groupsMap: new Map(),
-      filters: { folder: '', search: "" },
+      filters: { folder: "", search: "" },
       isInit: false,
+      config: { autoSave: true },
     };
   },
   actions: {
@@ -54,12 +61,7 @@ export const useGroups = defineStore("groups", {
         return;
       }
 
-      const groups = await api.addRequestToQueue<any, IGroup[]>({
-        method: "groups.getById",
-        params: {
-          group_ids: ids.join(),
-        },
-      });
+      const groups = await getGroupsByLinksOrIds(ids);
       groups.forEach((group) => this.groupsMap.set(group.id, group));
     },
     getLocalGroupById(id: number): ILocalGroup | undefined {
@@ -128,6 +130,13 @@ export const useGroups = defineStore("groups", {
       }, {} as Record<string, number[]>);
       const stringifyStr = JSON.stringify(allData);
       await useVk().setVkStorage("groups", stringifyStr);
+    },
+    async autoSaveCurrentLocalGroups() {
+      if (!this.config.autoSave) {
+        return;
+      }
+
+      await this.saveCurrentLocalGroups();
     },
     async getCurrentLocalGroups(): Promise<Record<string, number[]>> {
       const value = await useVk().getVkStorage("groups");

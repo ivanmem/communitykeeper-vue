@@ -5,7 +5,7 @@ import { useGroups } from "../../store/groups/groups";
 import AButton from "../../components/AButton/AButton.vue";
 import { isGroupsExport } from "../../store/groups/isGroupsExport";
 
-useAppCaption("Бэкап");
+useAppCaption("Настройки");
 
 const onImportFileChange = (event: any) => {
   if (!event.target?.files?.length) {
@@ -14,7 +14,7 @@ const onImportFileChange = (event: any) => {
 
   const reader = new FileReader();
 
-  reader.onload = (e) => {
+  reader.onload = async (e) => {
     const data = JSON.parse(e.target!.result as string);
     if (!isGroupsExport(data)) {
       window.alert("Некорректные данные.");
@@ -23,7 +23,7 @@ const onImportFileChange = (event: any) => {
 
     const oldGroupsCount = useGroups().localGroupsArray.length;
     useGroups().saveImport(data);
-    useGroups().saveCurrentLocalGroups();
+    await useGroups().autoSaveCurrentLocalGroups();
     const newGroupsCount = useGroups().localGroupsArray.length;
     window.alert(
       `Импорт завершён данные. Новых групп: ${newGroupsCount - oldGroupsCount}.`
@@ -33,16 +33,36 @@ const onImportFileChange = (event: any) => {
   reader.readAsText(event.target.files[0]);
 };
 
-const onRemoveAllGroups = () => {
+const onRemoveAllGroups = async () => {
   useGroups().removeLocalGroups();
-  useGroups().saveCurrentLocalGroups();
-  window.alert("Все текущие группы удалены.");
+  await useGroups().autoSaveCurrentLocalGroups();
+};
+
+const saveChanges = async () => {
+  await useGroups().saveCurrentLocalGroups();
+  window.alert("Данные сохранены.");
 };
 </script>
 
 <template>
-  <APageContainer class="a-backup">
-    <AButton class="a-backup__btn" icon="Icon24UploadOutline">
+  <APageContainer class="a-settings">
+    <label style="user-select: none">
+      <input type="checkbox" v-model="useGroups().config.autoSave" />
+      <span>
+        Автосохранение (осторожно, можно наткнуться на лимит запросов)
+      </span>
+    </label>
+    <template v-if="!useGroups().config.autoSave">
+      <AButton
+        class="a-settings__btn"
+        style="font-weight: bold"
+        icon="Icon24MemoryCard"
+        @click="saveChanges"
+      >
+        <span>Сохранить изменения</span>
+      </AButton>
+    </template>
+    <AButton class="a-settings__btn" icon="Icon24UploadOutline">
       <label>
         Добавить новые группы
         <input
@@ -55,14 +75,15 @@ const onRemoveAllGroups = () => {
     </AButton>
 
     <AButton
-      class="a-backup__btn"
+      class="a-settings__btn"
       icon="Icon24DownloadOutline"
       @click="useGroups().downloadExport()"
     >
       Скачать текущие группы
     </AButton>
     <AButton
-      class="a-backup__btn"
+      :disabled="useGroups().localGroupsArray.length === 0"
+      class="a-settings__btn"
       icon="Icon24DeleteOutline"
       @click="onRemoveAllGroups"
     >
@@ -72,10 +93,12 @@ const onRemoveAllGroups = () => {
 </template>
 
 <style lang="scss">
-.a-backup {
-  .a-backup__btn {
-    width: 250px;
-    justify-content: left;
-  }
+.a-settings {
+  gap: 10px;
+}
+
+.a-settings__btn {
+  width: 250px;
+  justify-content: left;
 }
 </style>
