@@ -113,11 +113,10 @@ export const useGroups = defineStore("groups", {
         return group;
       }
 
-      const group_id = group.id.toString();
-      const { counters } = await useVk().api!.addRequestToQueue<any, IGroup>({
+      const [{ counters }] = await useVk().addRequestToQueue<any, IGroup[]>({
         method: "groups.getById",
         params: {
-          group_id,
+          group_id: group.id,
           fields: "counters",
         },
       });

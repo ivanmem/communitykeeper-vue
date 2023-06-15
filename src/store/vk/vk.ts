@@ -4,6 +4,8 @@ import bridge from "@vkontakte/vk-bridge";
 import { chunkString } from "../../helpers/chunkString";
 import { watchEffect } from "vue";
 import { useGroups } from "../groups/groups";
+import { IRequestConfig } from "vkontakte-api/dist/types/shared";
+import { sleep } from "../../helpers/sleep";
 
 interface VkState {
   api?: VKAPI;
@@ -50,7 +52,7 @@ export const useVk = defineStore("vk", {
         app_id: 51658481,
       });
       useVk().api = new VKAPI({
-        rps: 1,
+        rps: 3,
         accessToken: token.access_token,
         lang: "ru",
         v: "5.131",
@@ -120,6 +122,21 @@ export const useVk = defineStore("vk", {
       useGroups().spaceUsed = +(
         chunksCount === 0 ? 0 : chunksCount / (this.chunksMaxCount * 0.01)
       ).toFixed(0);
+    },
+    async addRequestToQueue<P extends {} = any, R = any>(
+      config: IRequestConfig<P>
+    ): Promise<R> {
+      try {
+        return await useVk().api!.addRequestToQueue<P, R>(config);
+      } catch (ex: any) {
+        if (ex?.errorInfo?.error_code === 6) {
+          await sleep(2000);
+          // костыль для игнорирования Too many requests per second
+          return await useVk().addRequestToQueue<P, R>(config);
+        } else {
+          throw ex;
+        }
+      }
     },
   },
 });

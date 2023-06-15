@@ -28,7 +28,7 @@ export async function getGroupsByLinksOrIds(
   }
 
   try {
-    return await useVk().api!.addRequestToQueue({
+    return await useVk().addRequestToQueue({
       method: "groups.getById",
       params: {
         group_ids: group_ids.join(),
