@@ -7,5 +7,6 @@ export function showContextMenu(e: MouseEvent, items: MenuItem[] | undefined) {
     y: e.y,
     theme: darkColorScheme.value ? "flat dark" : "flat",
     items,
+    closeWhenScroll: true,
   });
 }

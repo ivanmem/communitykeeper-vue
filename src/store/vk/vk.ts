@@ -3,15 +3,19 @@ import { VKAPI } from "vkontakte-api";
 import bridge from "@vkontakte/vk-bridge";
 import { chunkString } from "../../helpers/chunkString";
 import { watchEffect } from "vue";
+import { useGroups } from "../groups/groups";
 
 interface VkState {
   api?: VKAPI;
   webAppConfig?: Record<string, any>;
+  chunksMaxCount: number;
 }
 
 export const useVk = defineStore("vk", {
   state: (): VkState => {
-    return {};
+    return {
+      chunksMaxCount: 20, // можно получить не более десяти за 1 запрос
+    };
   },
   actions: {
     async init() {
@@ -46,24 +50,39 @@ export const useVk = defineStore("vk", {
         app_id: 51658481,
       });
       useVk().api = new VKAPI({
-        rps: 2,
+        rps: 1,
         accessToken: token.access_token,
         lang: "ru",
         v: "5.122",
         isBrowser: true,
       });
     },
-    getChunkKey(key: string, index: number) {
-      return `${key}__${index}`;
+    getChunkSplitter() {
+      return "__";
     },
-    async getVkStorage(key: string, maxChunks = 10) {
+    getChunkKey(key: string, index: number) {
+      return `${key}${this.getChunkSplitter()}${index}`;
+    },
+    async getVkStorage(key: string) {
       const keys: string[] = [];
-      for (let i = 0; i < maxChunks; i++) {
+      for (let i = 0; i < this.chunksMaxCount; i++) {
         keys.push(this.getChunkKey(key, i));
       }
       const result = await bridge.send("VKWebAppStorageGet", { keys });
       const chunks: string[] = [];
-      for (const { value } of result.keys) {
+
+      const chunkSplitter = this.getChunkSplitter();
+      const getIndexBySplitKey = (splitKey: string) => {
+        return +splitKey.substring(key.length + chunkSplitter.length);
+      };
+
+      const sortComparer = (x: { key: string }, y: { key: string }) => {
+        const xIndex = getIndexBySplitKey(x.key);
+        const yIndex = getIndexBySplitKey(y.key);
+        return xIndex - yIndex;
+      };
+
+      for (const { value } of result.keys.sort(sortComparer)) {
         if (value === "") {
           // при встрече первого пустого - останавливаемся. Только один будет гарантированно пуст, он и последний. В остальных могут быть старые значения.
           break;
@@ -73,6 +92,10 @@ export const useVk = defineStore("vk", {
       }
 
       result.keys.forEach((x) => x.value);
+      if (key === "groups") {
+        this.setSpaceUsed(chunks.length);
+      }
+
       const compressData = chunks.join("");
       return compressData; //await decompressStr(compressData);
     },
@@ -88,6 +111,15 @@ export const useVk = defineStore("vk", {
         };
         await bridge.send("VKWebAppStorageSet", data);
       }
+
+      if (key === "groups") {
+        this.setSpaceUsed(chunks.length);
+      }
+    },
+    setSpaceUsed(chunksCount: number) {
+      useGroups().spaceUsed = +(
+        chunksCount === 0 ? 0 : chunksCount / (this.chunksMaxCount * 0.01)
+      ).toFixed(0);
     },
   },
 });

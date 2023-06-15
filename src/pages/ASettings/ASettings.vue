@@ -89,6 +89,7 @@ const saveChanges = async () => {
     >
       Удалить все текущие группы
     </AButton>
+    <div>Занято места: {{ useGroups().spaceUsed }}%</div>
   </APageContainer>
 </template>
 

@@ -17,6 +17,7 @@ interface GroupsState {
   filters: FiltersType;
   isInit: boolean;
   config: IGroupsConfig;
+  spaceUsed: number;
 }
 
 export interface IGroupsConfig {
@@ -31,6 +32,7 @@ export const useGroups = defineStore("groups", {
       filters: { folder: "", search: "" },
       isInit: false,
       config: { autoSave: true },
+      spaceUsed: 0,
     };
   },
   actions: {
