@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { IGroup, IGroupCounters, IGroupsExport, ILocalGroup } from "./types";
+import { IGroup, IGroupsExport, ILocalGroup } from "./types";
 import { keyBy, toNumber, uniq } from "lodash";
 import { useVk } from "../vk/vk";
 import { saveAs } from "file-saver";
@@ -113,15 +113,15 @@ export const useGroups = defineStore("groups", {
         return group;
       }
 
-      group.counters = await useVk().api!.addRequestToQueue<
-        any,
-        IGroupCounters
-      >({
-        method: "execute.counters",
+      const group_id = group.id.toString();
+      const { counters } = await useVk().api!.addRequestToQueue<any, IGroup>({
+        method: "groups.getById",
         params: {
-          group_id: group.id,
+          group_id,
+          fields: "counters",
         },
       });
+      group.counters = counters;
       return group;
     },
     async saveCurrentLocalGroups() {

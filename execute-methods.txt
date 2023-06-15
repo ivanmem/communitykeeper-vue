@@ -1,7 +1,0 @@
-counters:
-var group_id = Args.group_id;
-var group = API.groups.getById({
-  "group_id": group_id,
-  "fields": "counters"
-});
-return group[0].counters;

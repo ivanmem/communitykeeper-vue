@@ -53,7 +53,7 @@ export const useVk = defineStore("vk", {
         rps: 1,
         accessToken: token.access_token,
         lang: "ru",
-        v: "5.122",
+        v: "5.131",
         isBrowser: true,
       });
     },
