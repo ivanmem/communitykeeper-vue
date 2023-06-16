@@ -5,6 +5,7 @@ import { useGroups } from "@/store/groups/groups";
 import AButton from "@/components/AButton/AButton.vue";
 import { isGroupsExport } from "@/store/groups/isGroupsExport";
 import { useApp } from "@/store/app/app";
+import { useVk } from "@/store/vk/vk";
 
 useAppCaption("Настройки");
 
@@ -46,20 +47,27 @@ const onRemoveAllGroups = async () => {
   <APageContainer class="a-settings">
     <label style="user-select: none">
       <input type="checkbox" v-model="useGroups().config.autoSave" />
-      <span>
-        Автосохранение (осторожно, можно наткнуться на лимит запросов)
-      </span>
+      <span> Автосохранение </span>
+      <div style="font-size: 10px">
+        запросы ограничены до тысячи в час; делите 1000 на
+        {{ useVk().chunksMaxCount + 1 }} при заполненном хранилище и узнаете нужное
+        количество запросов на одно сохранение
+      </div>
     </label>
-    <template v-if="!useGroups().config.autoSave">
-      <AButton
-        class="a-settings__btn"
-        style="font-weight: bold"
-        icon="Icon24MemoryCard"
-        @click="useGroups().saveCurrentLocalGroups()"
-      >
-        <span>Сохранить изменения</span>
-      </AButton>
-    </template>
+    <AButton
+      class="a-settings__btn"
+      style="font-weight: bold"
+      :style="{ opacity: useGroups().config.autoSave ? 0 : 1 }"
+      icon="Icon24MemoryCard"
+      @click="useGroups().saveCurrentLocalGroups()"
+    >
+      <span>Сохранить изменения</span>
+    </AButton>
+    <label style="user-select: none">
+      <input type="checkbox" v-model="useGroups().config.showCounters" />
+      <span> Отображать счётчики количества фото\видео и так далее</span>
+      <div style="font-size: 10px">придётся ждать их загрузку</div>
+    </label>
     <AButton class="a-settings__btn" icon="Icon24UploadOutline">
       <label>
         Добавить новые группы

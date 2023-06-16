@@ -23,6 +23,7 @@ interface GroupsState {
 
 export interface IGroupsConfig {
   autoSave: boolean;
+  showCounters: boolean;
 }
 
 export const useGroups = defineStore("groups", {
@@ -32,7 +33,7 @@ export const useGroups = defineStore("groups", {
       groupsMap: new Map(),
       filters: { folder: "", search: "" },
       isInit: false,
-      config: { autoSave: true },
+      config: { autoSave: true, showCounters: true },
       spaceUsed: 0,
     };
   },

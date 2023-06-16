@@ -22,7 +22,14 @@ const { Icon24Linked } = icons;
 </script>
 
 <template>
-  <Loading :active="appStore.isLoading" is-full-page />
+  <Loading
+    :active="appStore.isLoading"
+    is-full-page
+    background-color="#000"
+    color="#eee"
+    :opacity="0.3"
+    lock-scroll
+  />
   <div v-if="groupsStore.isInit" :class="currentClasses" class="root">
     <div class="navigation-header">
       <div class="overflow-block navigation-caption">

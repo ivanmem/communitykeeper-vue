@@ -23,7 +23,11 @@ let isLoaded = ref(false);
 watch(
   targetIsVisible,
   async () => {
-    if (!targetIsVisible.value || isLoaded.value) {
+    if (
+      !targetIsVisible.value ||
+      isLoaded.value ||
+      !useGroups().config.showCounters
+    ) {
       return;
     }
 
@@ -86,7 +90,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
         @click.stop="onOpenContextMenu"
       ></AButton>
     </AButton>
-    <AGroupCounters :group="group" />
+    <AGroupCounters v-if="useGroups().config.showCounters" :group="group" />
   </div>
 </template>
 
