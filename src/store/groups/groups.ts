@@ -6,6 +6,7 @@ import { saveAs } from "file-saver";
 import { isGroupBanned } from "@/helpers/isGroupBanned";
 import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
 import { useApp } from "@/store/app/app";
+import { watch } from "vue";
 
 export interface FiltersType {
   folder: string;
@@ -39,9 +40,17 @@ export const useGroups = defineStore("groups", {
   },
   actions: {
     async init() {
+      await this.updateConfig();
       await this.updateCurrentLocalGroups();
       await this.loadNotLoadGroups();
       this.isInit = true;
+      watch(
+        this.config,
+        useApp().wrapLoading(() => {
+          return this.saveCurrentConfig();
+        }),
+        { deep: true }
+      );
     },
     async updateCurrentLocalGroups() {
       this.localGroupsArray.length = 0;
@@ -128,6 +137,24 @@ export const useGroups = defineStore("groups", {
         return group;
       } finally {
         loadingFinisher();
+      }
+    },
+    async saveCurrentConfig() {
+      await useVk().setVkStorageDict({
+        config: this.config,
+      });
+    },
+    async updateConfig() {
+      const { config } = await useVk().getVkStorageDict<IGroupsConfig>([
+        "config",
+      ]);
+      // таким нехитрым образом мы убедимся в правильности формата сохранённого конфига
+      if (
+        config &&
+        config.autoSave !== undefined &&
+        config.showCounters !== undefined
+      ) {
+        this.config = config;
       }
     },
     async saveCurrentLocalGroups() {

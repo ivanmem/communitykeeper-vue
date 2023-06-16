@@ -39,3 +39,40 @@
   border: 1px solid var(--separator_common);
   border-radius: var(--vkui--size_border_radius_paper--regular);
 }
+
+.a-mini-text {
+  display: inline-block;
+  font-size: 11px;
+  line-height: 140%;
+}
+
+.a-checkbox-label {
+  user-select: none;
+  font-size: 16px;
+}
+
+.a-horizontal-center {
+  display: flex;
+  align-items: center;
+}
+
+.a-rectangle-block {
+  display: flex;
+  flex-direction: column;
+  color: var(--a-rectangle-block-color);
+  border-radius: 10px;
+  padding: 4px;
+  line-height: 24px;
+
+  &[data-color="green"] {
+    background: var(--a-rectangle-block-background__green);
+  }
+
+  &[data-color="red"] {
+    background: var(--a-rectangle-block-background__red);
+  }
+}
+
+.line24 {
+  line-height: 24px;
+}

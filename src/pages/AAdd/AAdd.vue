@@ -26,6 +26,8 @@ const addGroup = async () => {
 
   store.addLocalGroup({ id, folder: newGroup.folder });
   newGroup.id = "";
+  currentGroup.value = undefined;
+  newGroup.linkOrId = "";
   await store.loadNotLoadGroups();
   await store.autoSaveCurrentLocalGroups();
 };
@@ -70,36 +72,37 @@ const { Icon16FolderOutline, Icon16Link } = icons;
 
 <template>
   <APageContainer class="a-add">
-    <div class="overflow-block">
+    <div class="overflow-block" style="gap: 10px">
       <label class="form-label">
         <span><Icon16Link /> Ссылка</span>
         <input v-model="newGroup.linkOrId" @blur="onLinkOrIdChanged" />
       </label>
-      <div style="color: red" v-if="isGroupAdded">
-        Группа уже добавлена в папку "{{
-          store.localGroups[newGroup.id].folder
-        }}". Она будет перезаписана.
-      </div>
       <label class="form-label">
         <span><Icon16FolderOutline /> Папка</span>
         <input v-model="newGroup.folder" />
       </label>
       <AButton
         :disabled="!currentGroup"
-        class="form-button"
-        icon="Icon16AddSquareOutline"
+        class="a-button__left-content form-button"
+        icon="Icon24AddSquareOutline"
         @click="addGroup"
       >
-        <span>Добавить</span>
+        <span>{{ isGroupAdded ? "Заменить" : "Добавить" }}</span>
       </AButton>
       <AButton
-        class="form-button"
-        icon="Icon16DeleteOutline"
+        class="a-button__left-content form-button"
+        data-color="red"
+        icon="Icon24DeleteOutline"
         @click="removeGroup"
         v-if="isGroupAdded"
       >
         <span>Удалить</span>
       </AButton>
+      <div class="a-rectangle-block" data-color="green" v-if="isGroupAdded">
+        Группа уже добавлена в папку "{{
+          store.localGroups[newGroup.id].folder
+        }}".
+      </div>
       <AGroupLink v-if="currentGroup" :group="currentGroup" :index="-1" />
     </div>
   </APageContainer>
@@ -107,12 +110,9 @@ const { Icon16FolderOutline, Icon16Link } = icons;
 <style lang="scss">
 .a-add {
   .a-button {
-    margin-top: 10px;
   }
 
   .form-label {
-    margin-top: 5px;
-
     span {
       display: inline-block;
       width: 130px;

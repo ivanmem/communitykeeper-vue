@@ -29,7 +29,8 @@
   border-radius: var(--vkui--size_border_radius--regular, 8px);
   border: 0.5px solid var(--vkui--color_background_contrast_secondary_alpha);
   cursor: pointer;
-  min-height: 26px;
+  padding: 4px;
+  line-height: 24px;
 
   @include button-pseudo-classes;
 
@@ -40,6 +41,14 @@
 
   &[data-size="middle"] {
     min-height: 26px;
+  }
+
+  &[data-color="green"] {
+    background: var(--a-rectangle-block-background__green);
+  }
+
+  &[data-color="red"] {
+    background: var(--a-rectangle-block-background__red);
   }
 }
 
@@ -67,4 +76,21 @@
 
   background: transparent;
   border: none;
+}
+
+.a-button__left-content-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: max-content;
+  max-width: 100%;
+}
+
+.a-button__left-content {
+  width: 100%;
+  width: -moz-available; /* WebKit-based browsers will ignore this. */
+  width: -webkit-fill-available; /* Mozilla-based browsers will ignore this. */
+  width: fill-available;
+  max-width: 100%;
+  justify-content: left;
 }

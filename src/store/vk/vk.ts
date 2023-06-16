@@ -11,12 +11,14 @@ interface VkState {
   api?: VKAPI;
   webAppConfig?: Record<string, any>;
   chunksMaxCount: number;
+  vkWebAppStorageSetCount: number;
 }
 
 export const useVk = defineStore("vk", {
   state: (): VkState => {
     return {
       chunksMaxCount: 20, // можно получить не более десяти за 1 запрос
+      vkWebAppStorageSetCount: 0,
     };
   },
   actions: {
@@ -65,12 +67,33 @@ export const useVk = defineStore("vk", {
     getChunkKey(key: string, index: number) {
       return `${key}${this.getChunkSplitter()}${index}`;
     },
+    /** @description Получить все значения по указанным ключам в виде словаря */
+    async getVkStorageDict<T extends object = Record<any, any>>(
+      keys: string[]
+    ) {
+      const result = await this.sendVKWebAppStorageGet({ keys });
+      return result.keys.reduce((dict, { key, value }) => {
+        try {
+          dict[key] = value.length ? JSON.parse(value) : undefined;
+        } catch {}
+        return dict;
+      }, {} as Record<string, T | undefined>);
+    },
+    /** @description Сохранить каждое свойство словаря в отдельном ключе */
+    async setVkStorageDict(dataDictArray: Record<string, Record<any, any>>) {
+      for (const [key, value] of Object.entries(dataDictArray)) {
+        await this.sendVKWebAppStorageSet({
+          key,
+          value: JSON.stringify(value),
+        });
+      }
+    },
     async getVkStorage(key: string) {
       const keys: string[] = [];
       for (let i = 0; i < this.chunksMaxCount; i++) {
         keys.push(this.getChunkKey(key, i));
       }
-      const result = await bridge.send("VKWebAppStorageGet", { keys });
+      const result = await this.sendVKWebAppStorageGet({ keys });
       const chunks: string[] = [];
 
       const chunkSplitter = this.getChunkSplitter();
@@ -111,12 +134,19 @@ export const useVk = defineStore("vk", {
           key: this.getChunkKey(key, i),
           value: chunk ?? "",
         };
-        await bridge.send("VKWebAppStorageSet", data);
+        await this.sendVKWebAppStorageSet(data);
       }
 
       if (key === "groups") {
         this.setSpaceUsed(chunks.length);
       }
+    },
+    sendVKWebAppStorageSet(data: { key: string; value: string }) {
+      this.vkWebAppStorageSetCount++;
+      return bridge.send("VKWebAppStorageSet", data);
+    },
+    sendVKWebAppStorageGet(data: { keys: string[] }) {
+      return bridge.send("VKWebAppStorageGet", data);
     },
     setSpaceUsed(chunksCount: number) {
       useGroups().spaceUsed = +(

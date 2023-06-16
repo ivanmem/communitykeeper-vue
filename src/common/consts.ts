@@ -22,6 +22,7 @@ import Icon24DeleteOutline from "@vkontakte/icons/src/svg/24/delete_outline_24.s
 import Icon24AddSquareOutline from "@vkontakte/icons/src/svg/24/add_square_outline_24.svg?component";
 import Icon24GearOutline from "@vkontakte/icons/src/svg/24/gear_outline_24.svg?component";
 import Icon24MemoryCard from "@vkontakte/icons/src/svg/24/memory_card_24.svg?component";
+import Icon24CloudOutline from "@vkontakte/icons/src/svg/24/cloud_outline_24.svg?component";
 
 import Icon16AddSquareOutline from "@vkontakte/icons/src/svg/16/add_square_outline_16.svg?component";
 import Icon16Link from "@vkontakte/icons/src/svg/16/link_16.svg?component";
@@ -69,6 +70,7 @@ export const icons = {
   Icon24AddSquareOutline,
   Icon24GearOutline,
   Icon24MemoryCard,
+  Icon24CloudOutline,
 
   Icon16AddSquareOutline,
   Icon16Link,

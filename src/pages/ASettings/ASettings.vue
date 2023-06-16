@@ -6,6 +6,7 @@ import AButton from "@/components/AButton/AButton.vue";
 import { isGroupsExport } from "@/store/groups/isGroupsExport";
 import { useApp } from "@/store/app/app";
 import { useVk } from "@/store/vk/vk";
+import { icons } from "@/common/consts";
 
 useAppCaption("Настройки");
 
@@ -41,71 +42,83 @@ const onRemoveAllGroups = async () => {
   useGroups().removeLocalGroups();
   await useGroups().autoSaveCurrentLocalGroups();
 };
+
+const { Icon24CloudOutline } = icons;
 </script>
 
 <template>
   <APageContainer class="a-settings">
-    <label style="user-select: none">
-      <input type="checkbox" v-model="useGroups().config.autoSave" />
-      <span> Автосохранение </span>
-      <div style="font-size: 10px">
-        запросы ограничены до тысячи в час; делите 1000 на
-        {{ useVk().chunksMaxCount + 1 }} при заполненном хранилище и узнаете нужное
-        количество запросов на одно сохранение
-      </div>
-    </label>
-    <AButton
-      class="a-settings__btn"
-      style="font-weight: bold"
-      :style="{ opacity: useGroups().config.autoSave ? 0 : 1 }"
-      icon="Icon24MemoryCard"
-      @click="useGroups().saveCurrentLocalGroups()"
-    >
-      <span>Сохранить изменения</span>
-    </AButton>
-    <label style="user-select: none">
-      <input type="checkbox" v-model="useGroups().config.showCounters" />
-      <span> Отображать счётчики количества фото\видео и так далее</span>
-      <div style="font-size: 10px">придётся ждать их загрузку</div>
-    </label>
-    <AButton class="a-settings__btn" icon="Icon24UploadOutline">
-      <label>
-        Добавить новые группы
-        <input
-          style="display: none"
-          type="file"
-          accept=".json"
-          @change="onImportFileChange"
-        />
+    <div class="a-button__left-content-block">
+      <label class="a-checkbox-label">
+        <input type="checkbox" v-model="useGroups().config.autoSave" />
+        <span> Автосохранение групп </span>
+        <br />
+        <span class="a-mini-text">
+          Запросы ограничены до тысячи в час; За этот сеанс вы уже сделали:
+          {{ useVk().vkWebAppStorageSetCount }}.
+          <br />
+          Этот параметр не влияет на сохранение настроек. Они будут сохраняться
+          автоматически в любом случае.
+        </span>
       </label>
-    </AButton>
-
-    <AButton
-      class="a-settings__btn"
-      icon="Icon24DownloadOutline"
-      @click="useGroups().downloadExport()"
-    >
-      Скачать текущие группы
-    </AButton>
-    <AButton
-      :disabled="useGroups().localGroupsArray.length === 0"
-      class="a-settings__btn"
-      icon="Icon24DeleteOutline"
-      @click="onRemoveAllGroups"
-    >
-      Удалить все текущие группы
-    </AButton>
-    <div>Занято места: {{ useGroups().spaceUsed }}%</div>
+      <AButton
+        class="a-button__left-content"
+        style="font-weight: bold"
+        :style="{ opacity: useGroups().config.autoSave ? 0 : 1 }"
+        icon="Icon24MemoryCard"
+        @click="useGroups().saveCurrentLocalGroups()"
+      >
+        <span>Сохранить группы</span>
+      </AButton>
+      <label class="a-checkbox-label">
+        <input type="checkbox" v-model="useGroups().config.showCounters" />
+        <span> Отображать счётчики количества фото\видео и так далее</span>
+        <br />
+        <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
+      </label>
+    </div>
+    <div class="a-button__left-content-block">
+      <AButton class="a-button__left-content" icon="Icon24UploadOutline">
+        <label>
+          Добавить новые группы
+          <input
+            style="display: none"
+            type="file"
+            accept=".json"
+            @change="onImportFileChange"
+          />
+        </label>
+      </AButton>
+      <AButton
+        class="a-button__left-content"
+        icon="Icon24DownloadOutline"
+        @click="useGroups().downloadExport()"
+      >
+        Скачать текущие группы
+      </AButton>
+      <AButton
+        :disabled="useGroups().localGroupsArray.length === 0"
+        class="a-button__left-content"
+        icon="Icon24DeleteOutline"
+        @click="onRemoveAllGroups"
+      >
+        Удалить все текущие группы
+      </AButton>
+      <div
+        class="a-rectangle-block"
+        :data-color="useGroups().spaceUsed >= 80 ? 'red' : 'green'"
+      >
+        <span class="a-horizontal-center" style="gap: 5px">
+          <Icon24CloudOutline />
+          Занято места: {{ useGroups().spaceUsed }}%
+        </span>
+      </div>
+    </div>
   </APageContainer>
 </template>
 
 <style lang="scss">
 .a-settings {
   gap: 10px;
-}
-
-.a-settings__btn {
-  width: 250px;
-  justify-content: left;
 }
 </style>

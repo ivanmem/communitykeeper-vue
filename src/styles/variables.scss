@@ -7,6 +7,9 @@
   --separator_common: var(--steel_gray_100);
   --counter_primary_background: #447bba;
   --counter_primary_text: #fff;
+  --a-rectangle-block-background__green: green;
+  --a-rectangle-block-background__red: #af0000;
+  --a-rectangle-block-color: white;
 }
 
 .vkui--vkCom--dark,
@@ -16,6 +19,9 @@
   --separator_common: var(--gray_750);
   --counter_primary_background: #fff;
   --counter_primary_text: #222;
+  --a-rectangle-block-background__green: #003f00;
+  --a-rectangle-block-background__red: #690000;
+  --a-rectangle-block-color: white;
 }
 
 .vkui--vkBase--dark,
