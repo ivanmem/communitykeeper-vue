@@ -5,6 +5,7 @@ import { useVk } from "../vk/vk";
 import { saveAs } from "file-saver";
 import { isGroupBanned } from "../../helpers/isGroupBanned";
 import { getGroupsByLinksOrIds } from "../../helpers/getGroupsByIds";
+import { useApp } from "../app/app";
 
 export interface FiltersType {
   folder: string;
@@ -113,24 +114,34 @@ export const useGroups = defineStore("groups", {
         return group;
       }
 
-      const [{ counters }] = await useVk().addRequestToQueue<any, IGroup[]>({
-        method: "groups.getById",
-        params: {
-          group_id: group.id,
-          fields: "counters",
-        },
-      });
-      group.counters = counters;
-      return group;
+      const loadingFinisher = useApp().getLoadingFinisher();
+      try {
+        const [{ counters }] = await useVk().addRequestToQueue<any, IGroup[]>({
+          method: "groups.getById",
+          params: {
+            group_id: group.id,
+            fields: "counters",
+          },
+        });
+        group.counters = counters;
+        return group;
+      } finally {
+        loadingFinisher();
+      }
     },
     async saveCurrentLocalGroups() {
-      const allData = this.localGroupsArray.reduce((data, localGroup) => {
-        data[localGroup.folder] ??= [];
-        data[localGroup.folder].push(localGroup.id);
-        return data;
-      }, {} as Record<string, number[]>);
-      const stringifyStr = JSON.stringify(allData);
-      await useVk().setVkStorage("groups", stringifyStr);
+      const loadingFinisher = useApp().getLoadingFinisher();
+      try {
+        const allData = this.localGroupsArray.reduce((data, localGroup) => {
+          data[localGroup.folder] ??= [];
+          data[localGroup.folder].push(localGroup.id);
+          return data;
+        }, {} as Record<string, number[]>);
+        const stringifyStr = JSON.stringify(allData);
+        await useVk().setVkStorage("groups", stringifyStr);
+      } finally {
+        loadingFinisher();
+      }
     },
     async autoSaveCurrentLocalGroups() {
       if (!this.config.autoSave) {

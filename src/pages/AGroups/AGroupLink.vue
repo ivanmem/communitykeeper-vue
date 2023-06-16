@@ -56,6 +56,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
       icon: h(icons.Icon16DeleteOutline),
       onClick: () => {
         useGroups().removeLocalGroup(props.group.id);
+        useGroups().autoSaveCurrentLocalGroups();
       },
     },
   ]);

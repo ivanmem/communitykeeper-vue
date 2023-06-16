@@ -32,6 +32,8 @@ const counters = useGroupCounters(groupRef);
 <style lang="scss">
 .a-group-counters {
   background-color: var(--vkui--color_background_secondary);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .a-group-counters__counter {

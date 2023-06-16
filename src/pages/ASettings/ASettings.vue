@@ -4,6 +4,7 @@ import { useAppCaption } from "../../hooks/useAppCaption";
 import { useGroups } from "../../store/groups/groups";
 import AButton from "../../components/AButton/AButton.vue";
 import { isGroupsExport } from "../../store/groups/isGroupsExport";
+import { useApp } from "../../store/app/app";
 
 useAppCaption("Настройки");
 
@@ -14,7 +15,7 @@ const onImportFileChange = (event: any) => {
 
   const reader = new FileReader();
 
-  reader.onload = async (e) => {
+  const onload = useApp().wrapLoading(async (e) => {
     const data = JSON.parse(e.target!.result as string);
     if (!isGroupsExport(data)) {
       window.alert("Некорректные данные.");
@@ -28,7 +29,9 @@ const onImportFileChange = (event: any) => {
     window.alert(
       `Импорт завершён данные. Новых групп: ${newGroupsCount - oldGroupsCount}.`
     );
-  };
+  });
+
+  reader.onload = onload;
 
   reader.readAsText(event.target.files[0]);
 };
@@ -36,11 +39,6 @@ const onImportFileChange = (event: any) => {
 const onRemoveAllGroups = async () => {
   useGroups().removeLocalGroups();
   await useGroups().autoSaveCurrentLocalGroups();
-};
-
-const saveChanges = async () => {
-  await useGroups().saveCurrentLocalGroups();
-  window.alert("Данные сохранены.");
 };
 </script>
 
@@ -57,7 +55,7 @@ const saveChanges = async () => {
         class="a-settings__btn"
         style="font-weight: bold"
         icon="Icon24MemoryCard"
-        @click="saveChanges"
+        @click="useGroups().saveCurrentLocalGroups()"
       >
         <span>Сохранить изменения</span>
       </AButton>

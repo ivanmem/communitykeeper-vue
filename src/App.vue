@@ -7,6 +7,7 @@ import { useApp } from "./store/app/app";
 import { icons } from "./common/consts";
 import { useGroups } from "./store/groups/groups";
 import { useVk } from "./store/vk/vk";
+import Loading from "vue3-loading-overlay";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -21,6 +22,7 @@ const { Icon24Linked } = icons;
 </script>
 
 <template>
+  <Loading :active="appStore.isLoading" is-full-page />
   <div v-if="groupsStore.isInit" :class="currentClasses" class="root">
     <div class="navigation-header">
       <div class="overflow-block navigation-caption">
