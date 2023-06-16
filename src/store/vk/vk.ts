@@ -23,43 +23,48 @@ export const useVk = defineStore("vk", {
   },
   actions: {
     async init() {
-      bridge.subscribe((e) => {
-        if (e.detail.type === "VKWebAppUpdateConfig") {
-          useVk().webAppConfig = e.detail.data;
-          return;
-        }
-      });
-
-      watchEffect(async () => {
-        const webAppConfig = useVk().webAppConfig;
-        if (!webAppConfig || !bridge.supports("VKWebAppResizeWindow")) {
-          return;
-        }
-
-        const { viewport_height: height, viewport_width: width } = webAppConfig;
-        if (!width || !height) {
-          return;
-        }
-
-        await bridge.send("VKWebAppResizeWindow", {
-          width,
-          height: Math.max(500, height - 200),
+      try {
+        bridge.subscribe((e) => {
+          if (e.detail.type === "VKWebAppUpdateConfig") {
+            useVk().webAppConfig = e.detail.data;
+            return;
+          }
         });
-      });
 
-      await bridge.send("VKWebAppInit", {});
+        watchEffect(async () => {
+          const webAppConfig = useVk().webAppConfig;
+          if (!webAppConfig || !bridge.supports("VKWebAppResizeWindow")) {
+            return;
+          }
 
-      const token: any = await bridge.send("VKWebAppGetAuthToken", {
-        scope: "groups",
-        app_id: 51658481,
-      });
-      useVk().api = new VKAPI({
-        rps: 3,
-        accessToken: token.access_token,
-        lang: "ru",
-        v: "5.131",
-        isBrowser: true,
-      });
+          const { viewport_height: height, viewport_width: width } =
+            webAppConfig;
+          if (!width || !height) {
+            return;
+          }
+
+          await bridge.send("VKWebAppResizeWindow", {
+            width,
+            height: Math.max(500, height - 200),
+          });
+        });
+
+        await bridge.send("VKWebAppInit", {});
+
+        const token: any = await bridge.send("VKWebAppGetAuthToken", {
+          scope: "groups",
+          app_id: 51658481,
+        });
+        useVk().api = new VKAPI({
+          rps: 3,
+          accessToken: token.access_token,
+          lang: "ru",
+          v: "5.131",
+          isBrowser: true,
+        });
+      } catch (ex) {
+        console.error("init vk store", ex);
+      }
     },
     getChunkSplitter() {
       return "__";

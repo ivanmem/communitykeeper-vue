@@ -40,9 +40,14 @@ export const useGroups = defineStore("groups", {
   },
   actions: {
     async init() {
-      await this.updateConfig();
-      await this.updateCurrentLocalGroups();
-      await this.loadNotLoadGroups();
+      try {
+        await this.updateConfig();
+        await this.updateCurrentLocalGroups();
+        await this.loadNotLoadGroups();
+      } catch (ex: any) {
+        console.error("init groups", ex);
+      }
+
       this.isInit = true;
       watch(
         this.config,
@@ -145,16 +150,20 @@ export const useGroups = defineStore("groups", {
       });
     },
     async updateConfig() {
-      const { config } = await useVk().getVkStorageDict<IGroupsConfig>([
-        "config",
-      ]);
-      // таким нехитрым образом мы убедимся в правильности формата сохранённого конфига
-      if (
-        config &&
-        config.autoSave !== undefined &&
-        config.showCounters !== undefined
-      ) {
-        this.config = config;
+      try {
+        const { config } = await useVk().getVkStorageDict<IGroupsConfig>([
+          "config",
+        ]);
+        // таким нехитрым образом мы убедимся в правильности формата сохранённого конфига
+        if (
+          config &&
+          config.autoSave !== undefined &&
+          config.showCounters !== undefined
+        ) {
+          this.config = config;
+        }
+      } catch (ex) {
+        console.error(ex);
       }
     },
     async saveCurrentLocalGroups() {

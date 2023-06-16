@@ -13,19 +13,37 @@ import { createPinia } from "pinia";
 import { router } from "@/router";
 import { useGroups } from "@/store/groups/groups";
 import App from "@/App.vue";
-import devtools from "@vue/devtools";
 import VueVirtualScroller from "vue-virtual-scroller";
 import Vue3ContextMenu from "@imengyu/vue3-context-menu";
 
-if (process.env.NODE_ENV === "development") {
-  devtools.connect("http://localhost", 8098);
+try {
+  document.documentElement.style.setProperty("background", "black");
+  const app = createApp(App)
+    .use(createPinia())
+    .use(router)
+    .use(VueVirtualScroller)
+    .use(Vue3ContextMenu);
+  app.mount("#app");
+  useGroups().init().then();
+} catch (ex: any) {
+  console.error("init app", ex);
 }
 
-document.documentElement.style.setProperty("background", "black");
-const app = createApp(App)
-  .use(createPinia())
-  .use(router)
-  .use(VueVirtualScroller)
-  .use(Vue3ContextMenu);
-app.mount("#app");
-useGroups().init().then();
+(async () => {
+  if (process.env.NODE_ENV === "development") {
+    try {
+      const devtools = (await import("@vue/devtools")).default;
+      devtools.connect("http://localhost", 8098);
+    } catch (ex) {
+      console.error("init devtools", ex);
+    }
+    try {
+      const eruda = (await import("eruda")).default;
+      eruda.init({
+        tool: ["console", "elements"],
+      });
+    } catch (ex) {
+      console.error("init eruda", ex);
+    }
+  }
+})();
