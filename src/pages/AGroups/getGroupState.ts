@@ -1,7 +1,7 @@
-import { isNullOrUndefined } from "../../helpers/isNullOrUndefined";
-import { IGroup } from "../../store/groups/types";
-import { useGroups } from "../../store/groups/groups";
-import { isGroupBanned } from "../../helpers/isGroupBanned";
+import { isNullOrUndefined } from "@/helpers/isNullOrUndefined";
+import { IGroup } from "@/store/groups/types";
+import { useGroups } from "@/store/groups/groups";
+import { isGroupBanned } from "@/helpers/isGroupBanned";
 
 export function getGroupState(group: IGroup) {
   const groupsService = useGroups();

@@ -1,5 +1,5 @@
-import { IGroup } from "../store/groups/types";
-import { FiltersType, useGroups } from "../store/groups/groups";
+import { IGroup } from "@/store/groups/types";
+import { FiltersType, useGroups } from "@/store/groups/groups";
 
 class GroupHelper {
   static getFiltered(groups: IGroup[], filters?: FiltersType) {

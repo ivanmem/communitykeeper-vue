@@ -1,8 +1,8 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import AAbout from "../pages/AAbout/AAbout.vue";
-import ASettings from "../pages/ASettings/ASettings.vue";
-import AGroups from "../pages/AGroups/AGroups.vue";
-import AAdd from "../pages/AAdd/AAdd.vue";
+import AAbout from "/src/pages/AAbout/AAbout.vue";
+import ASettings from "/src/pages/ASettings/ASettings.vue";
+import AGroups from "/src/pages/AGroups/AGroups.vue";
+import AAdd from "/src/pages/AAdd/AAdd.vue";
 import bridge from "@vkontakte/vk-bridge";
 
 const routes: RouteRecordRaw[] = [

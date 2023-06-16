@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import { IGroup } from "../../store/groups/types";
-import AButton from "../../components/AButton/AButton.vue";
-import { getGroupState } from "./getGroupState";
-import { openLink } from "../../helpers/openLink";
-import AGroupCounters from "./AGroupCounters.vue";
+import { IGroup } from "@/store/groups/types";
+import AButton from "@/components/AButton/AButton.vue";
+import { getGroupState } from "@/pages/AGroups/getGroupState";
+import { openLink } from "@/helpers/openLink";
+import AGroupCounters from "@/pages/AGroups/AGroupCounters.vue";
 import { h, onDeactivated, ref, watch } from "vue";
-import { useGroups } from "../../store/groups/groups";
+import { useGroups } from "@/store/groups/groups";
 import { useElementVisibility } from "@vueuse/core";
-import { sleep } from "../../helpers/sleep";
-import { icons } from "../../common/consts";
-import { showContextMenu } from "../../helpers/showContextMenu";
+import { sleep } from "@/helpers/sleep";
+import { icons } from "@/common/consts";
+import { showContextMenu } from "@/helpers/showContextMenu";
 
 const props = defineProps<{
   group: IGroup;

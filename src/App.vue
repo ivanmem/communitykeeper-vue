@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
 import copy from "copy-to-clipboard";
-import AButton from "./components/AButton/AButton.vue";
-import { useColorScheme } from "./useColorScheme";
-import { useApp } from "./store/app/app";
-import { icons } from "./common/consts";
-import { useGroups } from "./store/groups/groups";
-import { useVk } from "./store/vk/vk";
+import AButton from "@/components/AButton/AButton.vue";
+import { useColorScheme } from "@/useColorScheme";
+import { useApp } from "@/store/app/app";
+import { icons } from "@/common/consts";
+import { useGroups } from "@/store/groups/groups";
+import { useVk } from "@/store/vk/vk";
 import Loading from "vue3-loading-overlay";
 
 const route = useRoute();

@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
-import GroupHelper from "../../helpers/GroupHelper";
-import { useGroups } from "../../store/groups/groups";
+import { useGroups } from "@/store/groups/groups";
+import GroupHelper from "@/helpers/GroupHelper";
 
 export type UseGroupSearch = ReturnType<typeof useGroupSearch>;
 

@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
-import { IGroup, IGroupsExport, ILocalGroup } from "./types";
+import { IGroup, IGroupsExport, ILocalGroup } from "@/store/groups/types";
 import { keyBy, toNumber, uniq } from "lodash";
-import { useVk } from "../vk/vk";
+import { useVk } from "@/store/vk/vk";
 import { saveAs } from "file-saver";
-import { isGroupBanned } from "../../helpers/isGroupBanned";
-import { getGroupsByLinksOrIds } from "../../helpers/getGroupsByIds";
-import { useApp } from "../app/app";
+import { isGroupBanned } from "@/helpers/isGroupBanned";
+import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
+import { useApp } from "@/store/app/app";
 
 export interface FiltersType {
   folder: string;

@@ -1,4 +1,4 @@
-import { useApp } from "../store/app/app";
+import { useApp } from "@/store/app/app";
 import { watch } from "vue";
 import { get, MaybeRef } from "@vueuse/core";
 

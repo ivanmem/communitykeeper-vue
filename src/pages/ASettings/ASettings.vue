@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import APageContainer from "../../components/APageContainer/APageContainer.vue";
-import { useAppCaption } from "../../hooks/useAppCaption";
-import { useGroups } from "../../store/groups/groups";
-import AButton from "../../components/AButton/AButton.vue";
-import { isGroupsExport } from "../../store/groups/isGroupsExport";
-import { useApp } from "../../store/app/app";
+import APageContainer from "@/components/APageContainer/APageContainer.vue";
+import { useAppCaption } from "@/hooks/useAppCaption";
+import { useGroups } from "@/store/groups/groups";
+import AButton from "@/components/AButton/AButton.vue";
+import { isGroupsExport } from "@/store/groups/isGroupsExport";
+import { useApp } from "@/store/app/app";
 
 useAppCaption("Настройки");
 

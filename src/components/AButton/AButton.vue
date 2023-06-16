@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, StyleValue, VueElement } from "vue";
-import { icons } from "../../common/consts";
+import { icons } from "@/common/consts";
 import { RouteLocationRaw, useRoute } from "vue-router";
-import { router } from "../../router";
+import { router } from "@/router";
 import { isString } from "lodash";
 
 const props = defineProps<{

@@ -1,5 +1,5 @@
 import Vue3ContextMenu, { MenuItem } from "@imengyu/vue3-context-menu";
-import { darkColorScheme } from "../common/consts";
+import { darkColorScheme } from "@/common/consts";
 
 export function showContextMenu(e: MouseEvent, items: MenuItem[] | undefined) {
   return Vue3ContextMenu.showContextMenu({

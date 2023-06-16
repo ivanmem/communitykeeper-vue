@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
 import { VKAPI } from "vkontakte-api";
 import bridge from "@vkontakte/vk-bridge";
-import { chunkString } from "../../helpers/chunkString";
+import { chunkString } from "@/helpers/chunkString";
 import { watchEffect } from "vue";
-import { useGroups } from "../groups/groups";
+import { useGroups } from "@/store/groups/groups";
 import { IRequestConfig } from "vkontakte-api/dist/types/shared";
-import { sleep } from "../../helpers/sleep";
+import { sleep } from "@/helpers/sleep";
 
 interface VkState {
   api?: VKAPI;

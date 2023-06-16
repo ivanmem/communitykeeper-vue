@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import AButton from "../../components/AButton/AButton.vue";
-import APageContainer from "../../components/APageContainer/APageContainer.vue";
-import { useAppCaption } from "../../hooks/useAppCaption";
+import { useAppCaption } from "@/hooks/useAppCaption";
 import { computed, reactive, ref, watch } from "vue";
-import { useGroups } from "../../store/groups/groups";
+import { useGroups } from "@/store/groups/groups";
 import { toNumber } from "lodash";
-import { icons } from "../../common/consts";
-import { getGroupsByLinksOrIds } from "../../helpers/getGroupsByIds";
-import { IGroup } from "../../store/groups/types";
-import AGroupLink from "../AGroups/AGroupLink.vue";
+import { icons } from "@/common/consts";
+import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
+import { IGroup } from "@/store/groups/types";
+import AGroupLink from "/src/pages/AGroups/AGroupLink.vue";
+import AButton from "@/components/AButton/AButton.vue";
+import APageContainer from "@/components/APageContainer/APageContainer.vue";
 
 useAppCaption("Добавить");
 const store = useGroups();

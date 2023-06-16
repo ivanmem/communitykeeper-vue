@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { autoUpdate, useFloating } from "@floating-ui/vue";
-import { icons } from "../../common/consts.js";
-import { UseGroupSearch } from "./useGroupSearch";
-import AButton from "../../components/AButton/AButton.vue";
+import { icons } from "@/common/consts";
+import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
+import AButton from "@/components/AButton/AButton.vue";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
@@ -69,9 +69,7 @@ const { Icon24Filter } = icons;
           class="a-select"
           style="min-width: 100%"
         >
-          <option value="" >
-           -- Не выбрано --
-          </option>
+          <option value="">-- Не выбрано --</option>
           <option v-for="folder of store.folders" :key="folder" :value="folder">
             {{ folder }}
           </option>

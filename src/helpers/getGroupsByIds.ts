@@ -1,6 +1,6 @@
 import { isNumber } from "lodash";
-import { useVk } from "../store/vk/vk";
-import { IGroup } from "../store/groups/types";
+import { useVk } from "@/store/vk/vk";
+import { IGroup } from "@/store/groups/types";
 
 export async function getGroupsByLinksOrIds(
   linksOrIds: (string | number)[]

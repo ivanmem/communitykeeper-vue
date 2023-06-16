@@ -10,7 +10,7 @@ import {
   VKBridgeConfigData,
 } from "@vkontakte/vkui/dist/helpers/appearance";
 import { generateVKUITokensClassName } from "@vkontakte/vkui/dist/helpers/generateVKUITokensClassName";
-import { darkColorScheme } from "./common/consts";
+import { darkColorScheme } from "@/common/consts";
 
 export function useColorScheme() {
   const currentClasses = ref("");

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { useGroupSearch } from "./useGroupSearch";
-import { useAppCaption } from "../../hooks/useAppCaption";
-import AGroupsSearch from "./AGroupsSearch.vue";
-import AGroupLink from "./AGroupLink.vue";
+import { useGroupSearch } from "@/pages/AGroups/useGroupSearch";
+import { useAppCaption } from "@/hooks/useAppCaption";
+import AGroupsSearch from "@/pages/AGroups/AGroupsSearch.vue";
+import AGroupLink from "@/pages/AGroups/AGroupLink.vue";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 
 useAppCaption("Группы");

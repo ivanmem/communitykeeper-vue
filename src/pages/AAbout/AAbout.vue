@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import AButton from "../../components/AButton/AButton.vue";
-import APageContainer from "../../components/APageContainer/APageContainer.vue";
-import { useAppCaption } from "../../hooks/useAppCaption";
+import AButton from "@/components/AButton/AButton.vue";
+import APageContainer from "@/components/APageContainer/APageContainer.vue";
+import { useAppCaption } from "@/hooks/useAppCaption";
 
 useAppCaption("О приложении");
 </script>
@@ -11,8 +11,9 @@ useAppCaption("О приложении");
     <span>
       Переодически делайте бэкап данных. Они хранятся в
       <a href="https://dev.vk.com/method/storage.set" target="_blank">
-        VK Storage </a
-      >. Так как в этом хранилище ограничено количество символов на один ключ -
+        VK Storage.
+      </a>
+      Так как в этом хранилище ограничено количество символов на один ключ -
       данные делятся на части и сохраняются подобно разделённому архиву. Если
       ваши группы сохранятся не до конца - то приложение не сможет спарсить
       данные и они будут потеряны <b>навсегда</b>. Так же ВК хранит данные

@@ -1,4 +1,4 @@
-import { IGroupsExport } from "./types";
+import { IGroupsExport } from "@/store/groups/types";
 import { isNumber, isPlainObject } from "lodash";
 
 export function isGroupsExport(data: any): data is IGroupsExport {

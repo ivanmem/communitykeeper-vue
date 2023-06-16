@@ -1,7 +1,7 @@
-import { MaybeRef } from "@vueuse/core";
-import { IGroup } from "../../store/groups/types";
 import { computed, unref } from "vue";
-import { icons } from "../../common/consts";
+import { MaybeRef } from "@vueuse/core";
+import { IGroup } from "@/store/groups/types";
+import { icons } from "@/common/consts";
 
 interface ICounter {
   icon: any;

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { openLink } from "../../helpers/openLink";
-import AButton from "../../components/AButton/AButton.vue";
-import { useGroupCounters } from "./useGroupCounters";
-import { IGroup } from "../../store/groups/types";
+import { openLink } from "@/helpers/openLink";
+import { useGroupCounters } from "@/pages/AGroups/useGroupCounters";
+import { IGroup } from "@/store/groups/types";
 import { toRef } from "vue";
+import AButton from "@/components/AButton/AButton.vue";
 
 const props = defineProps<{
   group: IGroup;

@@ -1,4 +1,4 @@
-import { IGroup } from "../store/groups/types";
+import { IGroup } from "@/store/groups/types";
 
 export function isGroupBanned(group: IGroup) {
   return (
