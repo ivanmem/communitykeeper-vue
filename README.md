@@ -39,4 +39,4 @@ npm run deploy
 
 ## Ссылки
 
-[Ваш Каталог Групп](https://vk.com/app51658481)
+[Хранитель Групп](https://vk.com/app51658481)
