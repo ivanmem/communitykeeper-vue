@@ -1,6 +1,7 @@
 import { IGroup } from "@/store/groups/types";
 import { FiltersType, useGroups } from "@/store/groups/groups";
 import { getGroupState, GroupState } from "@/pages/AGroups/getGroupState";
+import bridge from "@vkontakte/vk-bridge";
 
 class GroupHelper {
   static getFiltered(groups: IGroup[], filters?: FiltersType) {
@@ -39,6 +40,19 @@ class GroupHelper {
   static getState(group: IGroup): GroupState {
     group.__state ??= getGroupState(group);
     return group.__state;
+  }
+
+  static async setIsMember(group: IGroup, isMember: boolean) {
+    const result = await bridge.send(
+      isMember ? "VKWebAppJoinGroup" : "VKWebAppLeaveGroup",
+      { group_id: group.id }
+    );
+    if (result.result) {
+      group.is_member = isMember;
+      group.__state = undefined;
+    }
+
+    return result.result;
   }
 }
 

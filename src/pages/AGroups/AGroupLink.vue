@@ -3,13 +3,15 @@ import { IGroup } from "@/store/groups/types";
 import AButton from "@/components/AButton/AButton.vue";
 import { openLink } from "@/helpers/openLink";
 import AGroupCounters from "@/pages/AGroups/AGroupCounters.vue";
-import { h, onDeactivated, ref, watch } from "vue";
+import { computed, h, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useElementVisibility } from "@vueuse/core";
 import { sleep } from "@/helpers/sleep";
 import { icons } from "@/common/consts";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import GroupHelper from "../../helpers/GroupHelper";
+import { MenuItem } from "@imengyu/vue3-context-menu";
+import useClipboard from "vue-clipboard3/dist/esm/index";
 
 const props = defineProps<{
   group: IGroup;
@@ -53,17 +55,52 @@ onDeactivated(() => {
   isDeactivated.value = true;
 });
 
+const link = computed(() => `vk.com/public${props.group.id}`);
+
+const { toClipboard } = useClipboard();
+
 const onOpenContextMenu = (e: MouseEvent) => {
-  showContextMenu(e, [
-    {
-      label: "Удалить",
-      icon: h(icons.Icon16DeleteOutline),
-      onClick: () => {
-        useGroups().removeLocalGroup(props.group.id);
-        useGroups().autoSaveCurrentLocalGroups();
-      },
+  const items: MenuItem[] = [];
+  items.push({
+    label: "Скопировать ссылку",
+    icon: h(icons.Icon16ChainOutline),
+    onClick: async () => {
+      try {
+        await toClipboard(link.value);
+      } catch (ex) {
+        console.error("Ошибка при копировании ссылки.", ex);
+        window.alert(link.value);
+      }
     },
-  ]);
+  });
+
+  items.push({
+    label: "Удалить",
+    icon: h(icons.Icon16DeleteOutline),
+    onClick: () => {
+      useGroups().removeLocalGroup(props.group.id);
+      useGroups().autoSaveCurrentLocalGroups();
+    },
+  });
+  if (props.group.is_member) {
+    items.push({
+      label: "Выйти",
+      icon: h(icons.Icon16DoorEnterArrowRightOutline),
+      onClick: () => {
+        return GroupHelper.setIsMember(props.group, false);
+      },
+    });
+  } else {
+    items.push({
+      label: "Вступить",
+      icon: h(icons.Icon16AddSquareOutline),
+      onClick: async () => {
+        return GroupHelper.setIsMember(props.group, true);
+      },
+    });
+  }
+
+  showContextMenu(e, items);
 };
 </script>
 
@@ -71,11 +108,12 @@ const onOpenContextMenu = (e: MouseEvent) => {
   <div
     ref="target"
     class="a-button__root"
+    :data-link="link"
     @click.right.prevent.stop="onOpenContextMenu"
   >
     <AButton
       class="a-group-link a-button__block"
-      @click="openLink(`//vk.com/public${group.id}`)"
+      @click="openLink(`//` + link)"
     >
       <div class="a-group-link__div">
         <b>{{ group.name }}</b>
@@ -107,7 +145,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
   background: none;
   border: none;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
   text-align: left;
   align-content: flex-start;
 }
@@ -123,7 +161,8 @@ const onOpenContextMenu = (e: MouseEvent) => {
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  width: 26px;
+  width: 36px;
+  height: 36px;
 
   .a-button__icon {
     margin: 0;
