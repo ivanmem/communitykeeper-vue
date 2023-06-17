@@ -140,5 +140,6 @@ const onOpenContextMenu = (e: MouseEvent) => {
   line-height: var(--vkui--font_subhead--line_height--compact, 16px);
   font-weight: var(--vkui--font_subhead--font_weight--regular, 400);
   font-family: var(--vkui--font_title1--font_family--regular);
+  opacity: 0.7;
 }
 </style>

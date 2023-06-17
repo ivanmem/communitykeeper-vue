@@ -22,15 +22,32 @@ useAppCaption("О приложении");
       Это приложение с открытым исходным кодом.
       <br />Вы можете внести свой вклад.
       <br />
-      Для этого вам необходимо изучить:
+      Мы используем:
       <b>TypeScript, SCSS, Vite, Vue 3, Pinia</b>.
     </span>
-    <AButton
-      icon="Icon16Link"
-      to="https://github.com/xeleoss/local-vk-groups-catalog-vue"
-    >
-      <span>Github</span>
-    </AButton>
+    <div class="a-button__left-content-block">
+      <AButton
+        class="a-button__left-content"
+        icon="Icon16Link"
+        to="https://github.com/xeleoss/local-vk-groups-catalog-vue"
+      >
+        <span>Github</span>
+      </AButton>
+      <AButton
+        class="a-button__left-content"
+        icon="Icon16Link"
+        to="https://github.com/xeleoss/local-vk-groups-catalog-vue/commits/main"
+      >
+        <span>Информация об обновлениях</span>
+      </AButton>
+      <AButton
+        class="a-button__left-content"
+        icon="Icon16Link"
+        to="https://github.com/xeleoss/local-vk-groups-catalog-vue/issues/new"
+      >
+        <span>Нашли баг или хотите новую функцию?</span>
+      </AButton>
+    </div>
   </APageContainer>
 </template>
 <style lang="scss"></style>
