@@ -55,7 +55,8 @@ const { Icon24CloudOutline } = icons;
         <br />
         <span class="a-mini-text">
           Запросы ограничены до тысячи в час; За этот сеанс вы уже сделали:
-          {{ useVk().vkWebAppStorageSetCount }}.
+          {{ useVk().vkWebAppStorageSetCount }}. Если вы попытаетесь сохраниться
+          при лимите - все группы будут утеряны!
           <br />
           Этот параметр не влияет на сохранение настроек. Они будут сохраняться
           автоматически в любом случае.
@@ -80,7 +81,7 @@ const { Icon24CloudOutline } = icons;
     <div class="a-button__left-content-block">
       <AButton class="a-button__left-content" icon="Icon24UploadOutline">
         <label>
-          Добавить новые группы
+          Добавить группы (импорт)
           <input
             style="display: none"
             type="file"
@@ -94,7 +95,7 @@ const { Icon24CloudOutline } = icons;
         icon="Icon24DownloadOutline"
         @click="useGroups().downloadExport()"
       >
-        Скачать текущие группы
+        Скачать все группы (экспорт)
       </AButton>
       <AButton
         :disabled="useGroups().localGroupsArray.length === 0"
@@ -102,7 +103,7 @@ const { Icon24CloudOutline } = icons;
         icon="Icon24DeleteOutline"
         @click="onRemoveAllGroups"
       >
-        Удалить все текущие группы
+        Удалить все группы
       </AButton>
       <div
         class="a-rectangle-block"

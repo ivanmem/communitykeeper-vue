@@ -3,7 +3,13 @@ import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
 import { isGroupBanned } from "@/helpers/isGroupBanned";
 
-export function getGroupState(group: IGroup) {
+export interface GroupState {
+  text: string;
+  isBanned: true | "banned" | undefined;
+  isVisibleJoin: boolean;
+}
+
+export function getGroupState(group: IGroup): GroupState {
   const groupsService = useGroups();
   const localGroup = groupsService.getLocalGroupById(group.id);
   const isVisibleJoin = group.name != "Частная группа" && !group?.is_request;
@@ -16,12 +22,17 @@ export function getGroupState(group: IGroup) {
   if (isBanned) {
     text.push("Забанено");
   }
+
   if (group?.is_member) {
-    text.push("Вы состоите");
+    text.push("Вы участник");
+  } else {
+    text.push("Вы не участник");
   }
+
   if (group?.is_request) {
-    text.push("Вы подали заявку на вступление");
+    text.push("Вы подали заявку на участие");
   }
+
   if (group?.is_admin) {
     text.push("Вы администратор");
   }
@@ -32,5 +43,5 @@ export function getGroupState(group: IGroup) {
     text.push("Закрытая");
   }
 
-  return { text, isBanned, isVisibleJoin };
+  return { text: text.join(", "), isBanned, isVisibleJoin };
 }

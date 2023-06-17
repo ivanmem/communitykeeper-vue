@@ -1,3 +1,5 @@
+import { GroupState } from "@/pages/AGroups/getGroupState";
+
 export interface ILocalGroup {
   id: number;
   folder: string;
@@ -19,6 +21,7 @@ export interface IGroup {
   type: string;
   counters?: IGroupCounters;
   countersSum?: number;
+  __state?: GroupState;
 }
 
 export interface IGroupCounters {

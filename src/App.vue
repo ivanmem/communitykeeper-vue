@@ -8,7 +8,6 @@ import { icons } from "@/common/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import Loading from "vue3-loading-overlay";
-import { onMounted } from "vue";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -16,10 +15,10 @@ const vkStore = useVk();
 const appStore = useApp();
 const { currentClasses } = useColorScheme();
 const { Icon24Linked } = icons;
-onMounted(async () => {
+(async () => {
   await vkStore.init();
   await groupsStore.init();
-});
+})();
 </script>
 
 <template>

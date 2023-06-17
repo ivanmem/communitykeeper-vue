@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { IGroup } from "@/store/groups/types";
 import AButton from "@/components/AButton/AButton.vue";
-import { getGroupState } from "@/pages/AGroups/getGroupState";
 import { openLink } from "@/helpers/openLink";
 import AGroupCounters from "@/pages/AGroups/AGroupCounters.vue";
 import { h, onDeactivated, ref, watch } from "vue";
@@ -10,6 +9,7 @@ import { useElementVisibility } from "@vueuse/core";
 import { sleep } from "@/helpers/sleep";
 import { icons } from "@/common/consts";
 import { showContextMenu } from "@/helpers/showContextMenu";
+import GroupHelper from "../../helpers/GroupHelper";
 
 const props = defineProps<{
   group: IGroup;
@@ -80,7 +80,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
       <div class="a-group-link__div">
         <b>{{ group.name }}</b>
         <span class="a-group-link__help">
-          {{ getGroupState(group).text.join(", ") }}
+          {{ GroupHelper.getState(group).text }}
         </span>
       </div>
 
