@@ -22,50 +22,52 @@ const { Icon24Linked } = icons;
 </script>
 
 <template>
-  <Loading
-    :active="!groupsStore.isInit || appStore.isLoading"
-    is-full-page
-    background-color="#000"
-    color="#eee"
-    :opacity="0.3"
-    lock-scroll
-  />
-  <div v-if="groupsStore.isInit" :class="currentClasses" class="root">
-    <div class="navigation-header">
-      <div class="overflow-block navigation-caption">
-        {{ appStore.caption }}
-      </div>
-      <AButton
-        v-if="route.path !== '/'"
-        style="height: 30px"
-        @click="copy('vk.com/app51658481#' + route.path)"
-      >
-        <Icon24Linked />
-      </AButton>
-    </div>
-    <div class="route-view">
-      <router-view v-slot="{ Component }">
-        <Transition mode="out-in" name="fade">
-          <component :is="Component" :key="route.fullPath" />
-        </Transition>
-      </router-view>
-    </div>
-    <div class="navigation">
-      <div class="navigation-bottom-buttons">
-        <AButton icon="Icon24ArticleBoxOutline" to="/">
-          <span> Группы </span>
-        </AButton>
-        <AButton icon="Icon24AddSquareOutline" to="/add">
-          <span> Добавить </span>
-        </AButton>
-        <AButton icon="Icon24GearOutline" to="/settings">
-          <span> Настройки </span>
-        </AButton>
-        <AButton icon="Icon24LightbulbStarOutline" to="/about">
-          <span> О приложении </span>
+  <div :class="currentClasses" class="root">
+    <Loading
+      :active="!groupsStore.isInit || appStore.isLoading"
+      is-full-page
+      background-color="#000"
+      color="#eee"
+      :opacity="0.3"
+      lock-scroll
+    />
+    <template v-if="groupsStore.isInit">
+      <div class="navigation-header">
+        <div class="overflow-block navigation-caption">
+          {{ appStore.caption }}
+        </div>
+        <AButton
+          v-if="route.path !== '/'"
+          style="height: 30px"
+          @click="copy('vk.com/app51658481#' + route.path)"
+        >
+          <Icon24Linked />
         </AButton>
       </div>
-    </div>
+      <div class="route-view">
+        <router-view v-slot="{ Component }">
+          <Transition mode="out-in" name="fade">
+            <component :is="Component" :key="route.fullPath" />
+          </Transition>
+        </router-view>
+      </div>
+      <div class="navigation">
+        <div class="navigation-bottom-buttons">
+          <AButton icon="Icon24ArticleBoxOutline" to="/">
+            <span> Группы </span>
+          </AButton>
+          <AButton icon="Icon24AddSquareOutline" to="/add">
+            <span> Добавить </span>
+          </AButton>
+          <AButton icon="Icon24GearOutline" to="/settings">
+            <span> Настройки </span>
+          </AButton>
+          <AButton icon="Icon24LightbulbStarOutline" to="/about">
+            <span> О приложении </span>
+          </AButton>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 

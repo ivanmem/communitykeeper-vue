@@ -19,7 +19,7 @@ const { x, y, strategy } = useFloating(reference, floating, {
   open: showFilters,
 });
 
-const { Icon24Filter } = icons;
+const { Icon24Filter, Icon16CrossCircleSmall } = icons;
 </script>
 
 <template>
@@ -40,6 +40,14 @@ const { Icon24Filter } = icons;
           margin-right: 10px;
         "
       >
+        <AButton
+          :disabled="!store.filters.search.length"
+          class="a-button__opacity"
+          @mousedown.stop
+          @click.stop="store.filters.search = ''"
+        >
+          <Icon16CrossCircleSmall />
+        </AButton>
         <AButton
           class="a-button__opacity"
           @mousedown.stop

@@ -47,6 +47,15 @@
 }
 
 .a-checkbox-label {
+  display: inline-block;
+  vertical-align: middle;
+
+  input[type="checkbox"] {
+    accent-color: var(--vkui--color_icon_accent);
+    width: 16px;
+    height: 16px;
+  }
+
   user-select: none;
   font-size: 16px;
 }

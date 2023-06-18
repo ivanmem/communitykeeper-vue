@@ -30,7 +30,10 @@
   border: 0.5px solid var(--vkui--color_background_contrast_secondary_alpha);
   cursor: pointer;
   padding: 4px;
-  line-height: 24px;
+  line-height: var(--vkui--font_headline1--line_height--compact);
+  font-size: var(--vkui--font_headline1--font_size--compact);
+  font-weight: var(--vkui--font_weight_accent2);
+  min-height: var(--vkui--size_button_large_height--compact);
 
   @include button-pseudo-classes;
 

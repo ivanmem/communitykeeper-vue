@@ -48,19 +48,19 @@ div[contenteditable="true"] {
 
 .TopSearch__input {
   border: 0;
-  line-height: 28px;
   width: 100%;
   -webkit-transition: background-color 0.05s, color 0.05s;
   transition: background-color 0.05s, color 0.05s;
   background-color: initial;
   border-radius: var(--vkui--size_border_radius--regular, 8px);
-  height: 32px;
   margin: 0;
   padding: 0 0 0 34px;
   color: var(--text_primary);
   background-image: url(data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20opacity%3D%22.92%22%3E%3Cpath%20opacity%3D%22.1%22%20d%3D%22M0%200H16V16H0z%22%2F%3E%3Cpath%20d%3D%22M6.5%201a5.5%205.5%200%200%201%204.383%208.823l3.896%203.9a.75.75%200%200%201-1.061%201.06l-3.895-3.9A5.5%205.5%200%201%201%206.5%201zm0%201.5a4%204%200%201%200%200%208%204%204%200%200%200%200-8z%22%20fill%3D%22%23818c99%22%20fill-rule%3D%22nonzero%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);
   background-position: 10px;
   background-repeat: no-repeat;
+  line-height: 100%;
+  flex-grow: 1;
 
   &:focus-visible {
     outline: none;
