@@ -77,6 +77,10 @@ const { Icon24CloudOutline } = icons;
         <br />
         <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
       </label>
+      <label class="a-checkbox-label">
+        <input type="checkbox" v-model="useGroups().config.eruda" />
+        <span> Включить дебаг кнопку (eruda)</span>
+      </label>
     </div>
     <div class="a-button__left-content-block">
       <AButton class="a-button__left-content" icon="Icon24UploadOutline">

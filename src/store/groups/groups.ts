@@ -8,6 +8,7 @@ import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
 import { useApp } from "@/store/app/app";
 import { watch } from "vue";
 import GroupHelper from "@/helpers/GroupHelper";
+import { setEruda } from "@/helpers/setEruda";
 
 export interface FiltersType {
   folder: string;
@@ -26,6 +27,7 @@ interface GroupsState {
 export interface IGroupsConfig {
   autoSave: boolean;
   showCounters: boolean;
+  eruda?: boolean;
 }
 
 export const useGroups = defineStore("groups", {
@@ -56,6 +58,13 @@ export const useGroups = defineStore("groups", {
           return this.saveCurrentConfig();
         }),
         { deep: true }
+      );
+      watch(
+        () => this.config.eruda,
+        useApp().wrapLoading(() => {
+          return setEruda(Boolean(this.config.eruda));
+        }),
+        { immediate: this.config.eruda }
       );
       console.info("groups store init");
     },

@@ -5,7 +5,7 @@ export function showContextMenu(e: MouseEvent, items: MenuItem[] | undefined) {
   return Vue3ContextMenu.showContextMenu({
     x: e.x,
     y: e.y,
-    theme: darkColorScheme.value ? "flat dark" : "flat",
+    theme: darkColorScheme.value ? "mac dark" : "mac",
     items,
     closeWhenScroll: true,
   });

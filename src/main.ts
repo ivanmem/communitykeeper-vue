@@ -37,12 +37,4 @@ try {
       console.error("init devtools", ex);
     }
   }
-
-  try {
-    const eruda = (await import("eruda")).default;
-    eruda.init();
-    console.info("init eruda");
-  } catch (ex) {
-    console.error("init eruda", ex);
-  }
 })();
