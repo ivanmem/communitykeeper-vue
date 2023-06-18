@@ -49,10 +49,11 @@ const { Icon24CloudOutline } = icons;
 <template>
   <APageContainer class="a-settings">
     <div class="a-button__left-content-block">
-      <label class="a-checkbox-label">
-        <input type="checkbox" v-model="useGroups().config.autoSave" />
-        <span> Автосохранение групп </span>
-        <br />
+      <div>
+        <label class="a-checkbox-label">
+          <input type="checkbox" v-model="useGroups().config.autoSave" />
+          <span> Автосохранение групп </span>
+        </label>
         <span class="a-mini-text">
           Запросы ограничены до тысячи в час; За этот сеанс вы уже сделали:
           {{ useVk().vkWebAppStorageSetCount }}. Если вы попытаетесь сохраниться
@@ -61,7 +62,7 @@ const { Icon24CloudOutline } = icons;
           Этот параметр не влияет на сохранение настроек. Они будут сохраняться
           автоматически в любом случае.
         </span>
-      </label>
+      </div>
       <AButton
         class="a-button__left-content"
         style="font-weight: bold"
@@ -71,12 +72,13 @@ const { Icon24CloudOutline } = icons;
       >
         <span>Сохранить группы</span>
       </AButton>
-      <label class="a-checkbox-label">
-        <input type="checkbox" v-model="useGroups().config.showCounters" />
-        <span> Отображать счётчики количества фото\видео и так далее</span>
-        <br />
+      <div>
+        <label class="a-checkbox-label">
+          <input type="checkbox" v-model="useGroups().config.showCounters" />
+          <span> Отображать счётчики количества фото\видео и так далее</span>
+        </label>
         <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
-      </label>
+      </div>
       <label class="a-checkbox-label">
         <input type="checkbox" v-model="useGroups().config.eruda" />
         <span> Включить дебаг кнопку (eruda)</span>

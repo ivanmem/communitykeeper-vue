@@ -98,9 +98,13 @@ export const useGroups = defineStore("groups", {
 
       const groups = await getGroupsByLinksOrIds(ids);
       groups.forEach((group) => {
-        GroupHelper.getState(group);
-        this.groupsMap.set(group.id, group);
+        this.setGroup(group);
       });
+    },
+    setGroup(group: IGroup) {
+      GroupHelper.getState(group);
+      this.groupsMap.set(group.id, group);
+      return group;
     },
     getLocalGroupById(id: number): ILocalGroup | undefined {
       return this.localGroups[id];
@@ -125,8 +129,15 @@ export const useGroups = defineStore("groups", {
         });
       });
     },
-    getGroupById(id: number): IGroup {
-      return this.groupsMap.get(id)!;
+    getGroupById(id: number | string): IGroup {
+      return this.groupsMap.get(+id)!;
+    },
+    async getGroupByIdOrLoad(id: number | string): Promise<IGroup> {
+      const group = this.getGroupById(id);
+      if (group) return group;
+
+      const groups = await getGroupsByLinksOrIds([id]);
+      return groups[0];
     },
     addLocalGroup(localGroup: ILocalGroup) {
       // если группа уже существует - перезаписываем

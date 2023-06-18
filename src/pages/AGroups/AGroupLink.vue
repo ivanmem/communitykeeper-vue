@@ -12,6 +12,7 @@ import { showContextMenu } from "@/helpers/showContextMenu";
 import GroupHelper from "../../helpers/GroupHelper";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import useClipboard from "vue-clipboard3/dist/esm/index";
+import { router } from "@/router";
 
 const props = defineProps<{
   group: IGroup;
@@ -73,7 +74,13 @@ const onOpenContextMenu = (e: MouseEvent) => {
       }
     },
   });
-
+  items.push({
+    label: "Галерея (в разработке)",
+    icon: h(icons.Icon16FolderOutline),
+    onClick: async () => {
+      return router.push(`/albums/${props.group.id}`);
+    },
+  });
   items.push({
     label: "Удалить",
     icon: h(icons.Icon16DeleteOutline),

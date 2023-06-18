@@ -40,8 +40,6 @@ const { store, groupsOrder, showFilters } = groupSearch;
 </template>
 
 <style lang="scss">
-@import "/src/styles/variables.scss";
-
 .a-groups {
   display: flex;
   flex-direction: column;

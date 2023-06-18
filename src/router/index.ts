@@ -1,15 +1,33 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import AAbout from "/src/pages/AAbout/AAbout.vue";
-import ASettings from "/src/pages/ASettings/ASettings.vue";
-import AGroups from "/src/pages/AGroups/AGroups.vue";
-import AAdd from "/src/pages/AAdd/AAdd.vue";
 import bridge from "@vkontakte/vk-bridge";
 
 const routes: RouteRecordRaw[] = [
-  { path: "/", component: AGroups },
-  { path: "/settings", component: ASettings },
-  { path: "/about", component: AAbout },
-  { path: "/add", component: AAdd },
+  {
+    path: "/",
+    component: () => import("@/pages/AGroups/AGroups.vue"),
+  },
+  {
+    path: "/settings",
+    component: () => import("@/pages/ASettings/ASettings.vue"),
+  },
+  {
+    path: "/about",
+    component: () => import("@/pages/AAbout/AAbout.vue"),
+  },
+  {
+    path: "/add",
+    component: () => import("@/pages/AAdd/AAdd.vue"),
+  },
+  {
+    path: "/albums/:groupId",
+    component: () => import("@/pages/AAlbums/AAlbums.vue"),
+    props: true,
+  },
+  {
+    path: "/albums/:groupId/:albumId",
+    component: () => import("@/pages/AAlbum/AAlbum.vue"),
+    props: true,
+  },
 ];
 
 export const router = createRouter({

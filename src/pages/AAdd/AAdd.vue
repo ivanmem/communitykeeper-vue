@@ -79,7 +79,12 @@ const { Icon16FolderOutline, Icon16Link } = icons;
       </label>
       <label class="form-label">
         <span><Icon16FolderOutline /> Папка</span>
-        <input v-model="newGroup.folder" />
+        <input v-model="newGroup.folder" list="folder-list" />
+        <datalist id="folder-list">
+          <option v-for="folder in useGroups().folders" :key="folder">
+            {{ folder }}
+          </option>
+        </datalist>
       </label>
       <AButton
         :disabled="!currentGroup"
