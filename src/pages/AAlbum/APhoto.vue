@@ -44,8 +44,6 @@ watch(photoDiv, () => {
 <template>
   <div
     ref="photoDiv"
-    tabindex="1"
-    autofocus
     class="a-photo"
     :style="{ backgroundImage: `url(${originalSize.url})` }"
     @click="onClick"
@@ -71,5 +69,7 @@ watch(photoDiv, () => {
   background-position: center 35%;
   background-color: black;
   cursor: pointer;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 </style>

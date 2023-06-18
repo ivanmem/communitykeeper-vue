@@ -56,3 +56,8 @@ h6 {
   padding: 0;
   margin: 0;
 }
+
+.mx-context-menu.mac .mx-context-menu-item,
+.mx-menu-bar.mac .mx-context-menu-item {
+  padding: 10px 6px;
+}
