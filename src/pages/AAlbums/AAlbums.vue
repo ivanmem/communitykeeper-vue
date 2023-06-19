@@ -6,6 +6,9 @@ import { PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { useGroups } from "@/store/groups/groups";
 import { IGroup } from "@/store/groups/types";
 import AAlbumsPreview from "@/pages/AAlbums/AAlbumsPreview.vue";
+import { RecycleScroller } from "vue-virtual-scroller";
+import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
+import { useCountGridColumns } from "@/hooks/useCountGridColumns";
 
 const props = defineProps<{ groupId: number | string }>();
 
@@ -31,23 +34,39 @@ watch(
   },
   { immediate: true }
 );
+
+const albumsRef = ref();
+const albumsDiv = computed(() => albumsRef.value?.$el);
+const gridItems = useCountGridColumns(
+  albumsDiv,
+  () => AlbumsPreviewSizes.value.width,
+  20
+);
 </script>
 
 <template>
   <div class="a-albums vkuiGroup__inner Group__inner">
-    <div v-if="albums" class="a-albums__items">
+    <template v-if="albums">
       <Teleport to="#caption">
         <a :href="`//vk.com/public${props.groupId}`" target="_blank">
           {{ caption }}
         </a>
       </Teleport>
-      <AAlbumsPreview
-        v-for="(album, index) of albums.items"
-        :key="album.id"
-        :album="album"
-        :index="index"
-      />
-    </div>
+      <RecycleScroller
+        ref="albumsRef"
+        class="a-albums__items"
+        :items="albums.items"
+        :item-size="AlbumsPreviewSizes.height"
+        :itemSecondarySize="AlbumsPreviewSizes.width"
+        :gridItems="gridItems"
+        key-field="id"
+        v-slot="{ item, index }"
+      >
+        <AAlbumsPreview :key="item.id" :album="item" :index="index" />
+      </RecycleScroller>
+    </template>
+
+    <div></div>
   </div>
 </template>
 
@@ -70,6 +89,7 @@ watch(
   gap: 10px;
   overflow-x: auto;
   justify-content: space-evenly;
+  padding: 10px;
 }
 
 .a-albums__header {

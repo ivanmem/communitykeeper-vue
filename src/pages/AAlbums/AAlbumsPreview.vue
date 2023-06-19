@@ -6,11 +6,14 @@ import { router } from "@/router";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { icons } from "@/common/consts";
 import { openLink } from "@/helpers/openLink";
+import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
 const props = defineProps<{ album: IAlbumItem }>();
 const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.album.sizes)
 );
+
+const { width, height } = AlbumsPreviewSizes.value;
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
@@ -29,31 +32,38 @@ const onShowContextMenu = (e: MouseEvent) => {
 <template>
   <div
     class="a-album-item"
-    :style="{ backgroundImage: `url(${originalSize.url})` }"
     @click="router.push(`/albums/${-props.album.owner_id}/${props.album.id}`)"
     @contextmenu.stop.prevent="onShowContextMenu"
   >
+    <img :src="originalSize.url" alt="" />
     <div class="photos_album_title_wrap">{{ props.album.title }}</div>
   </div>
 </template>
 <style lang="scss">
 .a-album-item {
-  width: 245px;
-  min-width: 245px;
-  height: 165px;
-  min-height: 165px;
+  width: v-bind("`${width}px`");
+  min-width: v-bind("`${width}px`");
+  height: v-bind("`${height}px`");
+  min-height: v-bind("`${height}px`");
   position: relative;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center 35%;
   background-color: black;
   cursor: pointer;
+  padding: 5px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .photos_album_title_wrap {
   position: absolute;
-  bottom: 0;
-  width: 100%;
+  bottom: 0 + 5px;
+  width: calc(100% - 5px);
   padding: 35px 12px 9px;
   background: rgb(2, 0, 36);
   background: linear-gradient(

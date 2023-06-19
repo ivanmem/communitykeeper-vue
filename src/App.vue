@@ -88,6 +88,7 @@ const { Icon24Linked } = icons;
   padding-inline: 10px;
   padding-right: var(--navigation-header-padding-right, 10px);
   min-height: 30px;
+  gap: 5px;
 }
 
 .navigation {
@@ -103,6 +104,11 @@ const { Icon24Linked } = icons;
   justify-content: center;
   font-weight: bold;
   text-transform: uppercase;
+  font-size: min(calc(0.3em + 2vw), 18px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
 
   a {
     color: inherit;
@@ -110,6 +116,10 @@ const { Icon24Linked } = icons;
     font-size: inherit;
     text-transform: inherit;
     text-decoration: inherit;
+    text-overflow: inherit;
+    white-space: inherit;
+    overflow: inherit;
+    max-width: inherit;
   }
 }
 
