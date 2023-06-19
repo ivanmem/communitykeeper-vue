@@ -39,8 +39,11 @@ const onImportFileChange = (event: any) => {
 };
 
 const onRemoveAllGroups = async () => {
-  useGroups().removeLocalGroups();
-  await useGroups().autoSaveCurrentLocalGroups();
+  const isConfirm = confirm("Вы уверены, что хотите удалить все группы?");
+  if (isConfirm) {
+    useGroups().removeLocalGroups();
+    await useGroups().autoSaveCurrentLocalGroups();
+  }
 };
 
 const { Icon24CloudOutline } = icons;

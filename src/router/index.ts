@@ -36,6 +36,20 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
+  if (to.path.startsWith("/album-")) {
+    let [groupId, albumId] = to.path
+      .substring("/album-".length)
+      .split("_")
+      .map(parseFloat);
+    if (albumId == 0) {
+      albumId = -6;
+    }
+
+    if (!Number.isNaN(groupId) && !Number.isNaN(albumId)) {
+      return { path: `/albums/${groupId}/${albumId}` };
+    }
+  }
+
   if (to.query?.vk_app_id && from.fullPath === "/") {
     return { path: to.hash.replace("#", "") || "/", replace: true };
   }

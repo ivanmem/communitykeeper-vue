@@ -1,19 +1,37 @@
 <script lang="ts" setup>
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
-import { computed } from "vue";
+import { computed, h } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { router } from "@/router";
+import { showContextMenu } from "@/helpers/showContextMenu";
+import { icons } from "@/common/consts";
+import { openLink } from "@/helpers/openLink";
 
 const props = defineProps<{ album: IAlbumItem }>();
 const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.album.sizes)
 );
+
+const onShowContextMenu = (e: MouseEvent) => {
+  showContextMenu(e, [
+    {
+      label: "Открыть в ВК",
+      icon: h(icons.Icon16Link),
+      onClick: () => {
+        openLink(
+          `//${PhotoHelper.getAlbumUrl(-props.album.owner_id, props.album.id)}`
+        );
+      },
+    },
+  ]);
+};
 </script>
 <template>
   <div
     class="a-album-item"
     :style="{ backgroundImage: `url(${originalSize.url})` }"
     @click="router.push(`/albums/${-props.album.owner_id}/${props.album.id}`)"
+    @contextmenu.stop.prevent="onShowContextMenu"
   >
     <div class="photos_album_title_wrap">{{ props.album.title }}</div>
   </div>
@@ -29,6 +47,7 @@ const originalSize = computed(() =>
   background-size: cover;
   background-position: center 35%;
   background-color: black;
+  cursor: pointer;
 }
 
 .photos_album_title_wrap {

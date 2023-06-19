@@ -6,6 +6,7 @@ import { watchEffect } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { IRequestConfig } from "vkontakte-api/dist/types/shared";
 import { sleep } from "@/helpers/sleep";
+import { PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 
 interface VkState {
   api?: VKAPI;
@@ -172,6 +173,17 @@ export const useVk = defineStore("vk", {
           throw ex;
         }
       }
+    },
+    getAlbums(groupId: number | string): Promise<PhotosGetAlbums> {
+      return this.addRequestToQueue({
+        method: "photos.getAlbums",
+        params: {
+          owner_id: -+groupId,
+          need_system: 1,
+          need_covers: 1,
+          photo_sizes: 1,
+        },
+      });
     },
   },
 });

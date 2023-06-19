@@ -22,21 +22,12 @@ watch(
 const caption = computed(() =>
   group.value ? `Альбомы ${group.value.name}` : ""
 );
-useAppCaption(caption);
+useAppCaption("");
 
 watch(
   () => props.groupId,
   async () => {
-    const result: PhotosGetAlbums = await useVk().addRequestToQueue({
-      method: "photos.getAlbums",
-      params: {
-        owner_id: -props.groupId,
-        need_system: 1,
-        need_covers: 1,
-        photo_sizes: 1,
-      },
-    });
-    albums.value = result;
+    albums.value = await useVk().getAlbums(props.groupId);
   },
   { immediate: true }
 );
@@ -45,6 +36,11 @@ watch(
 <template>
   <div class="a-albums vkuiGroup__inner Group__inner">
     <div v-if="albums" class="a-albums__items">
+      <Teleport to="#caption">
+        <a :href="`//vk.com/public${props.groupId}`" target="_blank">
+          {{ caption }}
+        </a>
+      </Teleport>
       <AAlbumsPreview
         v-for="(album, index) of albums.items"
         :key="album.id"

@@ -5,6 +5,8 @@ import { useVk } from "@/store/vk/vk";
 import { IAlbumItem, PhotosGet, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import AAlbumPreview from "@/pages/AAlbum/AAlbumPreview.vue";
 import APhoto from "@/pages/AAlbum/APhoto.vue";
+import { icons } from "@/common/consts";
+import { PhotoHelper } from "@/helpers/PhotoHelper";
 
 const props = defineProps<{
   groupId: number | string;
@@ -17,14 +19,8 @@ const currentPhotoIndex = ref<number | undefined>();
 watch(
   () => props.groupId,
   async () => {
-    const albums: PhotosGetAlbums = await useVk().addRequestToQueue({
-      method: "photos.getAlbums",
-      params: {
-        albums_id: props.albumId,
-        owner_id: -props.groupId,
-      },
-    });
-    album.value = albums.items[0];
+    const albums: PhotosGetAlbums = await useVk().getAlbums(props.groupId);
+    album.value = albums.items.find((x) => x.id === +props.albumId);
     photos.value = await useVk().addRequestToQueue({
       method: "photos.get",
       params: {
@@ -38,12 +34,24 @@ watch(
 const caption = computed(() =>
   album.value ? `Альбом ${album.value.title}` : ""
 );
-useAppCaption(caption);
+useAppCaption("");
+const { Icon16Link } = icons;
 </script>
 
 <template>
   <div class="a-album vkuiGroup__inner Group__inner">
     <div v-if="photos" class="a-album__items">
+      <Teleport to="#caption">
+        <div style="display: flex; gap: 5px; align-items: center">
+          <Icon16Link />
+          <a
+            :href="`//${PhotoHelper.getAlbumUrl(props.groupId, props.albumId)}`"
+            target="_blank"
+          >
+            {{ caption }}
+          </a>
+        </div>
+      </Teleport>
       <AAlbumPreview
         v-for="(photo, index) of photos.items"
         :key="photo.id"

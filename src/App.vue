@@ -22,7 +22,7 @@ const { Icon24Linked } = icons;
 </script>
 
 <template>
-  <div :class="currentClasses" class="root">
+  <div :class="currentClasses" class="overflow-block root">
     <Loading
       :active="!groupsStore.isInit || appStore.isLoading"
       is-full-page
@@ -33,7 +33,7 @@ const { Icon24Linked } = icons;
     />
     <template v-if="groupsStore.isInit">
       <div class="navigation-header">
-        <div class="overflow-block navigation-caption">
+        <div id="caption" class="overflow-block navigation-caption">
           {{ appStore.caption }}
         </div>
         <AButton
@@ -44,7 +44,7 @@ const { Icon24Linked } = icons;
           <Icon24Linked />
         </AButton>
       </div>
-      <div class="route-view">
+      <div class="overflow-block route-view">
         <router-view v-slot="{ Component }">
           <Transition mode="out-in" name="fade">
             <component :is="Component" :key="route.fullPath" />
@@ -71,20 +71,15 @@ const { Icon24Linked } = icons;
   </div>
 </template>
 
-<style lang="scss" scoped>
-@import "styles/helpers";
-@import "styles/variables";
-
+<style lang="scss">
 .root {
   padding-top: 2px;
   padding-block: 10px;
   gap: 10px;
   background: var(--vkui--color_background_content);
-  @extend .overflow-block;
 }
 
 .route-view {
-  @extend .overflow-block;
 }
 
 .navigation-header {
@@ -108,6 +103,14 @@ const { Icon24Linked } = icons;
   justify-content: center;
   font-weight: bold;
   text-transform: uppercase;
+
+  a {
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    text-transform: inherit;
+    text-decoration: inherit;
+  }
 }
 
 .navigation-bottom-buttons {

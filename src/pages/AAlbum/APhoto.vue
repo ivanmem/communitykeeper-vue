@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import { IPhoto } from "vkontakte-api";
-import { computed, ref, watch } from "vue";
+import { computed, h, ref, watch } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
+import { showContextMenu } from "@/helpers/showContextMenu";
+import { openLink } from "@/helpers/openLink";
+import { icons } from "@/common/consts";
+import { saveAs } from "file-saver";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -40,13 +44,44 @@ watch(photoDiv, () => {
     photoDiv.value.focus();
   }
 });
+
+const onShowContextMenu = (e: MouseEvent) => {
+  showContextMenu(e, [
+    {
+      label: "Открыть в ВК",
+      icon: h(icons.Icon16Link),
+      onClick: () => {
+        openLink(`//vk.com/photo${props.photo.owner_id}_${props.photo.id}`);
+      },
+    },
+    {
+      label: "Скачать",
+      icon: h(icons.Icon16DownloadOutline),
+      onClick: () => {
+        saveAs(
+          originalSize.value.url,
+          PhotoHelper.getPhotoFileName(props.photo)
+        );
+      },
+    },
+    {
+      label: "Выйти из полного экрана (нажмите по центру экрана)",
+      icon: h(icons.Icon16DoorEnterArrowRightOutline),
+      onClick: () => {
+        emit("photo:exit");
+      },
+    },
+  ]);
+};
 </script>
 <template>
   <div
     ref="photoDiv"
+    tabindex="1"
     class="a-photo"
     :style="{ backgroundImage: `url(${originalSize.url})` }"
     @click="onClick"
+    @contextmenu.prevent.stop="onShowContextMenu"
     @keydown.stop.prevent.esc="emit('photo:exit')"
     @keydown.stop.prevent.space="emit('photo:exit')"
     @keydown.stop.prevent.left="emit('photo:prev')"
