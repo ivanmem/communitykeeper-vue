@@ -35,7 +35,7 @@ const onShowContextMenu = (e: MouseEvent) => {
     @click="router.push(`/albums/${-props.album.owner_id}/${props.album.id}`)"
     @contextmenu.stop.prevent="onShowContextMenu"
   >
-    <img :src="originalSize.url" alt="" />
+    <img v-if="originalSize" :src="originalSize.url" alt="" />
     <div class="photos_album_title_wrap">
       <div>
         {{ props.album.title }}

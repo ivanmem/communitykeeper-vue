@@ -1,7 +1,11 @@
 import { IPhoto, IPhotoSize } from "vkontakte-api";
 
 export class PhotoHelper {
-  static getOriginalSize(sizes: IPhotoSize[]) {
+  static getOriginalSize(sizes: IPhotoSize[] | undefined) {
+    if (!sizes) {
+      return undefined;
+    }
+
     let originalSize: IPhotoSize = sizes[0];
     sizes.forEach((size) => {
       if (size.height * size.width > originalSize.width * originalSize.height) {

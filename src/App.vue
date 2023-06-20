@@ -46,9 +46,7 @@ const { Icon24Linked } = icons;
       </div>
       <div class="overflow-block route-view">
         <router-view v-slot="{ Component }">
-          <Transition mode="out-in" name="fade">
-            <component :is="Component" :key="route.fullPath" />
-          </Transition>
+          <component :is="Component" :key="route.fullPath" />
         </router-view>
       </div>
       <div class="navigation">

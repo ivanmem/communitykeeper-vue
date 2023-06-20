@@ -18,17 +18,21 @@ const onShowContextMenu = (e: MouseEvent) => {
       label: "Открыть оригинал",
       icon: h(icons.Icon16Link),
       onClick: () => {
-        openLink(originalSize.value.url);
+        if (originalSize.value) {
+          openLink(originalSize.value.url);
+        }
       },
     },
     {
       label: "Скачать",
       icon: h(icons.Icon16DownloadOutline),
       onClick: () => {
-        saveAs(
-          originalSize.value.url,
-          PhotoHelper.getPhotoFileName(props.photo)
-        );
+        if (originalSize.value) {
+          saveAs(
+            originalSize.value.url,
+            PhotoHelper.getPhotoFileName(props.photo)
+          );
+        }
       },
     },
   ]);
@@ -37,7 +41,9 @@ const onShowContextMenu = (e: MouseEvent) => {
 <template>
   <div
     class="photos_row"
-    :style="{ backgroundImage: `url(${originalSize.url})` }"
+    :style="{
+      backgroundImage: `url(${originalSize?.url})`,
+    }"
     @contextmenu.stop.prevent="onShowContextMenu"
   ></div>
 </template>

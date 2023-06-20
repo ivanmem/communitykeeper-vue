@@ -163,8 +163,11 @@ export const useVk = defineStore("vk", {
       config: IRequestConfig<P>
     ): Promise<R> {
       try {
-        return await useVk().api!.addRequestToQueue<P, R>(config);
+        const result = await useVk().api!.addRequestToQueue<P, R>(config);
+        console.log({ config, result });
+        return result;
       } catch (ex: any) {
+        console.warn("api error", { config, ex });
         if (ex?.errorInfo?.error_code === 6) {
           await sleep(2000);
           // костыль для игнорирования Too many requests per second

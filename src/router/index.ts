@@ -48,6 +48,17 @@ router.beforeEach(async (to, from) => {
     if (!Number.isNaN(groupId) && !Number.isNaN(albumId)) {
       return { path: `/albums/${groupId}/${albumId}` };
     }
+
+    if (!Number.isNaN(groupId)) {
+      return { path: `/albums/${groupId}` };
+    }
+  }
+  if (to.path.startsWith("/albums-")) {
+    let groupId = parseFloat(to.path.substring("/albums-".length));
+    console.log(groupId);
+    if (!Number.isNaN(groupId)) {
+      return { path: `/albums/${groupId}` };
+    }
   }
 
   if (to.query?.vk_app_id && from.fullPath === "/") {

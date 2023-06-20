@@ -1,17 +1,17 @@
 import { IPhoto, IPhotoSize } from "vkontakte-api";
 
 export interface IAlbumItem {
-  id: number;
+  id: number | string;
   owner_id: number;
-  size: number;
+  size: number | string;
   title: string;
-  feed_disabled: number;
-  feed_has_pinned: number;
-  can_delete: boolean;
-  can_include_to_feed: boolean;
-  sizes: IPhotoSize[];
-  thumb_id: number;
-  thumb_src: string;
+  feed_disabled?: number;
+  feed_has_pinned?: number;
+  can_delete?: boolean;
+  can_include_to_feed?: boolean;
+  sizes?: IPhotoSize[];
+  thumb_id?: number;
+  thumb_src?: string;
   can_upload?: number;
   created?: number;
   description?: string;

@@ -7,6 +7,8 @@ import AAlbumPreview from "@/pages/AAlbum/AAlbumPreview.vue";
 import APhoto from "@/pages/AAlbum/APhoto.vue";
 import { icons } from "@/common/consts";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
+import { getStaticAlbums } from "@/pages/AAlbums/consts";
+import { toString } from "lodash";
 
 const props = defineProps<{
   groupId: number | string;
@@ -15,12 +17,17 @@ const props = defineProps<{
 const album = ref<IAlbumItem | undefined>();
 const photos = ref<PhotosGet | undefined>();
 
+console.log(album);
 const currentPhotoIndex = ref<number | undefined>();
 watch(
   () => props.groupId,
   async () => {
     const albums: PhotosGetAlbums = await useVk().getAlbums(props.groupId);
-    album.value = albums.items.find((x) => x.id === +props.albumId);
+    album.value =
+      albums.items.find((x) => toString(x.id) === toString(props.albumId)) ||
+      getStaticAlbums(props.groupId).find(
+        (x) => toString(x.id) === toString(props.albumId)
+      );
     photos.value = await useVk().addRequestToQueue({
       method: "photos.get",
       params: {

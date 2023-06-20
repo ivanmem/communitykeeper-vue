@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import { platform } from "@vkontakte/vkui";
+import { IAlbumItem } from "@/store/vk/IAlbumItem";
 
 export const AlbumsPreviewSizes = computed(() => {
   const plaftorm = platform();
@@ -15,3 +16,14 @@ export const AlbumsPreviewSizes = computed(() => {
     };
   }
 });
+
+export function getStaticAlbums(groupId: string | number): IAlbumItem[] {
+  return [
+    {
+      title: "Фото на стене",
+      id: "wall",
+      size: "?",
+      owner_id: -groupId,
+    },
+  ];
+}

@@ -7,11 +7,11 @@ import { useGroups } from "@/store/groups/groups";
 import { IGroup } from "@/store/groups/types";
 import AAlbumsPreview from "@/pages/AAlbums/AAlbumsPreview.vue";
 import { RecycleScroller } from "vue-virtual-scroller";
-import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
+import { AlbumsPreviewSizes, getStaticAlbums } from "@/pages/AAlbums/consts";
 import { useCountGridColumns } from "@/hooks/useCountGridColumns";
 
+const isInit = ref(false);
 const props = defineProps<{ groupId: number | string }>();
-
 const albums = ref<IAlbumItem[]>([]);
 const albumsMaxItems = ref(100);
 const isLoadingAlbums = ref(false);
@@ -20,6 +20,7 @@ const group = ref<IGroup | undefined>();
 watch(
   () => props.groupId,
   async () => {
+    albums.value.push(...getStaticAlbums(props.groupId));
     group.value = await useGroups().getGroupByIdOrLoad(props.groupId);
   },
   { immediate: true }
@@ -46,11 +47,12 @@ watch(
     }
 
     isLoadingAlbums.value = true;
-    const offset = albums.value?.length ?? 0;
-    const count = albumsMaxItems.value - (albums.value?.length ?? 0);
+    const offset = albums.value.length - getStaticAlbums(props.groupId).length;
+    const count = albumsMaxItems.value - offset;
     const { items } = await useVk().getAlbums(props.groupId, offset, count);
     albums.value.push(...items);
     isLoadingAlbums.value = false;
+    isInit.value = true;
     albumsRef.value?.updateVisibleItems(true);
   },
   { immediate: true }
@@ -68,7 +70,7 @@ useAppCaption("");
 
 <template>
   <div class="a-albums vkuiGroup__inner Group__inner">
-    <template v-if="albums.length > 0 || !isLoadingAlbums">
+    <template v-if="isInit">
       <Teleport to="#caption">
         <a
           v-if="group"
@@ -87,7 +89,7 @@ useAppCaption("");
         :ready="!isLoadingAlbums"
         :itemSecondarySize="AlbumsPreviewSizes.width"
         :gridItems="gridItems"
-        updateInterval="100"
+        :updateInterval="100"
         emit-update
         key-field="id"
         @update="onScrollerUpdate"

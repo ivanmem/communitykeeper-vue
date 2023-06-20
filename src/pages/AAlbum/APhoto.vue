@@ -58,14 +58,16 @@ const onShowContextMenu = (e: MouseEvent) => {
       label: "Скачать",
       icon: h(icons.Icon16DownloadOutline),
       onClick: () => {
-        saveAs(
-          originalSize.value.url,
-          PhotoHelper.getPhotoFileName(props.photo)
-        );
+        if (originalSize.value) {
+          saveAs(
+            originalSize.value.url,
+            PhotoHelper.getPhotoFileName(props.photo)
+          );
+        }
       },
     },
     {
-      label: "Выйти",
+      label: "Выйти из полного экрана (нажмите по центру экрана)",
       icon: h(icons.Icon16DoorEnterArrowRightOutline),
       onClick: () => {
         emit("photo:exit");
@@ -79,7 +81,7 @@ const onShowContextMenu = (e: MouseEvent) => {
     ref="photoDiv"
     tabindex="1"
     class="a-photo"
-    :style="{ backgroundImage: `url(${originalSize.url})` }"
+    :style="{ backgroundImage: `url(${originalSize?.url})` }"
     @click="onClick"
     @contextmenu.prevent.stop="onShowContextMenu"
     @keydown.stop.prevent.esc="emit('photo:exit')"
