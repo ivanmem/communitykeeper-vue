@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/hooks/useAppCaption";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useVk } from "@/store/vk/vk";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { useGroups } from "@/store/groups/groups";
@@ -20,17 +20,16 @@ const group = ref<IGroup | undefined>();
 watch(
   () => props.groupId,
   async () => {
-    albums.value.push(...getStaticAlbums(props.groupId));
     group.value = await useGroups().getGroupByIdOrLoad(props.groupId);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const onScrollerUpdate = (
   startIndex: number,
   endIndex: number,
   visibleStartIndex: number,
-  visibleEndIndex: number
+  visibleEndIndex: number,
 ) => {
   if (endIndex + 50 < albumsMaxItems.value) {
     return;
@@ -38,6 +37,8 @@ const onScrollerUpdate = (
 
   albumsMaxItems.value += 100;
 };
+
+const staticAlbums = computed(() => getStaticAlbums(props.groupId));
 
 watch(
   [() => props.groupId, albumsMaxItems],
@@ -47,22 +48,33 @@ watch(
     }
 
     isLoadingAlbums.value = true;
-    const offset = albums.value.length - getStaticAlbums(props.groupId).length;
+    if (albums.value.length === 0) {
+      albums.value.push(...staticAlbums.value);
+    }
+
+    const offset = albums.value.length - staticAlbums.value.length;
     const count = albumsMaxItems.value - offset;
-    const { items } = await useVk().getAlbums(props.groupId, offset, count);
-    albums.value.push(...items);
+    try {
+      const { items } = await useVk().getAlbums(props.groupId, offset, count);
+      albums.value.push(...items);
+    } catch (ex: any) {
+      alert(ex.message);
+      if (albums.value.length === staticAlbums.value.length) {
+        albums.value.length = 0;
+      }
+    }
     isLoadingAlbums.value = false;
     isInit.value = true;
     albumsRef.value?.updateVisibleItems(true);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const albumsRef = ref<InstanceType<typeof RecycleScroller>>();
 const gridItems = useCountGridColumns(
   albumsRef,
   () => AlbumsPreviewSizes.value.width,
-  20
+  20,
 );
 
 useAppCaption("");

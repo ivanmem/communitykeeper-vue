@@ -163,9 +163,7 @@ export const useVk = defineStore("vk", {
       config: IRequestConfig<P>
     ): Promise<R> {
       try {
-        const result = await useVk().api!.addRequestToQueue<P, R>(config);
-        console.log({ config, result });
-        return result;
+        return await useVk().api!.addRequestToQueue<P, R>(config);
       } catch (ex: any) {
         console.warn("api error", { config, ex });
         if (ex?.errorInfo?.error_code === 6) {

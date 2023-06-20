@@ -5,11 +5,6 @@ import Vue3ContextMenu, {
 import { darkColorScheme } from "@/common/consts";
 import { nextTick } from "vue";
 
-// const onClick = ContextMenuItem.methods!.onClick;
-console.log(ContextMenuItem);
-
-// ContextMenuItem.methods!.onClick = onClick;
-
 export function showContextMenu(e: MouseEvent, items: MenuItem[] | undefined) {
   const contextMenuInstance = Vue3ContextMenu.showContextMenu({
     x: e.x,

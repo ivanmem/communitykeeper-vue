@@ -55,7 +55,6 @@ router.beforeEach(async (to, from) => {
   }
   if (to.path.startsWith("/albums-")) {
     let groupId = parseFloat(to.path.substring("/albums-".length));
-    console.log(groupId);
     if (!Number.isNaN(groupId)) {
       return { path: `/albums/${groupId}` };
     }

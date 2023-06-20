@@ -16,27 +16,30 @@ const props = defineProps<{
 }>();
 const album = ref<IAlbumItem | undefined>();
 const photos = ref<PhotosGet | undefined>();
-
-console.log(album);
 const currentPhotoIndex = ref<number | undefined>();
+
 watch(
   () => props.groupId,
   async () => {
-    const albums: PhotosGetAlbums = await useVk().getAlbums(props.groupId);
-    album.value =
-      albums.items.find((x) => toString(x.id) === toString(props.albumId)) ||
-      getStaticAlbums(props.groupId).find(
-        (x) => toString(x.id) === toString(props.albumId)
-      );
-    photos.value = await useVk().addRequestToQueue({
-      method: "photos.get",
-      params: {
-        album_id: props.albumId,
-        owner_id: -props.groupId,
-      },
-    });
+    try {
+      const albums: PhotosGetAlbums = await useVk().getAlbums(props.groupId);
+      album.value =
+        albums.items.find((x) => toString(x.id) === toString(props.albumId)) ||
+        getStaticAlbums(props.groupId).find(
+          (x) => toString(x.id) === toString(props.albumId),
+        );
+      photos.value = await useVk().addRequestToQueue({
+        method: "photos.get",
+        params: {
+          album_id: props.albumId,
+          owner_id: -props.groupId,
+        },
+      });
+    } catch (ex: any) {
+      alert(ex.message);
+    }
   },
-  { immediate: true }
+  { immediate: true },
 );
 useAppCaption("");
 const { Icon16Link } = icons;
