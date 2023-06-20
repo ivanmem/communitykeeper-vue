@@ -32,6 +32,7 @@ export async function getGroupsByLinksOrIds(
       method: "groups.getById",
       params: {
         group_ids: group_ids.join(),
+        fields: "counters",
       },
     });
   } catch (ex: any) {

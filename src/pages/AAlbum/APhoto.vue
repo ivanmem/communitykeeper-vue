@@ -65,7 +65,7 @@ const onShowContextMenu = (e: MouseEvent) => {
       },
     },
     {
-      label: "Выйти из полного экрана (нажмите по центру экрана)",
+      label: "Выйти",
       icon: h(icons.Icon16DoorEnterArrowRightOutline),
       onClick: () => {
         emit("photo:exit");

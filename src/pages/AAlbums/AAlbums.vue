@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/hooks/useAppCaption";
-import { computed, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useVk } from "@/store/vk/vk";
-import { PhotosGetAlbums } from "@/store/vk/IAlbumItem";
+import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { useGroups } from "@/store/groups/groups";
 import { IGroup } from "@/store/groups/types";
 import AAlbumsPreview from "@/pages/AAlbums/AAlbumsPreview.vue";
@@ -12,9 +12,11 @@ import { useCountGridColumns } from "@/hooks/useCountGridColumns";
 
 const props = defineProps<{ groupId: number | string }>();
 
-const albums = ref<PhotosGetAlbums | undefined>();
-
+const albums = ref<IAlbumItem[]>([]);
+const albumsMaxItems = ref(100);
+const isLoadingAlbums = ref(false);
 const group = ref<IGroup | undefined>();
+
 watch(
   () => props.groupId,
   async () => {
@@ -22,44 +24,73 @@ watch(
   },
   { immediate: true }
 );
-const caption = computed(() =>
-  group.value ? `Альбомы ${group.value.name}` : ""
-);
-useAppCaption("");
+
+const onScrollerUpdate = (
+  startIndex: number,
+  endIndex: number,
+  visibleStartIndex: number,
+  visibleEndIndex: number
+) => {
+  if (endIndex + 50 < albumsMaxItems.value) {
+    return;
+  }
+
+  albumsMaxItems.value += 100;
+};
 
 watch(
-  () => props.groupId,
+  [() => props.groupId, albumsMaxItems],
   async () => {
-    albums.value = await useVk().getAlbums(props.groupId);
+    if (isLoadingAlbums.value) {
+      return;
+    }
+
+    isLoadingAlbums.value = true;
+    const offset = albums.value?.length ?? 0;
+    const count = albumsMaxItems.value - (albums.value?.length ?? 0);
+    const { items } = await useVk().getAlbums(props.groupId, offset, count);
+    albums.value.push(...items);
+    isLoadingAlbums.value = false;
+    albumsRef.value?.updateVisibleItems(true);
   },
   { immediate: true }
 );
 
-const albumsRef = ref();
-const albumsDiv = computed(() => albumsRef.value?.$el);
+const albumsRef = ref<InstanceType<typeof RecycleScroller>>();
 const gridItems = useCountGridColumns(
-  albumsDiv,
+  albumsRef,
   () => AlbumsPreviewSizes.value.width,
   20
 );
+
+useAppCaption("");
 </script>
 
 <template>
   <div class="a-albums vkuiGroup__inner Group__inner">
-    <template v-if="albums">
+    <template v-if="albums.length > 0 || !isLoadingAlbums">
       <Teleport to="#caption">
-        <a :href="`//vk.com/public${props.groupId}`" target="_blank">
-          {{ caption }}
+        <a
+          v-if="group"
+          :href="`//vk.com/albums-${props.groupId}`"
+          target="_blank"
+        >
+          <small>Альбомы</small> {{ group.name }}
         </a>
       </Teleport>
       <RecycleScroller
         ref="albumsRef"
         class="a-albums__items"
-        :items="albums.items"
+        :items="albums"
         :item-size="AlbumsPreviewSizes.height"
+        :total-size="albums.length"
+        :ready="!isLoadingAlbums"
         :itemSecondarySize="AlbumsPreviewSizes.width"
         :gridItems="gridItems"
+        updateInterval="100"
+        emit-update
         key-field="id"
+        @update="onScrollerUpdate"
         v-slot="{ item, index }"
       >
         <AAlbumsPreview :key="item.id" :album="item" :index="index" />

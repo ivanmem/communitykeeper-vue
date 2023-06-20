@@ -1,4 +1,6 @@
 import {
+  ComponentPublicInstance,
+  computed,
   MaybeRefOrGetter,
   onUnmounted,
   reactive,
@@ -7,43 +9,49 @@ import {
   watchEffect,
 } from "vue";
 
+/** @description Возвращает максимальное количество колонок у контейнеря*/
 export function useCountGridColumns(
-  container: MaybeRefOrGetter<HTMLElement | undefined>,
-  width: MaybeRefOrGetter<number>,
+  containerOrInstanceComponent: MaybeRefOrGetter<
+    HTMLElement | { $el: ComponentPublicInstance["$el"] } | undefined
+  >,
+  widthOneColumn: MaybeRefOrGetter<number>,
   containerIndent = 0
 ) {
   const count = ref(0);
   const unsubs: (() => any)[] = reactive([]);
+  const el = computed<HTMLElement | undefined>(() => {
+    const elOrComponent = toValue(containerOrInstanceComponent);
+    if (!elOrComponent) {
+      return undefined;
+    }
 
-  const updateCount = (el: HTMLElement) => {
-    let { clientWidth } = el;
+    return "$el" in elOrComponent ? elOrComponent.$el : elOrComponent;
+  });
+
+  const updateCount = () => {
+    if (!el.value) {
+      return;
+    }
+
+    let { clientWidth } = el.value;
     clientWidth -= containerIndent;
     if (clientWidth > 0) {
-      count.value = Math.floor(clientWidth / toValue(width));
+      count.value = Math.floor(clientWidth / toValue(widthOneColumn));
     } else {
       count.value = 0;
     }
   };
 
-  const resizeListener = () => {
-    const el = toValue(container);
-    if (!el) {
-      return;
-    }
-
-    updateCount(el);
-  };
-
   watchEffect(() => {
-    resizeListener();
-    const el = toValue(container);
-    if (!el) {
+    updateCount();
+    const element = el.value;
+    if (!element) {
       return;
     }
 
-    el.addEventListener("resize", resizeListener);
+    element.addEventListener("resize", updateCount);
     unsubs.push(() => {
-      el.removeEventListener("resize", resizeListener);
+      element.removeEventListener("resize", updateCount);
     });
   });
 

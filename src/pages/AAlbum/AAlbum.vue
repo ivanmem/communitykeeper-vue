@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/hooks/useAppCaption";
-import { computed, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useVk } from "@/store/vk/vk";
 import { IAlbumItem, PhotosGet, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import AAlbumPreview from "@/pages/AAlbum/AAlbumPreview.vue";
@@ -31,9 +31,6 @@ watch(
   },
   { immediate: true }
 );
-const caption = computed(() =>
-  album.value ? `Альбом ${album.value.title}` : ""
-);
 useAppCaption("");
 const { Icon16Link } = icons;
 </script>
@@ -45,10 +42,11 @@ const { Icon16Link } = icons;
         <div style="display: flex; gap: 5px; align-items: center">
           <Icon16Link />
           <a
+            v-if="album"
             :href="`//${PhotoHelper.getAlbumUrl(props.groupId, props.albumId)}`"
             target="_blank"
           >
-            {{ caption }}
+            <small>Альбом</small> {{ album.title }}
           </a>
         </div>
       </Teleport>

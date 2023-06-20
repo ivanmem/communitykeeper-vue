@@ -1,7 +1,7 @@
 // Type definitions for vue-virtual-scroller
 // Project: https://github.com/Akryum/vue-virtual-scroller/
 declare module "vue-virtual-scroller" {
-  import Vue, { PluginObject } from "vue";
+  import Vue, { ComponentPublicInstance, PluginObject } from "vue";
 
   interface PluginOptions {
     installComponents?: boolean;
@@ -11,6 +11,7 @@ declare module "vue-virtual-scroller" {
   declare const plugin: PluginObject<PluginOptions> & { version: string };
 
   export class RecycleScroller extends Vue {
+    $el: ComponentPublicInstance["$el"];
     sizes: Array<{ accumulator: number }>;
     itemSize: number | null;
     totalSize: number;
@@ -40,6 +41,8 @@ declare module "vue-virtual-scroller" {
     scrollToItem(index: number): void;
 
     scrollToPosition(position: number);
+
+    updateVisibleItems(checkItem?: boolean, checkPositionDiff?: boolean);
   }
 
   export class DynamicScroller extends RecycleScroller {

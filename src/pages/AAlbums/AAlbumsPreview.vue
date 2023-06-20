@@ -36,7 +36,14 @@ const onShowContextMenu = (e: MouseEvent) => {
     @contextmenu.stop.prevent="onShowContextMenu"
   >
     <img :src="originalSize.url" alt="" />
-    <div class="photos_album_title_wrap">{{ props.album.title }}</div>
+    <div class="photos_album_title_wrap">
+      <div>
+        {{ props.album.title }}
+      </div>
+      <small>
+        {{ props.album.size }}
+      </small>
+    </div>
   </div>
 </template>
 <style lang="scss">
@@ -71,5 +78,10 @@ const onShowContextMenu = (e: MouseEvent) => {
     rgba(2, 0, 36, 0.8968181022408963) 12%,
     rgba(255, 255, 255, 0) 100%
   );
+  color: white;
+
+  small {
+    opacity: 0.7;
+  }
 }
 </style>

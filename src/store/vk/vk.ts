@@ -174,7 +174,11 @@ export const useVk = defineStore("vk", {
         }
       }
     },
-    getAlbums(groupId: number | string): Promise<PhotosGetAlbums> {
+    getAlbums(
+      groupId: number | string,
+      offset: number | undefined = undefined,
+      count: number | undefined = undefined
+    ): Promise<PhotosGetAlbums> {
       return this.addRequestToQueue({
         method: "photos.getAlbums",
         params: {
@@ -182,6 +186,8 @@ export const useVk = defineStore("vk", {
           need_system: 1,
           need_covers: 1,
           photo_sizes: 1,
+          offset,
+          count,
         },
       });
     },
