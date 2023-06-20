@@ -18,7 +18,7 @@ class GroupHelper {
       }
 
       if (
-        filters.folder &&
+        filters.folder.length > 0 &&
         filters.folder.trim().toLowerCase() !=
           localGroup.folder.trim().toLowerCase()
       ) {

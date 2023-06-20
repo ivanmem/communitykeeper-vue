@@ -170,6 +170,8 @@ const onOpenContextMenu = (e: MouseEvent) => {
   border-radius: 50%;
   width: 36px;
   height: 36px;
+  min-width: 36px;
+  min-height: 36px;
 
   .a-button__icon {
     margin: 0;

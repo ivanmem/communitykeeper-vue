@@ -1,4 +1,4 @@
-import { isNumber } from "lodash";
+import { chunk, isNumber } from "lodash";
 import { useVk } from "@/store/vk/vk";
 import { IGroup } from "@/store/groups/types";
 
@@ -28,13 +28,19 @@ export async function getGroupsByLinksOrIds(
   }
 
   try {
-    return await useVk().addRequestToQueue({
-      method: "groups.getById",
-      params: {
-        group_ids: group_ids.join(),
-        fields: "counters",
-      },
-    });
+    const result: IGroup[] = [];
+    const groupIdsChunks = chunk(group_ids, 500);
+    for (let groupIdsChunk of groupIdsChunks) {
+      const groupsChunk = await useVk().addRequestToQueue({
+        method: "groups.getById",
+        params: {
+          group_ids: groupIdsChunk.join(),
+          fields: "counters",
+        },
+      });
+      result.push(...groupsChunk);
+    }
+    return result;
   } catch (ex: any) {
     console.warn(ex);
     return [];
