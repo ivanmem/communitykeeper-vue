@@ -8,6 +8,8 @@ import { icons } from "@/common/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import Loading from "vue3-loading-overlay";
+import { onMounted, ref, watch } from "vue";
+import { switchFullscreen } from "@/helpers/switchFullscreen";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -19,26 +21,32 @@ const { Icon24Linked } = icons;
   await vkStore.init();
   await groupsStore.init();
 })();
+const fullscreenElement = ref(document.fullscreenElement);
 
-const openFullscreen = () => {
-  const elem = document.documentElement;
-  elem.requestFullscreen();
-};
+watch(fullscreenElement, () => {
+  appStore.isFullScreen = !!fullscreenElement.value;
+});
 
 const onKeyDown = (e: KeyboardEvent) => {
   if (e.code === "F11" && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
     e.preventDefault();
     e.stopPropagation();
-    openFullscreen();
-    document.querySelector<HTMLDivElement>(".root")?.focus();
+    switchFullscreen();
   }
 };
+
+onMounted(() => {
+  document.documentElement.addEventListener("fullscreenchange", () => {
+    fullscreenElement.value = document.fullscreenElement;
+  });
+});
 </script>
 
 <template>
   <div
     :class="currentClasses"
     :data-platform="appStore.platform"
+    :data-fullscreen="appStore.isFullScreen"
     tabindex="0"
     class="overflow-block root"
     @keydown="onKeyDown"
@@ -63,6 +71,13 @@ const onKeyDown = (e: KeyboardEvent) => {
         >
           <Icon24Linked />
         </AButton>
+        <AButton
+          style="height: 30px"
+          @click="switchFullscreen()"
+          :icon="
+            fullscreenElement ? 'Icon24FullscreenExit' : 'Icon24Fullscreen'
+          "
+        />
       </div>
       <div class="overflow-block route-view">
         <router-view v-slot="{ Component }">
@@ -125,6 +140,10 @@ const onKeyDown = (e: KeyboardEvent) => {
   padding-right: var(--navigation-header-padding-right, 10px);
   min-height: 30px;
   gap: 5px;
+
+  @at-root .root[data-fullscreen="true"] & {
+    padding-right: 10px;
+  }
 }
 
 .navigation {
@@ -173,7 +192,7 @@ const onKeyDown = (e: KeyboardEvent) => {
     flex-grow: 1;
   }
 
-  @at-root .root:not([platform="vkcom"]) & {
+  @at-root .root:not([data-platform="vkcom"]) & {
     justify-content: space-around;
     align-content: space-around;
   }

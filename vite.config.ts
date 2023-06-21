@@ -12,7 +12,13 @@ export default defineConfig({
       host: "localhost",
     },
   },
-  plugins: [vue(), svgLoader(), basicSsl()],
+  plugins: [
+    vue(),
+    svgLoader({
+      svgo: false,
+    }),
+    basicSsl(),
+  ],
   resolve: {
     alias: [
       {

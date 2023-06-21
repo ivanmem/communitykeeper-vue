@@ -6,6 +6,9 @@ import { showContextMenu } from "@/helpers/showContextMenu";
 import { openLink } from "@/helpers/openLink";
 import { icons } from "@/common/consts";
 import { saveAs } from "file-saver";
+import { MenuItem } from "@imengyu/vue3-context-menu";
+import { switchFullscreen } from "@/helpers/switchFullscreen";
+import { useApp } from "@/store/app/app";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -66,7 +69,7 @@ watch(
 );
 
 const onShowContextMenu = (e: MouseEvent) => {
-  showContextMenu(e, [
+  const items: MenuItem[] = [
     {
       label: "Открыть в ВК",
       icon: h(icons.Icon16Link),
@@ -89,13 +92,26 @@ const onShowContextMenu = (e: MouseEvent) => {
       },
     },
     {
-      label: "Выйти из полного экрана (нажмите по центру экрана)",
+      label: "Полный экран",
+      icon: h(
+        useApp().isFullScreen
+          ? icons.Icon24FullscreenExit
+          : icons.Icon24Fullscreen,
+        { width: "16px", height: "16px" }
+      ),
+      onClick: () => {
+        switchFullscreen();
+      },
+    },
+    {
+      label: "Выйти из просмотра фото",
       icon: h(icons.Icon16DoorEnterArrowRightOutline),
       onClick: () => {
         emit("photo:exit");
       },
     },
-  ]);
+  ];
+  showContextMenu(e, items);
 };
 
 const onWheel = (e: WheelEvent) => {

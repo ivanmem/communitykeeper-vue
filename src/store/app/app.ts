@@ -6,6 +6,7 @@ interface AppState {
   caption: string;
   loadingSet: Set<any>;
   platform: string;
+  isFullScreen: boolean;
 }
 
 export const useApp = defineStore("app", {
@@ -14,6 +15,7 @@ export const useApp = defineStore("app", {
       caption: "",
       loadingSet: new Set(),
       platform: platform(),
+      isFullScreen: false,
     };
   },
   getters: {
