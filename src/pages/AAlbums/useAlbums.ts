@@ -20,12 +20,11 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const albumsRef = ref<InstanceType<typeof RecycleScroller>>();
   const gridItems = useCountGridColumns(
     albumsRef,
-    () => AlbumsPreviewSizes.value.width,
-    20
+    () => AlbumsPreviewSizes.value.width
   );
   const screenError = ref<any>();
 
-  const countOneLoad = 100;
+  const countOneLoad = 200;
 
   const onClearComponent = () => {
     isInit.value = false;
@@ -88,7 +87,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     visibleStartIndex: number,
     visibleEndIndex: number
   ) => {
-    if (endIndex + countOneLoad / 2 < albumsMaxItems.value) {
+    if (endIndex + countOneLoad / 3 < albumsMaxItems.value) {
       return;
     }
 

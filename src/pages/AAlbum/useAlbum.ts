@@ -25,8 +25,7 @@ export function useAlbum(
   const albumRef = ref<InstanceType<typeof RecycleScroller>>();
   const gridItems = useCountGridColumns(
     albumRef,
-    () => AlbumsPreviewSizes.value.width,
-    20
+    () => AlbumsPreviewSizes.value.width
   );
   const router = useRouter();
   const route = useRoute();
@@ -126,7 +125,7 @@ export function useAlbum(
     visibleStartIndex: number,
     visibleEndIndex: number
   ) => {
-    if (endIndex + countOneLoad / 2 < photosMaxItems.value) {
+    if (endIndex + countOneLoad / 3 < photosMaxItems.value) {
       return;
     }
 
@@ -160,5 +159,6 @@ export function useAlbum(
     onScrollerUpdate,
     albumRef,
     gridItems,
+    isLoadAllPhotos,
   };
 }

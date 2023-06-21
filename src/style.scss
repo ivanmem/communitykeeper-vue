@@ -66,3 +66,19 @@ div {
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
+
+a {
+  color: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  text-transform: inherit;
+  text-decoration: inherit;
+  text-overflow: inherit;
+  white-space: inherit;
+  overflow: inherit;
+  max-width: inherit;
+}
+
+code.vkuiFormField--status-error {
+  padding: 10px;
+}

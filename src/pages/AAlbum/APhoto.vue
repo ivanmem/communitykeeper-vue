@@ -13,7 +13,11 @@ const emit = defineEmits<{
   (e: "photo:exit"): void;
 }>();
 
-const props = defineProps<{ photo: IPhoto }>();
+const props = defineProps<{
+  photo: IPhoto;
+  index?: number;
+  count?: number | string;
+}>();
 
 const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes)
@@ -39,12 +43,27 @@ const onClick = (event: MouseEvent) => {
   return;
 };
 const photoDiv = ref<HTMLDivElement>();
+const showInfo = ref(true);
 
 watch(photoDiv, () => {
   if (photoDiv.value) {
     photoDiv.value.focus();
   }
 });
+
+let timeoutShowInfo: any = undefined;
+
+watch(
+  () => props.photo,
+  () => {
+    clearTimeout(timeoutShowInfo);
+    showInfo.value = true;
+    timeoutShowInfo = setTimeout(() => {
+      showInfo.value = false;
+    }, 2000);
+  },
+  { immediate: true }
+);
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
@@ -78,6 +97,15 @@ const onShowContextMenu = (e: MouseEvent) => {
     },
   ]);
 };
+
+const onWheel = (e: WheelEvent) => {
+  const delta = e.deltaY || e.detail;
+  if (delta > 0) {
+    emit("photo:next");
+  } else {
+    emit("photo:prev");
+  }
+};
 </script>
 <template>
   <div
@@ -91,7 +119,13 @@ const onShowContextMenu = (e: MouseEvent) => {
     @keydown.stop.prevent.space="emit('photo:exit')"
     @keydown.stop.prevent.left="emit('photo:prev')"
     @keydown.stop.prevent.right="emit('photo:next')"
-  ></div>
+    @wheel="onWheel"
+    @click.middle="emit('photo:exit')"
+  >
+    <div v-if="showInfo && index !== undefined" class="a-photo__info">
+      {{ index + 1 }} из {{ count ?? "?" }}
+    </div>
+  </div>
 </template>
 <style lang="scss">
 .a-photo {
@@ -109,5 +143,20 @@ const onShowContextMenu = (e: MouseEvent) => {
   background-position: center 35%;
   background-color: black;
   cursor: pointer;
+}
+
+.a-photo__info {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  height: max-content;
+  margin-top: 5px;
+  margin-left: 10px;
+  background-color: rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  user-select: none;
+  border-radius: 10px;
+  padding: 3px;
+  color: white;
 }
 </style>

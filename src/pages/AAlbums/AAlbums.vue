@@ -4,8 +4,9 @@ import AAlbumsPreview from "@/pages/AAlbums/AAlbumsPreview.vue";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { useAlbums } from "@/pages/AAlbums/useAlbums";
+import { icons } from "@/common/consts";
 
-useAppCaption("");
+useAppCaption("Галерея: Альбомы");
 const props = defineProps<{ ownerId: number | string }>();
 const {
   isInit,
@@ -17,28 +18,19 @@ const {
   albumsRef,
   screenError,
 } = useAlbums(() => props.ownerId);
+const { Icon16Link } = icons;
 </script>
 
 <template>
   <div class="a-albums vkuiGroup__inner Group__inner">
-    <code
-      v-if="screenError"
-      style="padding: 10px"
-      class="vkuiFormField--status-error"
-    >
-      {{ screenError }}
-    </code>
-
     <template v-if="isInit">
-      <Teleport to="#caption">
-        <a
-          v-if="group"
-          :href="`//vk.com/albums${props.ownerId}`"
-          target="_blank"
-        >
-          <small>Альбомы</small> {{ group.name }}
-        </a>
-      </Teleport>
+      <a v-if="group" :href="`//vk.com/albums${props.ownerId}`" target="_blank">
+        <Icon16Link />
+        {{ group.name }}
+      </a>
+      <code v-if="screenError" class="vkuiFormField--status-error">
+        {{ screenError }}
+      </code>
       <RecycleScroller
         ref="albumsRef"
         class="a-albums__items"
@@ -71,6 +63,7 @@ const {
   gap: 5px;
   background: var(--vkui--color_background_content);
   color: var(--vkui--color_text_primary);
+  padding-inline: 10px;
 }
 
 .a-albums__items {
@@ -81,6 +74,6 @@ const {
   gap: 10px;
   overflow-x: auto;
   justify-content: space-evenly;
-  padding: 10px;
+  padding-block: 10px;
 }
 </style>

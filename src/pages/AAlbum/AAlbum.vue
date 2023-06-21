@@ -7,6 +7,7 @@ import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useAlbum } from "@/pages/AAlbum/useAlbum";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { RecycleScroller } from "vue-virtual-scroller";
+import { toNumberOrUndefined } from "@/helpers/toNumberOrUndefined";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -26,37 +27,32 @@ const {
   albumRef,
   gridItems,
   isLoadingPhotos,
+  isLoadAllPhotos,
 } = useAlbum(
   () => props.ownerId,
   () => props.albumId,
   () => props.photoId
 );
-useAppCaption("");
+useAppCaption("Галерея: Альбом");
 const { Icon16Link } = icons;
 </script>
 
 <template>
   <div class="a-album vkuiGroup__inner Group__inner">
-    <code
-      v-if="screenError"
-      style="padding: 10px"
-      class="vkuiFormField--status-error"
-    >
-      {{ screenError }}
-    </code>
     <template v-if="isInit">
-      <Teleport to="#caption">
-        <div style="display: flex; gap: 5px; align-items: center">
-          <Icon16Link />
-          <a
-            v-if="album"
-            :href="`//${PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)}`"
-            target="_blank"
-          >
-            <small>Альбом</small> {{ album.title }}
-          </a>
-        </div>
-      </Teleport>
+      <div style="display: flex; gap: 5px; align-items: center">
+        <Icon16Link />
+        <a
+          v-if="album"
+          :href="`//${PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)}`"
+          target="_blank"
+        >
+          {{ album.title }}
+        </a>
+        <code v-if="screenError" class="vkuiFormField--status-error">
+          {{ screenError }}
+        </code>
+      </div>
       <RecycleScroller
         ref="albumRef"
         class="a-album__items"
@@ -82,6 +78,11 @@ const { Icon16Link } = icons;
       <APhoto
         v-if="currentPhoto"
         :photo="currentPhoto"
+        :count="
+          toNumberOrUndefined(album?.size) ??
+          (isLoadAllPhotos ? photos.length : `${photos.length}+`)
+        "
+        :index="currentPhotoIndex"
         @photo:prev="setCurrentPhotoIndex(currentPhotoIndex! - 1)"
         @photo:next="setCurrentPhotoIndex(currentPhotoIndex! + 1)"
         @photo:exit="setCurrentPhotoIndex(undefined)"
@@ -99,6 +100,7 @@ const { Icon16Link } = icons;
   gap: 5px;
   background: var(--vkui--color_background_content);
   color: var(--vkui--color_text_primary);
+  padding-inline: 10px;
 }
 
 .a-album__items {
@@ -109,6 +111,6 @@ const { Icon16Link } = icons;
   gap: 10px;
   overflow-x: auto;
   justify-content: space-evenly;
-  padding: 10px;
+  padding-block: 10px;
 }
 </style>
