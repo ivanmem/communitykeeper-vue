@@ -109,7 +109,5 @@ const onShowContextMenu = (e: MouseEvent) => {
   background-position: center 35%;
   background-color: black;
   cursor: pointer;
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent !important;
 }
 </style>

@@ -19,13 +19,28 @@ const { Icon24Linked } = icons;
   await vkStore.init();
   await groupsStore.init();
 })();
+
+const openFullscreen = () => {
+  const elem = document.documentElement;
+  elem.requestFullscreen();
+};
+
+const onKeyDown = (e: KeyboardEvent) => {
+  if (e.code === "F11" && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+    e.preventDefault();
+    e.stopPropagation();
+    openFullscreen();
+  }
+};
 </script>
 
 <template>
   <div
     :class="currentClasses"
     :data-platform="appStore.platform"
+    tabindex="0"
     class="overflow-block root"
+    @keydown="onKeyDown"
   >
     <Loading
       :active="!groupsStore.isInit || appStore.isLoading"

@@ -61,3 +61,8 @@ h6 {
 .mx-menu-bar.mac .mx-context-menu-item {
   padding: 10px 6px;
 }
+
+div {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
