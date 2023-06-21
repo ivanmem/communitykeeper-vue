@@ -50,12 +50,25 @@ export function useAlbum(
     ownerId,
     async () => {
       onClearComponent();
-      const albums: PhotosGetAlbums = await useVk().getAlbums(ownerId.value);
-      album.value =
-        albums.items.find((x) => toString(x.id) === toString(albumId.value)) ||
-        getStaticAlbums(ownerId.value).find(
-          (x) => toString(x.id) === toString(albumId.value)
-        );
+      const albums: PhotosGetAlbums["items"] =
+        albumId.value === "wall"
+          ? []
+          : (
+              await useVk()
+                .getAlbums(ownerId.value)
+                .catch((ex) => {
+                  if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
+                    screenError.value = ex;
+                    console.warn("Необработанная ошибка:", ex.errorInfo);
+                  }
+                  return { items: [], count: 0 };
+                })
+            ).items;
+      albums.push(...getStaticAlbums(ownerId.value));
+      album.value = albums.find(
+        (x) => toString(x.id) === toString(albumId.value)
+      );
+
       photosMaxItems.value = countOneLoad; // это инициирует первую загрузку
     },
     { immediate: true }

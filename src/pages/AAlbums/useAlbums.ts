@@ -68,9 +68,9 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
         const { items } = await useVk().getAlbums(ownerId.value, offset, count);
         albums.value.push(...items);
       } catch (ex: any) {
-        screenError.value = ex;
-        if (albums.value.length === staticAlbums.value.length) {
-          albums.value.length = 0;
+        if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
+          screenError.value = ex;
+          console.warn("Необработанная ошибка:", ex.errorInfo);
         }
       }
 
