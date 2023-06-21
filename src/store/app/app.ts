@@ -1,9 +1,11 @@
 import { defineStore } from "pinia";
 import { random } from "lodash";
+import { platform } from "@vkontakte/vkui";
 
 interface AppState {
   caption: string;
   loadingSet: Set<any>;
+  platform: string;
 }
 
 export const useApp = defineStore("app", {
@@ -11,11 +13,15 @@ export const useApp = defineStore("app", {
     return {
       caption: "",
       loadingSet: new Set(),
+      platform: platform(),
     };
   },
   getters: {
     isLoading(): boolean {
       return this.loadingSet.size !== 0;
+    },
+    isVkCom(): boolean {
+      return this.platform === "vkcom";
     },
   },
   actions: {

@@ -10,7 +10,7 @@ import AGroupLink from "/src/pages/AGroups/AGroupLink.vue";
 import AButton from "@/components/AButton/AButton.vue";
 import APageContainer from "@/components/APageContainer/APageContainer.vue";
 
-useAppCaption("Добавить");
+useAppCaption("Добавить группу");
 const store = useGroups();
 const newGroup = reactive({
   id: "",

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, StyleValue, VueElement } from "vue";
+import { computed, StyleValue, useSlots, VueElement } from "vue";
 import { icons } from "@/common/consts";
 import { RouteLocationRaw, useRoute } from "vue-router";
 import { router } from "@/router";
@@ -12,6 +12,7 @@ const props = defineProps<{
   target?: string | undefined;
   exactActiveDataType?: "accent";
   dataType?: "accent";
+  hideContent?: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -52,6 +53,12 @@ const dataType = computed(() => {
 
   return props.dataType;
 });
+
+const slots = useSlots();
+
+const hasContent = computed(() => {
+  return !!slots.default && !props.hideContent;
+});
 </script>
 
 <template>
@@ -64,10 +71,11 @@ const dataType = computed(() => {
             : props.icon
         "
         :style="props.iconStyle"
+        :data-has-content="hasContent"
         class="a-button__icon"
       />
     </template>
-    <slot />
+    <slot v-if="!hideContent" />
   </button>
 </template>
 

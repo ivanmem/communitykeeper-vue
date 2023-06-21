@@ -22,7 +22,11 @@ const { Icon24Linked } = icons;
 </script>
 
 <template>
-  <div :class="currentClasses" class="overflow-block root">
+  <div
+    :class="currentClasses"
+    :data-platform="appStore.platform"
+    class="overflow-block root"
+  >
     <Loading
       :active="!groupsStore.isInit || appStore.isLoading"
       is-full-page
@@ -53,16 +57,32 @@ const { Icon24Linked } = icons;
       </div>
       <div class="navigation">
         <div class="navigation-bottom-buttons">
-          <AButton icon="Icon24ArticleBoxOutline" to="/">
+          <AButton
+            icon="Icon24ArticleBoxOutline"
+            to="/"
+            :hide-content="!appStore.isVkCom"
+          >
             <span> Группы </span>
           </AButton>
-          <AButton icon="Icon24AddSquareOutline" to="/add">
+          <AButton
+            icon="Icon24AddSquareOutline"
+            to="/add"
+            :hide-content="!appStore.isVkCom"
+          >
             <span> Добавить </span>
           </AButton>
-          <AButton icon="Icon24GearOutline" to="/settings">
+          <AButton
+            icon="Icon24GearOutline"
+            to="/settings"
+            :hide-content="!appStore.isVkCom"
+          >
             <span> Настройки </span>
           </AButton>
-          <AButton icon="Icon24LightbulbStarOutline" to="/about">
+          <AButton
+            icon="Icon24LightbulbStarOutline"
+            to="/about"
+            :hide-content="!appStore.isVkCom"
+          >
             <span> О приложении </span>
           </AButton>
         </div>
@@ -133,11 +153,28 @@ const { Icon24Linked } = icons;
   min-width: 100%;
   border-radius: 5px;
 
+  & > * {
+    flex-grow: 1;
+  }
+
+  @at-root .root:not([platform="vkcom"]) & {
+    justify-content: space-around;
+    align-content: space-around;
+  }
+
   .a-button {
     min-height: 26px;
     white-space: nowrap;
   }
 }
+
+//.root[data-platform=android] {
+//  .navigation-bottom-buttons {
+//    //]:not[platform=vkcom] {
+//    justify-content: space-around;
+//    align-content: space-around;
+//  }
+//}
 
 .fade-enter-active,
 .fade-leave-active {

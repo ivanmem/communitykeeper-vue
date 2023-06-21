@@ -65,8 +65,11 @@
 }
 
 .a-button__icon {
-  margin: 0 5px 0 0;
   color: currentColor;
+
+  &[data-has-content="true"] {
+    margin: 0 5px 0 0;
+  }
 }
 
 .a-button__inline {
