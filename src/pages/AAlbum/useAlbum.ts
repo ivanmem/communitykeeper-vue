@@ -6,6 +6,7 @@ import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { IPhoto } from "vkontakte-api";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useRoute, useRouter } from "vue-router";
+import { useScreenSpinner } from "@/hooks/useScreenSpinner";
 
 export function useAlbum(
   ownerIdGetter: MaybeRefOrGetter<number | string>,
@@ -22,11 +23,22 @@ export function useAlbum(
   );
   const router = useRouter();
   const route = useRoute();
+  const screenError = ref<any>();
+  const isInit = ref(false);
+  useScreenSpinner(() => !isInit.value);
+
+  const onClearComponent = () => {
+    isInit.value = false;
+    photos.value = undefined;
+    album.value = undefined;
+    screenError.value = undefined;
+  };
 
   watch(
     ownerId,
     async () => {
       try {
+        onClearComponent();
         const albums: PhotosGetAlbums = await useVk().getAlbums(ownerId.value);
         album.value =
           albums.items.find(
@@ -44,9 +56,12 @@ export function useAlbum(
             },
           })
         ).items as IPhoto[];
+        screenError.value = undefined;
       } catch (ex: any) {
         alert(ex.message);
+        screenError.value = ex;
       }
+      isInit.value = true;
     },
     { immediate: true }
   );
@@ -70,5 +85,7 @@ export function useAlbum(
     currentPhotoIndex,
     setCurrentPhotoId,
     setCurrentPhotoIndex,
+    isInit,
+    screenError,
   };
 }

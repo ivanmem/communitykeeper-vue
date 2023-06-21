@@ -6,12 +6,14 @@ import { AlbumsPreviewSizes, getStaticAlbums } from "@/pages/AAlbums/consts";
 import { useVk } from "@/store/vk/vk";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { useCountGridColumns } from "@/hooks/useCountGridColumns";
+import { useScreenSpinner } from "@/hooks/useScreenSpinner";
 
 export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const ownerId = computed(() => toValue(ownerIdGetter));
   const isInit = ref(false);
+  useScreenSpinner(() => !isInit.value);
   const albums = ref<IAlbumItem[]>([]);
-  const albumsMaxItems = ref(100);
+  const albumsMaxItems = ref(0);
   const isLoadingAlbums = ref(false);
   const group = ref<IGroup | undefined>();
   const staticAlbums = computed(() => getStaticAlbums(ownerId.value));
@@ -21,24 +23,38 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     () => AlbumsPreviewSizes.value.width,
     20
   );
+  const screenError = ref<any>();
+
+  const countOneLoad = 100;
+
+  const onClearComponent = () => {
+    isInit.value = false;
+    isLoadingAlbums.value = false;
+    albums.value.length = 0;
+    albumsMaxItems.value = 0;
+    group.value = undefined;
+    screenError.value = undefined;
+  };
 
   watch(
     ownerId,
     async () => {
-      if (+ownerId.value > 0) {
-        group.value = undefined;
-        return;
+      onClearComponent();
+      if (+ownerId.value < 0) {
+        try {
+          group.value = await useGroups().getGroupByIdOrLoad(-ownerId.value);
+        } catch {}
       }
 
-      group.value = await useGroups().getGroupByIdOrLoad(-ownerId.value);
+      albumsMaxItems.value = countOneLoad; // это инициирует первую загрузку
     },
     { immediate: true }
   );
 
   watch(
-    [ownerId, albumsMaxItems],
+    albumsMaxItems,
     async () => {
-      if (isLoadingAlbums.value) {
+      if (isLoadingAlbums.value || albumsMaxItems.value === 0) {
         return;
       }
 
@@ -53,7 +69,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
         const { items } = await useVk().getAlbums(ownerId.value, offset, count);
         albums.value.push(...items);
       } catch (ex: any) {
-        alert(ex.message);
+        screenError.value = ex;
         if (albums.value.length === staticAlbums.value.length) {
           albums.value.length = 0;
         }
@@ -72,11 +88,11 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     visibleStartIndex: number,
     visibleEndIndex: number
   ) => {
-    if (endIndex + 50 < albumsMaxItems.value) {
+    if (endIndex + countOneLoad / 2 < albumsMaxItems.value) {
       return;
     }
 
-    albumsMaxItems.value += 100;
+    albumsMaxItems.value += countOneLoad;
   };
 
   return {
@@ -86,5 +102,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     isLoadingAlbums,
     gridItems,
     onScrollerUpdate,
+    albumsRef,
+    screenError,
   };
 }

@@ -12,19 +12,33 @@ const props = defineProps<{
   photoId: number | string | undefined;
 }>();
 
-const { photos, album, currentPhoto, setCurrentPhotoIndex, currentPhotoIndex } =
-  useAlbum(
-    () => props.ownerId,
-    () => props.albumId,
-    () => props.photoId
-  );
+const {
+  photos,
+  album,
+  currentPhoto,
+  setCurrentPhotoIndex,
+  currentPhotoIndex,
+  isInit,
+  screenError,
+} = useAlbum(
+  () => props.ownerId,
+  () => props.albumId,
+  () => props.photoId
+);
 useAppCaption("");
 const { Icon16Link } = icons;
 </script>
 
 <template>
   <div class="a-album vkuiGroup__inner Group__inner">
-    <div v-if="photos" class="a-album__items">
+    <code
+      v-if="screenError"
+      style="padding: 10px"
+      class="vkuiFormField--status-error"
+    >
+      {{ screenError }}
+    </code>
+    <div v-if="photos && isInit" class="a-album__items">
       <Teleport to="#caption">
         <div style="display: flex; gap: 5px; align-items: center">
           <Icon16Link />

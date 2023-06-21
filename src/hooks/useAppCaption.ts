@@ -1,13 +1,18 @@
 import { useApp } from "@/store/app/app";
-import { watch } from "vue";
-import { get, MaybeRef } from "@vueuse/core";
+import { MaybeRefOrGetter, onActivated, toValue, watch } from "vue";
 
-export function useAppCaption(newCaption: MaybeRef<string>) {
+export function useAppCaption(newCaption: MaybeRefOrGetter<string>) {
   const appState = useApp();
+  const setCaption = () => {
+    appState.caption = toValue(newCaption);
+  };
+  onActivated(() => {
+    setCaption();
+  });
   watch(
-    () => get(newCaption),
+    () => toValue(newCaption),
     () => {
-      appState.caption = get(newCaption);
+      setCaption();
     },
     { immediate: true }
   );

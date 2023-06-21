@@ -45,7 +45,11 @@ const { Icon24Linked } = icons;
         </AButton>
       </div>
       <div class="overflow-block route-view">
-        <router-view />
+        <router-view v-slot="{ Component }">
+          <keep-alive :max="3">
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
       </div>
       <div class="navigation">
         <div class="navigation-bottom-buttons">

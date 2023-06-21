@@ -7,12 +7,28 @@ import { useAlbums } from "@/pages/AAlbums/useAlbums";
 
 useAppCaption("");
 const props = defineProps<{ ownerId: number | string }>();
-const { isInit, group, albums, isLoadingAlbums, gridItems, onScrollerUpdate } =
-  useAlbums(() => props.ownerId);
+const {
+  isInit,
+  group,
+  albums,
+  isLoadingAlbums,
+  gridItems,
+  onScrollerUpdate,
+  albumsRef,
+  screenError,
+} = useAlbums(() => props.ownerId);
 </script>
 
 <template>
   <div class="a-albums vkuiGroup__inner Group__inner">
+    <code
+      v-if="screenError"
+      style="padding: 10px"
+      class="vkuiFormField--status-error"
+    >
+      {{ screenError }}
+    </code>
+
     <template v-if="isInit">
       <Teleport to="#caption">
         <a
