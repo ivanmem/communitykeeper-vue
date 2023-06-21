@@ -47,7 +47,7 @@ export function useCurrentPhoto(
   };
 
   watch(
-    [photoId, photos],
+    [photos, photoId],
     () => {
       if (!photos.value || !toStr(photoId.value).length) {
         setCurrentPhotoIndex(undefined);
@@ -71,7 +71,7 @@ export function useCurrentPhoto(
 
       setCurrentPhotoIndex(undefined);
     },
-    { immediate: true }
+    { immediate: true, deep: true }
   );
 
   return {

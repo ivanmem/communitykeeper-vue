@@ -183,7 +183,6 @@ export const useVk = defineStore("vk", {
       offset: number | undefined = undefined,
       count: number | undefined = undefined
     ): Promise<PhotosGetAlbums> {
-      console.log(owner_id);
       return this.addRequestToQueue({
         method: "photos.getAlbums",
         params: {

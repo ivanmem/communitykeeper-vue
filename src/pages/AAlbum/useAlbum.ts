@@ -9,6 +9,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useScreenSpinner } from "@/hooks/useScreenSpinner";
 import { useCountGridColumns } from "@/hooks/useCountGridColumns";
 import { RecycleScroller } from "vue-virtual-scroller";
+import { toStr } from "@/helpers/toStr";
 
 export function useAlbum(
   ownerIdGetter: MaybeRefOrGetter<number | string>,
@@ -17,12 +18,10 @@ export function useAlbum(
 ) {
   const ownerId = computed(() => toValue(ownerIdGetter));
   const albumId = computed(() => toValue(albumIdGetter));
+  const photoId = computed(() => toValue(photoIdGetter));
   const album = ref<IAlbumItem | undefined>();
   const photos = ref<IPhoto[]>([]);
-  const { currentPhoto, currentPhotoIndex } = useCurrentPhoto(
-    photos,
-    photoIdGetter
-  );
+  const { currentPhoto, currentPhotoIndex } = useCurrentPhoto(photos, photoId);
   const albumRef = ref<InstanceType<typeof RecycleScroller>>();
   const gridItems = useCountGridColumns(
     albumRef,
@@ -34,8 +33,9 @@ export function useAlbum(
   const screenError = ref<any>();
   const isInit = ref(false);
   const isLoadingPhotos = ref(false);
+  const isLoadAllPhotos = ref(false);
   const photosMaxItems = ref(0);
-  const countOneLoad = 100;
+  const countOneLoad = 200;
   useScreenSpinner(() => !isInit.value);
 
   const onClearComponent = () => {
@@ -44,6 +44,7 @@ export function useAlbum(
     screenError.value = undefined;
     photos.value.length = 0;
     photosMaxItems.value = 0;
+    isLoadAllPhotos.value = false;
   };
 
   watch(
@@ -63,14 +64,15 @@ export function useAlbum(
   watch(
     photosMaxItems,
     async () => {
-      if (isLoadingPhotos.value || photosMaxItems.value === 0) {
+      const maxItems = photosMaxItems.value;
+      if (isLoadingPhotos.value || maxItems === 0 || isLoadAllPhotos.value) {
         return;
       }
 
       isLoadingPhotos.value = true;
       screenError.value = undefined;
       const offset = photos.value.length;
-      const count = photosMaxItems.value - offset;
+      const count = maxItems - offset;
       try {
         const { items }: { items: IPhoto[] } = await useVk().addRequestToQueue({
           method: "photos.get",
@@ -81,6 +83,10 @@ export function useAlbum(
             count,
           },
         });
+        if (items.length === 0) {
+          isLoadAllPhotos.value = true;
+        }
+
         photos.value.push(...items);
       } catch (ex: any) {
         alert(ex.message);
@@ -105,6 +111,15 @@ export function useAlbum(
     );
   };
 
+  const onMoreLoad = () => {
+    // защищаем от переполнения
+    if (
+      photosMaxItems.value - photos.value.length < 1000 &&
+      !isLoadAllPhotos.value
+    ) {
+      photosMaxItems.value += countOneLoad;
+    }
+  };
   const onScrollerUpdate = (
     startIndex: number,
     endIndex: number,
@@ -115,8 +130,22 @@ export function useAlbum(
       return;
     }
 
-    photosMaxItems.value += countOneLoad;
+    onMoreLoad();
   };
+
+  watch(
+    [photoId, isLoadingPhotos],
+    () => {
+      if (toStr(photoId.value).length && !isLoadingPhotos.value) {
+        if (currentPhotoIndex.value !== undefined) {
+          albumRef.value?.scrollToItem(currentPhotoIndex.value);
+        } else if (!screenError.value) {
+          onMoreLoad();
+        }
+      }
+    },
+    { immediate: true, deep: true }
+  );
 
   return {
     photos,

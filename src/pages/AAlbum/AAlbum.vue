@@ -57,36 +57,36 @@ const { Icon16Link } = icons;
           </a>
         </div>
       </Teleport>
-    </template>
-    <RecycleScroller
-      ref="albumRef"
-      class="a-album__items"
-      :items="photos"
-      :item-size="AlbumsPreviewSizes.height"
-      :total-size="photos.length"
-      :ready="!isLoadingPhotos"
-      :itemSecondarySize="AlbumsPreviewSizes.width"
-      :gridItems="gridItems"
-      :updateInterval="100"
-      emit-update
-      key-field="id"
-      @update="onScrollerUpdate"
-      v-slot="{ item, index }"
-    >
-      <AAlbumPreview
-        :key="item.id"
-        :photo="item"
-        :index="index"
-        @click="setCurrentPhotoIndex(index)"
+      <RecycleScroller
+        ref="albumRef"
+        class="a-album__items"
+        :items="photos"
+        :item-size="AlbumsPreviewSizes.height"
+        :total-size="photos.length"
+        :ready="!isLoadingPhotos"
+        :itemSecondarySize="AlbumsPreviewSizes.width"
+        :gridItems="gridItems"
+        :updateInterval="100"
+        emit-update
+        key-field="id"
+        @update="onScrollerUpdate"
+        v-slot="{ item, index }"
+      >
+        <AAlbumPreview
+          :key="item.id"
+          :photo="item"
+          :index="index"
+          @click="setCurrentPhotoIndex(index)"
+        />
+      </RecycleScroller>
+      <APhoto
+        v-if="currentPhoto"
+        :photo="currentPhoto"
+        @photo:prev="setCurrentPhotoIndex(currentPhotoIndex! - 1)"
+        @photo:next="setCurrentPhotoIndex(currentPhotoIndex! + 1)"
+        @photo:exit="setCurrentPhotoIndex(undefined)"
       />
-    </RecycleScroller>
-    <APhoto
-      v-if="currentPhoto"
-      :photo="currentPhoto"
-      @photo:prev="setCurrentPhotoIndex(currentPhotoIndex! - 1)"
-      @photo:next="setCurrentPhotoIndex(currentPhotoIndex! + 1)"
-      @photo:exit="setCurrentPhotoIndex(undefined)"
-    />
+    </template>
   </div>
 </template>
 

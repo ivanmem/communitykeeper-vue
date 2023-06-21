@@ -20,14 +20,16 @@ const routes: RouteRecordRaw[] = [
     component: () => import("@/pages/AAdd/AAdd.vue"),
   },
   {
-    path: "/albums/:ownerId",
-    component: () => import("@/pages/AAlbums/AAlbums.vue"),
-    props: true,
-  },
-  {
     path: "/albums/:ownerId/:albumId/:photoId?",
     component: () => import("@/pages/AAlbum/AAlbum.vue"),
     props: true,
+    strict: true,
+  },
+  {
+    path: "/albums/:ownerId",
+    component: () => import("@/pages/AAlbums/AAlbums.vue"),
+    props: true,
+    strict: true,
   },
 ];
 
@@ -66,12 +68,12 @@ router.beforeEach(async (to, from) => {
       .substring("/photo".length)
       .split("_")
       .map(parseFloat);
-    if (ownerId > 0) {
-      // для пользовательских фото метод недоступен
+    if (Number.isNaN(ownerId) || ownerId > 0 || Number.isNaN(photoId)) {
       return;
     }
 
     try {
+      // для пользовательских фото метод недоступен
       const albumId = (
         await useVk().addRequestToQueue({
           method: "photos.getById",
@@ -81,9 +83,7 @@ router.beforeEach(async (to, from) => {
           },
         })
       )[0].album_id;
-      if (!Number.isNaN(ownerId) && !Number.isNaN(photoId)) {
-        return { path: `/albums/${ownerId}/${albumId}/${photoId}` };
-      }
+      return { path: `/albums/${ownerId}/${albumId}/${photoId}` };
     } catch {}
   }
 
