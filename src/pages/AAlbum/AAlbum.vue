@@ -1,46 +1,21 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/hooks/useAppCaption";
-import { ref, watch } from "vue";
-import { useVk } from "@/store/vk/vk";
-import { IAlbumItem, PhotosGet, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import AAlbumPreview from "@/pages/AAlbum/AAlbumPreview.vue";
 import APhoto from "@/pages/AAlbum/APhoto.vue";
 import { icons } from "@/common/consts";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
-import { getStaticAlbums } from "@/pages/AAlbums/consts";
-import { toString } from "lodash";
+import { useAlbum } from "@/pages/AAlbum/useAlbum";
 
 const props = defineProps<{
   groupId: number | string;
   albumId: number | string;
 }>();
-const album = ref<IAlbumItem | undefined>();
-const photos = ref<PhotosGet | undefined>();
-const currentPhotoIndex = ref<number | undefined>();
 
-watch(
+const { photos, album, currentPhotoIndex } = useAlbum(
   () => props.groupId,
-  async () => {
-    try {
-      const albums: PhotosGetAlbums = await useVk().getAlbums(props.groupId);
-      album.value =
-        albums.items.find((x) => toString(x.id) === toString(props.albumId)) ||
-        getStaticAlbums(props.groupId).find(
-          (x) => toString(x.id) === toString(props.albumId),
-        );
-      photos.value = await useVk().addRequestToQueue({
-        method: "photos.get",
-        params: {
-          album_id: props.albumId,
-          owner_id: -props.groupId,
-        },
-      });
-    } catch (ex: any) {
-      alert(ex.message);
-    }
-  },
-  { immediate: true },
+  () => props.albumId
 );
+
 useAppCaption("");
 const { Icon16Link } = icons;
 </script>

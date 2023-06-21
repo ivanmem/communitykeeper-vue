@@ -236,6 +236,9 @@ export const useGroups = defineStore("groups", {
         (x) => this.localGroups[x.id]
       );
     },
+    groupsReverse(): IGroup[] {
+      return this.groups.reverse();
+    },
     localGroups(): Record<number | string, ILocalGroup> {
       return keyBy(this.localGroupsArray, (x) => x.id);
     },
