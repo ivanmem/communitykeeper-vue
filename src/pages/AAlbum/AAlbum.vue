@@ -5,6 +5,8 @@ import APhoto from "@/pages/AAlbum/APhoto.vue";
 import { icons } from "@/common/consts";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useAlbum } from "@/pages/AAlbum/useAlbum";
+import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
+import { RecycleScroller } from "vue-virtual-scroller";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -18,8 +20,12 @@ const {
   currentPhoto,
   setCurrentPhotoIndex,
   currentPhotoIndex,
+  onScrollerUpdate,
   isInit,
   screenError,
+  albumRef,
+  gridItems,
+  isLoadingPhotos,
 } = useAlbum(
   () => props.ownerId,
   () => props.albumId,
@@ -38,7 +44,7 @@ const { Icon16Link } = icons;
     >
       {{ screenError }}
     </code>
-    <div v-if="photos && isInit" class="a-album__items">
+    <template v-if="isInit">
       <Teleport to="#caption">
         <div style="display: flex; gap: 5px; align-items: center">
           <Icon16Link />
@@ -51,19 +57,34 @@ const { Icon16Link } = icons;
           </a>
         </div>
       </Teleport>
+    </template>
+    <RecycleScroller
+      ref="albumRef"
+      class="a-album__items"
+      :items="photos"
+      :item-size="AlbumsPreviewSizes.height"
+      :total-size="photos.length"
+      :ready="!isLoadingPhotos"
+      :itemSecondarySize="AlbumsPreviewSizes.width"
+      :gridItems="gridItems"
+      :updateInterval="100"
+      emit-update
+      key-field="id"
+      @update="onScrollerUpdate"
+      v-slot="{ item, index }"
+    >
       <AAlbumPreview
-        v-for="(photo, index) of photos"
-        :key="photo.id"
-        :photo="photo"
+        :key="item.id"
+        :photo="item"
         :index="index"
         @click="setCurrentPhotoIndex(index)"
       />
-    </div>
+    </RecycleScroller>
     <APhoto
       v-if="currentPhoto"
       :photo="currentPhoto"
-      @photo:prev="setCurrentPhotoIndex(currentPhotoIndex - 1)"
-      @photo:next="setCurrentPhotoIndex(currentPhotoIndex + 1)"
+      @photo:prev="setCurrentPhotoIndex(currentPhotoIndex! - 1)"
+      @photo:next="setCurrentPhotoIndex(currentPhotoIndex! + 1)"
       @photo:exit="setCurrentPhotoIndex(undefined)"
     />
   </div>
@@ -88,5 +109,6 @@ const { Icon16Link } = icons;
   gap: 10px;
   overflow-x: auto;
   justify-content: space-evenly;
+  padding: 10px;
 }
 </style>

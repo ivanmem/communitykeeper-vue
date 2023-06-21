@@ -83,10 +83,4 @@ const {
   justify-content: space-evenly;
   padding: 10px;
 }
-
-.a-albums__header {
-  display: block;
-  padding: 8px var(--vkui--size_base_padding_horizontal--regular);
-  border-bottom: 1px solid currentColor;
-}
 </style>

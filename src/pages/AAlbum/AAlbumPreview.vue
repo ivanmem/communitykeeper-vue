@@ -6,11 +6,14 @@ import { showContextMenu } from "@/helpers/showContextMenu";
 import { icons } from "@/common/consts";
 import { openLink } from "@/helpers/openLink";
 import { saveAs } from "file-saver";
+import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
 const props = defineProps<{ photo: IPhoto }>();
 const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes)
 );
+
+const { width, height } = AlbumsPreviewSizes.value;
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
@@ -39,26 +42,43 @@ const onShowContextMenu = (e: MouseEvent) => {
 };
 </script>
 <template>
-  <div
-    class="photos_row"
-    :style="{
-      backgroundImage: `url(${originalSize?.url})`,
-    }"
-    @contextmenu.stop.prevent="onShowContextMenu"
-  ></div>
+  <div class="photos_row" @contextmenu.stop.prevent="onShowContextMenu">
+    <img v-if="originalSize" :src="originalSize.url" alt="" />
+    <div class="photos_row__title_wrap"></div>
+  </div>
 </template>
 <style lang="scss">
 .photos_row {
+  width: v-bind("`${width}px`");
+  min-width: v-bind("`${width}px`");
+  height: v-bind("`${height}px`");
+  min-height: v-bind("`${height}px`");
+  padding: 5px;
   display: inline-block;
   vertical-align: top;
-  width: 185px;
-  height: 127px;
-  margin: 2px 3px 3px 2px;
   position: relative;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center 35%;
   background-color: var(--placeholder_icon_background);
   cursor: pointer;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.photos_row__title_wrap {
+  position: absolute;
+  bottom: 0 + 5px;
+  width: calc(100% - 5px);
+  padding: 35px 12px 9px;
+  color: white;
+
+  small {
+    opacity: 0.7;
+  }
 }
 </style>
