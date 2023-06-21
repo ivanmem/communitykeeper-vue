@@ -11,6 +11,8 @@ import { useCountGridColumns } from "@/hooks/useCountGridColumns";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { toStr } from "@/helpers/toStr";
 
+const countOneLoad = 100;
+
 export function useAlbum(
   ownerIdGetter: MaybeRefOrGetter<number | string>,
   albumIdGetter: MaybeRefOrGetter<number | string>,
@@ -34,7 +36,6 @@ export function useAlbum(
   const isLoadingPhotos = ref(false);
   const isLoadAllPhotos = ref(false);
   const photosMaxItems = ref(0);
-  const countOneLoad = 200;
   useScreenSpinner(() => !isInit.value);
 
   const onClearComponent = () => {

@@ -8,6 +8,8 @@ import { RecycleScroller } from "vue-virtual-scroller";
 import { useCountGridColumns } from "@/hooks/useCountGridColumns";
 import { useScreenSpinner } from "@/hooks/useScreenSpinner";
 
+const countOneLoad = 100;
+
 export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const ownerId = computed(() => toValue(ownerIdGetter));
   const isInit = ref(false);
@@ -23,8 +25,6 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     () => AlbumsPreviewSizes.value.width
   );
   const screenError = ref<any>();
-
-  const countOneLoad = 200;
 
   const onClearComponent = () => {
     isInit.value = false;

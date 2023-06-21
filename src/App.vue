@@ -66,7 +66,7 @@ const onKeyDown = (e: KeyboardEvent) => {
       </div>
       <div class="overflow-block route-view">
         <router-view v-slot="{ Component }">
-          <keep-alive :max="3">
+          <keep-alive :max="3" exclude="AAlbum">
             <component :is="Component" />
           </keep-alive>
         </router-view>
