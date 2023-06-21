@@ -8,11 +8,11 @@ import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useRoute, useRouter } from "vue-router";
 
 export function useAlbum(
-  groupIdGetter: MaybeRefOrGetter<number | string>,
+  ownerIdGetter: MaybeRefOrGetter<number | string>,
   albumIdGetter: MaybeRefOrGetter<number | string>,
   photoIdGetter: MaybeRefOrGetter<number | string | undefined>
 ) {
-  const groupId = computed(() => toValue(groupIdGetter));
+  const ownerId = computed(() => toValue(ownerIdGetter));
   const albumId = computed(() => toValue(albumIdGetter));
   const album = ref<IAlbumItem | undefined>();
   const photos = ref<IPhoto[] | undefined>();
@@ -24,15 +24,15 @@ export function useAlbum(
   const route = useRoute();
 
   watch(
-    groupId,
+    ownerId,
     async () => {
       try {
-        const albums: PhotosGetAlbums = await useVk().getAlbums(groupId.value);
+        const albums: PhotosGetAlbums = await useVk().getAlbums(ownerId.value);
         album.value =
           albums.items.find(
             (x) => toString(x.id) === toString(albumId.value)
           ) ||
-          getStaticAlbums(groupId.value).find(
+          getStaticAlbums(ownerId.value).find(
             (x) => toString(x.id) === toString(albumId.value)
           );
         photos.value = (
@@ -40,7 +40,7 @@ export function useAlbum(
             method: "photos.get",
             params: {
               album_id: albumId.value,
-              owner_id: -groupId.value,
+              owner_id: ownerId.value,
             },
           })
         ).items as IPhoto[];

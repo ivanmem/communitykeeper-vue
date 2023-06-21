@@ -22,7 +22,7 @@ const onShowContextMenu = (e: MouseEvent) => {
       icon: h(icons.Icon16Link),
       onClick: () => {
         openLink(
-          `//${PhotoHelper.getAlbumUrl(-props.album.owner_id, props.album.id)}`
+          `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`
         );
       },
     },
@@ -32,7 +32,7 @@ const onShowContextMenu = (e: MouseEvent) => {
 <template>
   <div
     class="a-album-item"
-    @click="router.push(`/albums/${-props.album.owner_id}/${props.album.id}`)"
+    @click="router.push(`/albums/${props.album.owner_id}/${props.album.id}`)"
     @contextmenu.stop.prevent="onShowContextMenu"
   >
     <img v-if="originalSize" :src="originalSize.url" alt="" />

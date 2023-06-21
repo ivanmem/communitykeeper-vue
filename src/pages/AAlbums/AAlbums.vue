@@ -6,9 +6,9 @@ import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { useAlbums } from "@/pages/AAlbums/useAlbums";
 
 useAppCaption("");
-const props = defineProps<{ groupId: number | string }>();
+const props = defineProps<{ ownerId: number | string }>();
 const { isInit, group, albums, isLoadingAlbums, gridItems, onScrollerUpdate } =
-  useAlbums(() => props.groupId);
+  useAlbums(() => props.ownerId);
 </script>
 
 <template>
@@ -17,7 +17,7 @@ const { isInit, group, albums, isLoadingAlbums, gridItems, onScrollerUpdate } =
       <Teleport to="#caption">
         <a
           v-if="group"
-          :href="`//vk.com/albums-${props.groupId}`"
+          :href="`//vk.com/albums${props.ownerId}`"
           target="_blank"
         >
           <small>Альбомы</small> {{ group.name }}

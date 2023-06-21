@@ -7,14 +7,14 @@ import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useAlbum } from "@/pages/AAlbum/useAlbum";
 
 const props = defineProps<{
-  groupId: number | string;
+  ownerId: number | string;
   albumId: number | string;
   photoId: number | string | undefined;
 }>();
 
 const { photos, album, currentPhoto, setCurrentPhotoIndex, currentPhotoIndex } =
   useAlbum(
-    () => props.groupId,
+    () => props.ownerId,
     () => props.albumId,
     () => props.photoId
   );
@@ -30,7 +30,7 @@ const { Icon16Link } = icons;
           <Icon16Link />
           <a
             v-if="album"
-            :href="`//${PhotoHelper.getAlbumUrl(props.groupId, props.albumId)}`"
+            :href="`//${PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)}`"
             target="_blank"
           >
             <small>Альбом</small> {{ album.title }}

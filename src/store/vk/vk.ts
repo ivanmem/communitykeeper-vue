@@ -13,6 +13,9 @@ interface VkState {
   webAppConfig?: Record<string, any>;
   chunksMaxCount: number;
   vkWebAppStorageSetCount: number;
+  token?: {
+    access_token: string;
+  };
 }
 
 export const useVk = defineStore("vk", {
@@ -52,13 +55,13 @@ export const useVk = defineStore("vk", {
 
         await bridge.send("VKWebAppInit", {});
 
-        const token: any = await bridge.send("VKWebAppGetAuthToken", {
+        this.token = await bridge.send("VKWebAppGetAuthToken", {
           scope: "groups",
           app_id: 51658481,
         });
         useVk().api = new VKAPI({
           rps: 3,
-          accessToken: token.access_token,
+          accessToken: this.token.access_token,
           lang: "ru",
           v: "5.131",
           isBrowser: true,
@@ -176,14 +179,15 @@ export const useVk = defineStore("vk", {
       }
     },
     getAlbums(
-      groupId: number | string,
+      owner_id: number | string,
       offset: number | undefined = undefined,
       count: number | undefined = undefined
     ): Promise<PhotosGetAlbums> {
+      console.log(owner_id);
       return this.addRequestToQueue({
         method: "photos.getAlbums",
         params: {
-          owner_id: -+groupId,
+          owner_id,
           need_system: 1,
           need_covers: 1,
           photo_sizes: 1,

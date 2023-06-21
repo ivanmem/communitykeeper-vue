@@ -52,7 +52,9 @@ const onShowContextMenu = (e: MouseEvent) => {
       label: "Открыть в ВК",
       icon: h(icons.Icon16Link),
       onClick: () => {
-        openLink(`//vk.com/photo${props.photo.owner_id}_${props.photo.id}`);
+        openLink(
+          `//${PhotoHelper.getPhotoUrl(props.photo.owner_id, props.photo.id)}`
+        );
       },
     },
     {

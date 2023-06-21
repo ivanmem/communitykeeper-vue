@@ -78,7 +78,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
     label: "Галерея (в разработке)",
     icon: h(icons.Icon16FolderOutline),
     onClick: async () => {
-      return router.push(`/albums/${props.group.id}`);
+      return router.push(`/albums/-${props.group.id}`);
     },
   });
   items.push({

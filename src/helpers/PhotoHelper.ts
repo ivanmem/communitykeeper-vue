@@ -15,12 +15,20 @@ export class PhotoHelper {
     return originalSize;
   }
 
-  static getAlbumUrl(groupId: number | string, albumId: number | string) {
+  static getAlbumUrl(ownerId: number | string, albumId: number | string) {
     if (+albumId === -6) {
       albumId = 0;
     }
 
-    return `vk.com/album-${groupId}_${albumId}`;
+    if (albumId === "wall") {
+      albumId = "00";
+    }
+
+    return `vk.com/album${ownerId}_${albumId}`;
+  }
+
+  static getPhotoUrl(ownerId: number | string, photoId: number) {
+    return `vk.com/photo${ownerId}_${photoId}`;
   }
 
   static getPhotoFileName(photo: IPhoto) {

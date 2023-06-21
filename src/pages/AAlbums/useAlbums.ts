@@ -7,14 +7,14 @@ import { useVk } from "@/store/vk/vk";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { useCountGridColumns } from "@/hooks/useCountGridColumns";
 
-export function useAlbums(groupIdGetter: MaybeRefOrGetter<number | string>) {
-  const groupId = computed(() => toValue(groupIdGetter));
+export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
+  const ownerId = computed(() => toValue(ownerIdGetter));
   const isInit = ref(false);
   const albums = ref<IAlbumItem[]>([]);
   const albumsMaxItems = ref(100);
   const isLoadingAlbums = ref(false);
   const group = ref<IGroup | undefined>();
-  const staticAlbums = computed(() => getStaticAlbums(groupId.value));
+  const staticAlbums = computed(() => getStaticAlbums(ownerId.value));
   const albumsRef = ref<InstanceType<typeof RecycleScroller>>();
   const gridItems = useCountGridColumns(
     albumsRef,
@@ -23,15 +23,20 @@ export function useAlbums(groupIdGetter: MaybeRefOrGetter<number | string>) {
   );
 
   watch(
-    groupId,
+    ownerId,
     async () => {
-      group.value = await useGroups().getGroupByIdOrLoad(groupId.value);
+      if (+ownerId.value > 0) {
+        group.value = undefined;
+        return;
+      }
+
+      group.value = await useGroups().getGroupByIdOrLoad(-ownerId.value);
     },
     { immediate: true }
   );
 
   watch(
-    [groupId, albumsMaxItems],
+    [ownerId, albumsMaxItems],
     async () => {
       if (isLoadingAlbums.value) {
         return;
@@ -45,7 +50,7 @@ export function useAlbums(groupIdGetter: MaybeRefOrGetter<number | string>) {
       const offset = albums.value.length - staticAlbums.value.length;
       const count = albumsMaxItems.value - offset;
       try {
-        const { items } = await useVk().getAlbums(groupId.value, offset, count);
+        const { items } = await useVk().getAlbums(ownerId.value, offset, count);
         albums.value.push(...items);
       } catch (ex: any) {
         alert(ex.message);

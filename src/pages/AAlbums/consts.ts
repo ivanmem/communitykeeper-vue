@@ -17,13 +17,13 @@ export const AlbumsPreviewSizes = computed(() => {
   }
 });
 
-export function getStaticAlbums(groupId: string | number): IAlbumItem[] {
+export function getStaticAlbums(owner_id: string | number): IAlbumItem[] {
   return [
     {
       title: "Фото на стене",
       id: "wall",
       size: "?",
-      owner_id: -groupId,
+      owner_id: +owner_id,
     },
   ];
 }
