@@ -2,6 +2,7 @@ import {
   ComponentPublicInstance,
   computed,
   MaybeRefOrGetter,
+  onMounted,
   onUnmounted,
   reactive,
   ref,
@@ -28,11 +29,10 @@ export function useCountGridColumns(
     return "$el" in elOrComponent ? elOrComponent.$el : elOrComponent;
   });
 
-  const updateCount = () => {
+  const updateCount = async () => {
     if (!el.value) {
       return;
     }
-
     let { clientWidth } = el.value;
     clientWidth -= containerIndent;
     if (clientWidth > 0) {
@@ -50,8 +50,13 @@ export function useCountGridColumns(
     }
 
     element.addEventListener("resize", updateCount);
+    document.documentElement.addEventListener("fullscreenchange", updateCount);
     unsubs.push(() => {
       element.removeEventListener("resize", updateCount);
+      document.documentElement.removeEventListener(
+        "fullscreenchange",
+        updateCount
+      );
     });
   });
 
@@ -61,6 +66,11 @@ export function useCountGridColumns(
         x();
       } catch {}
     });
+  });
+
+  onMounted(() => {
+    const interval = setInterval(() => updateCount(), 100);
+    return () => clearInterval(interval);
   });
 
   return count;

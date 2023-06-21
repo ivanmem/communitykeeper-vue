@@ -30,6 +30,7 @@ const onKeyDown = (e: KeyboardEvent) => {
     e.preventDefault();
     e.stopPropagation();
     openFullscreen();
+    document.querySelector<HTMLDivElement>(".root")?.focus();
   }
 };
 </script>
