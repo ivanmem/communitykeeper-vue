@@ -1,5 +1,4 @@
-import { MaybeRefOrGetter, toValue } from "vue";
-import { computed, ref, watch } from "vue/dist/vue";
+import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";

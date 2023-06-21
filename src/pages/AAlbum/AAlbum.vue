@@ -9,13 +9,15 @@ import { useAlbum } from "@/pages/AAlbum/useAlbum";
 const props = defineProps<{
   groupId: number | string;
   albumId: number | string;
+  photoId: number | string | undefined;
 }>();
 
-const { photos, album, currentPhotoIndex } = useAlbum(
-  () => props.groupId,
-  () => props.albumId
-);
-
+const { photos, album, currentPhoto, setCurrentPhotoIndex, currentPhotoIndex } =
+  useAlbum(
+    () => props.groupId,
+    () => props.albumId,
+    () => props.photoId
+  );
 useAppCaption("");
 const { Icon16Link } = icons;
 </script>
@@ -36,23 +38,19 @@ const { Icon16Link } = icons;
         </div>
       </Teleport>
       <AAlbumPreview
-        v-for="(photo, index) of photos.items"
+        v-for="(photo, index) of photos"
         :key="photo.id"
         :photo="photo"
         :index="index"
-        @click="currentPhotoIndex = index"
+        @click="setCurrentPhotoIndex(index)"
       />
     </div>
     <APhoto
-      v-if="
-        photos &&
-        currentPhotoIndex !== undefined &&
-        photos.items[currentPhotoIndex]
-      "
-      :photo="photos.items[currentPhotoIndex]"
-      @photo:prev="currentPhotoIndex--"
-      @photo:next="currentPhotoIndex++"
-      @photo:exit="currentPhotoIndex = undefined"
+      v-if="currentPhoto"
+      :photo="currentPhoto"
+      @photo:prev="setCurrentPhotoIndex(currentPhotoIndex - 1)"
+      @photo:next="setCurrentPhotoIndex(currentPhotoIndex + 1)"
+      @photo:exit="setCurrentPhotoIndex(undefined)"
     />
   </div>
 </template>

@@ -45,9 +45,7 @@ const { Icon24Linked } = icons;
         </AButton>
       </div>
       <div class="overflow-block route-view">
-        <router-view v-slot="{ Component }">
-          <component :is="Component" :key="route.fullPath" />
-        </router-view>
+        <router-view />
       </div>
       <div class="navigation">
         <div class="navigation-bottom-buttons">

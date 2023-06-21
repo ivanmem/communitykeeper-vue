@@ -14,6 +14,7 @@ const emit = defineEmits<{
 }>();
 
 const props = defineProps<{ photo: IPhoto }>();
+
 const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes)
 );
