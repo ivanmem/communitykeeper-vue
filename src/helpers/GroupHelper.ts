@@ -1,9 +1,12 @@
 import { IGroup } from "@/store/groups/types";
-import { FiltersType, useGroups } from "@/store/groups/groups";
+import { FiltersType, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
 import { getGroupState, GroupState } from "@/pages/AGroups/getGroupState";
 import bridge from "@vkontakte/vk-bridge";
 
 class GroupHelper {
+  static getGroupAccess(g?: IGroup) {
+    return (g?.is_closed && g.is_member) || !g?.is_closed;
+  }
   static getFiltered(groups: IGroup[], filters?: FiltersType) {
     if (!filters) {
       return groups;
@@ -14,6 +17,14 @@ class GroupHelper {
     return groups.filter((group) => {
       const localGroup = groupsService.getLocalGroupById(group.id);
       if (!localGroup) {
+        return false;
+      }
+
+      const isAccessGroup = GroupHelper.getGroupAccess(group);
+      if (
+        (filters.access === OnlyAccessEnum.access && !isAccessGroup) ||
+        (filters.access === OnlyAccessEnum.noAccess && isAccessGroup)
+      ) {
         return false;
       }
 

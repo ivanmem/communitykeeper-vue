@@ -4,6 +4,7 @@ import { autoUpdate, useFloating } from "@floating-ui/vue";
 import { icons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AButton from "@/components/AButton/AButton.vue";
+import { OnlyAccessEnum } from "@/store/groups/groups";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
@@ -20,6 +21,21 @@ const { x, y, strategy } = useFloating(reference, floating, {
 });
 
 const { Icon24Filter, Icon16CrossCircleSmall } = icons;
+
+const accessEnumOptions = [
+  {
+    label: "Все",
+    value: OnlyAccessEnum.none,
+  },
+  {
+    label: "Доступные",
+    value: OnlyAccessEnum.access,
+  },
+  {
+    label: "Недоступные",
+    value: OnlyAccessEnum.noAccess,
+  },
+];
 </script>
 
 <template>
@@ -80,6 +96,22 @@ const { Icon24Filter, Icon16CrossCircleSmall } = icons;
           <option value="">-- Не выбрано --</option>
           <option v-for="folder of store.folders" :key="folder" :value="folder">
             {{ folder }}
+          </option>
+        </select>
+        <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
+          Показывать
+        </h5>
+        <select
+          v-model.number="store.filters.access"
+          class="a-select"
+          style="min-width: 100%"
+        >
+          <option
+            v-for="access of accessEnumOptions"
+            :key="access.value"
+            :value="access.value"
+          >
+            {{ access.label }}
           </option>
         </select>
       </div>

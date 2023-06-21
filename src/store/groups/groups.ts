@@ -13,6 +13,13 @@ import { setEruda } from "@/helpers/setEruda";
 export interface FiltersType {
   folder: string;
   search: string;
+  access: OnlyAccessEnum;
+}
+
+export enum OnlyAccessEnum {
+  none,
+  access,
+  noAccess,
 }
 
 interface GroupsState {
@@ -35,7 +42,7 @@ export const useGroups = defineStore("groups", {
     return {
       localGroupsArray: [],
       groupsMap: new Map(),
-      filters: { folder: "", search: "" },
+      filters: { folder: "", search: "", access: OnlyAccessEnum.none },
       isInit: false,
       config: { autoSave: true, showCounters: true },
       spaceUsed: 0,
