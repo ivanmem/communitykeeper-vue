@@ -92,6 +92,17 @@ const onShowContextMenu = (e: MouseEvent) => {
       },
     },
     {
+      label: "Найти оригинал",
+      icon: h(icons.Icon16SearchStarsOutline),
+      onClick: () => {
+        openLink(
+          `https://saucenao.com/search.php?url=${escape(
+            originalSize.value!.url
+          )}`
+        );
+      },
+    },
+    {
       label: "Полный экран",
       icon: h(
         useApp().isFullScreen
