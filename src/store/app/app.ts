@@ -5,7 +5,7 @@ import { platform } from "@vkontakte/vkui";
 interface AppState {
   caption: string;
   loadingSet: Set<any>;
-  platform: string;
+  platform: "android" | "ios" | "vkcom";
   isFullScreen: boolean;
 }
 
@@ -14,7 +14,7 @@ export const useApp = defineStore("app", {
     return {
       caption: "",
       loadingSet: new Set(),
-      platform: platform(),
+      platform: platform() as any,
       isFullScreen: false,
     };
   },

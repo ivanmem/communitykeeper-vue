@@ -62,6 +62,7 @@ export function useAlbum(
                     screenError.value = ex;
                     console.warn("Необработанная ошибка:", ex.errorInfo);
                   }
+
                   return { items: [], count: 0 };
                 })
             ).items;

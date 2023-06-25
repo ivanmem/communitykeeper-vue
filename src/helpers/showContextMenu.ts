@@ -1,11 +1,12 @@
-import Vue3ContextMenu, {
-  ContextMenuItem,
-  MenuItem,
-} from "@imengyu/vue3-context-menu";
+import Vue3ContextMenu, { MenuItem } from "@imengyu/vue3-context-menu";
 import { darkColorScheme } from "@/common/consts";
 import { nextTick } from "vue";
 
-export function showContextMenu(e: MouseEvent, items: MenuItem[] | undefined) {
+export function showContextMenu(
+  e: MouseEvent,
+  items: MenuItem[] | undefined,
+  onClose = () => {}
+) {
   const contextMenuInstance = Vue3ContextMenu.showContextMenu({
     x: e.x,
     y: e.y,
@@ -13,6 +14,7 @@ export function showContextMenu(e: MouseEvent, items: MenuItem[] | undefined) {
     items,
     closeWhenScroll: true,
     clickCloseClassName: "mx-context-no-clickable",
+    onClose,
   });
   nextTick(() => {
     const el = document.getElementById("mx-menu-default-container")!;

@@ -7,8 +7,7 @@ import { openLink } from "@/helpers/openLink";
 import { icons } from "@/common/consts";
 import { saveAs } from "file-saver";
 import { MenuItem } from "@imengyu/vue3-context-menu";
-import { switchFullscreen } from "@/helpers/switchFullscreen";
-import { useApp } from "@/store/app/app";
+import { useGroups } from "@/store/groups/groups";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -69,60 +68,71 @@ watch(
 );
 
 const onShowContextMenu = (e: MouseEvent) => {
-  const items: MenuItem[] = [
-    {
-      label: "Открыть в ВК",
-      icon: h(icons.Icon16Link),
-      onClick: () => {
-        openLink(
-          `//${PhotoHelper.getPhotoUrl(props.photo.owner_id, props.photo.id)}`
+  const items: MenuItem[] = [];
+
+  items.push({
+    label: "Открыть в ВК",
+    icon: h(icons.Icon16Link),
+    onClick: () => {
+      openLink(
+        `//${PhotoHelper.getPhotoUrl(props.photo.owner_id, props.photo.id)}`
+      );
+    },
+  });
+  items.push({
+    label: "Открыть оригинал",
+    icon: h(icons.Icon16Link),
+    onClick: () => {
+      if (originalSize.value) {
+        openLink(originalSize.value.url);
+      }
+    },
+  });
+  items.push({
+    label: "Скачать",
+    icon: h(icons.Icon16DownloadOutline),
+    onClick: () => {
+      if (originalSize.value) {
+        saveAs(
+          originalSize.value.url,
+          PhotoHelper.getPhotoFileName(props.photo)
         );
-      },
+      }
     },
-    {
-      label: "Скачать",
-      icon: h(icons.Icon16DownloadOutline),
-      onClick: () => {
-        if (originalSize.value) {
-          saveAs(
-            originalSize.value.url,
-            PhotoHelper.getPhotoFileName(props.photo)
-          );
-        }
-      },
+  });
+  items.push({
+    label: "Найти оригинал",
+    icon: h(icons.Icon16SearchStarsOutline),
+    onClick: () => {
+      openLink(
+        `https://saucenao.com/search.php?url=${escape(originalSize.value!.url)}`
+      );
     },
-    {
-      label: "Найти оригинал",
-      icon: h(icons.Icon16SearchStarsOutline),
-      onClick: () => {
-        openLink(
-          `https://saucenao.com/search.php?url=${escape(
-            originalSize.value!.url
-          )}`
-        );
-      },
+  });
+
+  items.push({
+    label: useGroups().config.originalSizePhoto
+      ? `Расширить на весь экран`
+      : "Отображать в оригинальном размере",
+    icon: h(
+      useGroups().config.originalSizePhoto
+        ? icons.Icon24Fullscreen
+        : icons.Icon24FullscreenExit,
+      { width: "16px", height: "16px" }
+    ),
+    onClick: () => {
+      useGroups().config.originalSizePhoto =
+        !useGroups().config.originalSizePhoto;
     },
-    {
-      label: "Полный экран",
-      icon: h(
-        useApp().isFullScreen
-          ? icons.Icon24FullscreenExit
-          : icons.Icon24Fullscreen,
-        { width: "16px", height: "16px" }
-      ),
-      onClick: () => {
-        switchFullscreen();
-      },
+  });
+  items.push({
+    label: "Выйти из просмотра фото",
+    icon: h(icons.Icon16DoorEnterArrowRightOutline),
+    onClick: () => {
+      emit("photo:exit");
     },
-    {
-      label: "Выйти из просмотра фото",
-      icon: h(icons.Icon16DoorEnterArrowRightOutline),
-      onClick: () => {
-        emit("photo:exit");
-      },
-    },
-  ];
-  showContextMenu(e, items);
+  });
+  showContextMenu(e, items, () => photoDiv.value?.focus());
 };
 
 const onWheel = (e: WheelEvent) => {
@@ -139,7 +149,6 @@ const onWheel = (e: WheelEvent) => {
     ref="photoDiv"
     tabindex="1"
     class="a-photo"
-    :style="{ backgroundImage: `url(${originalSize?.url})` }"
     @click="onClick"
     @contextmenu.prevent.stop="onShowContextMenu"
     @keydown.stop.prevent.esc="emit('photo:exit')"
@@ -149,8 +158,15 @@ const onWheel = (e: WheelEvent) => {
     @wheel="onWheel"
     @click.middle="emit('photo:exit')"
   >
+    <img
+      :style="{ flexGrow: useGroups().config.originalSizePhoto ? 0 : 1 }"
+      v-if="originalSize"
+      :src="originalSize.url"
+    />
     <div v-if="showInfo && index !== undefined" class="a-photo__info">
-      {{ index + 1 }} из {{ count ?? "?" }}
+      <div class="a-photo__info-counter">
+        {{ index + 1 }} из {{ count ?? "?" }}
+      </div>
     </div>
   </div>
 </template>
@@ -162,28 +178,49 @@ const onWheel = (e: WheelEvent) => {
   bottom: 0;
   left: 0;
   right: 0;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   vertical-align: top;
   margin: 2px 3px 3px 2px;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center 35%;
   background-color: black;
+
   cursor: pointer;
+
+  img {
+    flex-grow: 1;
+    user-select: none;
+    pointer-events: none;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
 }
 
 .a-photo__info {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  width: max-content;
-  height: max-content;
-  margin-top: 5px;
-  margin-left: 10px;
-  background-color: rgba(0, 0, 0, 0.3);
   pointer-events: none;
   user-select: none;
   border-radius: 10px;
   padding: 3px;
   color: white;
+  z-index: 2;
+}
+
+.a-photo__info-counter {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  height: max-content;
+  margin-top: 10px;
+  margin-left: 15px;
+  background-color: rgba(0, 0, 0, 0.3);
 }
 </style>

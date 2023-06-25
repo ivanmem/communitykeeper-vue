@@ -35,6 +35,7 @@ export interface IGroupsConfig {
   autoSave: boolean;
   showCounters: boolean;
   eruda?: boolean;
+  originalSizePhoto?: boolean;
 }
 
 export const useGroups = defineStore("groups", {

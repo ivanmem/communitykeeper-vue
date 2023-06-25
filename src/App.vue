@@ -4,7 +4,7 @@ import copy from "copy-to-clipboard";
 import AButton from "@/components/AButton/AButton.vue";
 import { useColorScheme } from "@/useColorScheme";
 import { useApp } from "@/store/app/app";
-import { icons } from "@/common/consts";
+import { darkColorScheme, icons } from "@/common/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import Loading from "vue3-loading-overlay";
@@ -47,6 +47,7 @@ onMounted(() => {
     :class="currentClasses"
     :data-platform="appStore.platform"
     :data-fullscreen="appStore.isFullScreen"
+    :data-dark="darkColorScheme"
     tabindex="0"
     class="overflow-block root"
     @keydown="onKeyDown"
@@ -72,6 +73,7 @@ onMounted(() => {
           <Icon24Linked />
         </AButton>
         <AButton
+          v-if="useApp().isVkCom"
           style="height: 30px"
           @click="switchFullscreen()"
           :icon="
