@@ -8,6 +8,7 @@ import { icons } from "@/common/consts";
 import { saveAs } from "file-saver";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { useGroups } from "@/store/groups/groups";
+import bridge from "@vkontakte/vk-bridge";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -86,6 +87,16 @@ const onShowContextMenu = (e: MouseEvent) => {
       if (originalSize.value) {
         openLink(originalSize.value.url);
       }
+    },
+  });
+  items.push({
+    label: "Поделиться",
+    icon: h(icons.Icon16Share),
+    onClick: () => {
+      bridge.send("VKWebAppShowWallPostBox", {
+        message: "",
+        attachments: originalSize.value?.url,
+      });
     },
   });
   items.push({
