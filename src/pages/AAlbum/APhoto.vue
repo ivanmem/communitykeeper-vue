@@ -9,6 +9,7 @@ import { saveAs } from "file-saver";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { useGroups } from "@/store/groups/groups";
 import bridge from "@vkontakte/vk-bridge";
+import { useApp } from "@/store/app/app";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -48,11 +49,15 @@ const onClick = (event: MouseEvent) => {
 const photoDiv = ref<HTMLDivElement>();
 const showInfo = ref(true);
 
-watch(photoDiv, () => {
-  if (photoDiv.value) {
-    photoDiv.value.focus();
-  }
-});
+watch(
+  [photoDiv, () => useApp().isFullScreen],
+  () => {
+    if (photoDiv.value) {
+      photoDiv.value.focus();
+    }
+  },
+  { immediate: true }
+);
 
 let timeoutShowInfo: any = undefined;
 
