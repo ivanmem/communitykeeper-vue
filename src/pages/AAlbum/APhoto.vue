@@ -205,6 +205,48 @@ const onWheel = (e: WheelEvent) => {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+    width: auto;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    @media (resolution: 1.25dppx) {
+      zoom: 0.875;
+    }
+    @media (resolution: 1.5dppx) {
+      zoom: 0.75;
+    }
+    @media (resolution: 1.75dppx) {
+      zoom: 0.625;
+    }
+    @media (resolution: 2dppx) {
+      zoom: 0.5;
+    }
+    @media (resolution: 2.25dppx) {
+      zoom: 0.444444;
+    }
+    @media (resolution: 2.5dppx) {
+      zoom: 0.4;
+    }
+    @media (resolution: 2.75dppx) {
+      zoom: 0.363636;
+    }
+    @media (resolution: 3dppx) {
+      zoom: 0.333333;
+    }
+    @media (resolution: 3.5dppx) {
+      zoom: 0.285714;
+    }
+    @media (resolution: 4dppx) {
+      zoom: 0.25;
+    }
+    @media (resolution: 4.5dppx) {
+      zoom: 0.222222;
+    }
+    @media (resolution: 5dppx) {
+      zoom: 0.2;
+    }
   }
 }
 
