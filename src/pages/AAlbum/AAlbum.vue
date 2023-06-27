@@ -8,6 +8,9 @@ import { useAlbum } from "@/pages/AAlbum/useAlbum";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { toNumberOrUndefined } from "@/helpers/toNumberOrUndefined";
+import AButton from "@/components/AButton/AButton.vue";
+import { useGroups } from "@/store/groups/groups";
+import { openLink } from "@/helpers/openLink";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -35,20 +38,40 @@ const {
 );
 useAppCaption("Галерея: Альбом");
 const { Icon16Link } = icons;
+const groupsStore = useGroups();
 </script>
 
 <template>
   <div class="a-album vkuiGroup__inner Group__inner">
     <template v-if="isInit">
-      <div style="display: flex; gap: 5px; align-items: center">
-        <Icon16Link />
-        <a
+      <div
+        style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
+      >
+        <AButton
           v-if="album"
-          :href="`//${PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)}`"
-          target="_blank"
+          icon="Icon16Link"
+          class="opacity"
+          @click="
+            openLink(
+              `//${PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)}`
+            )
+          "
         >
           {{ album.title }}
-        </a>
+        </AButton>
+        <AButton
+          style="margin-left: auto"
+          class="opacity"
+          icon="Icon24SortOutline"
+          @click="
+            groupsStore.config.reverseOrder = !groupsStore.config.reverseOrder
+          "
+          >{{
+            groupsStore.config.reverseOrder
+              ? "Показать в прямом порядке"
+              : "Показать в обратном порядке"
+          }}
+        </AButton>
         <code v-if="screenError" class="vkuiFormField--status-error">
           {{ screenError }}
         </code>

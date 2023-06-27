@@ -36,6 +36,7 @@ export interface IGroupsConfig {
   showCounters: boolean;
   eruda?: boolean;
   originalSizePhoto?: boolean;
+  reverseOrder?: boolean;
 }
 
 export const useGroups = defineStore("groups", {
@@ -62,9 +63,9 @@ export const useGroups = defineStore("groups", {
       this.isInit = true;
       watch(
         this.config,
-        useApp().wrapLoading(() => {
+        () => {
           return this.saveCurrentConfig();
-        }),
+        },
         { deep: true }
       );
       watch(

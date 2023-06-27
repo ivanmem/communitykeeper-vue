@@ -25,6 +25,7 @@ import Icon24MemoryCard from "@vkontakte/icons/src/svg/24/memory_card_24.svg?com
 import Icon24CloudOutline from "@vkontakte/icons/src/svg/24/cloud_outline_24.svg?component";
 import Icon24Fullscreen from "@vkontakte/icons/src/svg/24/fullscreen_24.svg?component";
 import Icon24FullscreenExit from "@vkontakte/icons/src/svg/24/fullscreen_exit_24.svg?component";
+import Icon24SortOutline from "@vkontakte/icons/src/svg/24/sort_outline_24.svg?component";
 
 import Icon16AddSquareOutline from "@vkontakte/icons/src/svg/16/add_square_outline_16.svg?component";
 import Icon16Link from "@vkontakte/icons/src/svg/16/link_16.svg?component";
@@ -81,6 +82,7 @@ export const icons = {
   Icon24CloudOutline,
   Icon24Fullscreen,
   Icon24FullscreenExit,
+  Icon24SortOutline,
 
   Icon16AddSquareOutline,
   Icon16Link,
