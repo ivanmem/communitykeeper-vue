@@ -1,14 +1,15 @@
 import { IPhoto, IPhotoSize } from "vkontakte-api";
+import last from "lodash/last";
 
 export class PhotoHelper {
   static getOriginalSize(sizes: IPhotoSize[] | undefined) {
-    if (!sizes) {
+    if (!sizes?.length) {
       return undefined;
     }
 
-    let originalSize: IPhotoSize = sizes[0];
+    let originalSize: IPhotoSize = last(sizes)!;
     sizes.forEach((size) => {
-      if (size.height * size.width > originalSize.width * originalSize.height) {
+      if (size.width * size.height > originalSize.width * originalSize.height) {
         originalSize = size;
       }
     });
