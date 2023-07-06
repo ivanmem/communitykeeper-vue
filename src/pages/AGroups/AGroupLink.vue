@@ -122,9 +122,9 @@ const onOpenContextMenu = (e: MouseEvent) => {
       class="a-group-link a-button__block"
       @click="openLink(`//` + link)"
     >
-      <img class="a-group-link__avatar" :src="group.photo_200" alt=""/>
+      <img class="a-group-link__avatar" :src="group.photo_200" alt="" />
       <div class="a-group-link__div">
-        <b>{{ group.name }}</b>
+        <span class="a-group-link__name">{{ group.name }}</span>
         <span class="a-group-link__help">
           {{ GroupHelper.getState(group).text }}
         </span>
@@ -157,6 +157,12 @@ const onOpenContextMenu = (e: MouseEvent) => {
   text-align: left;
   align-content: flex-start;
   gap: 12px;
+  transition: background-color 0.15s ease-out;
+
+  &:hover {
+    opacity: 1;
+    background-color: var(--a-group-link-hover-background);
+  }
 }
 
 .a-group-link__div {
@@ -180,8 +186,17 @@ const onOpenContextMenu = (e: MouseEvent) => {
   }
 }
 
+.a-group-link__name {
+  color: inherit;
+  display: block;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 20px;
+  text-overflow: ellipsis;
+}
+
 .a-group-link__help {
-  font-size: var(--vkui--font_subhead--font_size--compact, 13px);
+  font-size: 12px;
   flex-grow: 1;
   max-width: 100%;
   overflow: hidden;

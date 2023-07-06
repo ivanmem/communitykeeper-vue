@@ -59,11 +59,13 @@ const counters = useGroupCounters(groupRef);
   min-width: 24px;
   background: var(--counter_primary_background);
   color: var(--counter_primary_text);
-  padding: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: var(--vkui--font_headline2--font_size--compact, 14px);
   line-height: var(--vkui--font_headline2--line_height--compact, 20px);
+  font-weight: 400;
 }
 </style>
