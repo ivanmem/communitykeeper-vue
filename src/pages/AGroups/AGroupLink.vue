@@ -122,6 +122,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
       class="a-group-link a-button__block"
       @click="openLink(`//` + link)"
     >
+      <img class="a-group-link__avatar" :src="group.photo_200" alt=""/>
       <div class="a-group-link__div">
         <b>{{ group.name }}</b>
         <span class="a-group-link__help">
@@ -155,6 +156,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
   align-items: center;
   text-align: left;
   align-content: flex-start;
+  gap: 12px;
 }
 
 .a-group-link__div {
@@ -189,5 +191,11 @@ const onOpenContextMenu = (e: MouseEvent) => {
   font-weight: var(--vkui--font_subhead--font_weight--regular, 400);
   font-family: var(--vkui--font_title1--font_family--regular);
   opacity: 0.7;
+}
+
+.a-group-link__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
 }
 </style>
