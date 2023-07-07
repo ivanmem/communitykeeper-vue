@@ -1,14 +1,13 @@
 {
   "name": "local-vk-groups-catalog-vue",
-  "private": true,
   "version": "0.0.1",
-  "type": "module",
+  "private": true,
   "scripts": {
+    "build": "vue-tsc && vite build",
+    "deploy": "npm run build && vk-miniapps-deploy",
     "dev": "vite",
     "dev-host": "vite --host",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview",
-    "deploy": "npm run build && vk-miniapps-deploy"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@floating-ui/vue": "1.0.1",
@@ -35,6 +34,7 @@
     "vuetify": "^3.3.7"
   },
   "devDependencies": {
+    "@mdi/font": "^7.2.96",
     "@types/file-saver": "2.0.5",
     "@types/lodash": "4.14.195",
     "@vitejs/plugin-basic-ssl": "1.0.1",

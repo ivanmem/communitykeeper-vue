@@ -55,6 +55,17 @@ const sortEnumOptions = [
 
 <template>
   <div class="TopSearch">
+    <VTabs
+      v-model="store.filters.folder"
+      style="margin-bottom: 10px"
+      center-active
+      show-arrows
+    >
+      <VTab value="">Все</VTab>
+      <VTab :key="folder" v-for="folder of store.folders" :value="folder">
+        {{ folder }}
+      </VTab>
+    </VTabs>
     <div style="display: flex; gap: 5px; flex-grow: 1">
       <input
         ref="reference"
@@ -100,21 +111,6 @@ const sortEnumOptions = [
         @touchstart.stop
         @click.stop
       >
-        <section>
-          <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
-            Папка
-          </h5>
-          <select v-model="store.filters.folder" class="a-select">
-            <option value="">-- Не выбрано --</option>
-            <option
-              v-for="folder of store.folders"
-              :key="folder"
-              :value="folder"
-            >
-              {{ folder }}
-            </option>
-          </select>
-        </section>
         <section>
           <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
             Фильтрация

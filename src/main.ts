@@ -1,4 +1,5 @@
-import 'vuetify/styles'
+import "vuetify/styles";
+import "@mdi/font/css/materialdesignicons.css";
 import "@/styles/icons.scss";
 import "@/styles/variables.scss";
 import "@/styles/inputs.scss";
@@ -16,10 +17,13 @@ import App from "@/App.vue";
 import VueVirtualScroller from "vue-virtual-scroller";
 import Vue3ContextMenu from "@imengyu/vue3-context-menu";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
-import { createVuetify } from 'vuetify'
+import { createVuetify } from "vuetify";
 
-
-const vuetify = createVuetify();
+const vuetify = createVuetify({
+  icons: {
+    defaultSet: "mdi",
+  },
+});
 try {
   document.documentElement.style.setProperty("background", "black");
   const pinia = createPinia();
