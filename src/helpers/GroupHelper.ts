@@ -49,6 +49,7 @@ class GroupHelper {
   }
 
   static getState(group: IGroup): GroupState {
+    group.counters ??= useGroups().getCachedGroup(group)?.counters;
     group.__state ??= getGroupState(group);
     return group.__state;
   }

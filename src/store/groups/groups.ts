@@ -29,6 +29,10 @@ interface GroupsState {
   isInit: boolean;
   config: IGroupsConfig;
   spaceUsed: number;
+  cachedGroupsData: Record<
+    string | number,
+    { date: string; data: Partial<IGroup> }
+  >;
 }
 
 export interface IGroupsConfig {
@@ -48,6 +52,7 @@ export const useGroups = defineStore("groups", {
       isInit: false,
       config: { autoSave: true, showCounters: true },
       spaceUsed: 0,
+      cachedGroupsData: {},
     };
   },
   actions: {
@@ -171,18 +176,47 @@ export const useGroups = defineStore("groups", {
 
       const loadingFinisher = useApp().getLoadingFinisher();
       try {
-        const [{ counters }] = await useVk().addRequestToQueue<any, IGroup[]>({
-          method: "groups.getById",
-          params: {
-            group_id: group.id,
-            fields: "counters",
-          },
-        });
-        group.counters = counters;
+        group.counters = await this.getGroupCounters(group);
         return group;
       } finally {
         loadingFinisher();
       }
+    },
+    clearCachedGroupIfExpired(group: IGroup) {
+      const cache = this.cachedGroupsData[group.id];
+      if (!cache) {
+        return;
+      }
+
+      let days = Math.floor(
+        (+new Date() - +new Date(cache.date)) / (1000 * 60 * 60 * 24)
+      );
+      if (days > 3) {
+        delete this.cachedGroupsData[group.id];
+      }
+    },
+    getCachedGroup(group: IGroup) {
+      this.clearCachedGroupIfExpired(group);
+      return this.cachedGroupsData[group.id]?.data;
+    },
+    async getGroupCounters(group: IGroup) {
+      const cachedGroup = this.getCachedGroup(group);
+      if (cachedGroup?.counters) {
+        return cachedGroup.counters;
+      }
+
+      const [{ counters }] = await useVk().addRequestToQueue<any, IGroup[]>({
+        method: "groups.getById",
+        params: {
+          group_id: group.id,
+          fields: "counters",
+        },
+      });
+      this.cachedGroupsData[group.id] = {
+        date: new Date().toISOString(),
+        data: { counters },
+      };
+      return counters;
     },
     async saveCurrentConfig() {
       await useVk().setVkStorageDict({
@@ -258,5 +292,9 @@ export const useGroups = defineStore("groups", {
         return dict;
       }, {} as Record<string, number[]>);
     },
+  },
+  persist: {
+    storage: localStorage,
+    paths: ["cachedGroupsData"],
   },
 });

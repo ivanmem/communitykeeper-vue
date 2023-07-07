@@ -14,11 +14,14 @@ import { router } from "@/router";
 import App from "@/App.vue";
 import VueVirtualScroller from "vue-virtual-scroller";
 import Vue3ContextMenu from "@imengyu/vue3-context-menu";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
 try {
   document.documentElement.style.setProperty("background", "black");
+  const pinia = createPinia();
+  pinia.use(piniaPluginPersistedstate);
   const app = createApp(App)
-    .use(createPinia())
+    .use(pinia)
     .use(router)
     .use(VueVirtualScroller)
     .use(Vue3ContextMenu);

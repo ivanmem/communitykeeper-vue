@@ -29,7 +29,8 @@ watch(
     if (
       !targetIsVisible.value ||
       isLoaded.value ||
-      !useGroups().config.showCounters
+      !useGroups().config.showCounters ||
+      props.group.counters
     ) {
       return;
     }
