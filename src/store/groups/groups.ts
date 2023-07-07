@@ -131,7 +131,7 @@ export const useGroups = defineStore("groups", {
       // Создаем новый Blob-объект (данные в двоичном виде)
       const blob = new Blob([exportJson], { type: "application/json" });
       // Сохраняем файл на компьютере пользователя
-      saveAs(blob, "catalog-export.json");
+      saveAs(blob, "xg-backup.json");
     },
     saveImport(data: IGroupsExport) {
       Object.keys(data.groupIdsDictByFolderName).forEach((folder) => {
