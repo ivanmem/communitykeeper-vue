@@ -14,6 +14,13 @@ export interface FiltersType {
   folder: string;
   search: string;
   access: OnlyAccessEnum;
+  sort?: GroupsSortEnum;
+}
+
+export enum GroupsSortEnum {
+  newest,
+  oldest,
+  random,
 }
 
 export enum OnlyAccessEnum {
@@ -48,7 +55,12 @@ export const useGroups = defineStore("groups", {
     return {
       localGroupsArray: [],
       groupsMap: new Map(),
-      filters: { folder: "", search: "", access: OnlyAccessEnum.none },
+      filters: {
+        folder: "",
+        search: "",
+        access: OnlyAccessEnum.none,
+        sort: GroupsSortEnum.newest,
+      },
       isInit: false,
       config: { autoSave: true, showCounters: true },
       spaceUsed: 0,
@@ -295,6 +307,6 @@ export const useGroups = defineStore("groups", {
   },
   persist: {
     storage: localStorage,
-    paths: ["cachedGroupsData"],
+    paths: ["cachedGroupsData", "filters"],
   },
 });

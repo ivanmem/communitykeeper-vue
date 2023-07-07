@@ -4,7 +4,7 @@ import { autoUpdate, useFloating } from "@floating-ui/vue";
 import { icons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AButton from "@/components/AButton/AButton.vue";
-import { OnlyAccessEnum } from "@/store/groups/groups";
+import { GroupsSortEnum, OnlyAccessEnum } from "@/store/groups/groups";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
@@ -34,6 +34,21 @@ const accessEnumOptions = [
   {
     label: "Недоступные",
     value: OnlyAccessEnum.noAccess,
+  },
+];
+
+const sortEnumOptions = [
+  {
+    label: "Сначала новые",
+    value: GroupsSortEnum.newest,
+  },
+  {
+    label: "Сначала старые",
+    value: GroupsSortEnum.oldest,
+  },
+  {
+    label: "Случайный порядок",
+    value: GroupsSortEnum.random,
   },
 ];
 </script>
@@ -75,7 +90,7 @@ const accessEnumOptions = [
       <div
         v-if="showFilters"
         ref="floating"
-        class="a-popup"
+        class="a-popup a-group-filters"
         :style="{
           position: strategy,
           top: `${y ?? 0}px`,
@@ -85,35 +100,59 @@ const accessEnumOptions = [
         @touchstart.stop
         @click.stop
       >
-        <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
-          Папка
-        </h5>
-        <select
-          v-model="store.filters.folder"
-          class="a-select"
-          style="min-width: 100%"
-        >
-          <option value="">-- Не выбрано --</option>
-          <option v-for="folder of store.folders" :key="folder" :value="folder">
-            {{ folder }}
-          </option>
-        </select>
-        <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
-          Показывать
-        </h5>
-        <select
-          v-model.number="store.filters.access"
-          class="a-select"
-          style="min-width: 100%"
-        >
-          <option
-            v-for="access of accessEnumOptions"
-            :key="access.value"
-            :value="access.value"
-          >
-            {{ access.label }}
-          </option>
-        </select>
+        <section>
+          <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
+            Папка
+          </h5>
+          <select v-model="store.filters.folder" class="a-select">
+            <option value="">-- Не выбрано --</option>
+            <option
+              v-for="folder of store.folders"
+              :key="folder"
+              :value="folder"
+            >
+              {{ folder }}
+            </option>
+          </select>
+        </section>
+        <section>
+          <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
+            Фильтрация
+          </h5>
+          <select v-model.number="store.filters.access" class="a-select">
+            <option
+              v-for="opt of accessEnumOptions"
+              :key="opt.value"
+              :value="opt.value"
+            >
+              {{ opt.label }}
+            </option>
+          </select>
+        </section>
+        <section>
+          <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
+            Сортировка
+          </h5>
+          <select v-model.number="store.filters.sort" class="a-select">
+            <option
+              v-for="opt of sortEnumOptions"
+              :key="opt.value"
+              :value="opt.value"
+            >
+              {{ opt.label }}
+            </option>
+          </select>
+        </section>
+        <section style="flex-direction: row">
+          <AButton @click="showFilters = false">Закрыть</AButton>
+          <AButton
+            @click="
+              showFilters = false;
+              store.filters = { ...store.filters };
+            "
+            >Обновить
+          </AButton>
+        </section>
       </div>
     </div>
     <div
@@ -125,3 +164,27 @@ const accessEnumOptions = [
     </div>
   </div>
 </template>
+<style lang="scss">
+.a-group-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  section {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    gap: 10px;
+
+    select {
+      width: 145px;
+    }
+
+    h5 {
+      display: flex;
+      min-width: 90px;
+      height: min-content;
+    }
+  }
+}
+</style>

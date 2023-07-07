@@ -1,12 +1,19 @@
 import { IGroup } from "@/store/groups/types";
-import { FiltersType, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
+import {
+  FiltersType,
+  GroupsSortEnum,
+  OnlyAccessEnum,
+  useGroups,
+} from "@/store/groups/groups";
 import { getGroupState, GroupState } from "@/pages/AGroups/getGroupState";
 import bridge from "@vkontakte/vk-bridge";
+import shuffle from "lodash/shuffle";
 
 class GroupHelper {
   static getGroupAccess(g?: IGroup) {
     return (g?.is_closed && g.is_member) || !g?.is_closed;
   }
+
   static getFiltered(groups: IGroup[], filters?: FiltersType) {
     if (!filters) {
       return groups;
@@ -14,7 +21,7 @@ class GroupHelper {
 
     const groupsService = useGroups();
     const search = filters?.search.trim().toLowerCase();
-    return groups.filter((group) => {
+    let result = groups.filter((group) => {
       const localGroup = groupsService.getLocalGroupById(group.id);
       if (!localGroup) {
         return false;
@@ -46,6 +53,19 @@ class GroupHelper {
 
       return true;
     });
+
+    if (filters.sort !== undefined && filters.sort !== GroupsSortEnum.newest) {
+      switch (filters.sort) {
+        case GroupsSortEnum.oldest:
+          result = result.reverse();
+          break;
+        case GroupsSortEnum.random:
+          result = shuffle(result);
+          break;
+      }
+    }
+
+    return result;
   }
 
   static getState(group: IGroup): GroupState {
