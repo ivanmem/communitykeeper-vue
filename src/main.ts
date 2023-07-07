@@ -1,3 +1,4 @@
+import 'vuetify/styles'
 import "@/styles/icons.scss";
 import "@/styles/variables.scss";
 import "@/styles/inputs.scss";
@@ -15,7 +16,10 @@ import App from "@/App.vue";
 import VueVirtualScroller from "vue-virtual-scroller";
 import Vue3ContextMenu from "@imengyu/vue3-context-menu";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import { createVuetify } from 'vuetify'
 
+
+const vuetify = createVuetify();
 try {
   document.documentElement.style.setProperty("background", "black");
   const pinia = createPinia();
@@ -24,7 +28,8 @@ try {
     .use(pinia)
     .use(router)
     .use(VueVirtualScroller)
-    .use(Vue3ContextMenu);
+    .use(Vue3ContextMenu)
+    .use(vuetify);
   app.mount("#app");
 } catch (ex: any) {
   console.error("init app", ex);
