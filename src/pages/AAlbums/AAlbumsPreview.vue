@@ -9,8 +9,8 @@ import { openLink } from "@/helpers/openLink";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
 const props = defineProps<{ album: IAlbumItem }>();
-const originalSize = computed(() =>
-  PhotoHelper.getOriginalSize(props.album.sizes)
+const previewSize = computed(() =>
+  PhotoHelper.getPreviewSize(props.album.sizes)
 );
 
 const { width, height } = AlbumsPreviewSizes.value;
@@ -35,7 +35,7 @@ const onShowContextMenu = (e: MouseEvent) => {
     @click="router.push(`/albums/${props.album.owner_id}/${props.album.id}`)"
     @contextmenu.stop.prevent="onShowContextMenu"
   >
-    <img v-if="originalSize" :src="originalSize.url" alt="" />
+    <img v-if="previewSize" :src="previewSize.url" alt="" />
     <div class="photos_album_title_wrap">
       <div>
         {{ props.album.title }}
@@ -58,7 +58,6 @@ const onShowContextMenu = (e: MouseEvent) => {
   background-position: center 35%;
   background-color: black;
   cursor: pointer;
-  padding: 5px;
 
   img {
     width: 100%;
@@ -69,8 +68,8 @@ const onShowContextMenu = (e: MouseEvent) => {
 
 .photos_album_title_wrap {
   position: absolute;
-  bottom: 0 + 5px;
-  width: calc(100% - 5px);
+  bottom: 0;
+  width: 100%;
   padding: 35px 12px 9px;
   background: rgb(2, 0, 36);
   background: linear-gradient(

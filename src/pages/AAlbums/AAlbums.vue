@@ -71,7 +71,7 @@ const { Icon16Link } = icons;
   flex-grow: 1;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 5px;
   overflow-x: auto;
   justify-content: space-evenly;
   padding-block: 10px;

@@ -12,6 +12,9 @@ const props = defineProps<{ photo: IPhoto }>();
 const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes)
 );
+const previewSize = computed(() =>
+  PhotoHelper.getPreviewSize(props.photo.sizes)
+);
 
 const { width, height } = AlbumsPreviewSizes.value;
 
@@ -43,7 +46,7 @@ const onShowContextMenu = (e: MouseEvent) => {
 </script>
 <template>
   <div class="photos_row" @contextmenu.stop.prevent="onShowContextMenu">
-    <img v-if="originalSize" :src="originalSize.url" alt="" />
+    <img v-if="previewSize" :src="previewSize.url" alt="" />
     <div class="photos_row__title_wrap"></div>
   </div>
 </template>
@@ -53,7 +56,6 @@ const onShowContextMenu = (e: MouseEvent) => {
   min-width: v-bind("`${width}px`");
   height: v-bind("`${height}px`");
   min-height: v-bind("`${height}px`");
-  padding: 5px;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -72,8 +74,8 @@ const onShowContextMenu = (e: MouseEvent) => {
 
 .photos_row__title_wrap {
   position: absolute;
-  bottom: 0 + 5px;
-  width: calc(100% - 5px);
+  bottom: 0;
+  width: 100%;
   padding: 35px 12px 9px;
   color: white;
 

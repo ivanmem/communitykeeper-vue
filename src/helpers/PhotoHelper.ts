@@ -16,6 +16,22 @@ export class PhotoHelper {
     return originalSize;
   }
 
+  static getPreviewSize(sizes: IPhotoSize[] | undefined) {
+    if (!sizes?.length) {
+      return undefined;
+    }
+
+    let originalSize: IPhotoSize = sizes[0]!;
+    return (
+      sizes.find((size) => {
+        if (size.width * size.height > 450 * 450) {
+          originalSize = size;
+          return true;
+        }
+      }) ?? originalSize
+    );
+  }
+
   static getAlbumUrl(ownerId: number | string, albumId: number | string) {
     if (+albumId === -6) {
       albumId = 0;

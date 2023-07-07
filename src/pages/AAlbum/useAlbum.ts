@@ -11,6 +11,7 @@ import { useCountGridColumns } from "@/hooks/useCountGridColumns";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { toStr } from "@/helpers/toStr";
 import { useGroups } from "@/store/groups/groups";
+import { PhotoHelper } from "@/helpers/PhotoHelper";
 
 const countOneLoad = 100;
 
@@ -153,7 +154,23 @@ export function useAlbum(
     });
   };
 
+  const photoPrefetch = (photo: IPhoto | undefined) => {
+    if (!photo) {
+      return;
+    }
+
+    const img = new Image();
+    img.src = PhotoHelper.getOriginalSize(photo.sizes)?.url ?? "";
+  };
+
   const setCurrentPhotoIndex = (index: number | undefined) => {
+    if (index !== undefined) {
+      // кэшируем текущее фото и два следующих
+      photoPrefetch(photos.value[index]);
+      photoPrefetch(photos.value[index + 1]);
+      photoPrefetch(photos.value[index + 2]);
+    }
+
     return setCurrentPhotoId(
       index === undefined ? undefined : photos.value?.[index]?.id
     );

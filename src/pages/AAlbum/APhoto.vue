@@ -171,7 +171,7 @@ const onWheel = (e: WheelEvent) => {
     @keydown.stop.prevent.space="emit('photo:exit')"
     @keydown.stop.prevent.left="emit('photo:prev')"
     @keydown.stop.prevent.right="emit('photo:next')"
-    @wheel="onWheel"
+    @wheel.prevent.stop="onWheel"
     @click.middle="emit('photo:exit')"
   >
     <img
