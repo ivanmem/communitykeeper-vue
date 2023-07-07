@@ -7,7 +7,7 @@ import {
   reactive,
   ref,
   toValue,
-  watchEffect,
+  watch,
 } from "vue";
 
 /** @description Возвращает максимальное количество колонок у контейнеря*/
@@ -35,14 +35,18 @@ export function useCountGridColumns(
     }
     let { clientWidth } = el.value;
     clientWidth -= containerIndent;
-    if (clientWidth > 0) {
-      count.value = Math.floor(clientWidth / toValue(widthOneColumn));
-    } else {
-      count.value = 0;
+    if (clientWidth <= 0) {
+      return;
     }
+    const newValue = Math.floor(clientWidth / toValue(widthOneColumn));
+    if (newValue === count.value) {
+      return;
+    }
+
+    count.value = newValue;
   };
 
-  watchEffect(() => {
+  watch(el, () => {
     updateCount();
     const element = el.value;
     if (!element) {
