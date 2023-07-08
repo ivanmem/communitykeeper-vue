@@ -10,6 +10,7 @@ import { useVk } from "@/store/vk/vk";
 import Loading from "vue3-loading-overlay";
 import { onMounted, ref, watch } from "vue";
 import { switchFullscreen } from "@/helpers/switchFullscreen";
+import { VDefaultsProvider } from "vuetify/components";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -40,89 +41,102 @@ onMounted(() => {
     fullscreenElement.value = document.fullscreenElement;
   });
 });
+
+const vuetifyDefaults: VDefaultsProvider["defaults"] = {
+  VLabel: {},
+  VDialog: {
+    closeOnBack: true,
+    scrim: "black",
+  },
+  global: {
+    clearable: true,
+  },
+};
 </script>
 
 <template>
   <VThemeProvider :theme="darkColorScheme ? 'dark' : 'light'">
-    <div
-      :class="currentClasses"
-      :data-platform="appStore.platform"
-      :data-fullscreen="appStore.isFullScreen"
-      :data-dark="darkColorScheme"
-      tabindex="0"
-      class="overflow-block root"
-      @keydown="onKeyDown"
-    >
-      <Loading
-        :active="!groupsStore.isInit || appStore.isLoading"
-        is-full-page
-        background-color="#000"
-        color="#eee"
-        :opacity="0.3"
-        lock-scroll
-      />
-      <template v-if="groupsStore.isInit">
-        <div class="navigation-header">
-          <div id="caption" class="overflow-block navigation-caption">
-            {{ appStore.caption }}
+    <VDefaultsProvider :defaults="vuetifyDefaults">
+      <div
+        :class="currentClasses"
+        :data-dark="darkColorScheme"
+        :data-fullscreen="appStore.isFullScreen"
+        :data-platform="appStore.platform"
+        class="overflow-block root"
+        tabindex="0"
+        @keydown="onKeyDown"
+      >
+        <Loading
+          :active="!groupsStore.isInit || appStore.isLoading"
+          :opacity="0.3"
+          background-color="#000"
+          color="#eee"
+          is-full-page
+          lock-scroll
+        />
+        <template v-if="groupsStore.isInit">
+          <div class="navigation-header">
+            <div id="caption" class="overflow-block navigation-caption">
+              {{ appStore.caption }}
+            </div>
+            <AButton
+              v-if="route.path !== '/'"
+              style="height: 30px"
+              @click="copy('vk.com/app51658481#' + route.path)"
+            >
+              <Icon24Linked />
+            </AButton>
+            <AButton
+              v-if="useApp().isVkCom"
+              :icon="
+                fullscreenElement ? 'Icon24FullscreenExit' : 'Icon24Fullscreen'
+              "
+              style="height: 30px"
+              @click="switchFullscreen()"
+            />
           </div>
-          <AButton
-            v-if="route.path !== '/'"
-            style="height: 30px"
-            @click="copy('vk.com/app51658481#' + route.path)"
-          >
-            <Icon24Linked />
-          </AButton>
-          <AButton
-            v-if="useApp().isVkCom"
-            style="height: 30px"
-            @click="switchFullscreen()"
-            :icon="
-            fullscreenElement ? 'Icon24FullscreenExit' : 'Icon24Fullscreen'
-          "
-          />
-        </div>
-        <div class="overflow-block route-view">
-          <router-view v-slot="{ Component }">
-            <keep-alive :max="3" exclude="AAlbum">
-              <component :is="Component" />
-            </keep-alive>
-          </router-view>
-        </div>
-        <div class="navigation">
-          <div class="navigation-bottom-buttons">
-            <AButton
-              icon="Icon24ArticleBoxOutline"
-              to="/"
-              :hide-content="!appStore.isVkCom"
-            >
-              <span> Группы </span>
-            </AButton>
-            <AButton
-              icon="Icon24AddSquareOutline"
-              to="/add"
-              :hide-content="!appStore.isVkCom"
-            >
-              <span> Добавить </span>
-            </AButton>
-            <AButton
-              icon="Icon24GearOutline"
-              to="/settings"
-              :hide-content="!appStore.isVkCom"
-            >
-              <span> Настройки </span>
-            </AButton>
-            <AButton
-              icon="Icon24LightbulbStarOutline"
-              to="/about"
-              :hide-content="!appStore.isVkCom"
-            >
-              <span> О приложении </span>
-            </AButton>
+          <div class="overflow-block route-view">
+            <router-view v-slot="{ Component }">
+              <keep-alive :max="3" exclude="AAlbum">
+                <component :is="Component" />
+              </keep-alive>
+            </router-view>
           </div>
-        </div>
-      </template>
-    </div>
+          <div class="navigation">
+            <div class="navigation-bottom-buttons">
+              <AButton
+                :hide-content="!appStore.isVkCom"
+                :icon="icons.Icon24ArticleBoxOutline"
+                to="/"
+              >
+                <span> Группы </span>
+              </AButton>
+              <AButton
+                :hide-content="!appStore.isVkCom"
+                :icon="icons.Icon24AddSquareOutline"
+                to="/add"
+              >
+                <span> Добавить </span>
+              </AButton>
+              <AButton
+                :hide-content="!appStore.isVkCom"
+                :icon="icons.Icon24GearOutline"
+                to="/settings"
+              >
+                <span> Настройки </span>
+              </AButton>
+              <AButton
+                :hide-content="!appStore.isVkCom"
+                :icon="icons.Icon24LightbulbStarOutline"
+                to="/about"
+              >
+                <span> О приложении </span>
+              </AButton>
+            </div>
+          </div>
+        </template>
+      </div>
+    </VDefaultsProvider>
   </VThemeProvider>
 </template>
 

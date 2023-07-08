@@ -143,6 +143,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
 
 <style lang="scss">
 .a-button__root {
+  user-select: none;
 }
 
 .a-group-link {

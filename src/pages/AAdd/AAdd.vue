@@ -7,8 +7,6 @@ import { icons } from "@/common/consts";
 import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
 import { IGroup } from "@/store/groups/types";
 import AGroupLink from "/src/pages/AGroups/AGroupLink.vue";
-import AButton from "@/components/AButton/AButton.vue";
-import APageContainer from "@/components/APageContainer/APageContainer.vue";
 
 useAppCaption("Добавить группу");
 const store = useGroups();
@@ -71,61 +69,54 @@ const { Icon16FolderOutline, Icon16Link } = icons;
 </script>
 
 <template>
-  <APageContainer class="a-add">
-    <div class="overflow-block" style="gap: 10px">
-      <label class="form-label">
-        <span><Icon16Link /> Ссылка</span>
-        <input v-model="newGroup.linkOrId" @blur="onLinkOrIdChanged" />
-      </label>
-      <label class="form-label">
-        <span><Icon16FolderOutline /> Папка</span>
-        <input v-model="newGroup.folder" list="folder-list" />
-        <datalist id="folder-list">
-          <option v-for="folder in useGroups().folders" :key="folder">
-            {{ folder }}
-          </option>
-        </datalist>
-      </label>
-      <AButton
-        :disabled="!currentGroup"
-        class="a-button__left-content form-button"
-        icon="Icon24AddSquareOutline"
-        @click="addGroup"
-      >
-        <span>{{ isGroupAdded ? "Заменить" : "Добавить" }}</span>
-      </AButton>
-      <AButton
-        class="a-button__left-content form-button"
-        data-color="red"
-        icon="Icon24DeleteOutline"
-        @click="removeGroup"
+  <VCard class="overflow-block a-add">
+    <VCardItem>
+      <VTextField
+        :model-value="newGroup.linkOrId.length ? newGroup.linkOrId : undefined"
+        :prepend-icon="icons.Icon16Link"
+        label="Ссылка"
+        @blur="onLinkOrIdChanged"
+        @update:model-value="newGroup.linkOrId = $event ?? ''"
+      />
+      <VCombobox
+        :items="useGroups().folders"
+        :model-value="newGroup.folder.length ? newGroup.folder : undefined"
+        :prepend-icon="icons.Icon16FolderOutline"
+        label="Папка"
+        @update:model-value="newGroup.folder = $event ?? ''"
+      />
+      <VRow no-gutters style="gap: 10px">
+        <VBtn
+          :disabled="!currentGroup"
+          :prepend-icon="icons.Icon24AddSquareOutline"
+          @click="addGroup"
+        >
+          {{ isGroupAdded ? "Заменить" : "Добавить" }}
+        </VBtn>
+        <VBtn
+          :disabled="!isGroupAdded"
+          :prepend-icon="icons.Icon24DeleteOutline"
+          data-color="red"
+          @click="removeGroup"
+        >
+          <span>Удалить</span>
+        </VBtn>
+      </VRow>
+    </VCardItem>
+    <VCardItem>
+      <VCardText
         v-if="isGroupAdded"
+        class="a-rectangle-block"
+        data-color="green"
       >
-        <span>Удалить</span>
-      </AButton>
-      <div class="a-rectangle-block" data-color="green" v-if="isGroupAdded">
         Группа уже добавлена в папку "{{
           store.localGroups[newGroup.id].folder
         }}".
-      </div>
+      </VCardText>
+    </VCardItem>
+    <VCardItem>
       <AGroupLink v-if="currentGroup" :group="currentGroup" :index="-1" />
-    </div>
-  </APageContainer>
+    </VCardItem>
+  </VCard>
 </template>
-<style lang="scss">
-.a-add {
-  .a-button {
-  }
-
-  .form-label {
-    span {
-      display: inline-block;
-      width: 130px;
-    }
-  }
-
-  .form-button {
-    width: 300px;
-  }
-}
-</style>
+<style lang="scss"></style>

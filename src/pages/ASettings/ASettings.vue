@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import APageContainer from "@/components/APageContainer/APageContainer.vue";
 import { useAppCaption } from "@/hooks/useAppCaption";
 import { useGroups } from "@/store/groups/groups";
 import AButton from "@/components/AButton/AButton.vue";
@@ -9,6 +8,7 @@ import { useVk } from "@/store/vk/vk";
 import { icons } from "@/common/consts";
 
 useAppCaption("Настройки");
+const groupsStore = useGroups();
 
 const onImportFileChange = (event: any) => {
   if (!event.target?.files?.length) {
@@ -24,10 +24,10 @@ const onImportFileChange = (event: any) => {
       return;
     }
 
-    const oldGroupsCount = useGroups().localGroupsArray.length;
-    useGroups().saveImport(data);
-    await useGroups().autoSaveCurrentLocalGroups();
-    const newGroupsCount = useGroups().localGroupsArray.length;
+    const oldGroupsCount = groupsStore.localGroupsArray.length;
+    groupsStore.saveImport(data);
+    await groupsStore.autoSaveCurrentLocalGroups();
+    const newGroupsCount = groupsStore.localGroupsArray.length;
     window.alert(
       `Импорт завершён данные. Новых групп: ${newGroupsCount - oldGroupsCount}.`
     );
@@ -41,8 +41,8 @@ const onImportFileChange = (event: any) => {
 const onRemoveAllGroups = async () => {
   const isConfirm = confirm("Вы уверены, что хотите удалить все группы?");
   if (isConfirm) {
-    useGroups().removeLocalGroups();
-    await useGroups().autoSaveCurrentLocalGroups();
+    groupsStore.removeLocalGroups();
+    await groupsStore.autoSaveCurrentLocalGroups();
   }
 };
 
@@ -50,85 +50,109 @@ const { Icon24CloudOutline } = icons;
 </script>
 
 <template>
-  <APageContainer class="a-settings">
-    <div class="a-button__left-content-block">
-      <div>
-        <label class="a-checkbox-label">
-          <input type="checkbox" v-model="useGroups().config.autoSave" />
-          <span> Автосохранение групп </span>
-        </label>
-        <span class="a-mini-text">
-          Запросы ограничены до тысячи в час; За этот сеанс вы уже сделали:
-          {{ useVk().vkWebAppStorageSetCount }}. Если вы попытаетесь сохраниться
-          при лимите - все группы будут утеряны!
-          <br />
-          Этот параметр не влияет на сохранение настроек. Они будут сохраняться
-          автоматически в любом случае.
-        </span>
-      </div>
-      <AButton
+  <VCard class="overflow-block a-settings">
+    <VCardItem>
+      <VSwitch
+        v-model="groupsStore.config.autoSave"
+        density="compact"
+        hide-details
+        label="Автосохранение групп"
+      />
+      <span class="a-mini-text">
+        Запросы ограничены до тысячи в час; За этот сеанс вы уже сделали:
+        {{ useVk().vkWebAppStorageSetCount }}. Если вы попытаетесь сохраниться
+        при лимите - все группы будут утеряны!
+        <br />
+        Этот параметр не влияет на сохранение настроек. Они будут сохраняться
+        автоматически в любом случае.
+      </span>
+    </VCardItem>
+    <VCardItem>
+      <VBtn
+        :disabled="groupsStore.config.autoSave"
+        :style="{ opacity: groupsStore.config.autoSave ? 0 : 1 }"
         class="a-button__left-content"
-        style="font-weight: bold"
-        :style="{ opacity: useGroups().config.autoSave ? 0 : 1 }"
-        icon="Icon24MemoryCard"
-        @click="useGroups().saveCurrentLocalGroups()"
+        variant="tonal"
+        :prepend-icon="icons.Icon24MemoryCard"
+        @click="groupsStore.saveCurrentLocalGroups()"
       >
         <span>Сохранить группы</span>
-      </AButton>
-      <div>
-        <label class="a-checkbox-label">
-          <input type="checkbox" v-model="useGroups().config.showCounters" />
-          <span> Отображать счётчики количества фото\видео и так далее</span>
-        </label>
-        <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
-      </div>
-      <label class="a-checkbox-label">
-        <input type="checkbox" v-model="useGroups().config.eruda" />
-        <span> Включить дебаг кнопку (eruda)</span>
-      </label>
-    </div>
-    <div class="a-button__left-content-block">
-      <AButton class="a-button__left-content" icon="Icon24UploadOutline">
-        <label>
-          Добавить группы (импорт)
-          <input
-            style="display: none"
-            type="file"
-            accept=".json"
-            @change="onImportFileChange"
-          />
-        </label>
-      </AButton>
-      <AButton
-        class="a-button__left-content"
-        icon="Icon24DownloadOutline"
-        @click="useGroups().downloadExport()"
-      >
-        Скачать все группы (экспорт)
-      </AButton>
-      <AButton
-        :disabled="useGroups().localGroupsArray.length === 0"
-        class="a-button__left-content"
-        icon="Icon24DeleteOutline"
-        @click="onRemoveAllGroups"
-      >
-        Удалить все группы
-      </AButton>
-      <div
-        class="a-rectangle-block"
-        :data-color="useGroups().spaceUsed >= 80 ? 'red' : 'green'"
-      >
-        <span class="a-horizontal-center" style="gap: 5px">
-          <Icon24CloudOutline />
-          Занято места: {{ useGroups().spaceUsed }}%
-        </span>
-      </div>
-    </div>
-  </APageContainer>
+      </VBtn>
+    </VCardItem>
+    <VCardItem>
+      <VSwitch
+        v-model="groupsStore.config.showCounters"
+        density="compact"
+        hide-details
+        label="Отображать счётчики количества фото\видео и так далее"
+      />
+      <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
+    </VCardItem>
+    <VCardItem>
+      <VSwitch
+        v-model="groupsStore.config.eruda"
+        density="compact"
+        hide-details
+        label=" Включить дебаг кнопку (eruda)"
+      />
+      <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
+    </VCardItem>
+    <VCardItem></VCardItem>
+    <VCardItem style="max-width: 400px">
+      <VRow no-gutters style="gap: 10px">
+        <VBtn
+          :prepend-icon="icons.Icon24CloudOutline"
+          :color="
+            groupsStore.spaceUsed >= 80
+              ? 'deep-orange-darken-4'
+              : 'green-darken-3'
+          "
+          style="pointer-events: none"
+          class="a-button__left-content"
+        >
+          Занято места: {{ groupsStore.spaceUsed }}%
+        </VBtn>
+        <VBtn
+          :prepend-icon="icons.Icon24UploadOutline"
+          class="a-button__left-content"
+          color="green-darken-4"
+        >
+          <label>
+            Добавить группы (импорт)
+            <input
+              accept=".json"
+              style="display: none"
+              type="file"
+              @change="onImportFileChange"
+            />
+          </label>
+        </VBtn>
+        <VBtn
+          :prepend-icon="icons.Icon24DownloadOutline"
+          class="a-button__left-content"
+          color="light-blue-darken-4"
+          @click="groupsStore.downloadExport()"
+        >
+          Скачать все группы (экспорт)
+        </VBtn>
+        <VBtn
+          :disabled="groupsStore.localGroupsArray.length === 0"
+          :prepend-icon="icons.Icon24DeleteOutline"
+          class="a-button__left-content"
+          color="deep-orange"
+          @click="onRemoveAllGroups"
+        >
+          Удалить все группы
+        </VBtn>
+      </VRow>
+    </VCardItem>
+  </VCard>
 </template>
 
 <style lang="scss">
 .a-settings {
-  gap: 10px;
+  .v-switch .v-label {
+    opacity: 1;
+  }
 }
 </style>

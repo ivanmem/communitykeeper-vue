@@ -15,7 +15,10 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    vuetify({ autoImport: true }),
+    vuetify({
+      autoImport: true,
+      styles: { configFile: "./src/styles/vite.scss" },
+    }),
     svgLoader({
       svgo: false,
     }),

@@ -5,6 +5,7 @@ import { icons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AButton from "@/components/AButton/AButton.vue";
 import { GroupsSortEnum, OnlyAccessEnum } from "@/store/groups/groups";
+import { useApp } from "@/store/app/app";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
@@ -24,30 +25,30 @@ const { Icon24Filter, Icon16CrossCircleSmall } = icons;
 
 const accessEnumOptions = [
   {
-    label: "Все",
+    title: "Все",
     value: OnlyAccessEnum.none,
   },
   {
-    label: "Доступные",
+    title: "Доступные",
     value: OnlyAccessEnum.access,
   },
   {
-    label: "Недоступные",
+    title: "Недоступные",
     value: OnlyAccessEnum.noAccess,
   },
 ];
 
 const sortEnumOptions = [
   {
-    label: "Сначала новые",
+    title: "Сначала новые",
     value: GroupsSortEnum.newest,
   },
   {
-    label: "Сначала старые",
+    title: "Сначала старые",
     value: GroupsSortEnum.oldest,
   },
   {
-    label: "Случайный порядок",
+    title: "Случайный порядок",
     value: GroupsSortEnum.random,
   },
 ];
@@ -57,12 +58,15 @@ const sortEnumOptions = [
   <div class="TopSearch">
     <VTabs
       v-model="store.filters.folder"
-      style="margin-bottom: 10px"
+      style="margin-bottom: 5px"
       center-active
-      show-arrows
+      density="compact"
+      grow
+      mandatory
+      :show-arrows="useApp().isVkCom"
     >
       <VTab value="">Все</VTab>
-      <VTab :key="folder" v-for="folder of store.folders" :value="folder">
+      <VTab v-for="folder of store.folders" :key="folder" :value="folder">
         {{ folder }}
       </VTab>
     </VTabs>
@@ -98,58 +102,33 @@ const sortEnumOptions = [
           <Icon24Filter />
         </AButton>
       </div>
-      <div
-        v-if="showFilters"
-        ref="floating"
-        class="a-popup a-group-filters"
-        :style="{
-          position: strategy,
-          top: `${y ?? 0}px`,
-          left: `${x ?? 0}px`,
-        }"
-        @mousedown.stop
-        @touchstart.stop
-        @click.stop
-      >
-        <section>
-          <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
-            Фильтрация
-          </h5>
-          <select v-model.number="store.filters.access" class="a-select">
-            <option
-              v-for="opt of accessEnumOptions"
-              :key="opt.value"
-              :value="opt.value"
-            >
-              {{ opt.label }}
-            </option>
-          </select>
-        </section>
-        <section>
-          <h5 class="vkuiFormItem__top vkuiSubhead vkuiSubhead--sizeY-none">
-            Сортировка
-          </h5>
-          <select v-model.number="store.filters.sort" class="a-select">
-            <option
-              v-for="opt of sortEnumOptions"
-              :key="opt.value"
-              :value="opt.value"
-            >
-              {{ opt.label }}
-            </option>
-          </select>
-        </section>
-        <section style="flex-direction: row">
-          <AButton @click="showFilters = false">Закрыть</AButton>
-          <AButton
-            @click="
-              showFilters = false;
-              store.filters = { ...store.filters };
-            "
-            >Обновить
-          </AButton>
-        </section>
-      </div>
+      <VDialog v-model="showFilters">
+        <VCard class="overflow-block a-group-filters">
+          <VCardTitle>Фильтры</VCardTitle>
+          <VCardItem>
+            <VSelect
+              v-model.number="store.filters.access"
+              :items="accessEnumOptions"
+              label="Фильтрация"
+            />
+            <VSelect
+              v-model.number="store.filters.sort"
+              :items="sortEnumOptions"
+              label="Сортировка"
+            />
+          </VCardItem>
+          <VCardActions>
+            <VBtn @click="showFilters = false">Закрыть</VBtn>
+            <VBtn
+              @click="
+                showFilters = false;
+                store.filters = { ...store.filters };
+              "
+              >Обновить
+            </VBtn>
+          </VCardActions>
+        </VCard>
+      </VDialog>
     </div>
     <div
       aria-hidden="true"
