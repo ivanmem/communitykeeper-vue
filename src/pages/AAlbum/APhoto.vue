@@ -191,7 +191,7 @@ const win = window;
 <template>
   <div
     ref="photoDiv"
-    class="a-not-dragable-select a-photo"
+    class="a-not-dragable-and-not-select a-photo"
     tabindex="1"
     v-on="swipes"
     @click="onClick"
@@ -211,9 +211,9 @@ const win = window;
     />
     <div
       v-if="showInfo && index !== undefined"
-      class="a-not-dragable-select a-photo__info"
+      class="a-not-dragable-and-not-select a-photo__info"
     >
-      <div class="a-not-dragable-select a-photo__info-counter">
+      <div class="a-not-dragable-and-not-select a-photo__info-counter">
         {{ index + 1 }} из {{ count ?? "?" }}
       </div>
     </div>

@@ -46,16 +46,16 @@ const onShowContextMenu = (e: MouseEvent) => {
 </script>
 <template>
   <div
-    class="a-not-dragable-select photos_row"
+    class="a-not-dragable-and-not-select photos_row"
     @contextmenu.stop.prevent="onShowContextMenu"
   >
     <img
       v-if="previewSize"
       :src="previewSize.url"
       alt=""
-      class="a-not-dragable-select"
+      class="a-not-dragable-and-not-select"
     />
-    <div class="a-not-dragable-select photos_row__title_wrap"></div>
+    <div class="a-not-dragable-and-not-select photos_row__title_wrap"></div>
   </div>
 </template>
 <style lang="scss">
