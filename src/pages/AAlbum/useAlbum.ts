@@ -130,6 +130,7 @@ export function useAlbum(
             offset,
             count,
             rev: useGroups().config.reverseOrder ? 1 : 0,
+            extended: 1,
           },
         });
         if (items.length === 0) {

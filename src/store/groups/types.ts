@@ -1,4 +1,8 @@
 import { GroupState } from "@/pages/AGroups/getGroupState";
+import {
+  IObjectSharedProps,
+  IPhotoSize,
+} from "vkontakte-api/dist/types/objects/shared";
 
 export interface ILocalGroup {
   id: number;
@@ -40,4 +44,28 @@ export interface IGroupCounters {
 export interface IGroupsExport {
   /** @description ключ - название папки; значение - список ID групп. */
   groupIdsDictByFolderName: Record<string, number[]>;
+}
+
+export interface IPhoto extends IObjectSharedProps {
+  album_id: number;
+  user_id: number;
+  text: string;
+  date: number;
+  sizes: IPhotoSize[];
+  post_id?: number;
+  width: number;
+  height: number;
+  likes?: {
+    count: number;
+    user_likes: number;
+  };
+  comments?: {
+    count: number;
+  };
+  reposts?: {
+    count: number;
+  };
+  tags?: {
+    count: number;
+  };
 }

@@ -91,3 +91,12 @@
 .line24 {
   line-height: 24px;
 }
+
+.a-not-dragable-select {
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}

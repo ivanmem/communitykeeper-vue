@@ -43,6 +43,7 @@ import Icon16ChainOutline from "@vkontakte/icons/src/svg/16/chain_outline_16.svg
 import Icon16CrossCircleSmall from "@vkontakte/icons/src/svg/16/cross_circle_small_16.svg?component";
 import Icon16DownloadOutline from "@vkontakte/icons/src/svg/16/download_outline_16.svg?component";
 import Icon16Share from "@vkontakte/icons/src/svg/16/share_16.svg?component";
+import Icon16ArticleOutline from "@vkontakte/icons/src/svg/16/articles_outline_16.svg?component";
 
 import Icon12ErrorCircle from "@vkontakte/icons/src/svg/12/error_circle_12.svg?component";
 import Icon12Tag from "@vkontakte/icons/src/svg/12/tag_12.svg?component";
@@ -100,6 +101,7 @@ export const icons = {
   Icon16CrossCircleSmall,
   Icon16DownloadOutline,
   Icon16Share,
+  Icon16ArticleOutline,
 
   Icon12ErrorCircle,
   Icon12Tag,

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { IPhoto } from "vkontakte-api";
-import { computed, h, ref, watch } from "vue";
+import { computed, h, nextTick, ref, watch } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { openLink } from "@/helpers/openLink";
@@ -10,6 +9,9 @@ import { MenuItem } from "@imengyu/vue3-context-menu";
 import { useGroups } from "@/store/groups/groups";
 import bridge from "@vkontakte/vk-bridge";
 import { useApp } from "@/store/app/app";
+import { IPhoto } from "@/store/groups/types";
+import useClipboard from "vue-clipboard3/dist/esm/index";
+import { useSwipes } from "@/hooks/useSwipes";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -50,13 +52,20 @@ const onClick = (event: MouseEvent) => {
 };
 const photoDiv = ref<HTMLDivElement>();
 const showInfo = ref(true);
+const showMoreInfo = ref(false);
 
 watch(
-  [photoDiv, () => useApp().isFullScreen],
+  [photoDiv, () => useApp().isFullScreen, showMoreInfo],
   () => {
-    if (photoDiv.value) {
-      photoDiv.value.focus();
+    if (showMoreInfo.value) {
+      return;
     }
+
+    nextTick(() => {
+      if (photoDiv.value) {
+        photoDiv.value.focus();
+      }
+    });
   },
   { immediate: true }
 );
@@ -144,6 +153,13 @@ const onShowContextMenu = (e: MouseEvent) => {
     },
   });
   items.push({
+    label: "Информация",
+    icon: h(icons.Icon16ArticleOutline),
+    onClick: () => {
+      showMoreInfo.value = true;
+    },
+  });
+  items.push({
     label: "Выйти из просмотра фото",
     icon: h(icons.Icon16DoorEnterArrowRightOutline),
     onClick: () => {
@@ -153,8 +169,6 @@ const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, items, () => photoDiv.value?.focus());
 };
 
-const devicePixelRatio = window.devicePixelRatio;
-
 const onWheel = (e: WheelEvent) => {
   const delta = e.deltaY || e.detail;
   if (delta > 0) {
@@ -163,12 +177,23 @@ const onWheel = (e: WheelEvent) => {
     emit("photo:prev");
   }
 };
+
+const swipes = useSwipes({
+  onLeft: () => emit("photo:prev"),
+  onRight: () => emit("photo:next"),
+  onDown: () => emit("photo:exit"),
+  onUp: () => (showMoreInfo.value = true),
+});
+
+const { toClipboard } = useClipboard({ appendToBody: true });
+const win = window;
 </script>
 <template>
   <div
     ref="photoDiv"
+    class="a-not-dragable-select a-photo"
     tabindex="1"
-    class="a-photo"
+    v-on="swipes"
     @click="onClick"
     @contextmenu.prevent.stop="onShowContextMenu"
     @keydown.stop.prevent.esc="emit('photo:exit')"
@@ -180,15 +205,59 @@ const onWheel = (e: WheelEvent) => {
   >
     <img
       v-if="originalSize"
-      :src="originalSize.url"
       :data-original-size-photo="groupsStore.config.originalSizePhoto"
+      :src="originalSize.url"
+      alt=""
     />
-    <div v-if="showInfo && index !== undefined" class="a-photo__info">
-      <div class="a-photo__info-counter">
+    <div
+      v-if="showInfo && index !== undefined"
+      class="a-not-dragable-select a-photo__info"
+    >
+      <div class="a-not-dragable-select a-photo__info-counter">
         {{ index + 1 }} из {{ count ?? "?" }}
       </div>
     </div>
   </div>
+  <VDialog v-model="showMoreInfo">
+    <VCard>
+      <VCardTitle>Расширенная информация</VCardTitle>
+      <VCardText>
+        <div v-if="photo.text">
+          Описание: <b>{{ photo.text }}</b>
+        </div>
+        <div v-if="originalSize">
+          Разрешение: <b>{{ originalSize.width }}x{{ originalSize.height }}</b>
+        </div>
+        <div v-if="photo.likes">
+          Лайков: <b>{{ photo.likes.count }}</b>
+        </div>
+        <div v-if="photo.comments">
+          Комментариев: <b>{{ photo.comments.count }}</b>
+        </div>
+        <div v-if="photo.reposts">
+          Репостов: <b>{{ photo.reposts.count }}</b>
+        </div>
+        <div v-if="photo.tags">
+          Тэгов: <b>{{ photo.tags.count }}</b>
+        </div>
+      </VCardText>
+
+      <VExpansionPanels>
+        <VExpansionPanel title="JSON">
+          <template #text>
+            <VCode
+              @click="
+                toClipboard(JSON.stringify(photo), $event.target);
+                win.alert('JSON скопирован в буфер.');
+              "
+            >
+              {{ photo }}
+            </VCode>
+          </template>
+        </VExpansionPanel>
+      </VExpansionPanels>
+    </VCard>
+  </VDialog>
 </template>
 <style lang="scss">
 .a-photo {
@@ -204,7 +273,6 @@ const onWheel = (e: WheelEvent) => {
   vertical-align: top;
   margin: 2px 3px 3px 2px;
   background-color: black;
-
   cursor: pointer;
 
   img {
@@ -217,7 +285,6 @@ const onWheel = (e: WheelEvent) => {
     height: auto;
     max-width: 100%;
     max-height: 100%;
-    user-select: none;
     pointer-events: none;
 
     &[data-original-size-photo="true"] {
@@ -236,12 +303,11 @@ const onWheel = (e: WheelEvent) => {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  pointer-events: none;
-  user-select: none;
   border-radius: 10px;
   padding: 3px;
   color: white;
   z-index: 2;
+  pointer-events: none;
 }
 
 .a-photo__info-counter {
