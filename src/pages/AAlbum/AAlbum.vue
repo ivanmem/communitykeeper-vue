@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAppCaption } from "@/hooks/useAppCaption";
+import { useAppCaption } from "@/composables/useAppCaption";
 import AAlbumPreview from "@/pages/AAlbum/AAlbumPreview.vue";
 import APhoto from "@/pages/AAlbum/APhoto.vue";
 import { icons } from "@/common/consts";

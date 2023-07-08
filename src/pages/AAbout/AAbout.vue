@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAppCaption } from "@/hooks/useAppCaption";
+import { useAppCaption } from "@/composables/useAppCaption";
 import { icons } from "@/common/consts";
 
 useAppCaption("О приложении");

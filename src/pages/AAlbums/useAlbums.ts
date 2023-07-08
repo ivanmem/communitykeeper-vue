@@ -5,8 +5,8 @@ import { useGroups } from "@/store/groups/groups";
 import { AlbumsPreviewSizes, getStaticAlbums } from "@/pages/AAlbums/consts";
 import { useVk } from "@/store/vk/vk";
 import { RecycleScroller } from "vue-virtual-scroller";
-import { useCountGridColumns } from "@/hooks/useCountGridColumns";
-import { useScreenSpinner } from "@/hooks/useScreenSpinner";
+import { useCountGridColumns } from "@/composables/useCountGridColumns";
+import { useScreenSpinner } from "@/composables/useScreenSpinner";
 
 const countOneLoad = 100;
 

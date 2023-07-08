@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAppCaption } from "@/hooks/useAppCaption";
+import { useAppCaption } from "@/composables/useAppCaption";
 import { useGroups } from "@/store/groups/groups";
 import AButton from "@/components/AButton/AButton.vue";
 import { isGroupsExport } from "@/store/groups/isGroupsExport";

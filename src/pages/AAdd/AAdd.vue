@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAppCaption } from "@/hooks/useAppCaption";
+import { useAppCaption } from "@/composables/useAppCaption";
 import { computed, reactive, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { toNumber } from "lodash";

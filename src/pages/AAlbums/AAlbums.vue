@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAppCaption } from "@/hooks/useAppCaption";
+import { useAppCaption } from "@/composables/useAppCaption";
 import AAlbumsPreview from "@/pages/AAlbums/AAlbumsPreview.vue";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";

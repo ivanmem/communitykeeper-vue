@@ -11,7 +11,7 @@ import bridge from "@vkontakte/vk-bridge";
 import { useApp } from "@/store/app/app";
 import { IPhoto } from "@/store/groups/types";
 import useClipboard from "vue-clipboard3/dist/esm/index";
-import { useSwipes } from "@/hooks/useSwipes";
+import { useSwipes } from "@/composables/useSwipes";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
