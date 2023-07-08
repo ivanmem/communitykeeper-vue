@@ -22,6 +22,7 @@ onActivated(async () => {
     @mousedown="showFilters = false"
     @wheel="showFilters = false"
     @touchstart="showFilters = false"
+    v-on="groupSearch.swipes"
   >
     <AGroupsSearch :group-search="groupSearch" />
     <DynamicScroller
