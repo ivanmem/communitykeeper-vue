@@ -1,5 +1,6 @@
 import { IPhoto, IPhotoSize } from "vkontakte-api";
 import last from "lodash/last";
+import isNumeric from "@/helpers/isNumeric";
 
 export class PhotoHelper {
   static getOriginalSize(sizes: IPhotoSize[] | undefined) {
@@ -42,6 +43,18 @@ export class PhotoHelper {
     }
 
     return `vk.com/album${ownerId}_${albumId}`;
+  }
+
+  static getOwnerUrl(ownerId: number | string) {
+    if (!isNumeric(ownerId)) {
+      return `vk.com/${ownerId}`;
+    }
+
+    if (+ownerId < 0) {
+      return `vk.com/public${-ownerId}`;
+    }
+
+    return `vk.com/id${ownerId}`;
   }
 
   static getPhotoUrl(ownerId: number | string, photoId: number) {

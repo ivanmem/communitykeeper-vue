@@ -11,6 +11,8 @@ import { toNumberOrUndefined } from "@/helpers/toNumberOrUndefined";
 import AButton from "@/components/AButton/AButton.vue";
 import { useGroups } from "@/store/groups/groups";
 import { openLink } from "@/helpers/openLink";
+import { computed } from "vue";
+import { router } from "@/router";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -39,26 +41,37 @@ const {
 useAppCaption("Галерея: Альбом");
 const { Icon16Link } = icons;
 const groupsStore = useGroups();
+const albumUrl = computed(() =>
+  PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)
+);
+const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
+const group = computed(() => groupsStore.getGroupById(-props.ownerId));
 </script>
 
 <template>
   <div class="a-album vkuiGroup__inner Group__inner">
     <template v-if="isInit">
+      <VBreadcrumbs style="padding-left: 0" density="compact">
+        <VBreadcrumbsItem style="padding-left: 0" to="/">
+          Группы
+        </VBreadcrumbsItem>
+        <VIcon size="small" icon="mdi-chevron-right" />
+        <VBreadcrumbsItem
+          :href="`https://${ownerUrl}`"
+          :title="group?.name ?? 'Источник'"
+          @click.prevent="router.replace(`/albums/${ownerId}`)"
+        />
+        <VIcon size="small" icon="mdi-chevron-right" />
+        <VBreadcrumbsItem
+          style="opacity: 0.7"
+          :href="`https://${albumUrl}`"
+          :title="album?.title ?? 'Альбом'"
+          @click.prevent="openLink(`//${albumUrl}`)"
+        />
+      </VBreadcrumbs>
       <div
         style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
       >
-        <AButton
-          v-if="album"
-          icon="Icon16Link"
-          class="opacity"
-          @click="
-            openLink(
-              `//${PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)}`
-            )
-          "
-        >
-          {{ album.title }}
-        </AButton>
         <AButton
           style="margin-left: auto"
           class="opacity"
@@ -135,5 +148,6 @@ const groupsStore = useGroups();
   overflow-x: auto;
   justify-content: space-evenly;
   padding-block: 10px;
+  flex-basis: 0;
 }
 </style>

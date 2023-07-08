@@ -8,7 +8,7 @@ import { darkColorScheme, icons } from "@/common/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import Loading from "vue3-loading-overlay";
-import { onMounted, ref, watch } from "vue";
+import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { switchFullscreen } from "@/helpers/switchFullscreen";
 import { VDefaultsProvider } from "vuetify/components";
 
@@ -18,10 +18,7 @@ const vkStore = useVk();
 const appStore = useApp();
 const { currentClasses } = useColorScheme();
 const { Icon24Linked } = icons;
-(async () => {
-  await vkStore.init();
-  await groupsStore.init();
-})();
+
 const fullscreenElement = ref(document.fullscreenElement);
 
 watch(fullscreenElement, () => {
@@ -35,6 +32,17 @@ const onKeyDown = (e: KeyboardEvent) => {
     switchFullscreen();
   }
 };
+
+const init = ref(false);
+
+onBeforeMount(async () => {
+  try {
+    await vkStore.init();
+    await groupsStore.init();
+  } finally {
+    init.value = true;
+  }
+});
 
 onMounted(() => {
   document.documentElement.addEventListener("fullscreenchange", () => {
@@ -96,7 +104,7 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
             />
           </div>
           <div class="overflow-block route-view">
-            <router-view v-slot="{ Component }">
+            <router-view v-if="init" v-slot="{ Component }">
               <keep-alive :max="3" exclude="AAlbum">
                 <component :is="Component" />
               </keep-alive>
