@@ -27,6 +27,8 @@ const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes)
 );
 
+const groupsStore = useGroups();
+
 const onClick = (event: MouseEvent) => {
   const clickX = event.offsetX;
 
@@ -127,18 +129,18 @@ const onShowContextMenu = (e: MouseEvent) => {
   });
 
   items.push({
-    label: useGroups().config.originalSizePhoto
+    label: groupsStore.config.originalSizePhoto
       ? `Расширить на весь экран`
       : "Отображать в оригинальном размере",
     icon: h(
-      useGroups().config.originalSizePhoto
+      groupsStore.config.originalSizePhoto
         ? icons.Icon24Fullscreen
         : icons.Icon24FullscreenExit,
       { width: "16px", height: "16px" }
     ),
     onClick: () => {
-      useGroups().config.originalSizePhoto =
-        !useGroups().config.originalSizePhoto;
+      groupsStore.config.originalSizePhoto =
+        !groupsStore.config.originalSizePhoto;
     },
   });
   items.push({
@@ -150,6 +152,8 @@ const onShowContextMenu = (e: MouseEvent) => {
   });
   showContextMenu(e, items, () => photoDiv.value?.focus());
 };
+
+const devicePixelRatio = window.devicePixelRatio;
 
 const onWheel = (e: WheelEvent) => {
   const delta = e.deltaY || e.detail;
@@ -175,9 +179,9 @@ const onWheel = (e: WheelEvent) => {
     @click.middle="emit('photo:exit')"
   >
     <img
-      :style="{ flexGrow: useGroups().config.originalSizePhoto ? 0 : 1 }"
       v-if="originalSize"
       :src="originalSize.url"
+      :data-original-size-photo="groupsStore.config.originalSizePhoto"
     />
     <div v-if="showInfo && index !== undefined" class="a-photo__info">
       <div class="a-photo__info-counter">
@@ -204,53 +208,21 @@ const onWheel = (e: WheelEvent) => {
   cursor: pointer;
 
   img {
-    flex-grow: 1;
-    user-select: none;
-    pointer-events: none;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    width: auto;
-    height: auto;
     display: flex;
     justify-content: center;
     align-content: center;
+    flex-grow: 1;
+    object-fit: contain;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    user-select: none;
+    pointer-events: none;
 
-    @media (resolution: 1.25dppx) {
-      zoom: 0.875;
-    }
-    @media (resolution: 1.5dppx) {
-      zoom: 0.75;
-    }
-    @media (resolution: 1.75dppx) {
-      zoom: 0.625;
-    }
-    @media (resolution: 2dppx) {
-      zoom: 0.5;
-    }
-    @media (resolution: 2.25dppx) {
-      zoom: 0.444444;
-    }
-    @media (resolution: 2.5dppx) {
-      zoom: 0.4;
-    }
-    @media (resolution: 2.75dppx) {
-      zoom: 0.363636;
-    }
-    @media (resolution: 3dppx) {
-      zoom: 0.333333;
-    }
-    @media (resolution: 3.5dppx) {
-      zoom: 0.285714;
-    }
-    @media (resolution: 4dppx) {
-      zoom: 0.25;
-    }
-    @media (resolution: 4.5dppx) {
-      zoom: 0.222222;
-    }
-    @media (resolution: 5dppx) {
-      zoom: 0.2;
+    &[data-original-size-photo="true"] {
+      zoom: calc(1 / var(--device-pixel-ratio));
+      flex-grow: 0;
     }
   }
 }

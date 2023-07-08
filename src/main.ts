@@ -26,6 +26,7 @@ const vuetify = createVuetify({
 });
 try {
   document.documentElement.style.setProperty("background", "black");
+  document.documentElement.style.setProperty("--device-pixel-ratio", `${window.devicePixelRatio}`);
   const pinia = createPinia();
   pinia.use(piniaPluginPersistedstate);
   const app = createApp(App)
