@@ -51,53 +51,6 @@ const { Icon24CloudOutline } = icons;
 
 <template>
   <VCard class="overflow-block a-settings">
-    <VCardItem>
-      <VSwitch
-        v-model="groupsStore.config.autoSave"
-        density="compact"
-        hide-details
-        label="Автосохранение групп"
-      />
-      <span class="a-mini-text">
-        Запросы ограничены до тысячи в час; За этот сеанс вы уже сделали:
-        {{ useVk().vkWebAppStorageSetCount }}. Если вы попытаетесь сохраниться
-        при лимите - все группы будут утеряны!
-        <br />
-        Этот параметр не влияет на сохранение настроек. Они будут сохраняться
-        автоматически в любом случае.
-      </span>
-    </VCardItem>
-    <VCardItem>
-      <VBtn
-        :disabled="groupsStore.config.autoSave"
-        :style="{ opacity: groupsStore.config.autoSave ? 0 : 1 }"
-        class="a-button__left-content"
-        variant="tonal"
-        :prepend-icon="icons.Icon24MemoryCard"
-        @click="groupsStore.saveCurrentLocalGroups()"
-      >
-        <span>Сохранить группы</span>
-      </VBtn>
-    </VCardItem>
-    <VCardItem>
-      <VSwitch
-        v-model="groupsStore.config.showCounters"
-        density="compact"
-        hide-details
-        label="Отображать счётчики количества фото\видео и так далее"
-      />
-      <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
-    </VCardItem>
-    <VCardItem>
-      <VSwitch
-        v-model="groupsStore.config.eruda"
-        density="compact"
-        hide-details
-        label=" Включить дебаг кнопку (eruda)"
-      />
-      <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
-    </VCardItem>
-    <VCardItem></VCardItem>
     <VCardItem style="max-width: 400px">
       <VRow no-gutters style="gap: 10px">
         <VBtn
@@ -145,6 +98,49 @@ const { Icon24CloudOutline } = icons;
           Удалить все группы
         </VBtn>
       </VRow>
+    </VCardItem>
+    <VCardItem>
+      <VSwitch
+        v-model="groupsStore.config.autoSave"
+        density="compact"
+        hide-details
+        label="Автосохранение групп"
+      />
+      <span class="a-mini-text">
+        Запросы ограничены до тысячи в час; За этот сеанс вы уже сделали:
+        {{ useVk().vkWebAppStorageSetCount }}. Если вы попытаетесь сохраниться
+        при лимите - все группы будут утеряны!
+        <br />
+        Этот параметр не влияет на сохранение настроек. Они будут сохраняться
+        автоматически в любом случае.
+      </span>
+    </VCardItem>
+    <VCardItem v-if="!groupsStore.config.autoSave">
+      <VBtn
+        class="a-button__left-content"
+        variant="tonal"
+        :prepend-icon="icons.Icon24MemoryCard"
+        @click="groupsStore.saveCurrentLocalGroups()"
+      >
+        Сохранить группы
+      </VBtn>
+    </VCardItem>
+    <VCardItem>
+      <VSwitch
+        v-model="groupsStore.config.showCounters"
+        density="compact"
+        hide-details
+        label="Отображать счётчики количества фото\видео и так далее"
+      />
+      <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
+    </VCardItem>
+    <VCardItem>
+      <VSwitch
+        v-model="groupsStore.config.eruda"
+        density="compact"
+        hide-details
+        label=" Включить дебаг кнопку (eruda)"
+      />
     </VCardItem>
   </VCard>
 </template>

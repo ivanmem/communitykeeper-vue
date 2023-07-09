@@ -1,16 +1,22 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, h } from "vue";
 import { autoUpdate, useFloating } from "@floating-ui/vue";
 import { icons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AButton from "@/components/AButton/AButton.vue";
-import { GroupsSortEnum, OnlyAccessEnum } from "@/store/groups/groups";
+import {
+  GroupsSortEnum,
+  OnlyAccessEnum,
+  useGroups,
+} from "@/store/groups/groups";
 import { useApp } from "@/store/app/app";
+import { showContextMenu } from "@/helpers/showContextMenu";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
 }>();
 
+const groupsStore = useGroups();
 const { showFilters, store } = props.groupSearch;
 const reference = ref(null);
 const floating = ref(null);
@@ -52,6 +58,32 @@ const sortEnumOptions = [
     value: GroupsSortEnum.random,
   },
 ];
+
+const onTabContextMenu = (e: MouseEvent, folder: string) => {
+  if (!folder?.length) {
+    return;
+  }
+
+  showContextMenu(e, [
+    {
+      label: "Удалить",
+      icon: h(icons.Icon16DeleteOutline),
+      onClick: () => {
+        const folderGroupsIds = groupsStore.groupIdsDictByFolderName[folder];
+        if (
+          !confirm(
+            `Вы уверены что хотите удалить папку "${folder}" с ${folderGroupsIds.length} группами?`
+          )
+        ) {
+          return;
+        }
+
+        groupsStore.removeLocalGroup(new Set(folderGroupsIds));
+        useGroups().autoSaveCurrentLocalGroups();
+      },
+    },
+  ]);
+};
 </script>
 
 <template>
@@ -66,7 +98,12 @@ const sortEnumOptions = [
       :show-arrows="useApp().isVkCom"
     >
       <VTab value="">Все</VTab>
-      <VTab v-for="folder of store.folders" :key="folder" :value="folder">
+      <VTab
+        v-for="folder of store.folders"
+        :key="folder"
+        :value="folder"
+        @contextmenu.prevent="onTabContextMenu($event, folder)"
+      >
         {{ folder }}
       </VTab>
     </VTabs>

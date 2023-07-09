@@ -175,8 +175,10 @@ export const useGroups = defineStore("groups", {
 
       this.localGroupsArray.push(localGroup);
     },
-    removeLocalGroup(id: number) {
-      this.localGroupsArray = this.localGroupsArray.filter((x) => x.id !== id);
+    removeLocalGroup(id: number | Set<number>) {
+      this.localGroupsArray = this.localGroupsArray.filter((x) =>
+        typeof id === "number" ? x.id !== id : !id.has(x.id)
+      );
     },
     removeLocalGroups() {
       this.localGroupsArray = [];

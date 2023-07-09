@@ -51,7 +51,7 @@ useAppCaption("О приложении");
         <VBtn
           :prepend-icon="icons.Icon16Link"
           class="a-button__left-content"
-          href="https://github.com/xeleoss/local-vk-groups-catalog-vue/issues/new"
+          href="https://github.com/xeleoss/local-vk-groups-catalog-vue/issues"
           target="_blank"
           color="light-blue-darken-4"
         >
