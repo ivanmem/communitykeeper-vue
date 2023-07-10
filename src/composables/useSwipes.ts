@@ -4,6 +4,10 @@ export interface UsableSwipesOptions {
   onUp?: (e: TouchEvent) => any;
   onDown?: (e: TouchEvent) => any;
   minDiffTrigger?: number;
+  /** @description Если палец будет двигаться в любую из сторон на указанный процент, то свайп будет проигнорирован.
+   * Максимальное значение - 50%, тогда срабатывать будет в любом случае.
+   * При 0% срабатывать будет только под полным прямым углом.*/
+  precisionDirection?: number;
 }
 
 /** @description Функция позволяет установить обработчики на свайпы в определённые стороны */
@@ -18,7 +22,7 @@ export function useSwipes(opts: UsableSwipesOptions) {
   }
 
   function touchmove(evt: TouchEvent) {
-    if (!xDown || !yDown) {
+    if (!xDown || !yDown || evt.touches.length > 1) {
       return;
     }
 
@@ -30,7 +34,15 @@ export function useSwipes(opts: UsableSwipesOptions) {
     xDown = null;
     yDown = null;
 
-    const minDiffTrigger = opts.minDiffTrigger ?? 10 / window.devicePixelRatio;
+    const minDiffTrigger = opts.minDiffTrigger ?? 20 / window.devicePixelRatio;
+    const precisionDirection = opts.precisionDirection ?? 35;
+    const allDiff = Math.abs(xDiff) + Math.abs(yDiff);
+    const minDiff = Math.min(Math.abs(xDiff), Math.abs(yDiff));
+    const currentPrecisionDirection = minDiff / (allDiff / 100);
+    if (currentPrecisionDirection > precisionDirection) {
+      return;
+    }
+
     if (Math.abs(xDiff) > Math.abs(yDiff)) {
       if (Math.abs(xDiff) < minDiffTrigger) {
         return;
