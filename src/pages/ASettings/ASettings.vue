@@ -6,6 +6,8 @@ import { isGroupsExport } from "@/store/groups/isGroupsExport";
 import { useApp } from "@/store/app/app";
 import { useVk } from "@/store/vk/vk";
 import { icons } from "@/common/consts";
+import { ref } from "vue";
+import ExportBtn from "@/pages/ASettings/ExportBtn.vue";
 
 useAppCaption("Настройки");
 const groupsStore = useGroups();
@@ -45,8 +47,6 @@ const onRemoveAllGroups = async () => {
     await groupsStore.autoSaveCurrentLocalGroups();
   }
 };
-
-const { Icon24CloudOutline } = icons;
 </script>
 
 <template>
@@ -80,14 +80,7 @@ const { Icon24CloudOutline } = icons;
             />
           </label>
         </VBtn>
-        <VBtn
-          :prepend-icon="icons.Icon24DownloadOutline"
-          class="a-button__left-content"
-          color="light-blue-darken-4"
-          @click="groupsStore.downloadExport()"
-        >
-          Скачать все группы (экспорт)
-        </VBtn>
+        <ExportBtn />
         <VBtn
           :disabled="groupsStore.localGroupsArray.length === 0"
           :prepend-icon="icons.Icon24DeleteOutline"
