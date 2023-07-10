@@ -47,7 +47,6 @@ export function useGroupSearch() {
     },
   });
   return {
-    store,
     groupsOrder,
     showFilters,
     swipes,

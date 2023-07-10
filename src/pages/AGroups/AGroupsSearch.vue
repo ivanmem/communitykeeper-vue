@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, h } from "vue";
+import { ref } from "vue";
 import { autoUpdate, useFloating } from "@floating-ui/vue";
 import { icons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
@@ -9,15 +9,15 @@ import {
   OnlyAccessEnum,
   useGroups,
 } from "@/store/groups/groups";
-import { useApp } from "@/store/app/app";
-import { showContextMenu } from "@/helpers/showContextMenu";
+import AGroupsTabs from "@/pages/AGroups/AGroupsTabs.vue";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
 }>();
 
+const { showFilters } = props.groupSearch;
 const groupsStore = useGroups();
-const { showFilters, store } = props.groupSearch;
+
 const reference = ref(null);
 const floating = ref(null);
 const { x, y, strategy } = useFloating(reference, floating, {
@@ -58,59 +58,15 @@ const sortEnumOptions = [
     value: GroupsSortEnum.random,
   },
 ];
-
-const onTabContextMenu = (e: MouseEvent, folder: string) => {
-  if (!folder?.length) {
-    return;
-  }
-
-  showContextMenu(e, [
-    {
-      label: "Удалить",
-      icon: h(icons.Icon16DeleteOutline),
-      onClick: () => {
-        const folderGroupsIds = groupsStore.groupIdsDictByFolderName[folder];
-        if (
-          !confirm(
-            `Вы уверены что хотите удалить папку "${folder}" с ${folderGroupsIds.length} группами?`
-          )
-        ) {
-          return;
-        }
-
-        groupsStore.removeLocalGroup(new Set(folderGroupsIds));
-        useGroups().autoSaveCurrentLocalGroups();
-      },
-    },
-  ]);
-};
 </script>
 
 <template>
   <div class="TopSearch">
-    <VTabs
-      v-model="store.filters.folder"
-      style="margin-bottom: 5px"
-      center-active
-      density="compact"
-      grow
-      mandatory
-      :show-arrows="useApp().isVkCom"
-    >
-      <VTab value="">Все</VTab>
-      <VTab
-        v-for="folder of store.folders"
-        :key="folder"
-        :value="folder"
-        @contextmenu.prevent="onTabContextMenu($event, folder)"
-      >
-        {{ folder }}
-      </VTab>
-    </VTabs>
+    <AGroupsTabs />
     <div style="display: flex; gap: 5px; flex-grow: 1">
       <input
         ref="reference"
-        v-model="store.filters.search"
+        v-model="groupsStore.filters.search"
         class="TopSearch__input"
         placeholder="Поиск"
       />
@@ -124,10 +80,10 @@ const onTabContextMenu = (e: MouseEvent, folder: string) => {
         "
       >
         <AButton
-          :disabled="!store.filters.search.length"
+          :disabled="!groupsStore.filters.search.length"
           class="a-button__opacity"
           @mousedown.stop
-          @click.stop="store.filters.search = ''"
+          @click.stop="groupsStore.filters.search = ''"
         >
           <Icon16CrossCircleSmall />
         </AButton>
@@ -144,12 +100,12 @@ const onTabContextMenu = (e: MouseEvent, folder: string) => {
           <VCardTitle>Фильтры</VCardTitle>
           <VCardItem>
             <VSelect
-              v-model.number="store.filters.access"
+              v-model.number="groupsStore.filters.access"
               :items="accessEnumOptions"
               label="Фильтрация"
             />
             <VSelect
-              v-model.number="store.filters.sort"
+              v-model.number="groupsStore.filters.sort"
               :items="sortEnumOptions"
               label="Сортировка"
             />
@@ -159,7 +115,7 @@ const onTabContextMenu = (e: MouseEvent, folder: string) => {
             <VBtn
               @click="
                 showFilters = false;
-                store.filters = { ...store.filters };
+                groupsStore.filters = { ...groupsStore.filters };
               "
               >Обновить
             </VBtn>

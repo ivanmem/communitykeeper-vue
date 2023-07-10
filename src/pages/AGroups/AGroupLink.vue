@@ -82,14 +82,6 @@ const onOpenContextMenu = (e: MouseEvent) => {
       return router.push(`/albums/-${props.group.id}`);
     },
   });
-  items.push({
-    label: "Удалить",
-    icon: h(icons.Icon16DeleteOutline),
-    onClick: () => {
-      useGroups().removeLocalGroup(props.group.id);
-      useGroups().autoSaveCurrentLocalGroups();
-    },
-  });
   if (props.group.is_member) {
     items.push({
       label: "Выйти",
@@ -108,6 +100,15 @@ const onOpenContextMenu = (e: MouseEvent) => {
     });
   }
 
+  items.push({
+    label: "Удалить",
+    icon: h(icons.Icon16DeleteOutline, { style: { color: "red" } }),
+    onClick: () => {
+      useGroups().removeLocalGroup(props.group.id);
+      useGroups().autoSaveCurrentLocalGroups();
+    },
+  });
+
   showContextMenu(e, items);
 };
 </script>
@@ -115,15 +116,15 @@ const onOpenContextMenu = (e: MouseEvent) => {
 <template>
   <div
     ref="target"
-    class="a-button__root"
     :data-link="link"
+    class="a-button__root"
     @click.right.prevent.stop="onOpenContextMenu"
   >
     <AButton
       class="a-group-link a-button__block"
       @click="openLink(`//` + link)"
     >
-      <img class="a-group-link__avatar" :src="group.photo_200" alt="" />
+      <img :src="group.photo_200" alt="" class="a-group-link__avatar" />
       <div class="a-group-link__div">
         <span class="a-group-link__name">{{ group.name }}</span>
         <span class="a-group-link__help">
@@ -132,8 +133,8 @@ const onOpenContextMenu = (e: MouseEvent) => {
       </div>
 
       <AButton
-        icon="Icon16MoreVertical"
         class="a-group-link__context-menu"
+        icon="Icon16MoreVertical"
         @click.stop="onOpenContextMenu"
       ></AButton>
     </AButton>
