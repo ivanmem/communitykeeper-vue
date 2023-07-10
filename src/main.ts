@@ -18,30 +18,40 @@ import VueVirtualScroller from "vue-virtual-scroller";
 import Vue3ContextMenu from "@imengyu/vue3-context-menu";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import { createVuetify } from "vuetify";
-
-const vuetify = createVuetify({
-  icons: {
-    defaultSet: "mdi",
-  },
-});
-try {
-  document.documentElement.style.setProperty("background", "black");
-  document.documentElement.style.setProperty("--device-pixel-ratio", `${window.devicePixelRatio}`);
-  const pinia = createPinia();
-  pinia.use(piniaPluginPersistedstate);
-  const app = createApp(App)
-    .use(pinia)
-    .use(router)
-    .use(VueVirtualScroller)
-    .use(Vue3ContextMenu)
-    .use(vuetify);
-  app.mount("#app");
-} catch (ex: any) {
-  console.error("init app", ex);
-}
+import { isDev } from "@/common/consts";
 
 (async () => {
-  if (process.env.NODE_ENV === "development") {
+  const vuetify = createVuetify({
+    icons: {
+      defaultSet: "mdi",
+    },
+    components: isDev
+      ? (await import("vuetify/components")).default
+      : undefined,
+    directives: isDev
+      ? (await import("vuetify/directives")).default
+      : undefined,
+  });
+  try {
+    document.documentElement.style.setProperty("background", "black");
+    document.documentElement.style.setProperty(
+      "--device-pixel-ratio",
+      `${window.devicePixelRatio}`
+    );
+    const pinia = createPinia();
+    pinia.use(piniaPluginPersistedstate);
+    const app = createApp(App)
+      .use(pinia)
+      .use(router)
+      .use(VueVirtualScroller)
+      .use(Vue3ContextMenu)
+      .use(vuetify);
+    app.mount("#app");
+  } catch (ex: any) {
+    console.error("init app", ex);
+  }
+
+  if (isDev) {
     try {
       const devtools = (await import("@vue/devtools")).default;
       devtools.connect("http://localhost", 8098);

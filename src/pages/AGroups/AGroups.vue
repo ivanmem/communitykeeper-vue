@@ -5,14 +5,16 @@ import AGroupsSearch from "@/pages/AGroups/AGroupsSearch.vue";
 import AGroupLink from "@/pages/AGroups/AGroupLink.vue";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import { onActivated } from "vue";
+import { useGroups } from "@/store/groups/groups";
 
 useAppCaption("Группы");
 
 const groupSearch = useGroupSearch();
-const { store, groupsOrder, showFilters } = groupSearch;
+const { groupsOrder, showFilters } = groupSearch;
+const groupsStore = useGroups();
 
 onActivated(async () => {
-  await store.loadNotLoadGroups();
+  await groupsStore.loadNotLoadGroups();
 });
 </script>
 
