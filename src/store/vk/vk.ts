@@ -54,7 +54,13 @@ export const useVk = defineStore("vk", {
         });
 
         await bridge.send("VKWebAppInit", {});
-
+        await this.initVk();
+      } catch (ex) {
+        console.error("init vk store", ex);
+      }
+    },
+    async initVk() {
+      try {
         this.token = await bridge.send("VKWebAppGetAuthToken", {
           scope: "groups",
           app_id: 51658481,
@@ -67,7 +73,14 @@ export const useVk = defineStore("vk", {
           isBrowser: true,
         });
       } catch (ex) {
-        console.error("init vk store", ex);
+        console.warn(
+          "Ошибка при получении токена. Запущена повторная попытка.",
+          { ex }
+        );
+        window.alert(
+          "Приложение не может получить данные с групп без разрешения 'groups'. Предоставьте разрешение для продолжения работы."
+        );
+        await this.initVk();
       }
     },
     getChunkSplitter() {
