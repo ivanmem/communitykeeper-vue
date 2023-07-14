@@ -27,6 +27,8 @@ export enum OnlyAccessEnum {
   none,
   access,
   noAccess,
+  open,
+  close,
 }
 
 interface GroupsState {

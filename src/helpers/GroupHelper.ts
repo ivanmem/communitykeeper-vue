@@ -30,7 +30,9 @@ class GroupHelper {
       const isAccessGroup = GroupHelper.getGroupAccess(group);
       if (
         (filters.access === OnlyAccessEnum.access && !isAccessGroup) ||
-        (filters.access === OnlyAccessEnum.noAccess && isAccessGroup)
+        (filters.access === OnlyAccessEnum.noAccess && isAccessGroup) ||
+        (filters.access === OnlyAccessEnum.open && group.is_closed) ||
+        (filters.access === OnlyAccessEnum.close && !group.is_closed)
       ) {
         return false;
       }

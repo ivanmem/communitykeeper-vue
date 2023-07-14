@@ -42,6 +42,14 @@ const accessEnumOptions = [
     title: "Недоступные",
     value: OnlyAccessEnum.noAccess,
   },
+  {
+    title: "Открытые",
+    value: OnlyAccessEnum.open,
+  },
+  {
+    title: "Закрытые",
+    value: OnlyAccessEnum.close,
+  },
 ];
 
 const sortEnumOptions = [
