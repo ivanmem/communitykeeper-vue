@@ -131,9 +131,15 @@ const onShowContextMenu = (e: MouseEvent) => {
     label: "Найти оригинал",
     icon: h(icons.Icon16SearchStarsOutline),
     onClick: () => {
-      openLink(
-        `https://saucenao.com/search.php?url=${escape(originalSize.value!.url)}`
+      const isUseYandex = confirm(
+        "Подтвердите для поиска с помощью яндекса. Отмените для поиска с помощью saucenao."
       );
+      const url = escape(originalSize.value!.url);
+      if (isUseYandex) {
+        openLink(`https://yandex.com/images/search?rpt=imageview&url=${url}`);
+      } else {
+        openLink(`https://saucenao.com/search.php?url=${url}`);
+      }
     },
   });
 
