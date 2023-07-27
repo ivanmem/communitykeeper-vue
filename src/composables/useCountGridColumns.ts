@@ -1,35 +1,32 @@
 import {
-  ComponentPublicInstance,
   computed,
   MaybeRefOrGetter,
   onMounted,
   onUnmounted,
   reactive,
+  Ref,
   ref,
   toValue,
   watch,
 } from "vue";
+import { unrefElement, useElementSize } from "@vueuse/core";
+import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
-/** @description Возвращает максимальное количество колонок у контейнеря*/
+/** @description Возвращает максимальное количество колонок у контейнера и расширяет widthOneColumn, если остаётся свободное место */
 export function useCountGridColumns(
-  containerOrInstanceComponent: MaybeRefOrGetter<
-    HTMLElement | { $el: ComponentPublicInstance["$el"] } | undefined
-  >,
-  widthOneColumn: MaybeRefOrGetter<number>,
+  maybeElement: MaybeRefOrGetter,
+  widthOneColumn: Ref<number>,
+  initialWidthOneColumn: MaybeRefOrGetter<number>,
   containerIndent = 0
 ) {
-  const count = ref(0);
+  const gridItems = ref(0);
   const unsubs: (() => any)[] = reactive([]);
-  const el = computed<HTMLElement | undefined>(() => {
-    const elOrComponent = toValue(containerOrInstanceComponent);
-    if (!elOrComponent) {
-      return undefined;
-    }
-
-    return "$el" in elOrComponent ? elOrComponent.$el : elOrComponent;
+  const el = computed(() => {
+    return unrefElement(maybeElement) as HTMLElement | undefined;
   });
+  const { width: elWidth } = useElementSize(el);
 
-  const updateCount = async () => {
+  const updateCount = () => {
     if (!el.value) {
       return;
     }
@@ -39,12 +36,47 @@ export function useCountGridColumns(
       return;
     }
     const newValue = Math.floor(clientWidth / toValue(widthOneColumn));
-    if (newValue === count.value) {
+    if (newValue === gridItems.value) {
       return;
     }
 
-    count.value = newValue;
+    gridItems.value = newValue;
   };
+
+  // при каждом изменении ширины контейнера - сбрасываем размер столбца до первоначального значения
+  watch(
+    elWidth,
+    () => {
+      widthOneColumn.value = toValue(initialWidthOneColumn);
+    },
+    { immediate: true }
+  );
+
+  // при изменении ширины контейнера или изменении количества столбцов - добавляем к ширине столбца свободный размер, чтобы заполнить всю ширину контейнера
+  watch(
+    [elWidth, gridItems],
+    ([elWidth, gridItems]) => {
+      if (!el.value) {
+        return;
+      }
+
+      const freeWidth =
+        elWidth - gridItems * AlbumsPreviewSizes.width - containerIndent;
+      const fixWidthOnly = freeWidth / gridItems;
+      if (fixWidthOnly < 0) {
+        return;
+      }
+
+      const newWidthColumn = widthOneColumn.value + Math.floor(fixWidthOnly);
+      if (
+        Math.abs(fixWidthOnly) > 10 &&
+        newWidthColumn < toValue(initialWidthOneColumn) * 1.5
+      ) {
+        widthOneColumn.value = newWidthColumn;
+      }
+    },
+    { immediate: true, flush: "post" }
+  );
 
   watch(el, () => {
     updateCount();
@@ -77,5 +109,5 @@ export function useCountGridColumns(
     return () => clearInterval(interval);
   });
 
-  return count;
+  return gridItems;
 }

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { IPhoto } from "vkontakte-api";
-import { computed, h } from "vue";
+import { computed, h, toRefs } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { icons } from "@/common/consts";
@@ -16,7 +16,7 @@ const previewSize = computed(() =>
   PhotoHelper.getPreviewSize(props.photo.sizes)
 );
 
-const { width, height } = AlbumsPreviewSizes.value;
+const { width, height } = toRefs(AlbumsPreviewSizes);
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [

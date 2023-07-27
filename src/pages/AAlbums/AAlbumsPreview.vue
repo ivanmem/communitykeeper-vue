@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
-import { computed, h } from "vue";
+import { computed, h, toRefs } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { router } from "@/router";
 import { showContextMenu } from "@/helpers/showContextMenu";
@@ -13,7 +13,7 @@ const previewSize = computed(() =>
   PhotoHelper.getPreviewSize(props.album.sizes)
 );
 
-const { width, height } = AlbumsPreviewSizes.value;
+const { width, height } = toRefs(AlbumsPreviewSizes);
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [

@@ -1,8 +1,12 @@
-import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
+import { computed, MaybeRefOrGetter, ref, toRefs, toValue, watch } from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
-import { AlbumsPreviewSizes, getStaticAlbums } from "@/pages/AAlbums/consts";
+import {
+  AlbumsPreviewSizes,
+  AlbumsPreviewSizesInitial,
+  getStaticAlbums,
+} from "@/pages/AAlbums/consts";
 import { useVk } from "@/store/vk/vk";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { useCountGridColumns } from "@/composables/useCountGridColumns";
@@ -20,9 +24,12 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const group = ref<IGroup | undefined>();
   const staticAlbums = computed(() => getStaticAlbums(ownerId.value));
   const albumsRef = ref<InstanceType<typeof RecycleScroller>>();
+  const initialWidth = computed(() => AlbumsPreviewSizesInitial.value.width);
+  const { width: widthOneColumn } = toRefs(AlbumsPreviewSizes);
   const gridItems = useCountGridColumns(
     albumsRef,
-    () => AlbumsPreviewSizes.value.width
+    widthOneColumn,
+    initialWidth
   );
   const screenError = ref<any>();
 

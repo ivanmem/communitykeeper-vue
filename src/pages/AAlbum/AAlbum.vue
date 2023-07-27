@@ -51,21 +51,21 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
 <template>
   <div class="a-album vkuiGroup__inner Group__inner">
     <template v-if="isInit">
-      <VBreadcrumbs style="padding-left: 0" density="compact">
+      <VBreadcrumbs density="compact" style="padding-left: 0">
         <VBreadcrumbsItem style="padding-left: 0" to="/">
           Группы
         </VBreadcrumbsItem>
-        <VIcon size="small" icon="mdi-chevron-right" />
+        <VIcon icon="mdi-chevron-right" size="small" />
         <VBreadcrumbsItem
           :href="`https://${ownerUrl}`"
           :title="group?.name ?? 'Источник'"
           @click.prevent="router.replace(`/albums/${ownerId}`)"
         />
-        <VIcon size="small" icon="mdi-chevron-right" />
+        <VIcon icon="mdi-chevron-right" size="small" />
         <VBreadcrumbsItem
-          style="opacity: 0.7"
           :href="`https://${albumUrl}`"
           :title="album?.title ?? 'Альбом'"
+          style="opacity: 0.7"
           @click.prevent="openLink(`//${albumUrl}`)"
         />
       </VBreadcrumbs>
@@ -73,9 +73,9 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
         style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
       >
         <AButton
-          style="margin-left: auto"
           class="opacity"
           icon="Icon24SortOutline"
+          style="margin-left: auto"
           @click="
             groupsStore.config.reverseOrder = !groupsStore.config.reverseOrder
           "
@@ -91,34 +91,34 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
       </div>
       <RecycleScroller
         ref="albumRef"
-        class="a-album__items"
-        :items="photos"
-        :item-size="AlbumsPreviewSizes.height"
-        :total-size="photos.length"
-        :ready="!isLoadingPhotos"
-        :itemSecondarySize="AlbumsPreviewSizes.width"
+        v-slot="{ item, index }"
         :gridItems="gridItems"
-        :updateInterval="100"
+        :item-size="AlbumsPreviewSizes.height"
+        :itemSecondarySize="AlbumsPreviewSizes.width"
+        :items="photos"
+        :min-item-size="AlbumsPreviewSizes.height"
+        :ready="!isLoadingPhotos"
+        :total-size="photos.length"
+        class="a-album__items"
         emit-update
         key-field="id"
         @update="onScrollerUpdate"
-        v-slot="{ item, index }"
       >
         <AAlbumPreview
           :key="item.id"
-          :photo="item"
           :index="index"
+          :photo="item"
           @click="setCurrentPhotoIndex(index)"
         />
       </RecycleScroller>
       <APhoto
         v-if="currentPhoto"
-        :photo="currentPhoto"
         :count="
           toNumberOrUndefined(album?.size) ??
           (isLoadAllPhotos ? photos.length : `${photos.length}+`)
         "
         :index="currentPhotoIndex"
+        :photo="currentPhoto"
         @photo:prev="setCurrentPhotoIndex(currentPhotoIndex! - 1)"
         @photo:next="setCurrentPhotoIndex(currentPhotoIndex! + 1)"
         @photo:exit="setCurrentPhotoIndex(undefined)"

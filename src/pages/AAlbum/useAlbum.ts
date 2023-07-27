@@ -1,8 +1,20 @@
 import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { useVk } from "@/store/vk/vk";
 import { toString } from "lodash";
-import { AlbumsPreviewSizes, getStaticAlbums } from "@/pages/AAlbums/consts";
-import { computed, MaybeRefOrGetter, nextTick, ref, toValue, watch } from "vue";
+import {
+  AlbumsPreviewSizes,
+  AlbumsPreviewSizesInitial,
+  getStaticAlbums,
+} from "@/pages/AAlbums/consts";
+import {
+  computed,
+  MaybeRefOrGetter,
+  nextTick,
+  ref,
+  toRefs,
+  toValue,
+  watch,
+} from "vue";
 import { IPhoto } from "vkontakte-api";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useRoute, useRouter } from "vue-router";
@@ -27,10 +39,9 @@ export function useAlbum(
   const photos = ref<IPhoto[]>([]);
   const { currentPhoto, currentPhotoIndex } = useCurrentPhoto(photos, photoId);
   const albumRef = ref<InstanceType<typeof RecycleScroller>>();
-  const gridItems = useCountGridColumns(
-    albumRef,
-    () => AlbumsPreviewSizes.value.width
-  );
+  const { width: widthColumn } = toRefs(AlbumsPreviewSizes);
+  const initialWidth = computed(() => AlbumsPreviewSizesInitial.value.width);
+  const gridItems = useCountGridColumns(albumRef, widthColumn, initialWidth);
   const router = useRouter();
   const route = useRoute();
   const screenError = ref<any>();
