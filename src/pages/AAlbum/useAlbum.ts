@@ -25,7 +25,7 @@ import { useGroups } from "@/store/groups/groups";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useActiveElement } from "@vueuse/core";
 import { useElementDeviceSize } from "@/composables/useElementDeviceSize";
-import { sleep } from "@/helpers/sleep";
+import { getFirstRefChange } from "@/helpers/getFirstRefChange";
 
 const countOneLoad = 100;
 
@@ -205,9 +205,7 @@ export function useAlbum(
         onMoreLoad();
         await nextTick();
 
-        while (isLoadingPhotos.value) {
-          await sleep(50);
-        }
+        while (await getFirstRefChange(isLoadingPhotos)) {}
 
         await nextTick();
         showSwitchPhotoSpinner.value = false;
