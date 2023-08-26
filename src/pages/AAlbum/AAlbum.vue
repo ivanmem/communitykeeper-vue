@@ -27,6 +27,7 @@ const {
   setCurrentPhotoIndex,
   currentPhotoIndex,
   onScrollerUpdate,
+  onSwitchPhoto,
   isInit,
   screenError,
   albumRef,
@@ -36,13 +37,13 @@ const {
 } = useAlbum(
   () => props.ownerId,
   () => props.albumId,
-  () => props.photoId
+  () => props.photoId,
 );
 useAppCaption("Галерея: Альбом");
 const { Icon16Link } = icons;
 const groupsStore = useGroups();
 const albumUrl = computed(() =>
-  PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)
+  PhotoHelper.getAlbumUrl(props.ownerId, props.albumId),
 );
 const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 const group = computed(() => groupsStore.getGroupById(-props.ownerId));
@@ -119,8 +120,8 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
         "
         :index="currentPhotoIndex"
         :photo="currentPhoto"
-        @photo:prev="setCurrentPhotoIndex(currentPhotoIndex! - 1)"
-        @photo:next="setCurrentPhotoIndex(currentPhotoIndex! + 1)"
+        @photo:prev="onSwitchPhoto('prev')"
+        @photo:next="onSwitchPhoto('next')"
         @photo:exit="setCurrentPhotoIndex(undefined)"
       />
     </template>

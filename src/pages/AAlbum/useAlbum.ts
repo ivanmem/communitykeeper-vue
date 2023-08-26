@@ -17,39 +17,51 @@ import {
 } from "vue";
 import { IPhoto } from "vkontakte-api";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
-import { useRoute, useRouter } from "vue-router";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import { useCountGridColumns } from "@/composables/useCountGridColumns";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { toStr } from "@/helpers/toStr";
 import { useGroups } from "@/store/groups/groups";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
+import { useActiveElement } from "@vueuse/core";
+import { useElementDeviceSize } from "@/composables/useElementDeviceSize";
+import { sleep } from "@/helpers/sleep";
 
 const countOneLoad = 100;
 
 export function useAlbum(
   ownerIdGetter: MaybeRefOrGetter<number | string>,
   albumIdGetter: MaybeRefOrGetter<number | string>,
-  photoIdGetter: MaybeRefOrGetter<number | string | undefined>
+  photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
 ) {
   const ownerId = computed(() => toValue(ownerIdGetter));
   const albumId = computed(() => toValue(albumIdGetter));
   const photoId = computed(() => toValue(photoIdGetter));
   const album = ref<IAlbumItem | undefined>();
   const photos = ref<IPhoto[]>([]);
-  const { currentPhoto, currentPhotoIndex } = useCurrentPhoto(photos, photoId);
   const albumRef = ref<InstanceType<typeof RecycleScroller>>();
   const { width: widthColumn } = toRefs(AlbumsPreviewSizes);
   const initialWidth = computed(() => AlbumsPreviewSizesInitial.value.width);
   const gridItems = useCountGridColumns(albumRef, widthColumn, initialWidth);
-  const router = useRouter();
-  const route = useRoute();
+  const groupsStore = useGroups();
   const screenError = ref<any>();
   const isInit = ref(false);
   const isLoadingPhotos = ref(false);
   const isLoadAllPhotos = ref(false);
   const photosMaxItems = ref(0);
-  useScreenSpinner(() => !isInit.value);
+  const {
+    currentPhoto,
+    currentPhotoIndex,
+    getPhotoByIndex,
+    setCurrentPhotoIndex,
+    setCurrentPhotoId,
+  } = useCurrentPhoto(photos, photoId, isLoadingPhotos);
+  const activeEl = useActiveElement();
+  const activeElSize = useElementDeviceSize(activeEl, undefined, {
+    box: "border-box",
+  });
+  const showSwitchPhotoSpinner = ref(false);
+  useScreenSpinner(() => !isInit.value || showSwitchPhotoSpinner.value);
 
   const onClearPhotos = () => {
     photos.value.length = 0;
@@ -87,12 +99,12 @@ export function useAlbum(
           ).items;
     albums.push(...getStaticAlbums(ownerId.value));
     album.value = albums.find(
-      (x) => toString(x.id) === toString(albumId.value)
+      (x) => toString(x.id) === toString(albumId.value),
     );
   };
 
   const onLoad = () => {
-    nextTick(() => {
+    return nextTick(() => {
       photosMaxItems.value = countOneLoad; // это инициирует первую загрузку
     });
   };
@@ -107,7 +119,7 @@ export function useAlbum(
       await onUpdateAlbum();
       onLoad();
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   watch(
@@ -117,7 +129,7 @@ export function useAlbum(
       onClearError();
       onClearPhotos();
       onLoad();
-    }
+    },
   );
 
   watch(
@@ -157,35 +169,52 @@ export function useAlbum(
       isLoadingPhotos.value = false;
       albumRef.value?.updateVisibleItems(true);
     },
-    { immediate: true }
+    { immediate: true },
   );
 
-  const setCurrentPhotoId = async (photoId: number | string | undefined) => {
-    await router.replace({
-      params: { ...route.params, photoId: photoId ?? "" },
-    });
-  };
-
-  const photoPrefetch = (photo: IPhoto | undefined) => {
-    if (!photo) {
+  const onSwitchPhoto = async (mode: "prev" | "next") => {
+    if (isLoadingPhotos.value || !isInit.value) {
       return;
     }
 
-    const img = new Image();
-    img.src = PhotoHelper.getOriginalSize(photo.sizes)?.url ?? "";
-  };
-
-  const setCurrentPhotoIndex = (index: number | undefined) => {
-    if (index !== undefined) {
-      // кэшируем текущее фото и два следующих
-      photoPrefetch(photos.value[index]);
-      photoPrefetch(photos.value[index + 1]);
-      photoPrefetch(photos.value[index + 2]);
+    let currentIndex = currentPhotoIndex.value;
+    if (currentIndex === undefined) {
+      return;
     }
 
-    return setCurrentPhotoId(
-      index === undefined ? undefined : photos.value?.[index]?.id
-    );
+    const indexChangeValue = mode === "prev" ? -1 : 1;
+
+    const onChangeIndex = () =>
+      (currentIndex = currentIndex! + indexChangeValue);
+
+    onChangeIndex();
+    if (groupsStore.config.skipLowResolutionPhotos) {
+      while (
+        getPhotoByIndex(currentIndex) !== undefined &&
+        PhotoHelper.isPhotoLessSizeAndNotMaxSize(
+          getPhotoByIndex(currentIndex)!,
+          activeElSize,
+        )
+      ) {
+        onChangeIndex();
+        if (getPhotoByIndex(currentIndex) !== undefined) {
+          continue;
+        }
+
+        showSwitchPhotoSpinner.value = true;
+        onMoreLoad();
+        await nextTick();
+
+        while (isLoadingPhotos.value) {
+          await sleep(50);
+        }
+
+        await nextTick();
+        showSwitchPhotoSpinner.value = false;
+      }
+    }
+
+    return setCurrentPhotoIndex(currentIndex);
   };
 
   const onMoreLoad = () => {
@@ -201,7 +230,7 @@ export function useAlbum(
     startIndex: number,
     endIndex: number,
     visibleStartIndex: number,
-    visibleEndIndex: number
+    visibleEndIndex: number,
   ) => {
     if (endIndex + countOneLoad / 3 < photosMaxItems.value) {
       return;
@@ -221,7 +250,7 @@ export function useAlbum(
         }
       }
     },
-    { immediate: true, deep: true }
+    { immediate: true, deep: true },
   );
 
   return {
@@ -235,6 +264,7 @@ export function useAlbum(
     isLoadingPhotos,
     screenError,
     onScrollerUpdate,
+    onSwitchPhoto,
     albumRef,
     gridItems,
     isLoadAllPhotos,

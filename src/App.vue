@@ -228,22 +228,4 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
     white-space: nowrap;
   }
 }
-
-//.root[data-platform=android] {
-//  .navigation-bottom-buttons {
-//    //]:not[platform=vkcom] {
-//    justify-content: space-around;
-//    align-content: space-around;
-//  }
-//}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s linear;
-}
-
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
-}
 </style>

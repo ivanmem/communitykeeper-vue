@@ -50,6 +50,7 @@ export interface IGroupsConfig {
   eruda?: boolean;
   originalSizePhoto?: boolean;
   reverseOrder?: boolean;
+  skipLowResolutionPhotos?: boolean;
 }
 
 export const useGroups = defineStore("groups", {
@@ -85,14 +86,14 @@ export const useGroups = defineStore("groups", {
         () => {
           return this.saveCurrentConfig();
         },
-        { deep: true }
+        { deep: true },
       );
       watch(
         () => this.config.eruda,
         useApp().wrapLoading(() => {
           return setEruda(Boolean(this.config.eruda));
         }),
-        { immediate: this.config.eruda }
+        { immediate: this.config.eruda },
       );
       console.info("groups store init");
     },
@@ -171,7 +172,7 @@ export const useGroups = defineStore("groups", {
       // если группа уже существует - перезаписываем
       if (this.localGroupsArray.some((x) => x.id === localGroup.id)) {
         this.localGroupsArray = this.localGroupsArray.filter(
-          (x) => x.id !== localGroup.id
+          (x) => x.id !== localGroup.id,
         );
       }
 
@@ -179,7 +180,7 @@ export const useGroups = defineStore("groups", {
     },
     removeLocalGroup(id: number | Set<number>) {
       this.localGroupsArray = this.localGroupsArray.filter((x) =>
-        typeof id === "number" ? x.id !== id : !id.has(x.id)
+        typeof id === "number" ? x.id !== id : !id.has(x.id),
       );
     },
     removeLocalGroups() {
@@ -205,7 +206,7 @@ export const useGroups = defineStore("groups", {
       }
 
       let days = Math.floor(
-        (+new Date() - +new Date(cache.date)) / (1000 * 60 * 60 * 24)
+        (+new Date() - +new Date(cache.date)) / (1000 * 60 * 60 * 24),
       );
       if (days > 3) {
         delete this.cachedGroupsData[group.id];
@@ -261,11 +262,14 @@ export const useGroups = defineStore("groups", {
     async saveCurrentLocalGroups() {
       const loadingFinisher = useApp().getLoadingFinisher();
       try {
-        const allData = this.localGroupsArray.reduce((data, localGroup) => {
-          data[localGroup.folder] ??= [];
-          data[localGroup.folder].push(localGroup.id);
-          return data;
-        }, {} as Record<string, number[]>);
+        const allData = this.localGroupsArray.reduce(
+          (data, localGroup) => {
+            data[localGroup.folder] ??= [];
+            data[localGroup.folder].push(localGroup.id);
+            return data;
+          },
+          {} as Record<string, number[]>,
+        );
         const stringifyStr = JSON.stringify(allData);
         await useVk().setVkStorage("groups", stringifyStr);
       } finally {
@@ -294,7 +298,7 @@ export const useGroups = defineStore("groups", {
     },
     groups(): IGroup[] {
       return Array.from(this.groupsMap.values()).filter(
-        (x) => this.localGroups[x.id]
+        (x) => this.localGroups[x.id],
       );
     },
     groupsReverse(): IGroup[] {
@@ -304,11 +308,14 @@ export const useGroups = defineStore("groups", {
       return keyBy(this.localGroupsArray, (x) => x.id);
     },
     groupIdsDictByFolderName(): Record<string, number[]> {
-      return this.localGroupsArray.reduce((dict, value) => {
-        dict[value.folder] ??= [];
-        dict[value.folder].push(value.id);
-        return dict;
-      }, {} as Record<string, number[]>);
+      return this.localGroupsArray.reduce(
+        (dict, value) => {
+          dict[value.folder] ??= [];
+          dict[value.folder].push(value.id);
+          return dict;
+        },
+        {} as Record<string, number[]>,
+      );
     },
   },
   persist: {

@@ -26,7 +26,7 @@ const props = defineProps<{
 }>();
 
 const originalSize = computed(() =>
-  PhotoHelper.getOriginalSize(props.photo.sizes)
+  PhotoHelper.getOriginalSize(props.photo.sizes),
 );
 
 const groupsStore = useGroups();
@@ -67,7 +67,7 @@ watch(
       }
     });
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 let timeoutShowInfo: any = undefined;
@@ -81,8 +81,10 @@ watch(
       showInfo.value = false;
     }, 2000);
   },
-  { immediate: true }
+  { immediate: true },
 );
+
+const h16 = (icon: any) => h(icon, { width: "16px", height: "16px" });
 
 const onShowContextMenu = (e: MouseEvent) => {
   const items: MenuItem[] = [];
@@ -92,7 +94,7 @@ const onShowContextMenu = (e: MouseEvent) => {
     icon: h(icons.Icon16Link),
     onClick: () => {
       openLink(
-        `//${PhotoHelper.getPhotoUrl(props.photo.owner_id, props.photo.id)}`
+        `//${PhotoHelper.getPhotoUrl(props.photo.owner_id, props.photo.id)}`,
       );
     },
   });
@@ -122,7 +124,7 @@ const onShowContextMenu = (e: MouseEvent) => {
       if (originalSize.value) {
         saveAs(
           originalSize.value.url,
-          PhotoHelper.getPhotoFileName(props.photo)
+          PhotoHelper.getPhotoFileName(props.photo),
         );
       }
     },
@@ -132,7 +134,7 @@ const onShowContextMenu = (e: MouseEvent) => {
     icon: h(icons.Icon16SearchStarsOutline),
     onClick: () => {
       const isUseYandex = confirm(
-        "Подтвердите для поиска с помощью яндекса. Отмените для поиска с помощью saucenao."
+        "Подтвердите для поиска с помощью яндекса. Отмените для поиска с помощью saucenao.",
       );
       const url = escape(originalSize.value!.url);
       if (isUseYandex) {
@@ -147,11 +149,10 @@ const onShowContextMenu = (e: MouseEvent) => {
     label: groupsStore.config.originalSizePhoto
       ? `Расширить на весь экран`
       : "Отображать в оригинальном размере",
-    icon: h(
+    icon: h16(
       groupsStore.config.originalSizePhoto
         ? icons.Icon24Fullscreen
         : icons.Icon24FullscreenExit,
-      { width: "16px", height: "16px" }
     ),
     onClick: () => {
       groupsStore.config.originalSizePhoto =
@@ -163,6 +164,18 @@ const onShowContextMenu = (e: MouseEvent) => {
     icon: h(icons.Icon16ArticleOutline),
     onClick: () => {
       showMoreInfo.value = true;
+    },
+  });
+  items.push({
+    label: `${
+      groupsStore.config.skipLowResolutionPhotos
+        ? "Не пропускать"
+        : "Пропускать"
+    } фото с маленьким размером`,
+    icon: h16(icons.Icon24SkipToAction),
+    onClick: () => {
+      groupsStore.config.skipLowResolutionPhotos =
+        !groupsStore.config.skipLowResolutionPhotos;
     },
   });
   items.push({

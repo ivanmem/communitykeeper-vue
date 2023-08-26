@@ -1,13 +1,22 @@
 import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { IPhoto } from "vkontakte-api";
 import { toStr } from "@/helpers/toStr";
+import { PhotoHelper } from "@/helpers/PhotoHelper";
+import { useRoute, useRouter } from "vue-router";
 
 export function useCurrentPhoto(
   photosGetter: MaybeRefOrGetter<IPhoto[] | undefined>,
-  photoIdGetter: MaybeRefOrGetter<number | string | undefined>
+  photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
+  isLoadingPhotosGetter: MaybeRefOrGetter<boolean>,
 ) {
+  const router = useRouter();
+  const route = useRoute();
   const photos = computed(() => toValue(photosGetter));
   const photoId = computed(() => toValue(photoIdGetter));
+  const isLoadingPhotos = computed(() => toValue(isLoadingPhotosGetter));
+  // Кэшируем индекс предыдущего найденного фото для оптимизации при перелистывании
+  const currentPhotoIndex = ref<number | undefined>();
+  const currentPhoto = computed(() => getPhotoByIndex(currentPhotoIndex.value));
 
   const getPhotoByIndex = (index?: number) => {
     if (index === undefined) {
@@ -17,8 +26,41 @@ export function useCurrentPhoto(
     return photos.value?.[index];
   };
 
-  // Кэшируем индекс предыдущего найденного фото для оптимизации при перелистывании
-  const currentPhotoIndex = ref<number | undefined>();
+  const prefetchPhoto = (photo: IPhoto | undefined) => {
+    if (!photo) {
+      return;
+    }
+
+    const img = new Image();
+    img.src = PhotoHelper.getOriginalSize(photo.sizes)?.url ?? "";
+  };
+
+  const setCurrentPhotoId = async (photoId: number | string | undefined) => {
+    await router.replace({
+      params: { ...route.params, photoId: photoId ?? "" },
+    });
+  };
+
+  const setCurrentPhotoIndex = (index: number | undefined) => {
+    if (photos.value === undefined) {
+      return;
+    }
+
+    if (index !== undefined) {
+      // кэшируем текущее фото и два следующих
+      prefetchPhoto(photos.value[index]);
+      prefetchPhoto(photos.value[index + 1]);
+      prefetchPhoto(photos.value[index + 2]);
+    }
+
+    if (index === undefined) {
+      return setCurrentPhotoId(undefined);
+    }
+
+    const photo = photos.value[index];
+    return setCurrentPhotoId(photo?.id);
+  };
+
   const predictPhotoIndex = computed<number | undefined>(() => {
     if (currentPhotoIndex.value === undefined || !photoId.value) {
       return undefined;
@@ -42,20 +84,21 @@ export function useCurrentPhoto(
     return undefined;
   });
 
-  const setCurrentPhotoIndex = (index: number | undefined) => {
-    currentPhotoIndex.value = index;
-  };
-
   watch(
-    [photos, photoId],
+    [() => photos.value?.length, photoId],
     () => {
       if (!photos.value || !toStr(photoId.value).length) {
-        setCurrentPhotoIndex(undefined);
+        currentPhotoIndex.value = undefined;
         return;
       }
 
       if (predictPhotoIndex.value !== undefined) {
-        setCurrentPhotoIndex(predictPhotoIndex.value);
+        currentPhotoIndex.value = predictPhotoIndex.value;
+        return;
+      }
+
+      // если идёт загрузка, то дождёмся её, прежде чем обходить все фото
+      if (isLoadingPhotos.value) {
         return;
       }
 
@@ -65,17 +108,20 @@ export function useCurrentPhoto(
           continue;
         }
 
-        setCurrentPhotoIndex(i);
+        currentPhotoIndex.value = i;
         return;
       }
 
-      setCurrentPhotoIndex(undefined);
+      currentPhotoIndex.value = undefined;
     },
-    { immediate: true, deep: true }
+    { immediate: true },
   );
 
   return {
-    currentPhoto: computed(() => getPhotoByIndex(currentPhotoIndex.value)),
+    currentPhoto,
     currentPhotoIndex,
+    getPhotoByIndex,
+    setCurrentPhotoIndex,
+    setCurrentPhotoId,
   };
 }

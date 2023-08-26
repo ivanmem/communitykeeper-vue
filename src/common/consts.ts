@@ -26,6 +26,7 @@ import Icon24CloudOutline from "@vkontakte/icons/src/svg/24/cloud_outline_24.svg
 import Icon24Fullscreen from "@vkontakte/icons/src/svg/24/fullscreen_24.svg?component";
 import Icon24FullscreenExit from "@vkontakte/icons/src/svg/24/fullscreen_exit_24.svg?component";
 import Icon24SortOutline from "@vkontakte/icons/src/svg/24/sort_outline_24.svg?component";
+import Icon24SkipToAction from "@vkontakte/icons/src/svg/24/skip_to_action_24.svg?component";
 
 import Icon16AddSquareOutline from "@vkontakte/icons/src/svg/16/add_square_outline_16.svg?component";
 import Icon16Link from "@vkontakte/icons/src/svg/16/link_16.svg?component";
@@ -84,6 +85,7 @@ export const icons = {
   Icon24Fullscreen,
   Icon24FullscreenExit,
   Icon24SortOutline,
+  Icon24SkipToAction,
 
   Icon16AddSquareOutline,
   Icon16Link,
@@ -115,3 +117,8 @@ export const icons = {
 export const darkColorScheme = ref(false);
 
 export const isDev = process.env.NODE_ENV === "development";
+
+export const VK_MAX_PHOTO_SIZE = {
+  width: 2560,
+  height: 2160,
+} as const;

@@ -1,3 +1,11 @@
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import { createVuetify } from "vuetify";
+import { router } from "@/router";
+import { isDev } from "@/common/consts";
+import VueVirtualScroller from "vue-virtual-scroller";
+import Vue3ContextMenu from "@imengyu/vue3-context-menu";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
 import "@/styles/icons.scss";
@@ -10,15 +18,7 @@ import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
 import "vue3-loading-overlay/dist/vue3-loading-overlay.css";
 import "@/style.scss";
-import { createApp } from "vue";
-import { createPinia } from "pinia";
-import { router } from "@/router";
 import App from "@/App.vue";
-import VueVirtualScroller from "vue-virtual-scroller";
-import Vue3ContextMenu from "@imengyu/vue3-context-menu";
-import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
-import { createVuetify } from "vuetify";
-import { isDev } from "@/common/consts";
 
 (async () => {
   const vuetify = createVuetify({
@@ -36,7 +36,7 @@ import { isDev } from "@/common/consts";
     document.documentElement.style.setProperty("background", "black");
     document.documentElement.style.setProperty(
       "--device-pixel-ratio",
-      `${window.devicePixelRatio}`
+      `${window.devicePixelRatio}`,
     );
     const pinia = createPinia();
     pinia.use(piniaPluginPersistedstate);
