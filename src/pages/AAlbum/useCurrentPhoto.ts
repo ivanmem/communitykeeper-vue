@@ -1,19 +1,36 @@
-import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
+import {
+  computed,
+  MaybeRefOrGetter,
+  nextTick,
+  Ref,
+  ref,
+  toValue,
+  watch,
+} from "vue";
 import { IPhoto } from "vkontakte-api";
 import { toStr } from "@/helpers/toStr";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useRoute, useRouter } from "vue-router";
+import { useGroups } from "@/store/groups/groups";
+import { useActiveElement } from "@vueuse/core";
+import { useElementDeviceSize } from "@/composables/useElementDeviceSize";
+import { SwitchPhotoMode } from "@/pages/AAlbum/types";
+import { getFirstRefChange } from "@/helpers/getFirstRefChange";
+import { useApp } from "@/store/app/app";
 
 export function useCurrentPhoto(
   photosGetter: MaybeRefOrGetter<IPhoto[] | undefined>,
   photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
-  isLoadingPhotosGetter: MaybeRefOrGetter<boolean>,
+  isLoadingPhotos: Ref<boolean>,
+  isInit: Ref<boolean>,
+  onMoreLoad: () => void,
 ) {
   const router = useRouter();
   const route = useRoute();
+  const groupsStore = useGroups();
+  const appStore = useApp();
   const photos = computed(() => toValue(photosGetter));
   const photoId = computed(() => toValue(photoIdGetter));
-  const isLoadingPhotos = computed(() => toValue(isLoadingPhotosGetter));
   // Кэшируем индекс предыдущего найденного фото для оптимизации при перелистывании
   const currentPhotoIndex = ref<number | undefined>();
   const currentPhoto = computed(() => getPhotoByIndex(currentPhotoIndex.value));
@@ -41,23 +58,30 @@ export function useCurrentPhoto(
     });
   };
 
-  const setCurrentPhotoIndex = (index: number | undefined) => {
+  const setCurrentPhotoIndex = async (
+    index: number | undefined,
+    mode?: SwitchPhotoMode,
+  ) => {
     if (photos.value === undefined) {
       return;
-    }
-
-    if (index !== undefined) {
-      // кэшируем текущее фото и два следующих
-      prefetchPhoto(photos.value[index]);
-      prefetchPhoto(photos.value[index + 1]);
-      prefetchPhoto(photos.value[index + 2]);
     }
 
     if (index === undefined) {
       return setCurrentPhotoId(undefined);
     }
 
-    const photo = photos.value[index];
+    // кэшируем текущее фото и следующее
+    prefetchPhoto(getPhotoByIndex(index));
+    if (!mode || mode === "next") {
+      let prefetchIndex = index + 1;
+      if (groupsStore.config.skipLowResolutionPhotos) {
+        prefetchIndex = await getSwitchPhotoBig(prefetchIndex, "next");
+      }
+
+      prefetchPhoto(getPhotoByIndex(prefetchIndex));
+    }
+
+    const photo = getPhotoByIndex(index);
     return setCurrentPhotoId(photo?.id);
   };
 
@@ -85,7 +109,7 @@ export function useCurrentPhoto(
   });
 
   watch(
-    [() => photos.value?.length, photoId],
+    [() => photos.value?.length, photoId, isLoadingPhotos],
     () => {
       if (!photos.value || !toStr(photoId.value).length) {
         currentPhotoIndex.value = undefined;
@@ -117,11 +141,74 @@ export function useCurrentPhoto(
     { immediate: true },
   );
 
+  const activeEl = useActiveElement();
+  const activeElSize = useElementDeviceSize(activeEl, undefined, {
+    box: "border-box",
+  });
+  // Получить новый индекс для фото в зависимости от mode
+  const getSwitchPhotoIndexByMode = (
+    currentIndex: number,
+    mode: SwitchPhotoMode,
+  ) => {
+    return currentIndex + (mode === "prev" ? -1 : 1);
+  };
+
+  const getSwitchPhotoBig = async (
+    currentIndex: number,
+    mode: SwitchPhotoMode,
+  ) => {
+    while (
+      getPhotoByIndex(currentIndex) !== undefined &&
+      PhotoHelper.isPhotoLessSizeAndNotMaxSize(
+        getPhotoByIndex(currentIndex)!,
+        activeElSize,
+      )
+    ) {
+      currentIndex = getSwitchPhotoIndexByMode(currentIndex, mode);
+      if (getPhotoByIndex(currentIndex) !== undefined) {
+        continue;
+      }
+
+      await appStore.wrapLoading(async () => {
+        onMoreLoad();
+        await nextTick();
+
+        if (isLoadingPhotos.value) {
+          while (await getFirstRefChange(isLoadingPhotos)) {}
+        }
+
+        await nextTick();
+      })();
+    }
+
+    return currentIndex;
+  };
+
+  const onSwitchPhoto = async (mode: SwitchPhotoMode) => {
+    if (isLoadingPhotos.value || !isInit.value) {
+      return;
+    }
+
+    let currentIndex = currentPhotoIndex.value;
+    if (currentIndex === undefined) {
+      return;
+    }
+
+    currentIndex = getSwitchPhotoIndexByMode(currentIndex, mode);
+    if (groupsStore.config.skipLowResolutionPhotos) {
+      currentIndex = await getSwitchPhotoBig(currentIndex, mode);
+    }
+
+    return await setCurrentPhotoIndex(currentIndex, mode);
+  };
+
   return {
     currentPhoto,
     currentPhotoIndex,
     getPhotoByIndex,
+    getSwitchPhotoBig,
     setCurrentPhotoIndex,
     setCurrentPhotoId,
+    onSwitchPhoto,
   };
 }

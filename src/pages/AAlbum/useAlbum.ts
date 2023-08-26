@@ -22,12 +22,8 @@ import { useCountGridColumns } from "@/composables/useCountGridColumns";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { toStr } from "@/helpers/toStr";
 import { useGroups } from "@/store/groups/groups";
-import { PhotoHelper } from "@/helpers/PhotoHelper";
-import { useActiveElement } from "@vueuse/core";
-import { useElementDeviceSize } from "@/composables/useElementDeviceSize";
-import { getFirstRefChange } from "@/helpers/getFirstRefChange";
 
-const countOneLoad = 100;
+const countOneLoad = 150;
 
 export function useAlbum(
   ownerIdGetter: MaybeRefOrGetter<number | string>,
@@ -43,25 +39,35 @@ export function useAlbum(
   const { width: widthColumn } = toRefs(AlbumsPreviewSizes);
   const initialWidth = computed(() => AlbumsPreviewSizesInitial.value.width);
   const gridItems = useCountGridColumns(albumRef, widthColumn, initialWidth);
-  const groupsStore = useGroups();
   const screenError = ref<any>();
   const isInit = ref(false);
   const isLoadingPhotos = ref(false);
   const isLoadAllPhotos = ref(false);
   const photosMaxItems = ref(0);
+
+  useScreenSpinner(() => !isInit.value);
+
+  const onMoreLoad = () => {
+    if (isLoadingPhotos.value) {
+      return;
+    }
+
+    // защищаем от переполнения
+    if (
+      photosMaxItems.value - photos.value.length < 1000 &&
+      !isLoadAllPhotos.value
+    ) {
+      photosMaxItems.value += countOneLoad;
+    }
+  };
+
   const {
     currentPhoto,
     currentPhotoIndex,
-    getPhotoByIndex,
     setCurrentPhotoIndex,
     setCurrentPhotoId,
-  } = useCurrentPhoto(photos, photoId, isLoadingPhotos);
-  const activeEl = useActiveElement();
-  const activeElSize = useElementDeviceSize(activeEl, undefined, {
-    box: "border-box",
-  });
-  const showSwitchPhotoSpinner = ref(false);
-  useScreenSpinner(() => !isInit.value || showSwitchPhotoSpinner.value);
+    onSwitchPhoto,
+  } = useCurrentPhoto(photos, photoId, isLoadingPhotos, isInit, onMoreLoad);
 
   const onClearPhotos = () => {
     photos.value.length = 0;
@@ -117,7 +123,7 @@ export function useAlbum(
       onClearPhotos();
       onClearAlbum();
       await onUpdateAlbum();
-      onLoad();
+      await onLoad();
     },
     { immediate: true },
   );
@@ -128,7 +134,7 @@ export function useAlbum(
       onClearInit();
       onClearError();
       onClearPhotos();
-      onLoad();
+      await onLoad();
     },
   );
 
@@ -172,58 +178,6 @@ export function useAlbum(
     { immediate: true },
   );
 
-  const onSwitchPhoto = async (mode: "prev" | "next") => {
-    if (isLoadingPhotos.value || !isInit.value) {
-      return;
-    }
-
-    let currentIndex = currentPhotoIndex.value;
-    if (currentIndex === undefined) {
-      return;
-    }
-
-    const indexChangeValue = mode === "prev" ? -1 : 1;
-
-    const onChangeIndex = () =>
-      (currentIndex = currentIndex! + indexChangeValue);
-
-    onChangeIndex();
-    if (groupsStore.config.skipLowResolutionPhotos) {
-      while (
-        getPhotoByIndex(currentIndex) !== undefined &&
-        PhotoHelper.isPhotoLessSizeAndNotMaxSize(
-          getPhotoByIndex(currentIndex)!,
-          activeElSize,
-        )
-      ) {
-        onChangeIndex();
-        if (getPhotoByIndex(currentIndex) !== undefined) {
-          continue;
-        }
-
-        showSwitchPhotoSpinner.value = true;
-        onMoreLoad();
-        await nextTick();
-
-        while (await getFirstRefChange(isLoadingPhotos)) {}
-
-        await nextTick();
-        showSwitchPhotoSpinner.value = false;
-      }
-    }
-
-    return setCurrentPhotoIndex(currentIndex);
-  };
-
-  const onMoreLoad = () => {
-    // защищаем от переполнения
-    if (
-      photosMaxItems.value - photos.value.length < 1000 &&
-      !isLoadAllPhotos.value
-    ) {
-      photosMaxItems.value += countOneLoad;
-    }
-  };
   const onScrollerUpdate = (
     startIndex: number,
     endIndex: number,
