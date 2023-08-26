@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { computed, StyleValue, useSlots, VueElement } from "vue";
 import { icons } from "@/common/consts";
-import { RouteLocationRaw, useRoute } from "vue-router";
-import { router } from "@/router";
+import { RouteLocationRaw, useRoute, useRouter } from "vue-router";
 import { isString } from "lodash";
 
 const props = defineProps<{
@@ -24,19 +23,18 @@ const isExternalLink = computed(
 );
 
 const route = useRoute();
+const router = useRouter();
 
-const onClick = computed(() => {
-  return (e: MouseEvent) => {
+const onClick = async (e: MouseEvent) => {
     emits("click", e);
     if (props.to !== undefined) {
       if (isString(props.to) && isExternalLink.value) {
         window.open(props.to, props.target);
       } else {
-        router.push(props.to);
+        await router.push(props.to);
       }
     }
-  };
-});
+};
 
 const link = computed(() => {
   if (!props.to || isExternalLink.value) {

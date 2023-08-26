@@ -41,8 +41,8 @@ import { isDev } from "@/common/consts";
     const pinia = createPinia();
     pinia.use(piniaPluginPersistedstate);
     const app = createApp(App)
-      .use(pinia)
       .use(router)
+      .use(pinia)
       .use(VueVirtualScroller)
       .use(Vue3ContextMenu)
       .use(vuetify);
