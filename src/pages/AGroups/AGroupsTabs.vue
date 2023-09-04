@@ -2,9 +2,12 @@
 import { useApp } from "@/store/app/app";
 import { useGroups } from "@/store/groups/groups";
 import { showContextMenu } from "@/helpers/showContextMenu";
-import { h, ref } from "vue";
+import { h, PropType, ref } from "vue";
 import { icons } from "@/common/consts";
 
+const props = defineProps({
+  style: { type: [] as PropType<any> },
+});
 const appStore = useApp();
 const groupsStore = useGroups();
 
@@ -32,7 +35,7 @@ const onTabContextMenu = (e: MouseEvent, folder: string) => {
         const folderGroupsIds = groupsStore.groupIdsDictByFolderName[folder];
         if (
           !confirm(
-            `Вы уверены что хотите удалить папку "${folder}" с ${folderGroupsIds.length} группами?`
+            `Вы уверены что хотите удалить папку "${folder}" с ${folderGroupsIds.length} группами?`,
           )
         ) {
           return;
@@ -56,7 +59,7 @@ const onSaveSettings = () => {
     if (groupsStore.folders.includes(renameDialog.value.newSettings.folder)) {
       if (
         !window.confirm(
-          `Папка с таким названием уже существует. Хотите произвести слияние?`
+          `Папка с таким названием уже существует. Хотите произвести слияние?`,
         )
       ) {
         return;
@@ -86,25 +89,26 @@ const onSaveSettings = () => {
 };
 </script>
 <template>
-  <VTabs
-    v-model="groupsStore.filters.folder"
-    :show-arrows="appStore.isVkCom"
-    center-active
-    density="compact"
-    grow
-    mandatory
-    style="margin-bottom: 5px"
-  >
-    <VTab value="">Все</VTab>
-    <VTab
-      v-for="folder of groupsStore.folders"
-      :key="folder"
-      :value="folder"
-      @contextmenu.prevent="onTabContextMenu($event, folder)"
+  <div :style="style">
+    <VTabs
+      v-model="groupsStore.filters.folder"
+      :show-arrows="appStore.isVkCom"
+      center-active
+      density="compact"
+      grow
+      mandatory
     >
-      {{ folder }}
-    </VTab>
-  </VTabs>
+      <VTab value="">Все</VTab>
+      <VTab
+        v-for="folder of groupsStore.folders"
+        :key="folder"
+        :value="folder"
+        @contextmenu.prevent="onTabContextMenu($event, folder)"
+      >
+        {{ folder }}
+      </VTab>
+    </VTabs>
+  </div>
 
   <VDialog
     :model-value="renameDialog !== undefined"

@@ -11,13 +11,13 @@ import Loading from "vue3-loading-overlay";
 import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { switchFullscreen } from "@/helpers/switchFullscreen";
 import { VDefaultsProvider } from "vuetify/components";
+import { useHistory } from "@/store/history/history";
 
 const route = useRoute();
 const groupsStore = useGroups();
 const vkStore = useVk();
 const appStore = useApp();
 const { currentClasses } = useColorScheme();
-const { Icon24Linked } = icons;
 
 const fullscreenElement = ref(document.fullscreenElement);
 
@@ -60,6 +60,39 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
     clearable: true,
   },
 };
+
+const tabBarItems: Array<{
+  caption: string;
+  icon: any;
+  to: string;
+}> = [
+  {
+    caption: "Группы",
+    icon: icons.Icon24ArticleBoxOutline,
+    to: "/",
+  },
+  {
+    caption: "Добавить",
+    icon: icons.Icon24AddSquareOutline,
+    to: "/add",
+  },
+  {
+    caption: "История",
+    icon: icons.Icon24HistoryBackwardOutline,
+    to: "/history",
+  },
+  {
+    caption: "Настройки",
+    icon: icons.Icon24GearOutline,
+    to: "/settings",
+  },
+  {
+    caption: "О приложении",
+    icon: icons.Icon24LightbulbStarOutline,
+    to: "/about",
+  },
+];
+const win = window;
 </script>
 
 <template>
@@ -83,26 +116,39 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
           lock-scroll
         />
         <template v-if="groupsStore.isInit">
-          <div class="navigation-header">
-            <div id="caption" class="overflow-block navigation-caption">
-              {{ appStore.caption }}
-            </div>
-            <AButton
+          <v-toolbar density="compact" class="navigation-header">
+            <v-toolbar-title>
+              <div id="caption" class="overflow-block navigation-caption">
+                {{ appStore.caption }}
+              </div>
+            </v-toolbar-title>
+
+            <v-spacer></v-spacer>
+
+            <VBtn
+              v-if="route.path.startsWith('/history')"
+              :icon="icons.Icon16Delete"
+              @click="
+                win.confirm(
+                  'Вы уверены, что хотите отчистить историю просмотров?',
+                ) && useHistory().clear()
+              "
+            />
+            <VBtn
               v-if="route.path !== '/'"
-              style="height: 30px"
+              :icon="icons.Icon24Linked"
               @click="copy('vk.com/app51658481#' + route.path)"
-            >
-              <Icon24Linked />
-            </AButton>
-            <AButton
+            />
+            <VBtn
               v-if="useApp().isVkCom"
               :icon="
-                fullscreenElement ? 'Icon24FullscreenExit' : 'Icon24Fullscreen'
+                fullscreenElement
+                  ? icons.Icon24FullscreenExit
+                  : icons.Icon24Fullscreen
               "
-              style="height: 30px"
               @click="switchFullscreen()"
             />
-          </div>
+          </v-toolbar>
           <div class="overflow-block route-view">
             <router-view v-if="init" v-slot="{ Component }">
               <keep-alive :max="3" exclude="AAlbum">
@@ -110,38 +156,18 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
               </keep-alive>
             </router-view>
           </div>
-          <div class="navigation">
+          <VToolbar density="compact" class="navigation" color="transparent">
             <div class="navigation-bottom-buttons">
               <AButton
+                v-for="item of tabBarItems"
                 :hide-content="!appStore.isVkCom"
-                :icon="icons.Icon24ArticleBoxOutline"
-                to="/"
+                :icon="item.icon"
+                :to="item.to"
               >
-                <span> Группы </span>
-              </AButton>
-              <AButton
-                :hide-content="!appStore.isVkCom"
-                :icon="icons.Icon24AddSquareOutline"
-                to="/add"
-              >
-                <span> Добавить </span>
-              </AButton>
-              <AButton
-                :hide-content="!appStore.isVkCom"
-                :icon="icons.Icon24GearOutline"
-                to="/settings"
-              >
-                <span> Настройки </span>
-              </AButton>
-              <AButton
-                :hide-content="!appStore.isVkCom"
-                :icon="icons.Icon24LightbulbStarOutline"
-                to="/about"
-              >
-                <span> О приложении </span>
+                <span> {{ item.caption }} </span>
               </AButton>
             </div>
-          </div>
+          </VToolbar>
         </template>
       </div>
     </VDefaultsProvider>
@@ -150,8 +176,6 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
 
 <style lang="scss">
 .root {
-  padding-top: 2px;
-  padding-block: 10px;
   gap: 10px;
   background: var(--vkui--color_background_content);
 }
@@ -175,7 +199,7 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
 .navigation {
   display: flex;
   align-items: center;
-  padding-inline: 10px;
+  padding-inline: 5px;
 }
 
 .navigation-caption {
@@ -210,7 +234,6 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
   align-items: center;
   overflow: auto;
   padding: 10px;
-  background: var(--vkui--color_background);
   min-width: 100%;
   border-radius: 5px;
 

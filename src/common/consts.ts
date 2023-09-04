@@ -40,3 +40,5 @@ export const VK_MAX_PHOTO_SIZE = {
   width: 2560,
   height: 2160,
 } as const;
+
+export const MAX_SIZE_ONE_VK_VALUE = 2236;

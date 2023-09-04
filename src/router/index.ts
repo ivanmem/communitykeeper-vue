@@ -1,6 +1,13 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import {
+  createRouter,
+  createWebHashHistory,
+  NavigationHookAfter,
+  RouteLocationNormalized,
+  RouteRecordRaw,
+} from "vue-router";
 import bridge from "@vkontakte/vk-bridge";
 import { useVk } from "@/store/vk/vk";
+import { useHistory } from "@/store/history/history";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -20,12 +27,18 @@ const routes: RouteRecordRaw[] = [
     component: () => import("@/pages/AAdd/AAdd.vue"),
   },
   {
+    path: "/history",
+    component: () => import("@/pages/AHistory/AHistory.vue"),
+  },
+  {
+    name: "album",
     path: "/albums/:ownerId/:albumId/:photoId?",
     component: () => import("@/pages/AAlbum/AAlbum.vue"),
     props: true,
     strict: true,
   },
   {
+    name: "albums",
     path: "/albums/:ownerId",
     component: () => import("@/pages/AAlbums/AAlbums.vue"),
     props: true,
@@ -38,7 +51,7 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, from) => {
+router.afterEach(async (to, from) => {
   if (to.path.startsWith("/album")) {
     let [ownerId, albumId] = to.path
       .substring("/album".length)
@@ -96,6 +109,8 @@ router.afterEach((to) => {
     location: to.fullPath,
     replace_state: true,
   });
+  const historyStore = useHistory();
+  historyStore.afterEach(to as NavigationHookAfter & RouteLocationNormalized);
 });
 bridge.subscribe((event) => {
   if (event.detail.type === "VKWebAppChangeFragment") {

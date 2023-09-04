@@ -70,7 +70,7 @@ const sortEnumOptions = [
 
 <template>
   <div class="TopSearch">
-    <AGroupsTabs />
+    <AGroupsTabs style="margin-bottom: 5px; padding-inline: 10px" />
     <div style="display: flex; gap: 5px; flex-grow: 1">
       <input
         ref="reference"

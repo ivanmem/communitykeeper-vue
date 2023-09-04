@@ -7,6 +7,7 @@ import { useGroups } from "@/store/groups/groups";
 import { IRequestConfig } from "vkontakte-api/dist/types/shared";
 import { sleep } from "@/helpers/sleep";
 import { PhotosGetAlbums } from "@/store/vk/IAlbumItem";
+import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
 
 interface VkState {
   api?: VKAPI;
@@ -75,10 +76,10 @@ export const useVk = defineStore("vk", {
       } catch (ex) {
         console.warn(
           "Ошибка при получении токена. Запущена повторная попытка.",
-          { ex }
+          { ex },
         );
         window.alert(
-          "Приложение не может получить данные с групп без разрешения 'groups'. Предоставьте разрешение для продолжения работы."
+          "Приложение не может получить данные с групп без разрешения 'groups'. Предоставьте разрешение для продолжения работы.",
         );
         await this.initVk();
       }
@@ -91,15 +92,18 @@ export const useVk = defineStore("vk", {
     },
     /** @description Получить все значения по указанным ключам в виде словаря */
     async getVkStorageDict<T extends object = Record<any, any>>(
-      keys: string[]
+      keys: string[],
     ) {
       const result = await this.sendVKWebAppStorageGet({ keys });
-      return result.keys.reduce((dict, { key, value }) => {
-        try {
-          dict[key] = value.length ? JSON.parse(value) : undefined;
-        } catch {}
-        return dict;
-      }, {} as Record<string, T | undefined>);
+      return result.keys.reduce(
+        (dict, { key, value }) => {
+          try {
+            dict[key] = value.length ? JSON.parse(value) : undefined;
+          } catch {}
+          return dict;
+        },
+        {} as Record<string, T | undefined>,
+      );
     },
     /** @description Сохранить каждое свойство словаря в отдельном ключе */
     async setVkStorageDict(dataDictArray: Record<string, Record<any, any>>) {
@@ -148,7 +152,7 @@ export const useVk = defineStore("vk", {
     },
     async setVkStorage(key: string, value: string) {
       const compressData = value; // await compressStr(value);
-      const chunks = chunkString(compressData);
+      const chunks = chunkString(compressData, MAX_SIZE_ONE_VK_VALUE);
       // проходим на один больше, чтобы последний чанк был пустой
       for (let i = 0; i < chunks.length + 1; i++) {
         let chunk = chunks[i];
@@ -176,7 +180,7 @@ export const useVk = defineStore("vk", {
       ).toFixed(0);
     },
     async addRequestToQueue<P extends {} = any, R = any>(
-      config: IRequestConfig<P>
+      config: IRequestConfig<P>,
     ): Promise<R> {
       try {
         return await useVk().api!.addRequestToQueue<P, R>(config);
@@ -194,7 +198,7 @@ export const useVk = defineStore("vk", {
     getAlbums(
       owner_id: number | string,
       offset: number | undefined = undefined,
-      count: number | undefined = undefined
+      count: number | undefined = undefined,
     ): Promise<PhotosGetAlbums> {
       return this.addRequestToQueue({
         method: "photos.getAlbums",
