@@ -23,6 +23,7 @@ const props = defineProps<{
 const {
   photos,
   album,
+  albumCount,
   currentPhoto,
   setCurrentPhotoIndex,
   currentPhotoIndex,
@@ -114,10 +115,7 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
       </RecycleScroller>
       <APhoto
         v-if="currentPhoto"
-        :count="
-          toNumberOrUndefined(album?.size) ??
-          (isLoadAllPhotos ? photos.length : `${photos.length}+`)
-        "
+        :count="albumCount"
         :index="currentPhotoIndex"
         :photo="currentPhoto"
         @photo:prev="onSwitchPhoto('prev')"

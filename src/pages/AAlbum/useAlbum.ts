@@ -22,6 +22,8 @@ import { useCountGridColumns } from "@/composables/useCountGridColumns";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { toStr } from "@/helpers/toStr";
 import { useGroups } from "@/store/groups/groups";
+import { useHistory } from "@/store/history/history";
+import { toNumberOrUndefined } from "@/helpers/toNumberOrUndefined";
 
 const countOneLoad = 150;
 
@@ -44,6 +46,15 @@ export function useAlbum(
   const isLoadingPhotos = ref(false);
   const isLoadAllPhotos = ref(false);
   const photosMaxItems = ref(0);
+  const historyStore = useHistory();
+  const albumHistoryItem = computed(() =>
+    historyStore.getViewAlbum(ownerId.value, albumId.value),
+  );
+  const albumCount = computed(
+    () =>
+      toNumberOrUndefined(album.value?.size) ??
+      (isLoadAllPhotos ? photos.value.length : `${photos.value.length}+`),
+  );
 
   useScreenSpinner(() => !isInit.value);
 
@@ -114,6 +125,20 @@ export function useAlbum(
       photosMaxItems.value = countOneLoad; // это инициирует первую загрузку
     });
   };
+
+  watch([albumHistoryItem, album, currentPhotoIndex], () => {
+    if (
+      !albumHistoryItem.value ||
+      !album.value ||
+      currentPhotoIndex.value === undefined
+    ) {
+      return;
+    }
+
+    albumHistoryItem.value.subtitle = `${album.value.title} (${
+      currentPhotoIndex.value + 1
+    } из ${albumCount.value})`;
+  });
 
   watch(
     ownerId,
@@ -208,6 +233,7 @@ export function useAlbum(
   return {
     photos,
     album,
+    albumCount,
     currentPhoto,
     currentPhotoIndex,
     setCurrentPhotoId,

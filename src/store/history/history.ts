@@ -22,6 +22,7 @@ export interface HistoryItemViewAlbum {
   ownerId: string | number;
   albumId: string | number;
   photoId: string | number;
+  subtitle?: string;
 }
 
 export const useHistory = defineStore("history", {
@@ -37,6 +38,10 @@ export const useHistory = defineStore("history", {
       albumId: string | number,
     ): `view_album_${number | string}_${string | number}` {
       return `view_album_${ownerId}_${albumId}}`;
+    },
+    getViewAlbum(ownerId: string | number, albumId: string | number) {
+      const key = this.getViewAlbumKey(ownerId, albumId);
+      return this.history[key] as HistoryItemViewAlbum | undefined;
     },
     afterEach(to: NavigationHookAfter & RouteLocationNormalized) {
       const { ownerId, albumId, photoId } = to.params as Record<string, string>;
@@ -87,6 +92,16 @@ export const useHistory = defineStore("history", {
   getters: {
     historyArray(): HistoryItem[] {
       return Object.values(this.history).reverse();
+    },
+    historyArrayViewAlbum(): HistoryItemViewAlbum[] {
+      return this.historyArray.filter(
+        (x) => x.type === "view_album",
+      ) as HistoryItemViewAlbum[];
+    },
+    historyArrayViewOwner(): HistoryItemViewOwner[] {
+      return this.historyArray.filter(
+        (x) => x.type === "view_owner",
+      ) as HistoryItemViewOwner[];
     },
     oldestKey(): HistoryKey | undefined {
       return this.historyArray.at(-1) as any;

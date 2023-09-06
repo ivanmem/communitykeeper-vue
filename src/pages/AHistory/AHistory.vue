@@ -17,32 +17,21 @@ interface HistoryItemComputed {
   to: string;
 }
 
-const items = computed<HistoryItemComputed[]>(() => {
-  return historyStore.historyArray.map((item) => {
+const items = computed<HistoryItemComputed[]>(() =>
+  historyStore.historyArrayViewAlbum.map((item) => {
     const group: IGroup | undefined = groupsStore.getGroupById(-item.ownerId);
     const title = group?.name ?? item.ownerId;
     const prependAvatar = group?.photo_200;
-    if (item.type === "view_owner") {
-      return {
-        title,
-        subtitle: `${PhotoHelper.getOwnerUrl(item.ownerId)}`,
-        prependAvatar,
-        to: `/albums/${item.ownerId}`,
-      };
-    }
-
-    if (item.type === "view_album") {
-      return {
-        title,
-        subtitle: `${PhotoHelper.getAlbumUrl(item.ownerId, item.albumId)}`,
-        prependAvatar,
-        to: `/albums/${item.ownerId}/${item.albumId}/${item.photoId}`,
-      };
-    }
-
-    throw new Error("Неизвестный тип: " + (item as any).type);
-  });
-});
+    return {
+      title,
+      subtitle: `${
+        item.subtitle || PhotoHelper.getAlbumUrl(item.ownerId, item.albumId)
+      }`,
+      prependAvatar,
+      to: `/albums/${item.ownerId}/${item.albumId}/${item.photoId}`,
+    };
+  }),
+);
 </script>
 <template>
   <VCard class="overflow-block">
