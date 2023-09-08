@@ -10,7 +10,7 @@ import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
 const props = defineProps<{ album: IAlbumItem }>();
 const previewSize = computed(() =>
-  PhotoHelper.getPreviewSize(props.album.sizes)
+  PhotoHelper.getPreviewSize(props.album.sizes),
 );
 
 const { width, height } = toRefs(AlbumsPreviewSizes);
@@ -22,7 +22,7 @@ const onShowContextMenu = (e: MouseEvent) => {
       icon: h(icons.Icon16Link),
       onClick: () => {
         openLink(
-          `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`
+          `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`,
         );
       },
     },
@@ -37,7 +37,7 @@ const onShowContextMenu = (e: MouseEvent) => {
   >
     <img v-if="previewSize" :src="previewSize.url" alt="" />
     <div class="photos_album_title_wrap">
-      <div>
+      <div class="photos_album_title_name">
         {{ props.album.title }}
       </div>
       <small>
@@ -68,8 +68,13 @@ const onShowContextMenu = (e: MouseEvent) => {
 
 .photos_album_title_wrap {
   position: absolute;
+  top: 0;
   bottom: 0;
-  width: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
   padding: 35px 12px 9px;
   background: rgb(2, 0, 36);
   background: linear-gradient(
@@ -79,8 +84,19 @@ const onShowContextMenu = (e: MouseEvent) => {
   );
   color: white;
 
+  text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.78);
+  box-shadow: -2px -2px 4px 0px rgba(0, 0, 0, 0.4) inset;
+
   small {
     opacity: 0.7;
   }
+}
+
+.photos_album_title_name {
+  display: -webkit-box;
+  width: 100%;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 </style>

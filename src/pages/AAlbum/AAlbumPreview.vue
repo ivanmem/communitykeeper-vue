@@ -10,10 +10,10 @@ import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
 const props = defineProps<{ photo: IPhoto }>();
 const originalSize = computed(() =>
-  PhotoHelper.getOriginalSize(props.photo.sizes)
+  PhotoHelper.getOriginalSize(props.photo.sizes),
 );
 const previewSize = computed(() =>
-  PhotoHelper.getPreviewSize(props.photo.sizes)
+  PhotoHelper.getPreviewSize(props.photo.sizes),
 );
 
 const { width, height } = toRefs(AlbumsPreviewSizes);
@@ -36,7 +36,7 @@ const onShowContextMenu = (e: MouseEvent) => {
         if (originalSize.value) {
           saveAs(
             originalSize.value.url,
-            PhotoHelper.getPhotoFileName(props.photo)
+            PhotoHelper.getPhotoFileName(props.photo),
           );
         }
       },
@@ -82,10 +82,13 @@ const onShowContextMenu = (e: MouseEvent) => {
 
 .photos_row__title_wrap {
   position: absolute;
+  top: 0;
   bottom: 0;
-  width: 100%;
+  left: 0;
+  right: 0;
   padding: 35px 12px 9px;
   color: white;
+  box-shadow: -2px -2px 4px 0px rgba(0, 0, 0, 0.4) inset;
 
   small {
     opacity: 0.7;
