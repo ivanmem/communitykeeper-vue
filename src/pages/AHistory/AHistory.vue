@@ -43,7 +43,7 @@ const items = computed<HistoryItemComputed[]>(() =>
       <h2 class="text-h5 mb-6">История просмотров отсутствует</h2>
       <v-divider class="mb-4"></v-divider>
     </v-sheet>
-    <VList :items="items" item-props lines="three">
+    <VList :items="items" item-props lines="two" density="compact">
       <template v-slot:subtitle="{ subtitle }">
         <div>{{ subtitle }}</div>
       </template>
