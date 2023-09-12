@@ -11,7 +11,6 @@ import Loading from "vue3-loading-overlay";
 import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { switchFullscreen } from "@/helpers/switchFullscreen";
 import { VDefaultsProvider } from "vuetify/components";
-import { useHistory } from "@/store/history/history";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -123,24 +122,19 @@ const win = window;
               </div>
             </v-toolbar-title>
 
-            <v-spacer></v-spacer>
+            <v-spacer ></v-spacer>
+            <div id="navigation-header__right">
 
-            <VBtn
-              v-if="route.path.startsWith('/history')"
-              :icon="icons.Icon16Delete"
-              @click="
-                win.confirm(
-                  'Вы уверены, что хотите отчистить историю просмотров?',
-                ) && useHistory().clear()
-              "
-            />
+            </div>
             <VBtn
               v-if="route.path !== '/'"
+              variant="text"
               :icon="icons.Icon24Linked"
               @click="copy('vk.com/app51658481#' + route.path)"
             />
             <VBtn
               v-if="useApp().isVkCom"
+              variant="text"
               :icon="
                 fullscreenElement
                   ? icons.Icon24FullscreenExit
@@ -194,6 +188,12 @@ const win = window;
   @at-root .root[data-fullscreen="true"] & {
     padding-right: 10px;
   }
+}
+
+#navigation-header__right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .navigation {

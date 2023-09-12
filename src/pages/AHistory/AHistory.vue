@@ -5,6 +5,8 @@ import { computed } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { IGroup } from "@/store/groups/types";
+import { icons } from "@/common/consts";
+import FixedTeleport from "@/components/FixedTeleport.vue";
 
 useAppCaption("История");
 const historyStore = useHistory();
@@ -32,8 +34,20 @@ const items = computed<HistoryItemComputed[]>(() =>
     };
   }),
 );
+
+const onClear = () => {
+  if (!window.confirm("Вы уверены, что хотите отчистить историю просмотров?")) {
+    return;
+  }
+
+  historyStore.clear();
+};
+
 </script>
 <template>
+  <FixedTeleport to="#navigation-header__right">
+    <VBtn variant="text" :icon="icons.Icon16Delete" @click="onClear" />
+  </FixedTeleport>
   <VCard class="overflow-block">
     <v-sheet
       v-if="items.length === 0"
