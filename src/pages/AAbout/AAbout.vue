@@ -28,34 +28,25 @@ useAppCaption("О приложении");
     <VCardItem>
       <VCode>TypeScript, SCSS, Vite, Vue 3, Pinia, Vuetify</VCode>
     </VCardItem>
-    <VCardItem style="max-width: 400px">
+    <VCardItem style="max-width: 200px">
       <VRow no-gutters style="gap: 10px">
         <VBtn
           :prepend-icon="icons.Icon16Link"
           class="a-button__left-content"
-          href="https://github.com/xeleoss/local-vk-groups-catalog-vue"
+          href="https://vk.com/communitykeeper"
+          target="_blank"
+          color="light-blue-darken-4"
+        >
+          Сообщество
+        </VBtn>
+        <VBtn
+          :prepend-icon="icons.Icon16Link"
+          class="a-button__left-content"
+          href="https://github.com/ivanmem/local-vk-groups-catalog-vue"
           target="_blank"
           color="light-blue-darken-4"
         >
           Github
-        </VBtn>
-        <VBtn
-          :prepend-icon="icons.Icon16Link"
-          class="a-button__left-content"
-          href="https://github.com/xeleoss/local-vk-groups-catalog-vue/commits/main"
-          target="_blank"
-          color="light-blue-darken-4"
-        >
-          Информация об обновлениях
-        </VBtn>
-        <VBtn
-          :prepend-icon="icons.Icon16Link"
-          class="a-button__left-content"
-          href="https://github.com/xeleoss/local-vk-groups-catalog-vue/issues"
-          target="_blank"
-          color="light-blue-darken-4"
-        >
-          Задачи
         </VBtn>
       </VRow>
     </VCardItem>
