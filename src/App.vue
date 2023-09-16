@@ -116,16 +116,13 @@ const win = window;
         />
         <template v-if="groupsStore.isInit">
           <v-toolbar density="compact" class="navigation-header">
-            <v-toolbar-title>
+            <v-toolbar-title style="flex-grow: 5">
               <div id="caption" class="overflow-block navigation-caption">
                 {{ appStore.caption }}
               </div>
             </v-toolbar-title>
-
-            <v-spacer ></v-spacer>
-            <div id="navigation-header__right">
-
-            </div>
+            <v-spacer></v-spacer>
+            <div id="navigation-header__right"></div>
             <VBtn
               v-if="route.path !== '/'"
               variant="text"
