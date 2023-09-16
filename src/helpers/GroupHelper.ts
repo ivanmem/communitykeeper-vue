@@ -7,21 +7,24 @@ import {
 } from "@/store/groups/groups";
 import { getGroupState, GroupState } from "@/pages/AGroups/getGroupState";
 import bridge from "@vkontakte/vk-bridge";
-import shuffle from "lodash/shuffle";
+import { from, IEnumerable, NumberComparer } from "linq-to-typescript";
 
 class GroupHelper {
   static getGroupAccess(g?: IGroup) {
     return (g?.is_closed && g.is_member) || !g?.is_closed;
   }
 
-  static getFiltered(groups: IGroup[], filters?: FiltersType) {
+  static getFiltered(groupsIds: number[], filters?: FiltersType): IGroup[] {
+    const groupsService = useGroups();
+    let groupsIter: IEnumerable<IGroup> = from(groupsIds).select(
+      (id) => groupsService.groupsMap.get(id)!,
+    );
     if (!filters) {
-      return groups;
+      return groupsIter.toArray();
     }
 
-    const groupsService = useGroups();
     const search = filters?.search.trim().toLowerCase();
-    let result = groups.filter((group) => {
+    groupsIter = groupsIter.where((group) => {
       const localGroup = groupsService.getLocalGroupById(group.id);
       if (!localGroup) {
         return false;
@@ -59,15 +62,16 @@ class GroupHelper {
     if (filters.sort !== undefined && filters.sort !== GroupsSortEnum.newest) {
       switch (filters.sort) {
         case GroupsSortEnum.oldest:
-          result = result.reverse();
+          groupsIter = groupsIter.reverse();
           break;
         case GroupsSortEnum.random:
-          result = shuffle(result);
+          // Аналогично snuffle
+          groupsIter = groupsIter.orderBy(() => Math.random(), NumberComparer);
           break;
       }
     }
 
-    return result;
+    return groupsIter.toArray();
   }
 
   static getState(group: IGroup): GroupState {
@@ -79,7 +83,7 @@ class GroupHelper {
   static async setIsMember(group: IGroup, isMember: boolean) {
     const result = await bridge.send(
       isMember ? "VKWebAppJoinGroup" : "VKWebAppLeaveGroup",
-      { group_id: group.id }
+      { group_id: group.id },
     );
     if (result.result) {
       group.is_member = isMember;

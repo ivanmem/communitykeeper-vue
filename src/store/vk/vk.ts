@@ -151,8 +151,7 @@ export const useVk = defineStore("vk", {
       return compressData; //await decompressStr(compressData);
     },
     async setVkStorage(key: string, value: string) {
-      const compressData = value; // await compressStr(value);
-      const chunks = chunkString(compressData, MAX_SIZE_ONE_VK_VALUE);
+      const chunks = chunkString(value, MAX_SIZE_ONE_VK_VALUE);
       // проходим на один больше, чтобы последний чанк был пустой
       for (let i = 0; i < chunks.length + 1; i++) {
         let chunk = chunks[i];

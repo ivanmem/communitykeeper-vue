@@ -9,7 +9,7 @@ export type UseGroupSearch = ReturnType<typeof useGroupSearch>;
 export function useGroupSearch() {
   const store = useGroups();
   const groupsOrder = computed(() =>
-    GroupHelper.getFiltered(store.groupsReverse, store.filters)
+    GroupHelper.getFiltered(store.groupsIdsReverse, store.filters),
   );
   const showFilters = ref(false);
 

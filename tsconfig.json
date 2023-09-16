@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "es2022",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -9,7 +9,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": ["es2022", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
     "paths": {

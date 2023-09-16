@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { IGroup, IGroupsExport, ILocalGroup } from "@/store/groups/types";
-import { keyBy, toNumber, uniq } from "lodash";
+import toNumber from "lodash/toNumber";
 import { useVk } from "@/store/vk/vk";
 import { saveAs } from "file-saver";
 import { isGroupBanned } from "@/helpers/isGroupBanned";
@@ -9,6 +9,7 @@ import { useApp } from "@/store/app/app";
 import { watch } from "vue";
 import GroupHelper from "@/helpers/GroupHelper";
 import { setEruda } from "@/helpers/setEruda";
+import { from } from "linq-to-typescript";
 
 export interface FiltersType {
   folder: string;
@@ -126,9 +127,9 @@ export const useGroups = defineStore("groups", {
       }
 
       const groups = await getGroupsByLinksOrIds(ids);
-      groups.forEach((group) => {
+      for (const group of groups) {
         this.setGroup(group);
-      });
+      }
     },
     setGroup(group: IGroup) {
       GroupHelper.getState(group);
@@ -294,18 +295,19 @@ export const useGroups = defineStore("groups", {
   },
   getters: {
     folders(): string[] {
-      return uniq(this.localGroupsArray.map((x) => x.folder));
+      return from(this.localGroupsArray)
+        .select((x) => x.folder)
+        .distinct()
+        .toArray();
     },
-    groups(): IGroup[] {
-      return Array.from(this.groupsMap.values()).filter(
-        (x) => this.localGroups[x.id],
-      );
+    groupsIds(): number[] {
+      return Array.from(this.groupsMap.keys());
     },
-    groupsReverse(): IGroup[] {
-      return this.groups.reverse();
+    groupsIdsReverse(): number[] {
+      return from(this.groupsMap.keys()).reverse().toArray();
     },
     localGroups(): Record<number | string, ILocalGroup> {
-      return keyBy(this.localGroupsArray, (x) => x.id);
+      return from(this.localGroupsArray).toObject((x) => x.id);
     },
     groupIdsDictByFolderName(): Record<string, number[]> {
       return this.localGroupsArray.reduce(

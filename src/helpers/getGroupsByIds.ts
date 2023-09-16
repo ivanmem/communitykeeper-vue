@@ -1,46 +1,39 @@
-import { chunk, isNumber } from "lodash";
+import { isNumber } from "lodash";
 import { useVk } from "@/store/vk/vk";
 import { IGroup } from "@/store/groups/types";
+import { from } from "linq-to-typescript";
 
 export async function getGroupsByLinksOrIds(
-  linksOrIds: (string | number)[]
+  linksOrIds: (string | number)[],
 ): Promise<IGroup[]> {
-  const group_ids: string[] = [];
-  linksOrIds.forEach((value) => {
-    if (isNumber(value)) {
-      group_ids.push(`${value}`);
-      return;
-    }
-
-    if (
-      value.includes(".com/public") &&
-      isNumber(value.substring(value.lastIndexOf(".com/public") + 11))
-    ) {
-      group_ids.push(value.substring(value.lastIndexOf(".com/public") + 11));
-      return;
-    }
-
-    group_ids.push(value.substring(value.lastIndexOf("/") + 1));
-  });
-
-  if (group_ids.length === 0) {
-    return [];
-  }
-
   try {
-    const result: IGroup[] = [];
-    const groupIdsChunks = chunk(group_ids, 500);
-    for (let groupIdsChunk of groupIdsChunks) {
-      const groupsChunk = await useVk().addRequestToQueue({
-        method: "groups.getById",
-        params: {
-          group_ids: groupIdsChunk.join(),
-          fields: "counters",
-        },
-      });
-      result.push(...groupsChunk);
-    }
-    return result;
+    return await from(linksOrIds)
+      .select((value) => {
+        if (isNumber(value)) {
+          return `${value}`;
+        }
+
+        if (
+          value.includes(".com/public") &&
+          isNumber(value.substring(value.lastIndexOf(".com/public") + 11))
+        ) {
+          return value.substring(value.lastIndexOf(".com/public") + 11);
+        }
+
+        return value.substring(value.lastIndexOf("/") + 1);
+      })
+      .chunk(500)
+      .selectManyAsync(
+        (groupIdsChunk): Promise<IGroup[]> =>
+          useVk().addRequestToQueue({
+            method: "groups.getById",
+            params: {
+              group_ids: groupIdsChunk.join(),
+              fields: "counters",
+            },
+          }),
+      )
+      .toArray();
   } catch (ex: any) {
     console.warn(ex);
     return [];

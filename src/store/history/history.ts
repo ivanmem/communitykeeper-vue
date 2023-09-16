@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import type { NavigationHookAfter, RouteLocationNormalized } from "vue-router";
 import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
+import { from } from "linq-to-typescript";
 
 type HistoryKey =
   | `view_owner_${number | string}`
@@ -90,24 +91,33 @@ export const useHistory = defineStore("history", {
     },
   },
   getters: {
+    historyKeys(): HistoryKey[] {
+      return Object.keys(this.history) as HistoryKey[];
+    },
+    length(): number {
+      return this.historyKeys.length;
+    },
     historyArray(): HistoryItem[] {
-      return Object.values(this.history).reverse();
+      return from(this.historyKeys)
+        .reverse()
+        .select((key) => this.history[key])
+        .toArray();
+    },
+    historyGroupByType(): Map<"view_owner" | "view_album", HistoryItem[]> {
+      return from(this.historyArray).toMap((x) => x.type);
     },
     historyArrayViewAlbum(): HistoryItemViewAlbum[] {
-      return this.historyArray.filter(
-        (x) => x.type === "view_album",
+      return this.historyGroupByType.get(
+        "view_album",
       ) as HistoryItemViewAlbum[];
     },
     historyArrayViewOwner(): HistoryItemViewOwner[] {
-      return this.historyArray.filter(
-        (x) => x.type === "view_owner",
+      return this.historyGroupByType.get(
+        "view_owner",
       ) as HistoryItemViewOwner[];
     },
     oldestKey(): HistoryKey | undefined {
       return this.historyArray.at(-1) as any;
-    },
-    length(): number {
-      return Object.keys(this.history).length;
     },
   },
   persist: {

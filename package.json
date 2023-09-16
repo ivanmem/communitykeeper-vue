@@ -20,6 +20,7 @@
     "copy-to-clipboard": "3.3.3",
     "eruda": "^3.0.1",
     "file-saver": "2.0.5",
+    "linq-to-typescript": "^11.0.0",
     "lodash": "4.17.21",
     "pinia": "2.1.6",
     "pinia-plugin-persistedstate": "^3.2.0",
