@@ -1,16 +1,15 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/composables/useAppCaption";
 import { useGroups } from "@/store/groups/groups";
-import AButton from "@/components/AButton/AButton.vue";
 import { isGroupsExport } from "@/store/groups/isGroupsExport";
 import { useApp } from "@/store/app/app";
 import { useVk } from "@/store/vk/vk";
 import { icons } from "@/common/consts";
-import { ref } from "vue";
 import ExportBtn from "@/pages/ASettings/ExportBtn.vue";
 
 useAppCaption("Настройки");
 const groupsStore = useGroups();
+const vkStore = useVk();
 
 const onImportFileChange = (event: any) => {
   if (!event.target?.files?.length) {
@@ -31,7 +30,9 @@ const onImportFileChange = (event: any) => {
     await groupsStore.autoSaveCurrentLocalGroups();
     const newGroupsCount = groupsStore.localGroupsArray.length;
     window.alert(
-      `Импорт завершён данные. Новых групп: ${newGroupsCount - oldGroupsCount}.`
+      `Импорт завершён данные. Новых групп: ${
+        newGroupsCount - oldGroupsCount
+      }.`,
     );
   });
 
@@ -101,7 +102,7 @@ const onRemoveAllGroups = async () => {
       />
       <span class="a-mini-text">
         Запросы ограничены до тысячи в час; За этот сеанс вы уже сделали:
-        {{ useVk().vkWebAppStorageSetCount }}. Если вы попытаетесь сохраниться
+        {{ vkStore.vkWebAppStorageSetCount }}. Если вы попытаетесь сохраниться
         при лимите - все группы будут утеряны!
         <br />
         Этот параметр не влияет на сохранение настроек. Они будут сохраняться
@@ -125,7 +126,10 @@ const onRemoveAllGroups = async () => {
         hide-details
         label="Отображать счётчики количества фото\видео и так далее"
       />
-      <span class="a-mini-text">Учтите, что придётся ждать их загрузку.</span>
+      <span class="a-mini-text">
+        Если опция выключена, то вы можете вручную загрузить счётчики по клику
+        на аватарку группы.
+      </span>
     </VCardItem>
     <VCardItem>
       <VSwitch

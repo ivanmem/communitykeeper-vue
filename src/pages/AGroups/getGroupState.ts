@@ -7,6 +7,7 @@ export interface GroupState {
   text: string;
   isBanned: true | "banned" | undefined;
   isVisibleJoin: boolean;
+  hideCounters?: boolean;
 }
 
 export function getGroupState(group: IGroup): GroupState {

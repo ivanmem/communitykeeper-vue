@@ -89,6 +89,15 @@ export const useGroups = defineStore("groups", {
         },
         { deep: true },
       );
+      // если меняется настройка showCounters - очищаем ручное состояние скрытия счётчиков
+      watch(
+        () => this.config.showCounters,
+        () => {
+          for (let value of this.groupsMap.values()) {
+            delete GroupHelper.getState(value).hideCounters;
+          }
+        },
+      );
       watch(
         () => this.config.eruda,
         useApp().wrapLoading(() => {

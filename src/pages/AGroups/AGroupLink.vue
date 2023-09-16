@@ -18,6 +18,7 @@ const props = defineProps<{
   group: IGroup;
   index: number;
 }>();
+const groupsStore = useGroups();
 const target = ref<HTMLDivElement | null>(null);
 const targetIsVisible = useElementVisibility(target);
 const isDeactivated = ref(false);
@@ -29,7 +30,7 @@ watch(
     if (
       !targetIsVisible.value ||
       isLoaded.value ||
-      !useGroups().config.showCounters ||
+      !groupsStore.config.showCounters ||
       props.group.counters
     ) {
       return;
@@ -48,9 +49,9 @@ watch(
       return;
     }
 
-    await useGroups().loadGroupCounters(props.group);
+    await groupsStore.loadGroupCounters(props.group);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onDeactivated(() => {
@@ -111,6 +112,39 @@ const onOpenContextMenu = (e: MouseEvent) => {
 
   showContextMenu(e, items);
 };
+
+const onClickAvatar = () => {
+  if (props.group.counters) {
+    const groupState = GroupHelper.getState(props.group);
+    if (
+      groupState.hideCounters === undefined &&
+      !groupsStore.config.showCounters
+    ) {
+      groupState.hideCounters = false;
+      return;
+    }
+
+    if (!groupState.hideCounters) {
+      groupState.hideCounters = true;
+      return;
+    }
+
+    groupState.hideCounters = false;
+    return;
+  }
+
+  return groupsStore.loadGroupCounters(props.group);
+};
+
+const showCounters = computed(() => {
+  return (
+    props.group.counters &&
+    !(
+      GroupHelper.getState(props.group).hideCounters ??
+      !groupsStore.config.showCounters
+    )
+  );
+});
 </script>
 
 <template>
@@ -124,21 +158,25 @@ const onOpenContextMenu = (e: MouseEvent) => {
       class="a-group-link a-button__block"
       @click="openLink(`//` + link)"
     >
-      <img :src="group.photo_200" alt="" class="a-group-link__avatar" />
+      <img
+        :src="group.photo_200"
+        alt=""
+        class="a-group-link__avatar"
+        @click.stop="onClickAvatar"
+      />
       <div class="a-group-link__div">
         <span class="a-group-link__name">{{ group.name }}</span>
         <span class="a-group-link__help">
           {{ GroupHelper.getState(group).text }}
         </span>
       </div>
-
       <AButton
         class="a-group-link__context-menu"
         icon="Icon16MoreVertical"
         @click.stop="onOpenContextMenu"
-      ></AButton>
+      />
     </AButton>
-    <AGroupCounters v-if="useGroups().config.showCounters" :group="group" />
+    <AGroupCounters v-if="showCounters" :group="group" />
   </div>
 </template>
 
@@ -215,5 +253,11 @@ const onOpenContextMenu = (e: MouseEvent) => {
   width: 48px;
   height: 48px;
   border-radius: 50%;
+  transition: transform 0.5s ease;
+  transform: rotate(0deg);
+
+  &:hover {
+    transform: rotate(10deg);
+  }
 }
 </style>
