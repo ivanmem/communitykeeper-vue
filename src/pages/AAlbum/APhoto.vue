@@ -290,7 +290,6 @@ const win = window;
   justify-content: center;
   align-items: center;
   vertical-align: top;
-  margin: 2px 3px 3px 2px;
   background-color: black;
   cursor: pointer;
 

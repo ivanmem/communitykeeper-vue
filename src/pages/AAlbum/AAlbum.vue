@@ -7,7 +7,6 @@ import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useAlbum } from "@/pages/AAlbum/useAlbum";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { RecycleScroller } from "vue-virtual-scroller";
-import { toNumberOrUndefined } from "@/helpers/toNumberOrUndefined";
 import AButton from "@/components/AButton/AButton.vue";
 import { useGroups } from "@/store/groups/groups";
 import { openLink } from "@/helpers/openLink";
@@ -34,7 +33,6 @@ const {
   albumRef,
   gridItems,
   isLoadingPhotos,
-  isLoadAllPhotos,
 } = useAlbum(
   () => props.ownerId,
   () => props.albumId,
@@ -53,43 +51,45 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
 <template>
   <div class="a-album vkuiGroup__inner Group__inner">
     <template v-if="isInit">
-      <VBreadcrumbs density="compact" style="padding-left: 0">
-        <VBreadcrumbsItem style="padding-left: 0" to="/">
-          Группы
-        </VBreadcrumbsItem>
-        <VIcon icon="mdi-chevron-right" size="small" />
-        <VBreadcrumbsItem
-          :href="`https://${ownerUrl}`"
-          :title="group?.name ?? 'Источник'"
-          @click.prevent="router.replace(`/albums/${ownerId}`)"
-        />
-        <VIcon icon="mdi-chevron-right" size="small" />
-        <VBreadcrumbsItem
-          :href="`https://${albumUrl}`"
-          :title="album?.title ?? 'Альбом'"
-          style="opacity: 0.7"
-          @click.prevent="openLink(`//${albumUrl}`)"
-        />
-      </VBreadcrumbs>
-      <div
-        style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
-      >
-        <AButton
-          class="opacity"
-          icon="Icon24SortOutline"
-          style="margin-left: auto"
-          @click="
-            groupsStore.config.reverseOrder = !groupsStore.config.reverseOrder
-          "
-          >{{
-            groupsStore.config.reverseOrder
-              ? "Показать в прямом порядке"
-              : "Показать в обратном порядке"
-          }}
-        </AButton>
-        <code v-if="screenError" class="vkuiFormField--status-error">
-          {{ screenError }}
-        </code>
+      <div style="padding-inline: 10px">
+        <VBreadcrumbs density="compact" style="padding-left: 0">
+          <VBreadcrumbsItem style="padding-left: 0" to="/">
+            Группы
+          </VBreadcrumbsItem>
+          <VIcon icon="mdi-chevron-right" size="small" />
+          <VBreadcrumbsItem
+            :href="`https://${ownerUrl}`"
+            :title="group?.name ?? 'Источник'"
+            @click.prevent="router.replace(`/albums/${ownerId}`)"
+          />
+          <VIcon icon="mdi-chevron-right" size="small" />
+          <VBreadcrumbsItem
+            :href="`https://${albumUrl}`"
+            :title="album?.title ?? 'Альбом'"
+            style="opacity: 0.7"
+            @click.prevent="openLink(`//${albumUrl}`)"
+          />
+        </VBreadcrumbs>
+        <div
+          style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
+        >
+          <AButton
+            class="opacity"
+            icon="Icon24SortOutline"
+            style="margin-left: auto"
+            @click="
+              groupsStore.config.reverseOrder = !groupsStore.config.reverseOrder
+            "
+            >{{
+              groupsStore.config.reverseOrder
+                ? "Показать в прямом порядке"
+                : "Показать в обратном порядке"
+            }}
+          </AButton>
+          <code v-if="screenError" class="vkuiFormField--status-error">
+            {{ screenError }}
+          </code>
+        </div>
       </div>
       <RecycleScroller
         ref="albumRef"
@@ -135,18 +135,11 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
   gap: 5px;
   background: var(--vkui--color_background_content);
   color: var(--vkui--color_text_primary);
-  padding-inline: 10px;
 }
 
 .a-album__items {
-  display: flex;
   flex-grow: 1;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 10px;
   overflow-x: auto;
   justify-content: space-evenly;
-  padding-block: 10px;
-  flex-basis: 0;
 }
 </style>

@@ -28,24 +28,26 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 <template>
   <div class="a-albums vkuiGroup__inner Group__inner">
     <template v-if="isInit">
-      <VBreadcrumbs style="padding-left: 0" density="compact">
-        <VBreadcrumbsItem
-          style="padding-left: 0"
-          replace
-          to="/"
-          title="Группы"
-        />
-        <VIcon size="small" icon="mdi-chevron-right" />
-        <VBreadcrumbsItem
-          style="opacity: 0.7"
-          :href="`https://${ownerUrl}`"
-          :title="group?.name ?? 'Источник'"
-          @click.prevent="openLink(`//${ownerUrl}`)"
-        />
-      </VBreadcrumbs>
-      <code v-if="screenError" class="vkuiFormField--status-error">
-        {{ screenError }}
-      </code>
+      <div style="padding-inline: 10px">
+        <VBreadcrumbs style="padding-left: 0" density="compact">
+          <VBreadcrumbsItem
+            style="padding-left: 0"
+            replace
+            to="/"
+            title="Группы"
+          />
+          <VIcon size="small" icon="mdi-chevron-right" />
+          <VBreadcrumbsItem
+            style="opacity: 0.7"
+            :href="`https://${ownerUrl}`"
+            :title="group?.name ?? 'Источник'"
+            @click.prevent="openLink(`//${ownerUrl}`)"
+          />
+        </VBreadcrumbs>
+        <code v-if="screenError" class="vkuiFormField--status-error">
+          {{ screenError }}
+        </code>
+      </div>
       <RecycleScroller
         ref="albumsRef"
         class="a-albums__items"
@@ -78,7 +80,6 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
   gap: 5px;
   background: var(--vkui--color_background_content);
   color: var(--vkui--color_text_primary);
-  padding-inline: 10px;
 }
 
 .a-albums__items {

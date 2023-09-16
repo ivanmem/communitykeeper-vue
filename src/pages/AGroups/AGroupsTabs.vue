@@ -2,11 +2,11 @@
 import { useApp } from "@/store/app/app";
 import { useGroups } from "@/store/groups/groups";
 import { showContextMenu } from "@/helpers/showContextMenu";
-import { h, PropType, ref } from "vue";
+import { h, PropType, ref, StyleValue } from "vue";
 import { icons } from "@/common/consts";
 
 const props = defineProps({
-  style: { type: [] as PropType<any> },
+  style: { type: [String, Object, Array] as PropType<StyleValue> },
 });
 const appStore = useApp();
 const groupsStore = useGroups();

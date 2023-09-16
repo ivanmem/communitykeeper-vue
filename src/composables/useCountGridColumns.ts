@@ -17,7 +17,7 @@ export function useCountGridColumns(
   maybeElement: MaybeRefOrGetter,
   widthOneColumn: Ref<number>,
   initialWidthOneColumn: MaybeRefOrGetter<number>,
-  containerIndent = 0
+  containerIndent = 0,
 ) {
   const gridItems = ref(0);
   const unsubs: (() => any)[] = reactive([]);
@@ -49,7 +49,7 @@ export function useCountGridColumns(
     () => {
       widthOneColumn.value = toValue(initialWidthOneColumn);
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   // при изменении ширины контейнера или изменении количества столбцов - добавляем к ширине столбца свободный размер, чтобы заполнить всю ширину контейнера
@@ -63,19 +63,16 @@ export function useCountGridColumns(
       const freeWidth =
         elWidth - gridItems * AlbumsPreviewSizes.width - containerIndent;
       const fixWidthOnly = freeWidth / gridItems;
-      if (fixWidthOnly < 0) {
+      if (fixWidthOnly <= 0) {
         return;
       }
 
       const newWidthColumn = widthOneColumn.value + Math.floor(fixWidthOnly);
-      if (
-        Math.abs(fixWidthOnly) > 10 &&
-        newWidthColumn < toValue(initialWidthOneColumn) * 1.5
-      ) {
+      if (newWidthColumn < toValue(initialWidthOneColumn) * 1.5) {
         widthOneColumn.value = newWidthColumn;
       }
     },
-    { immediate: true, flush: "post" }
+    { immediate: true, flush: "post" },
   );
 
   watch(el, () => {
@@ -91,7 +88,7 @@ export function useCountGridColumns(
       element.removeEventListener("resize", updateCount);
       document.documentElement.removeEventListener(
         "fullscreenchange",
-        updateCount
+        updateCount,
       );
     });
   });
