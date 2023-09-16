@@ -11,7 +11,15 @@ import { from, IEnumerable, NumberComparer } from "linq-to-typescript";
 
 class GroupHelper {
   static getGroupAccess(g?: IGroup) {
-    return (g?.is_closed && g.is_member) || !g?.is_closed;
+    if (!g || GroupHelper.getState(g).isBanned !== undefined) {
+      return false;
+    }
+
+    if (!g.is_closed) {
+      return true;
+    }
+
+    return g.is_closed && g.is_member;
   }
 
   static getFiltered(groupsIds: number[], filters?: FiltersType): IGroup[] {
