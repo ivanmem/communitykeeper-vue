@@ -32,8 +32,10 @@ const counters = useGroupCounters(groupRef);
         <div>
           {{ counter.name }}
         </div>
-        <div class="a-group-counter__count">
-          {{ counter.count }}
+        <div class="a-group-counter__count" style="min-width: 36px">
+          <div class="a-group-counter__count-wrapper">
+            {{ counter.count }}
+          </div>
         </div>
       </VSheet>
     </VListItem>
@@ -46,35 +48,44 @@ const counters = useGroupCounters(groupRef);
 
 .a-group-counters__icon {
   display: flex;
-  width: 48px;
-  margin-right: 12px;
   justify-content: center;
+  margin-right: 12px;
+  width: 48px;
 }
 
 .a-group-counters__counter {
-  display: flex;
-  flex-direction: row;
   align-content: flex-start;
   align-items: center;
-  justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
   font-family: var(--vkui--font_family_base);
+  justify-content: flex-start;
 }
 
 .a-group-counter__count {
-  margin-left: auto;
-  border-radius: 12px;
-  height: 24px;
-  min-width: 24px;
-  background: var(--counter_primary_background);
-  color: var(--counter_primary_text);
-  padding-left: 5px;
-  padding-right: 5px;
+  align-items: center;
   display: flex;
   justify-content: center;
+  margin-left: auto;
+  min-height: 36px;
+  min-width: 36px;
+}
+
+.a-group-counter__count-wrapper {
   align-items: center;
+  background: var(--counter_primary_background);
+  border-radius: 12px;
+  color: var(--counter_primary_text);
+  display: flex;
   font-size: var(--vkui--font_headline2--font_size--compact, 14px);
-  line-height: var(--vkui--font_headline2--line_height--compact, 20px);
   font-weight: 400;
-  margin-right: 6px;
+  height: 24px;
+  justify-content: center;
+  line-height: var(--vkui--font_headline2--line_height--compact, 20px);
+  min-width: 24px;
+
+  padding-left: 5px;
+  padding-right: 5px;
+  width: max-content;
 }
 </style>

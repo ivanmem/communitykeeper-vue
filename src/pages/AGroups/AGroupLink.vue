@@ -186,23 +186,24 @@ const showCounters = computed(() => {
 }
 
 .a-group-link {
-  display: flex;
-  text-decoration: none;
-  padding: 8px var(--vkui--size_base_padding_horizontal--regular);
-  font-family: var(--vkui--font_family_base);
-  color: var(--vkui--color_text_primary);
+  align-content: flex-start;
+  align-items: center;
   background: none;
   border: none;
-  justify-content: flex-start;
-  align-items: center;
-  text-align: left;
-  align-content: flex-start;
+  border-radius: 0;
+  color: var(--vkui--color_text_primary);
+  display: flex;
+  font-family: var(--vkui--font_family_base);
   gap: 12px;
+  justify-content: flex-start;
+  padding: 8px var(--vkui--size_base_padding_horizontal--regular);
+  text-align: left;
+  text-decoration: none;
   transition: background-color 0.15s ease-out;
 
   &:hover {
-    opacity: 1;
     background-color: var(--a-group-link-hover-background);
+    opacity: 1;
   }
 }
 
@@ -213,15 +214,15 @@ const showCounters = computed(() => {
 }
 
 .a-group-link__context-menu {
-  display: flex;
-  margin-left: auto;
-  justify-content: center;
   align-items: center;
   border-radius: 50%;
-  width: 36px;
+  display: flex;
   height: 36px;
-  min-width: 36px;
+  justify-content: center;
+  margin-left: auto;
   min-height: 36px;
+  min-width: 36px;
+  width: 36px;
 
   .a-button__icon {
     margin: 0;
@@ -231,30 +232,30 @@ const showCounters = computed(() => {
 .a-group-link__name {
   color: inherit;
   display: block;
-  overflow: hidden;
   font-size: 15px;
   line-height: 20px;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .a-group-link__help {
+  font-family: var(--vkui--font_title1--font_family--regular);
   font-size: 12px;
+  font-weight: var(--vkui--font_subhead--font_weight--regular, 400);
+  line-height: var(--vkui--font_subhead--line_height--compact, 16px);
+  opacity: 0.7;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  line-height: var(--vkui--font_subhead--line_height--compact, 16px);
-  font-weight: var(--vkui--font_subhead--font_weight--regular, 400);
-  font-family: var(--vkui--font_title1--font_family--regular);
-  opacity: 0.7;
 }
 
 .a-group-link__avatar {
-  width: 48px;
-  height: 48px;
   border-radius: 50%;
-  transition: transform 0.5s ease;
+  height: 48px;
   transform: rotate(0deg);
+  transition: transform 0.5s ease;
+  width: 48px;
 
   &:hover {
     transform: rotate(10deg);
