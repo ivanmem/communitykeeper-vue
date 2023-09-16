@@ -24,7 +24,6 @@ onActivated(async () => {
     @mousedown="showFilters = false"
     @wheel="showFilters = false"
     @touchstart="showFilters = false"
-    v-on="groupSearch.swipes"
   >
     <AGroupsSearch :group-search="groupSearch" />
     <DynamicScroller
@@ -32,6 +31,7 @@ onActivated(async () => {
       :items="groupsOrder"
       :min-item-size="64"
       key-field="id"
+      v-on="groupSearch.swipes"
     >
       <template v-slot="{ item, index, active }">
         <DynamicScrollerItem
