@@ -209,6 +209,7 @@ const showCounters = computed(() => {
 .a-group-link__div {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .a-group-link__context-menu {
@@ -234,12 +235,11 @@ const showCounters = computed(() => {
   font-size: 15px;
   line-height: 20px;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .a-group-link__help {
   font-size: 12px;
-  flex-grow: 1;
-  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
