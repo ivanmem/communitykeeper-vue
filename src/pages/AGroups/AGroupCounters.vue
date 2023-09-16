@@ -20,10 +20,14 @@ const counters = useGroupCounters(groupRef);
     <VListItem
       v-for="counter in counters"
       :key="counter.name"
-      :prepend-icon="counter.icon"
       width="100%"
       @click="openLink(counter.link)"
     >
+      <template #prepend>
+        <div class="a-group-counters__icon">
+          <component :is="counter.icon" />
+        </div>
+      </template>
       <VSheet class="a-group-counters__counter">
         <div>
           {{ counter.name }}
@@ -38,6 +42,13 @@ const counters = useGroupCounters(groupRef);
 <style lang="scss">
 .a-group-counters {
   padding-top: 0;
+}
+
+.a-group-counters__icon {
+  display: flex;
+  width: 48px;
+  margin-right: 12px;
+  justify-content: center;
 }
 
 .a-group-counters__counter {
@@ -64,5 +75,6 @@ const counters = useGroupCounters(groupRef);
   font-size: var(--vkui--font_headline2--font_size--compact, 14px);
   line-height: var(--vkui--font_headline2--line_height--compact, 20px);
   font-weight: 400;
+  margin-right: 6px;
 }
 </style>
