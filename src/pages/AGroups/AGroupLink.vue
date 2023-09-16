@@ -113,27 +113,27 @@ const onOpenContextMenu = (e: MouseEvent) => {
   showContextMenu(e, items);
 };
 
-const onClickAvatar = () => {
-  if (props.group.counters) {
-    const groupState = GroupHelper.getState(props.group);
-    if (
-      groupState.hideCounters === undefined &&
-      !groupsStore.config.showCounters
-    ) {
-      groupState.hideCounters = false;
-      return;
-    }
+const onClickAvatar = async () => {
+  if (!props.group.counters) {
+    await groupsStore.loadGroupCounters(props.group);
+  }
 
-    if (!groupState.hideCounters) {
-      groupState.hideCounters = true;
-      return;
-    }
-
+  const groupState = GroupHelper.getState(props.group);
+  if (
+    groupState.hideCounters === undefined &&
+    !groupsStore.config.showCounters
+  ) {
     groupState.hideCounters = false;
     return;
   }
 
-  return groupsStore.loadGroupCounters(props.group);
+  if (!groupState.hideCounters) {
+    groupState.hideCounters = true;
+    return;
+  }
+
+  groupState.hideCounters = false;
+  return;
 };
 
 const showCounters = computed(() => {
