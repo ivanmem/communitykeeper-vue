@@ -5,7 +5,8 @@ import { nextTick } from "vue";
 export function showContextMenu(
   e: MouseEvent,
   items: MenuItem[] | undefined,
-  onClose = () => {}
+  onClose = () => {
+  },
 ) {
   const contextMenuInstance = Vue3ContextMenu.showContextMenu({
     x: e.x,

@@ -22,23 +22,23 @@ onActivated(async () => {
   <div
     class="a-groups vkuiGroup__inner Group__inner"
     @mousedown="showFilters = false"
-    @wheel="showFilters = false"
     @touchstart="showFilters = false"
+    @wheel="showFilters = false"
   >
     <AGroupsSearch :group-search="groupSearch" />
     <DynamicScroller
-      class="a-groups__groups"
       :items="groupsOrder"
       :min-item-size="64"
+      class="a-groups__groups"
       key-field="id"
       v-on="groupSearch.swipes"
     >
       <template v-slot="{ item, index, active }">
         <DynamicScrollerItem
-          :item="item"
           :active="active"
-          :size-dependencies="[item.counters]"
           :data-index="index"
+          :item="item"
+          :size-dependencies="[item.counters]"
         >
           <AGroupLink :key="item.id" :group="item" :index="index" />
         </DynamicScrollerItem>
@@ -49,26 +49,26 @@ onActivated(async () => {
 
 <style lang="scss">
 .a-groups {
+  background: var(--vkui--color_background_content);
+  color: var(--vkui--color_text_primary);
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  overflow: auto;
   gap: 5px;
-  background: var(--vkui--color_background_content);
-  color: var(--vkui--color_text_primary);
+  overflow: auto;
 }
 
 .a-groups__groups {
   display: flex;
-  flex-grow: 1;
-  overflow: auto;
   flex-direction: column;
+  flex-grow: 1;
   gap: 5px;
+  overflow: auto;
 }
 
 .a-groups__header {
+  border-bottom: 1px solid currentColor;
   display: block;
   padding: 8px var(--vkui--size_base_padding_horizontal--regular);
-  border-bottom: 1px solid currentColor;
 }
 </style>

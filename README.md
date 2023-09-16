@@ -3,7 +3,7 @@
 ## Зависимости
 
 ```shell
-npm install --force
+npm install
 ```
 
 ## Запуск

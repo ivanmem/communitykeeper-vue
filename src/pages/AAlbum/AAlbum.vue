@@ -80,7 +80,7 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
             @click="
               groupsStore.config.reverseOrder = !groupsStore.config.reverseOrder
             "
-            >{{
+          >{{
               groupsStore.config.reverseOrder
                 ? "Показать в прямом порядке"
                 : "Показать в обратном порядке"
@@ -128,18 +128,18 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
 
 <style lang="scss">
 .a-album {
+  background: var(--vkui--color_background_content);
+  color: var(--vkui--color_text_primary);
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  overflow: auto;
   gap: 5px;
-  background: var(--vkui--color_background_content);
-  color: var(--vkui--color_text_primary);
+  overflow: auto;
 }
 
 .a-album__items {
   flex-grow: 1;
-  overflow-x: auto;
   justify-content: space-evenly;
+  overflow-x: auto;
 }
 </style>

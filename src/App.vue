@@ -2,7 +2,7 @@
 import { useRoute } from "vue-router";
 import copy from "copy-to-clipboard";
 import AButton from "@/components/AButton/AButton.vue";
-import { useColorScheme } from "@/useColorScheme";
+import { useColorScheme } from "@/composables/useColorScheme";
 import { useApp } from "@/store/app/app";
 import { darkColorScheme, icons } from "@/common/consts";
 import { useGroups } from "@/store/groups/groups";
@@ -115,7 +115,7 @@ const win = window;
           lock-scroll
         />
         <template v-if="groupsStore.isInit">
-          <v-toolbar density="compact" class="navigation-header">
+          <v-toolbar class="navigation-header" density="compact">
             <v-toolbar-title style="flex-grow: 5">
               <div id="caption" class="overflow-block navigation-caption">
                 {{ appStore.caption }}
@@ -125,18 +125,18 @@ const win = window;
             <div id="navigation-header__right"></div>
             <VBtn
               v-if="route.path !== '/'"
-              variant="text"
               :icon="icons.Icon24Linked"
+              variant="text"
               @click="copy('vk.com/app51658481#' + route.path)"
             />
             <VBtn
               v-if="useApp().isVkCom"
-              variant="text"
               :icon="
                 fullscreenElement
                   ? icons.Icon24FullscreenExit
                   : icons.Icon24Fullscreen
               "
+              variant="text"
               @click="switchFullscreen()"
             />
           </v-toolbar>
@@ -147,7 +147,7 @@ const win = window;
               </keep-alive>
             </router-view>
           </div>
-          <VToolbar density="compact" class="navigation" color="transparent">
+          <VToolbar class="navigation" color="transparent" density="compact">
             <div class="navigation-bottom-buttons">
               <AButton
                 v-for="item of tabBarItems"
@@ -167,20 +167,17 @@ const win = window;
 
 <style lang="scss">
 .root {
-  gap: 10px;
   background: var(--vkui--color_background_content);
-}
-
-.route-view {
+  gap: 10px;
 }
 
 .navigation-header {
-  display: flex;
   align-items: center;
+  display: flex;
+  gap: 5px;
+  min-height: 30px;
   padding-inline: 10px;
   padding-right: var(--navigation-header-padding-right, 10px);
-  min-height: 30px;
-  gap: 5px;
 
   @at-root .root[data-fullscreen="true"] & {
     padding-right: 10px;
@@ -188,51 +185,51 @@ const win = window;
 }
 
 #navigation-header__right {
-  display: flex;
   align-items: center;
+  display: flex;
   gap: 5px;
 }
 
 .navigation {
-  display: flex;
   align-items: center;
+  display: flex;
   padding-inline: 5px;
 }
 
 .navigation-caption {
-  display: flex;
   align-items: flex-start;
-  justify-items: center;
-  justify-content: center;
-  font-weight: bold;
-  text-transform: uppercase;
+  display: flex;
   font-size: min(calc(0.3em + 2vw), 18px);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+  font-weight: bold;
+  justify-content: center;
+  justify-items: center;
   max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
 
   a {
     color: inherit;
-    font-weight: inherit;
     font-size: inherit;
-    text-transform: inherit;
+    font-weight: inherit;
+    max-width: inherit;
+    overflow: inherit;
     text-decoration: inherit;
     text-overflow: inherit;
+    text-transform: inherit;
     white-space: inherit;
-    overflow: inherit;
-    max-width: inherit;
   }
 }
 
 .navigation-bottom-buttons {
+  align-items: center;
+  border-radius: 5px;
   display: flex;
   gap: 5px;
-  align-items: center;
+  min-width: 100%;
   overflow: auto;
   padding: 10px;
-  min-width: 100%;
-  border-radius: 5px;
 
   & > * {
     flex-grow: 1;

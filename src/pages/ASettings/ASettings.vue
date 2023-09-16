@@ -55,14 +55,14 @@ const onRemoveAllGroups = async () => {
     <VCardItem style="max-width: 400px">
       <VRow no-gutters style="gap: 10px">
         <VBtn
-          :prepend-icon="icons.Icon24CloudOutline"
           :color="
             groupsStore.spaceUsed >= 80
               ? 'deep-orange-darken-4'
               : 'green-darken-3'
           "
-          style="pointer-events: none"
+          :prepend-icon="icons.Icon24CloudOutline"
           class="a-button__left-content"
+          style="pointer-events: none"
         >
           Занято места: {{ groupsStore.spaceUsed }}%
         </VBtn>
@@ -111,9 +111,9 @@ const onRemoveAllGroups = async () => {
     </VCardItem>
     <VCardItem v-if="!groupsStore.config.autoSave">
       <VBtn
+        :prepend-icon="icons.Icon24MemoryCard"
         class="a-button__left-content"
         variant="tonal"
-        :prepend-icon="icons.Icon24MemoryCard"
         @click="groupsStore.saveCurrentLocalGroups()"
       >
         Сохранить группы

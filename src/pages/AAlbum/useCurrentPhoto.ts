@@ -1,12 +1,4 @@
-import {
-  computed,
-  MaybeRefOrGetter,
-  nextTick,
-  Ref,
-  ref,
-  toValue,
-  watch,
-} from "vue";
+import { computed, MaybeRefOrGetter, nextTick, Ref, ref, toValue, watch } from "vue";
 import { IPhoto } from "vkontakte-api";
 import { toStr } from "@/helpers/toStr";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
@@ -163,7 +155,7 @@ export function useCurrentPhoto(
         getPhotoByIndex(currentIndex)!,
         activeElSize,
       )
-    ) {
+      ) {
       currentIndex = getSwitchPhotoIndexByMode(currentIndex, mode);
       if (getPhotoByIndex(currentIndex) !== undefined) {
         continue;
@@ -174,7 +166,8 @@ export function useCurrentPhoto(
         await nextTick();
 
         if (isLoadingPhotos.value) {
-          while (await getFirstRefChange(isLoadingPhotos)) {}
+          while (await getFirstRefChange(isLoadingPhotos)) {
+          }
         }
 
         await nextTick();

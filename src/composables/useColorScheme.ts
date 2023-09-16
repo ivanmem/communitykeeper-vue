@@ -29,7 +29,7 @@ export function useColorScheme() {
   if (currentPlatform !== Platform.VKCOM) {
     document.documentElement.style.setProperty(
       "--navigation-header-padding-right",
-      "100px"
+      "100px",
     );
   }
 
@@ -46,11 +46,11 @@ export function useColorScheme() {
 
     currentClasses.value = generateVKUITokensClassName(
       currentPlatform,
-      initialAppearance
+      initialAppearance,
     );
     document!.documentElement.style.setProperty(
       "color-scheme",
-      initialAppearance
+      initialAppearance,
     );
     darkColorScheme.value = initialAppearance === "dark";
   }

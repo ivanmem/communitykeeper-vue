@@ -33,18 +33,18 @@ useAppCaption("О приложении");
         <VBtn
           :prepend-icon="icons.Icon16Link"
           class="a-button__left-content"
+          color="light-blue-darken-4"
           href="https://vk.com/communitykeeper"
           target="_blank"
-          color="light-blue-darken-4"
         >
           Сообщество
         </VBtn>
         <VBtn
           :prepend-icon="icons.Icon16Link"
           class="a-button__left-content"
+          color="light-blue-darken-4"
           href="https://github.com/ivanmem/local-vk-groups-catalog-vue"
           target="_blank"
-          color="light-blue-darken-4"
         >
           Github
         </VBtn>

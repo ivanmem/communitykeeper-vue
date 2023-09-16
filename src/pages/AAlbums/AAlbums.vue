@@ -29,18 +29,18 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
   <div class="a-albums vkuiGroup__inner Group__inner">
     <template v-if="isInit">
       <div style="padding-inline: 10px">
-        <VBreadcrumbs style="padding-left: 0" density="compact">
+        <VBreadcrumbs density="compact" style="padding-left: 0">
           <VBreadcrumbsItem
-            style="padding-left: 0"
             replace
-            to="/"
+            style="padding-left: 0"
             title="Группы"
+            to="/"
           />
-          <VIcon size="small" icon="mdi-chevron-right" />
+          <VIcon icon="mdi-chevron-right" size="small" />
           <VBreadcrumbsItem
-            style="opacity: 0.7"
             :href="`https://${ownerUrl}`"
             :title="group?.name ?? 'Источник'"
+            style="opacity: 0.7"
             @click.prevent="openLink(`//${ownerUrl}`)"
           />
         </VBreadcrumbs>
@@ -50,18 +50,18 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
       </div>
       <RecycleScroller
         ref="albumsRef"
-        class="a-albums__items"
-        :items="albums"
-        :item-size="AlbumsPreviewSizes.height"
-        :total-size="albums.length"
-        :ready="!isLoadingAlbums"
-        :itemSecondarySize="AlbumsPreviewSizes.width"
+        v-slot="{ item, index }"
         :gridItems="gridItems"
+        :item-size="AlbumsPreviewSizes.height"
+        :itemSecondarySize="AlbumsPreviewSizes.width"
+        :items="albums"
+        :ready="!isLoadingAlbums"
+        :total-size="albums.length"
         :updateInterval="100"
+        class="a-albums__items"
         emit-update
         key-field="id"
         @update="onScrollerUpdate"
-        v-slot="{ item, index }"
       >
         <AAlbumsPreview :key="item.id" :album="item" :index="index" />
       </RecycleScroller>
@@ -73,24 +73,24 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 
 <style lang="scss">
 .a-albums {
+  background: var(--vkui--color_background_content);
+  color: var(--vkui--color_text_primary);
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  overflow: auto;
   gap: 5px;
-  background: var(--vkui--color_background_content);
-  color: var(--vkui--color_text_primary);
+  overflow: auto;
 }
 
 .a-albums__items {
   display: flex;
-  flex-grow: 1;
+  flex-basis: 0;
   flex-direction: row;
+  flex-grow: 1;
   flex-wrap: wrap;
   gap: 5px;
-  overflow-x: auto;
   justify-content: space-evenly;
+  overflow-x: auto;
   padding-block: 10px;
-  flex-basis: 0;
 }
 </style>

@@ -13,6 +13,6 @@ export function useScreenSpinner(loading: MaybeRefOrGetter<boolean>) {
         useApp().loadingSet.add(id);
       }
     },
-    { immediate: true }
+    { immediate: true },
   );
 }

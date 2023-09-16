@@ -5,13 +5,13 @@
 </template>
 <style lang="scss">
 .a-page-container {
+  background: var(--vkui--color_background_content);
+  color: var(--vkui--color_text_primary);
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  overflow: auto;
   gap: 5px;
-  background: var(--vkui--color_background_content);
-  color: var(--vkui--color_text_primary);
+  overflow: auto;
   padding: 8px var(--vkui--size_base_padding_horizontal--regular);
 }
 </style>

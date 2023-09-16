@@ -1,10 +1,5 @@
 import { IGroup } from "@/store/groups/types";
-import {
-  FiltersType,
-  GroupsSortEnum,
-  OnlyAccessEnum,
-  useGroups,
-} from "@/store/groups/groups";
+import { FiltersType, GroupsSortEnum, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
 import { getGroupState, GroupState } from "@/pages/AGroups/getGroupState";
 import bridge from "@vkontakte/vk-bridge";
 import { from, IEnumerable, NumberComparer } from "linq-to-typescript";
@@ -51,7 +46,7 @@ class GroupHelper {
       if (
         filters.folder.length > 0 &&
         filters.folder.trim().toLowerCase() !=
-          localGroup.folder.trim().toLowerCase()
+        localGroup.folder.trim().toLowerCase()
       ) {
         return false;
       }

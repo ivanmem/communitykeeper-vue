@@ -14,6 +14,6 @@ export function useAppCaption(newCaption: MaybeRefOrGetter<string>) {
     () => {
       setCaption();
     },
-    { immediate: true }
+    { immediate: true },
   );
 }

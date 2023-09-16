@@ -26,9 +26,10 @@ const win = window;
     <VCard class="overflow-block a-group-filters">
       <VCardTitle>Экспорт</VCardTitle>
       <VCardText
-        >Если экспорт прошёл успешно, то нажмите кнопку Закрыть. Иначе
+      >Если экспорт прошёл успешно, то нажмите кнопку Закрыть. Иначе
         скопируйте данные в буфер обмена и вставьте в текстовый
-        <b>.json</b> файл.</VCardText
+        <b>.json</b> файл.
+      </VCardText
       >
       <VCardActions>
         <VBtn @click="exportShow = false">Закрыть</VBtn>
@@ -37,7 +38,7 @@ const win = window;
             toClipboard(JSON.stringify(groupsStore.getExport()), $event.target);
             win.alert('Экспорт помещён в буфер обмена.');
           "
-          >Скопировать
+        >Скопировать
         </VBtn>
       </VCardActions>
     </VCard>

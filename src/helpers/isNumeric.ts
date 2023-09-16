@@ -3,7 +3,7 @@ import { replaceCommaNumber } from "./replaceCommaNumber";
 
 export default function isNumeric(
   str: string | number | undefined | null,
-  replaceComma = false
+  replaceComma = false,
 ): str is number | string {
   if (isNullOrUndefined(str)) {
     return false;

@@ -5,7 +5,7 @@ export function useActivated() {
 
   onActivated(() => {
     isActive.value = true;
-  })
+  });
 
   onDeactivated(() => {
     isActive.value = false;

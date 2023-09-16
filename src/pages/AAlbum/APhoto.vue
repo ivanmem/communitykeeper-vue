@@ -212,8 +212,8 @@ const win = window;
     ref="photoDiv"
     class="a-not-dragable-and-not-select a-photo"
     tabindex="1"
-    v-on="swipes"
     @click="onClick"
+    v-on="swipes"
     @contextmenu.prevent.stop="onShowContextMenu"
     @keydown.stop.prevent.esc="emit('photo:exit')"
     @keydown.stop.prevent.space="emit('photo:exit')"
@@ -280,61 +280,61 @@ const win = window;
 </template>
 <style lang="scss">
 .a-photo {
-  z-index: 1;
-  position: fixed;
-  top: 0;
+  align-items: center;
+  background-color: black;
   bottom: 0;
-  left: 0;
-  right: 0;
+  cursor: pointer;
   display: flex;
   justify-content: center;
-  align-items: center;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
   vertical-align: top;
-  background-color: black;
-  cursor: pointer;
+  z-index: 1;
 
   img {
-    display: flex;
-    justify-content: center;
     align-content: center;
+    display: flex;
     flex-grow: 1;
-    object-fit: contain;
-    width: auto;
     height: auto;
-    max-width: 100%;
+    justify-content: center;
     max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
     pointer-events: none;
+    width: auto;
 
     &[data-original-size-photo="true"] {
-      zoom: calc(1 / var(--device-pixel-ratio));
       flex-grow: 0;
+      zoom: calc(1 / var(--device-pixel-ratio));
     }
   }
 }
 
 .a-photo__info {
-  position: absolute;
-  top: 0;
+  border-radius: 10px;
   bottom: 0;
-  left: 0;
-  right: 0;
-  flex-grow: 1;
+  color: white;
   display: flex;
   flex-direction: column;
-  border-radius: 10px;
+  flex-grow: 1;
+  left: 0;
   padding: 3px;
-  color: white;
-  z-index: 2;
   pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 2;
 }
 
 .a-photo__info-counter {
+  background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  width: max-content;
   height: max-content;
-  margin-top: 10px;
   margin-left: 15px;
-  background-color: rgba(0, 0, 0, 0.3);
+  margin-top: 10px;
+  width: max-content;
 }
 </style>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useAppCaption } from "@/composables/useAppCaption";
 import { useHistory } from "@/store/history/history";
 import { computed } from "vue";
@@ -42,22 +42,21 @@ const onClear = () => {
 
   historyStore.clear();
 };
-
 </script>
 <template>
   <FixedTeleport to="#navigation-header__right">
-    <VBtn variant="text" :icon="icons.Icon16Delete" @click="onClear" />
+    <VBtn :icon="icons.Icon16Delete" variant="text" @click="onClear" />
   </FixedTeleport>
   <VCard class="overflow-block">
     <v-sheet
       v-if="items.length === 0"
-      width="100%"
       class="pa-4 text-center mx-auto"
+      width="100%"
     >
       <h2 class="text-h5 mb-6">История просмотров отсутствует</h2>
       <v-divider class="mb-4"></v-divider>
     </v-sheet>
-    <VList :items="items" item-props lines="two" density="compact">
+    <VList :items="items" density="compact" item-props lines="two">
       <template v-slot:subtitle="{ subtitle }">
         <div>{{ subtitle }}</div>
       </template>

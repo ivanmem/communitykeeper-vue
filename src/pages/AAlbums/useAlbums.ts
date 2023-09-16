@@ -2,11 +2,7 @@ import { computed, MaybeRefOrGetter, ref, toRefs, toValue, watch } from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
-import {
-  AlbumsPreviewSizes,
-  AlbumsPreviewSizesInitial,
-  getStaticAlbums,
-} from "@/pages/AAlbums/consts";
+import { AlbumsPreviewSizes, AlbumsPreviewSizesInitial, getStaticAlbums } from "@/pages/AAlbums/consts";
 import { useVk } from "@/store/vk/vk";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { useCountGridColumns } from "@/composables/useCountGridColumns";
@@ -29,7 +25,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const gridItems = useCountGridColumns(
     albumsRef,
     widthOneColumn,
-    initialWidth
+    initialWidth,
   );
   const screenError = ref<any>();
 
@@ -49,12 +45,13 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       if (+ownerId.value < 0) {
         try {
           group.value = await useGroups().getGroupByIdOrLoad(-ownerId.value);
-        } catch {}
+        } catch {
+        }
       }
 
       albumsMaxItems.value = countOneLoad; // это инициирует первую загрузку
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   watch(
@@ -85,14 +82,14 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       isInit.value = true;
       albumsRef.value?.updateVisibleItems(true);
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   const onScrollerUpdate = (
     startIndex: number,
     endIndex: number,
     visibleStartIndex: number,
-    visibleEndIndex: number
+    visibleEndIndex: number,
   ) => {
     if (endIndex + countOneLoad / 3 < albumsMaxItems.value) {
       return;

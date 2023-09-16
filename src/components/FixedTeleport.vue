@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useActivated } from "@/composables/useActivated";
 
 const props = defineProps({

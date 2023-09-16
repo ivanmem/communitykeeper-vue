@@ -19,21 +19,21 @@ const emits = defineEmits<{
 }>();
 
 const isExternalLink = computed(
-  () => typeof props.to === "string" && props.to.startsWith("http")
+  () => typeof props.to === "string" && props.to.startsWith("http"),
 );
 
 const route = useRoute();
 const router = useRouter();
 
 const onClick = async (e: MouseEvent) => {
-    emits("click", e);
-    if (props.to !== undefined) {
-      if (isString(props.to) && isExternalLink.value) {
-        window.open(props.to, props.target);
-      } else {
-        await router.push(props.to);
-      }
+  emits("click", e);
+  if (props.to !== undefined) {
+    if (isString(props.to) && isExternalLink.value) {
+      window.open(props.to, props.target);
+    } else {
+      await router.push(props.to);
     }
+  }
 };
 
 const link = computed(() => {
@@ -68,8 +68,8 @@ const hasContent = computed(() => {
             ? icons[props.icon] ?? props.icon
             : props.icon
         "
-        :style="props.iconStyle"
         :data-has-content="hasContent"
+        :style="props.iconStyle"
         class="a-button__icon"
       />
     </template>

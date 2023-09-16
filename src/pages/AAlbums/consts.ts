@@ -10,13 +10,13 @@ export const AlbumsPreviewSizes = reactive({
 export const AlbumsPreviewSizesInitial = computed(() => {
   return useApp().platform === "vkcom"
     ? {
-        width: 245,
-        height: 165,
-      }
+      width: 245,
+      height: 165,
+    }
     : {
-        width: 170,
-        height: 115,
-      };
+      width: 170,
+      height: 115,
+    };
 });
 
 watch(
@@ -24,7 +24,7 @@ watch(
   () => {
     Object.assign(AlbumsPreviewSizes, AlbumsPreviewSizesInitial.value);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -34,7 +34,7 @@ watch(
     const percent = newWidth / prevWidth;
     AlbumsPreviewSizes.height = height * percent;
   },
-  { flush: "sync" }
+  { flush: "sync" },
 );
 
 export function getStaticAlbums(owner_id: string | number): IAlbumItem[] {

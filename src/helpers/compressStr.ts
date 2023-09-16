@@ -6,7 +6,7 @@ export async function compressStr(str: string) {
   }
 
   return new TextDecoder().decode(
-    await compress(new TextEncoder().encode(str), { quality: 11 })
+    await compress(new TextEncoder().encode(str), { quality: 11 }),
   );
 }
 
@@ -16,6 +16,6 @@ export async function decompressStr(compressStr: string) {
   }
 
   return new TextDecoder().decode(
-    await decompress(new TextEncoder().encode(compressStr))
+    await decompress(new TextEncoder().encode(compressStr)),
   );
 }

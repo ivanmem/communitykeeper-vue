@@ -99,7 +99,8 @@ export const useVk = defineStore("vk", {
         (dict, { key, value }) => {
           try {
             dict[key] = value.length ? JSON.parse(value) : undefined;
-          } catch {}
+          } catch {
+          }
           return dict;
         },
         {} as Record<string, T | undefined>,

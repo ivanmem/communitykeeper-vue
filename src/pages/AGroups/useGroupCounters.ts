@@ -30,7 +30,7 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
       icon: any,
       name: string,
       link: string,
-      addAlways = false
+      addAlways = false,
     ) => {
       if (count || addAlways) {
         if (count === undefined) {
@@ -51,25 +51,25 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
       Icon28PictureOutline,
       "Фотографий",
       `//vk.com/album-${group.id}_00`,
-      true
+      true,
     );
     add(
       group.counters.albums,
       Icon28Attachments,
       "Альбомов",
-      `//vk.com/albums-${group.id}`
+      `//vk.com/albums-${group.id}`,
     );
     add(
       group.counters.videos,
       Icon28Video,
       "Видеозаписей",
-      `//vk.com/videos-${group.id}`
+      `//vk.com/videos-${group.id}`,
     );
     add(
       group.counters.articles,
       Icon28ArticleOutline,
       "Статей",
-      `//vk.com/@public${group.id}`
+      `//vk.com/@public${group.id}`,
     );
     return result;
   });

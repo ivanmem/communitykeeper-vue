@@ -7,7 +7,7 @@ export function isGroupsExport(data: any): data is IGroupsExport {
     isPlainObject(exportObj) &&
     isPlainObject(exportObj.groupIdsDictByFolderName) &&
     !Object.values(exportObj.groupIdsDictByFolderName).some(
-      (x) => !Array.isArray(x) || x.some((id) => !isNumber(id))
+      (x) => !Array.isArray(x) || x.some((id) => !isNumber(id)),
     )
   );
 }

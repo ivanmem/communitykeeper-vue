@@ -1,8 +1,8 @@
 .v-breadcrumbs-item {
-  white-space: nowrap;
   flex-grow: 1;
-  min-width: 0;
   max-width: max-content;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }

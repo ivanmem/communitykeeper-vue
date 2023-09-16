@@ -69,6 +69,7 @@ router.afterEach(async (to, from) => {
       return { path: `/albums/${ownerId}` };
     }
   }
+
   if (to.path.startsWith("/albums")) {
     let ownerId = parseFloat(to.path.substring("/albums".length));
     if (!Number.isNaN(ownerId)) {

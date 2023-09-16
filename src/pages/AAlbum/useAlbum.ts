@@ -1,20 +1,8 @@
 import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { useVk } from "@/store/vk/vk";
 import { toString } from "lodash";
-import {
-  AlbumsPreviewSizes,
-  AlbumsPreviewSizesInitial,
-  getStaticAlbums,
-} from "@/pages/AAlbums/consts";
-import {
-  computed,
-  MaybeRefOrGetter,
-  nextTick,
-  ref,
-  toRefs,
-  toValue,
-  watch,
-} from "vue";
+import { AlbumsPreviewSizes, AlbumsPreviewSizesInitial, getStaticAlbums } from "@/pages/AAlbums/consts";
+import { computed, MaybeRefOrGetter, nextTick, ref, toRefs, toValue, watch } from "vue";
 import { IPhoto } from "vkontakte-api";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
@@ -103,17 +91,17 @@ export function useAlbum(
       albumId.value === "wall"
         ? []
         : (
-            await useVk()
-              .getAlbums(ownerId.value)
-              .catch((ex) => {
-                if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
-                  screenError.value = ex;
-                  console.warn("Необработанная ошибка:", ex.errorInfo);
-                }
+          await useVk()
+            .getAlbums(ownerId.value)
+            .catch((ex) => {
+              if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
+                screenError.value = ex;
+                console.warn("Необработанная ошибка:", ex.errorInfo);
+              }
 
-                return { items: [], count: 0 };
-              })
-          ).items;
+              return { items: [], count: 0 };
+            })
+        ).items;
     albums.push(...getStaticAlbums(ownerId.value));
     album.value = albums.find(
       (x) => toString(x.id) === toString(albumId.value),

@@ -43,7 +43,7 @@ const removeGroup = async () => {
 };
 
 const isGroupAdded = computed(
-  () => newGroup.id && store.localGroups[newGroup.id]
+  () => newGroup.id && store.localGroups[newGroup.id],
 );
 
 const currentGroup = ref<undefined | IGroup>();

@@ -60,35 +60,35 @@ const onShowContextMenu = (e: MouseEvent) => {
 </template>
 <style lang="scss">
 .photos_row {
-  width: v-bind("`${width}px`");
-  min-width: v-bind("`${width}px`");
-  height: v-bind("`${height}px`");
-  min-height: v-bind("`${height}px`");
-  display: inline-block;
-  vertical-align: top;
-  position: relative;
+  background-color: var(--placeholder_icon_background);
+  background-position: center 35%;
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center 35%;
-  background-color: var(--placeholder_icon_background);
   cursor: pointer;
+  display: inline-block;
+  height: v-bind("`${height}px`");
+  min-height: v-bind("`${height}px`");
+  min-width: v-bind("`${width}px`");
+  position: relative;
+  vertical-align: top;
+  width: v-bind("`${width}px`");
 
   img {
-    width: 100%;
     height: 100%;
     object-fit: cover;
+    width: 100%;
   }
 }
 
 .photos_row__title_wrap {
-  position: absolute;
-  top: 0;
   bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 35px 12px 9px;
-  color: white;
   box-shadow: -2px -2px 4px 0px rgba(0, 0, 0, 0.4) inset;
+  color: white;
+  left: 0;
+  padding: 35px 12px 9px;
+  position: absolute;
+  right: 0;
+  top: 0;
 
   small {
     opacity: 0.7;

@@ -3,15 +3,15 @@
 @import "styles/vuetify";
 
 :root {
-  line-height: 1.5;
-  font-weight: 400;
-
   background: var(--vkui--color_background_content);
+  -webkit-font-smoothing: antialiased;
 
   font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+
+  font-weight: 400;
+  line-height: 1.5;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
 
   * {
@@ -34,10 +34,10 @@ pre {
 html,
 body {
   @extend .overflow-block;
-  font-family: var(--vkui--font_text--font_family--regular);
   background: black;
-  width: 100vw;
+  font-family: var(--vkui--font_text--font_family--regular);
   height: 100vh;
+  width: 100vw;
 }
 
 #app {
@@ -54,8 +54,8 @@ h3,
 h4,
 h5,
 h6 {
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 .mx-context-menu.mac .mx-context-menu-item,
@@ -71,14 +71,14 @@ img {
 
 a {
   color: inherit;
-  font-weight: inherit;
   font-size: inherit;
-  text-transform: inherit;
+  font-weight: inherit;
+  max-width: inherit;
+  overflow: inherit;
   text-decoration: inherit;
   text-overflow: inherit;
+  text-transform: inherit;
   white-space: inherit;
-  overflow: inherit;
-  max-width: inherit;
 }
 
 code.vkuiFormField--status-error {

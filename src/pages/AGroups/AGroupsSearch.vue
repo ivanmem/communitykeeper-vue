@@ -4,11 +4,7 @@ import { autoUpdate, useFloating } from "@floating-ui/vue";
 import { icons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AButton from "@/components/AButton/AButton.vue";
-import {
-  GroupsSortEnum,
-  OnlyAccessEnum,
-  useGroups,
-} from "@/store/groups/groups";
+import { GroupsSortEnum, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
 import AGroupsTabs from "@/pages/AGroups/AGroupsTabs.vue";
 
 const props = defineProps<{
@@ -125,7 +121,7 @@ const sortEnumOptions = [
                 showFilters = false;
                 groupsStore.filters = { ...groupsStore.filters };
               "
-              >Обновить
+            >Обновить
             </VBtn>
           </VCardActions>
         </VCard>
@@ -147,10 +143,10 @@ const sortEnumOptions = [
   gap: 10px;
 
   section {
-    display: flex;
-    justify-content: right;
     align-items: center;
+    display: flex;
     gap: 10px;
+    justify-content: right;
 
     select {
       width: 145px;
@@ -158,8 +154,8 @@ const sortEnumOptions = [
 
     h5 {
       display: flex;
-      min-width: 90px;
       height: min-content;
+      min-width: 90px;
     }
   }
 }
