@@ -5,6 +5,8 @@ import basicSsl from "@vitejs/plugin-basic-ssl";
 import { fileURLToPath, URL } from "url";
 import vuetify from "vite-plugin-vuetify";
 
+const isDev = process.env.NODE_ENV === "development";
+
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
@@ -16,7 +18,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vuetify({
-      autoImport: true,
+      autoImport: !isDev,
       styles: { configFile: "./src/styles/vite.scss" },
     }),
     svgLoader({

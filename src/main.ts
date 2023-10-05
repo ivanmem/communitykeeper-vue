@@ -25,10 +25,10 @@ import App from "@/App.vue";
       defaultSet: "mdi",
     },
     components: isDev
-      ? (await import("vuetify/components")).default
+      ? (await import("vuetify/components"))
       : undefined,
     directives: isDev
-      ? (await import("vuetify/directives")).default
+      ? (await import("vuetify/directives"))
       : undefined,
   });
   try {

@@ -107,14 +107,12 @@ export const useHistory = defineStore("history", {
       return from(this.historyArray).toMap((x) => x.type);
     },
     historyArrayViewAlbum(): HistoryItemViewAlbum[] {
-      return this.historyGroupByType.get(
-        "view_album",
-      ) as HistoryItemViewAlbum[];
+      return (this.historyGroupByType.get("view_album") ||
+        []) as HistoryItemViewAlbum[];
     },
     historyArrayViewOwner(): HistoryItemViewOwner[] {
-      return this.historyGroupByType.get(
-        "view_owner",
-      ) as HistoryItemViewOwner[];
+      return (this.historyGroupByType.get("view_owner") ||
+        []) as HistoryItemViewOwner[];
     },
     oldestKey(): HistoryKey | undefined {
       return this.historyArray.at(-1) as any;
