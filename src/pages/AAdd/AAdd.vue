@@ -65,23 +65,22 @@ const onLinkOrIdChanged = async () => {
 watch(currentGroup, () => {
   newGroup.id = currentGroup.value?.id.toString() ?? "";
 });
-const { Icon16FolderOutline, Icon16Link } = icons;
 </script>
 
 <template>
   <VCard class="overflow-block a-add">
     <VCardItem>
       <VTextField
+        :append-inner-icon="icons.Icon16Link"
         :model-value="newGroup.linkOrId.length ? newGroup.linkOrId : undefined"
-        :prepend-icon="icons.Icon16Link"
         label="Ссылка"
         @blur="onLinkOrIdChanged"
         @update:model-value="newGroup.linkOrId = $event ?? ''"
       />
       <VCombobox
+        :append-inner-icon="icons.Icon16FolderOutline"
         :items="useGroups().folders"
         :model-value="newGroup.folder.length ? newGroup.folder : undefined"
-        :prepend-icon="icons.Icon16FolderOutline"
         label="Папка"
         @update:model-value="newGroup.folder = $event ?? ''"
       />
