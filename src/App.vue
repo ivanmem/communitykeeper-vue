@@ -7,10 +7,10 @@ import { useApp } from "@/store/app/app";
 import { darkColorScheme, icons } from "@/common/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
-import Loading from "vue3-loading-overlay";
 import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { switchFullscreen } from "@/helpers/switchFullscreen";
 import { VDefaultsProvider } from "vuetify/components";
+import ASpinner from "@/components/ASpinner.vue";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -106,14 +106,7 @@ const win = window;
         tabindex="0"
         @keydown="onKeyDown"
       >
-        <Loading
-          :active="!groupsStore.isInit || appStore.isLoading"
-          :opacity="0.3"
-          background-color="#000"
-          color="#eee"
-          is-full-page
-          lock-scroll
-        />
+        <ASpinner v-show="!groupsStore.isInit || appStore.isLoading" />
         <template v-if="groupsStore.isInit">
           <v-toolbar class="navigation-header" density="compact">
             <v-toolbar-title style="flex-grow: 5">

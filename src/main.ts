@@ -16,7 +16,6 @@ import "@/styles/helpers.scss";
 import "@vkontakte/vkui/dist/vkui.css";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
-import "vue3-loading-overlay/dist/vue3-loading-overlay.css";
 import "@/style.scss";
 import App from "@/App.vue";
 
