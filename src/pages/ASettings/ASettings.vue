@@ -96,7 +96,6 @@ const onRemoveAllGroups = async () => {
     <VCardItem>
       <VSwitch
         v-model="groupsStore.config.autoSave"
-        density="compact"
         hide-details
         label="Автосохранение групп"
       />
@@ -122,7 +121,6 @@ const onRemoveAllGroups = async () => {
     <VCardItem>
       <VSwitch
         v-model="groupsStore.config.showCounters"
-        density="compact"
         hide-details
         label="Отображать счётчики количества фото\видео и так далее"
       />
@@ -134,7 +132,6 @@ const onRemoveAllGroups = async () => {
     <VCardItem>
       <VSwitch
         v-model="groupsStore.config.eruda"
-        density="compact"
         hide-details
         label=" Включить дебаг кнопку (eruda)"
       />
@@ -144,8 +141,8 @@ const onRemoveAllGroups = async () => {
 
 <style lang="scss">
 .a-settings {
-  .v-switch .v-label {
-    opacity: 1;
+  .v-card-item__content {
+    overflow: visible;
   }
 }
 </style>
