@@ -55,6 +55,7 @@ export const useVk = defineStore("vk", {
         });
 
         await bridge.send("VKWebAppInit", {});
+        await sleep(10);
         await this.initVk();
       } catch (ex) {
         console.error("init vk store", ex);
