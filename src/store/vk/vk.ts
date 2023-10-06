@@ -55,7 +55,6 @@ export const useVk = defineStore("vk", {
         });
 
         await bridge.send("VKWebAppInit", {});
-        await sleep(10);
         await this.initVk();
       } catch (ex) {
         console.error("init vk store", ex);
@@ -63,10 +62,13 @@ export const useVk = defineStore("vk", {
     },
     async initVk() {
       try {
-        this.token = await bridge.send("VKWebAppGetAuthToken", {
-          scope: "groups",
-          app_id: 51658481,
-        });
+        while (!this.token?.access_token) {
+          this.token = await bridge.send("VKWebAppGetAuthToken", {
+            scope: "groups",
+            app_id: 51658481,
+          });
+        }
+
         useVk().api = new VKAPI({
           rps: 3,
           accessToken: this.token.access_token,
@@ -100,8 +102,7 @@ export const useVk = defineStore("vk", {
         (dict, { key, value }) => {
           try {
             dict[key] = value.length ? JSON.parse(value) : undefined;
-          } catch {
-          }
+          } catch {}
           return dict;
         },
         {} as Record<string, T | undefined>,
