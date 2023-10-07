@@ -19,10 +19,11 @@ const props = defineProps<{
   index: number;
 }>();
 const groupsStore = useGroups();
+const groupState = computed(() => GroupHelper.getState(props.group));
 const target = ref<HTMLDivElement | null>(null);
 const targetIsVisible = useElementVisibility(target);
 const isDeactivated = ref(false);
-let isLoaded = ref(false);
+const isLoaded = ref(false);
 
 watch(
   targetIsVisible,
@@ -49,7 +50,7 @@ watch(
       return;
     }
 
-    await groupsStore.loadGroupCounters(props.group);
+    groupState.value.needLoadingCounters = true;
   },
   { immediate: true },
 );
@@ -114,36 +115,33 @@ const onOpenContextMenu = (e: MouseEvent) => {
 };
 
 const onClickAvatar = async () => {
-  if (!props.group.counters) {
-    await groupsStore.loadGroupCounters(props.group);
-  }
-
-  const groupState = GroupHelper.getState(props.group);
   if (
-    groupState.hideCounters === undefined &&
+    groupState.value.hideCounters === undefined &&
     !groupsStore.config.showCounters
   ) {
-    groupState.hideCounters = false;
+    groupState.value.hideCounters = false;
     return;
   }
 
-  if (!groupState.hideCounters) {
-    groupState.hideCounters = true;
+  if (!groupState.value.hideCounters) {
+    groupState.value.hideCounters = true;
     return;
   }
 
-  groupState.hideCounters = false;
+  groupState.value.hideCounters = false;
   return;
 };
 
 const showCounters = computed(() => {
-  return (
-    props.group.counters &&
-    !(
-      GroupHelper.getState(props.group).hideCounters ??
-      !groupsStore.config.showCounters
-    )
-  );
+  return !(groupState.value.hideCounters ?? !groupsStore.config.showCounters);
+});
+
+watch(showCounters, async () => {
+  if (!showCounters.value) {
+    return;
+  }
+
+  await groupsStore.loadGroupCounters(props.group);
 });
 </script>
 
@@ -167,7 +165,7 @@ const showCounters = computed(() => {
       <div class="a-group-link__div">
         <span class="a-group-link__name">{{ group.name }}</span>
         <span class="a-group-link__help">
-          {{ GroupHelper.getState(group).text }}
+          {{ groupState.text }}
         </span>
       </div>
       <AButton

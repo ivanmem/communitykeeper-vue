@@ -20,10 +20,6 @@ const {
 export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
   return computed((): ICounter[] => {
     const group = unref(groupRef);
-    if (!group.counters) {
-      return [];
-    }
-
     const result: ICounter[] = [];
     const add = (
       count: number | string | undefined,
@@ -47,26 +43,26 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
     };
 
     add(
-      !group.counters.photos ? "?" : group.counters.photos,
+      !group.counters?.photos ? "?" : group.counters.photos,
       Icon28PictureOutline,
       "Фотографий",
       `//vk.com/album-${group.id}_00`,
       true,
     );
     add(
-      group.counters.albums,
+      group.counters?.albums,
       Icon28Attachments,
       "Альбомов",
       `//vk.com/albums-${group.id}`,
     );
     add(
-      group.counters.videos,
+      group.counters?.videos,
       Icon28Video,
       "Видеозаписей",
       `//vk.com/videos-${group.id}`,
     );
     add(
-      group.counters.articles,
+      group.counters?.articles,
       Icon28ArticleOutline,
       "Статей",
       `//vk.com/@public${group.id}`,

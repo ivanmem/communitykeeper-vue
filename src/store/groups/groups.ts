@@ -41,7 +41,10 @@ interface GroupsState {
   spaceUsed: number;
   cachedGroupsData: Record<
     string | number,
-    { date: string; data: Partial<IGroup> }
+    {
+      date: string;
+      data: Partial<IGroup>;
+    }
   >;
 }
 
@@ -201,13 +204,8 @@ export const useGroups = defineStore("groups", {
         return group;
       }
 
-      const loadingFinisher = useApp().getLoadingFinisher();
-      try {
-        group.counters = await this.getGroupCounters(group);
-        return group;
-      } finally {
-        loadingFinisher();
-      }
+      group.counters = await this.getGroupCounters(group);
+      return group;
     },
     clearCachedGroupIfExpired(group: IGroup) {
       const cache = this.cachedGroupsData[group.id];

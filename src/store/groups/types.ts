@@ -1,16 +1,20 @@
 import { GroupState } from "@/pages/AGroups/getGroupState";
-import { IObjectSharedProps, IPhotoSize } from "vkontakte-api/dist/types/objects/shared";
+import {
+  IObjectSharedProps,
+  IPhotoSize,
+} from "vkontakte-api/dist/types/objects/shared";
 
 export interface ILocalGroup {
   id: number;
   folder: string;
 }
 
+/** @link https://dev.vk.com/ru/reference/objects/group */
 export interface IGroup {
   id: number;
   is_admin: boolean;
   is_advertiser: boolean;
-  deactivated?: "banned";
+  deactivated?: "banned" | "deleted";
   is_closed: boolean;
   is_member: boolean;
   is_request?: boolean;
@@ -25,6 +29,7 @@ export interface IGroup {
   __state?: GroupState;
 }
 
+/** @link https://dev.vk.com/ru/reference/objects/group#counters */
 export interface IGroupCounters {
   photos: number;
   albums: number;
@@ -43,6 +48,7 @@ export interface IGroupsExport {
   groupIdsDictByFolderName: Record<string, number[]>;
 }
 
+/** @link https://dev.vk.com/ru/reference/objects/photo */
 export interface IPhoto extends IObjectSharedProps {
   album_id: number;
   user_id: number;

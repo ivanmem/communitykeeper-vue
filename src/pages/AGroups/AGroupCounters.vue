@@ -2,16 +2,38 @@
 import { openLink } from "@/helpers/openLink";
 import { useGroupCounters } from "@/pages/AGroups/useGroupCounters";
 import { IGroup } from "@/store/groups/types";
-import { toRef } from "vue";
+import { computed, ref, toRef, watch } from "vue";
+import ASpinner from "@/components/ASpinner.vue";
+import GroupHelper from "@/helpers/GroupHelper";
+import { useGroups } from "@/store/groups/groups";
 
 const props = defineProps<{
   group: IGroup;
 }>();
+const groupsStore = useGroups();
 const groupRef = toRef(() => props.group);
 const counters = useGroupCounters(groupRef);
+const groupState = computed(() => GroupHelper.getState(props.group));
+const loading = ref(false);
+watch(
+  () => groupState.value.needLoadingCounters,
+  async () => {
+    if (!groupState.value.needLoadingCounters) {
+      return;
+    }
+
+    loading.value = true;
+    try {
+      await groupsStore.loadGroupCounters(props.group);
+    } finally {
+      loading.value = false;
+    }
+  },
+  { immediate: true },
+);
 </script>
 <template>
-  <div v-if="counters.length > 0" class="a-group-counters">
+  <div class="a-group-counters">
     <VChip
       v-for="counter in counters"
       :key="counter.name"
@@ -21,7 +43,10 @@ const counters = useGroupCounters(groupRef);
       <div class="a-group-counters__counter">
         <component :is="counter.icon" class="a-group-counters__icon" />
         <div class="a-group-counter__count">
-          {{ counter.count }}
+          <ASpinner v-if="loading" :absolute="false" />
+          <template v-else>
+            {{ counter.count }}
+          </template>
         </div>
       </div>
     </VChip>
@@ -30,9 +55,9 @@ const counters = useGroupCounters(groupRef);
 <style lang="scss">
 .a-group-counters {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   padding: 8px var(--vkui--size_base_padding_horizontal--regular);
-  flex-wrap: wrap;
 }
 
 .a-group-counters__icon {
@@ -47,15 +72,15 @@ const counters = useGroupCounters(groupRef);
   display: flex;
   flex-direction: row;
   font-family: var(--vkui--font_family_base);
-  justify-content: flex-start;
   gap: 6px;
+  justify-content: flex-start;
 }
 
 .a-group-counter__count {
   align-items: center;
   display: flex;
+  font-weight: 600;
   justify-content: center;
   margin-left: auto;
-  font-weight: 600;
 }
 </style>

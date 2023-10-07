@@ -1,4 +1,17 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { computed } from "vue";
+
+const props = withDefaults(
+  defineProps<{
+    absolute?: boolean;
+  }>(),
+  {
+    absolute: true,
+  },
+);
+
+const position = computed(() => (props.absolute ? "absolute" : "static"));
+</script>
 <template>
   <div class="a-spinner" />
 </template>
@@ -6,7 +19,7 @@
 .a-spinner {
   bottom: 0;
   left: 0;
-  position: absolute;
+  position: v-bind(position);
   right: 0;
   top: 0;
 
@@ -24,7 +37,7 @@
     height: 16px;
     left: 50%;
     margin: -8px 0 0-8px;
-    position: absolute;
+    position: v-bind(position);
     top: 50%;
     width: 16px;
     z-index: 100;
