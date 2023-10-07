@@ -2,6 +2,7 @@ import { IGroup } from "@/store/groups/types";
 import {
   FiltersType,
   GroupsSortEnum,
+  groupsSortKeys,
   OnlyAccessEnum,
   useGroups,
 } from "@/store/groups/groups";
@@ -67,16 +68,34 @@ class GroupHelper {
       return true;
     });
 
-    if (filters.sort !== undefined && filters.sort !== GroupsSortEnum.newest) {
+    if (filters.sort !== undefined && filters.sort !== GroupsSortEnum.date) {
       switch (filters.sort) {
-        case GroupsSortEnum.oldest:
-          groupsIter = groupsIter.reverse();
-          break;
-        case GroupsSortEnum.random:
+        case GroupsSortEnum.random: {
           // Аналогично snuffle
           groupsIter = groupsIter.orderBy(() => Math.random(), NumberComparer);
           break;
+        }
+        default: {
+          if (!groupsService.isGroupCountersSort) {
+            break;
+          }
+
+          if (!groupsService.isGroupCountersCurrentFolderLoaded) {
+            break;
+          }
+
+          const key = groupsSortKeys.get(filters.sort)!;
+          groupsIter = groupsIter.orderByDescending(
+            (group) => (group.counters as any)?.[key] ?? 0,
+            NumberComparer,
+          );
+          break;
+        }
       }
+    }
+
+    if (filters.sortDesc) {
+      groupsIter = groupsIter.reverse();
     }
 
     return groupsIter.toArray();

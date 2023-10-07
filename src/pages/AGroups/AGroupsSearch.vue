@@ -1,11 +1,16 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { autoUpdate, useFloating } from "@floating-ui/vue";
 import { icons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AButton from "@/components/AButton/AButton.vue";
-import { GroupsSortEnum, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
+import {
+  GroupsSortEnum,
+  OnlyAccessEnum,
+  useGroups,
+} from "@/store/groups/groups";
 import AGroupsTabs from "@/pages/AGroups/AGroupsTabs.vue";
+import { useApp } from "@/store/app/app";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
@@ -50,18 +55,64 @@ const accessEnumOptions = [
 
 const sortEnumOptions = [
   {
-    title: "Сначала новые",
-    value: GroupsSortEnum.newest,
+    title: "Недавно добавленные",
+    value: GroupsSortEnum.date,
   },
   {
-    title: "Сначала старые",
-    value: GroupsSortEnum.oldest,
-  },
-  {
-    title: "Случайный порядок",
+    title: "В случайном порядке",
     value: GroupsSortEnum.random,
   },
+  {
+    title: "Количество изображений",
+    value: GroupsSortEnum.photos,
+  },
+  {
+    title: "Количество альбомов",
+    value: GroupsSortEnum.albums,
+  },
+  {
+    title: "Количество статей",
+    value: GroupsSortEnum.articles,
+  },
+  {
+    title: "Количество видео",
+    value: GroupsSortEnum.videos,
+  },
 ];
+
+const onLoadFolderCounters = useApp().wrapLoading(async () => {
+  for (const groupId of groupsStore.groupIdsByCurrentFolderName) {
+    await groupsStore.loadGroupCounters(groupsStore.groupsMap.get(groupId)!);
+  }
+});
+
+// Загружаем все счётчики, если текущая сортировка связана с ними
+watch(
+  [() => groupsStore.isGroupCountersSort, () => groupsStore.filters.folder],
+  () => {
+    if (
+      !groupsStore.isGroupCountersSort ||
+      groupsStore.isGroupCountersCurrentFolderLoaded
+    ) {
+      return;
+    }
+
+    if (
+      !confirm(
+        "Вы применили сортировку по счётчикам. " +
+          "\nОна будет работать только после загрузки счётчиков от всех групп текущей папки. " +
+          "\nХотите запустить загрузку? " +
+          "\nПри отмене сортировка будет сброшена.",
+      )
+    ) {
+      groupsStore.filters.sort = GroupsSortEnum.date;
+      return;
+    }
+
+    return onLoadFolderCounters();
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -108,21 +159,21 @@ const sortEnumOptions = [
               :items="accessEnumOptions"
               label="Фильтрация"
             />
-            <VSelect
-              v-model.number="groupsStore.filters.sort"
-              :items="sortEnumOptions"
-              label="Сортировка"
-            />
+            <div style="display: flex; column-gap: 20px; flex-wrap: wrap">
+              <VSelect
+                v-model.number="groupsStore.filters.sort"
+                :items="sortEnumOptions"
+                label="Сортировка"
+                style="flex-grow: 30"
+              />
+              <VSwitch
+                v-model="groupsStore.filters.sortDesc"
+                label="В обратном порядке"
+              />
+            </div>
           </VCardItem>
           <VCardActions>
             <VBtn @click="showFilters = false">Закрыть</VBtn>
-            <VBtn
-              @click="
-                showFilters = false;
-                groupsStore.filters = { ...groupsStore.filters };
-              "
-            >Обновить
-            </VBtn>
           </VCardActions>
         </VCard>
       </VDialog>
@@ -157,6 +208,10 @@ const sortEnumOptions = [
       height: min-content;
       min-width: 90px;
     }
+  }
+
+  .v-card-item__content {
+    overflow: visible;
   }
 }
 </style>

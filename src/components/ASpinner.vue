@@ -22,6 +22,7 @@ const position = computed(() => (props.absolute ? "absolute" : "static"));
   position: v-bind(position);
   right: 0;
   top: 0;
+  z-index: 10000;
 
   &:before {
     animation-duration: 700ms;
@@ -40,7 +41,6 @@ const position = computed(() => (props.absolute ? "absolute" : "static"));
     position: v-bind(position);
     top: 50%;
     width: 16px;
-    z-index: 100;
   }
 }
 </style>

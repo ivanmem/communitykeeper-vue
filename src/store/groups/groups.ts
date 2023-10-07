@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { IGroup, IGroupsExport, ILocalGroup } from "@/store/groups/types";
+import {
+  IGroup,
+  IGroupCounters,
+  IGroupsExport,
+  ILocalGroup,
+} from "@/store/groups/types";
 import toNumber from "lodash/toNumber";
 import { useVk } from "@/store/vk/vk";
 import { saveAs } from "file-saver";
@@ -16,13 +21,38 @@ export interface FiltersType {
   search: string;
   access: OnlyAccessEnum;
   sort?: GroupsSortEnum;
+  sortDesc?: boolean;
 }
 
 export enum GroupsSortEnum {
-  newest,
-  oldest,
+  date,
   random,
+  photos,
+  albums,
+  articles,
+  videos,
 }
+
+export const groupsSortKeys = Object.keys(GroupsSortEnum).reduce(
+  (dict, key) => {
+    dict.set(GroupsSortEnum[key as any] as any, key);
+    return dict;
+  },
+  new Map<number, any>(),
+);
+
+export const countersKeys: Set<keyof IGroupCounters> = new Set([
+  "photos",
+  "albums",
+  "topics",
+  "videos",
+  "market",
+  "articles",
+  "narratives",
+  "addresses",
+  "clips",
+  "clips_followers",
+]);
 
 export enum OnlyAccessEnum {
   none,
@@ -66,7 +96,8 @@ export const useGroups = defineStore("groups", {
         folder: "",
         search: "",
         access: OnlyAccessEnum.none,
-        sort: GroupsSortEnum.newest,
+        sort: GroupsSortEnum.date,
+        sortDesc: false,
       },
       isInit: false,
       config: { autoSave: true, showCounters: true },
@@ -325,6 +356,34 @@ export const useGroups = defineStore("groups", {
         },
         {} as Record<string, number[]>,
       );
+    },
+    groupIdsByCurrentFolderName(): number[] {
+      if (!this.filters.folder) {
+        return this.groupsIds;
+      }
+
+      return this.groupIdsDictByFolderName[this.filters.folder];
+    },
+    // Все счётчики текущей папки загружены?
+    isGroupCountersCurrentFolderLoaded(): boolean {
+      return !this.groupsIds.some((id) => {
+        const group = this.groupsMap.get(id)!;
+        const localGroup = this.localGroups[id];
+        if (this.filters.folder && this.filters.folder !== localGroup.folder) {
+          return false;
+        }
+
+        if (GroupHelper.getState(group).isBanned) {
+          return false;
+        }
+
+        return !group.counters;
+      });
+    },
+    // Текущая сортировка - это сортировка по счётчикам?
+    isGroupCountersSort(): boolean {
+      const key = groupsSortKeys.get(this.filters.sort ?? GroupsSortEnum.date);
+      return key && countersKeys.has(key);
     },
   },
   persist: {
