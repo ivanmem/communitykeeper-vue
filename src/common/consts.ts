@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { h, ref } from "vue";
 import Icon28PictureOutline from "@vkontakte/icons/src/svg/28/picture_outline_28.svg?component";
 import Icon28Attachments from "@vkontakte/icons/src/svg/28/attachments_28.svg?component";
 import Icon28Video from "@vkontakte/icons/src/svg/28/video_28.svg?component";
@@ -41,14 +41,14 @@ import Icon16KeyOutline from "@vkontakte/icons/src/svg/16/key_outline_16.svg?com
 import Icon16DeleteOutline from "@vkontakte/icons/src/svg/16/delete_outline_16.svg?component";
 import Icon16MoreVertical from "@vkontakte/icons/src/svg/16/more_vertical_16.svg?component";
 import Icon16FolderOutline from "@vkontakte/icons/src/svg/16/folder_outline_16.svg?component";
-import Icon16DoorEnterArrowRightOutline
-  from "@vkontakte/icons/src/svg/16/door_enter_arrow_right_outline_16.svg?component";
+import Icon16DoorEnterArrowRightOutline from "@vkontakte/icons/src/svg/16/door_enter_arrow_right_outline_16.svg?component";
 import Icon16ChainOutline from "@vkontakte/icons/src/svg/16/chain_outline_16.svg?component";
 import Icon16CrossCircleSmall from "@vkontakte/icons/src/svg/16/cross_circle_small_16.svg?component";
 import Icon16DownloadOutline from "@vkontakte/icons/src/svg/16/download_outline_16.svg?component";
 import Icon16Share from "@vkontakte/icons/src/svg/16/share_16.svg?component";
 import Icon16ArticleOutline from "@vkontakte/icons/src/svg/16/articles_outline_16.svg?component";
 import Icon16Delete from "@vkontakte/icons/src/svg/16/delete_16.svg?component";
+import Icon16CopyOutline from "@vkontakte/icons/src/svg/16/copy_outline_16.svg?component";
 
 import Icon12ErrorCircle from "@vkontakte/icons/src/svg/12/error_circle_12.svg?component";
 import Icon12Tag from "@vkontakte/icons/src/svg/12/tag_12.svg?component";
@@ -108,6 +108,7 @@ export const icons = {
   Icon16Share,
   Icon16ArticleOutline,
   Icon16Delete,
+  Icon16CopyOutline,
 
   Icon12ErrorCircle,
   Icon12Tag,
@@ -116,6 +117,12 @@ export const icons = {
   Icon12Question,
   Icon12View,
   Icon12Cards,
+};
+
+export const styledIcons = {
+  Icon24CopyOutline: h(icons.Icon16CopyOutline, {
+    style: `width: ${24}px; height: ${24}px;`,
+  }) as any,
 };
 
 export const darkColorScheme = ref(false);

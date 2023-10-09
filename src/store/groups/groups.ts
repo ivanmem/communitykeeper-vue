@@ -182,11 +182,19 @@ export const useGroups = defineStore("groups", {
     getLocalGroupById(id: number): ILocalGroup | undefined {
       return this.localGroups[id];
     },
-    getExport(): IGroupsExport {
-      return { groupIdsDictByFolderName: this.groupIdsDictByFolderName };
+    getExport(folders: string[]): IGroupsExport {
+      const groupIdsDictByFolderName = folders.reduce(
+        (dict, folder) => {
+          dict[folder] ??= [];
+          dict[folder].push(...this.groupIdsDictByFolderName[folder]);
+          return dict;
+        },
+        {} as Record<string, number[]>,
+      );
+      return { groupIdsDictByFolderName };
     },
-    downloadExport() {
-      const exportJson = JSON.stringify(this.getExport());
+    downloadExport(groupsExport: IGroupsExport) {
+      const exportJson = JSON.stringify(groupsExport);
       // Создаем новый Blob-объект (данные в двоичном виде)
       const blob = new Blob([exportJson], { type: "text/plain;charset=utf-8" });
       // Сохраняем файл на компьютере пользователя
@@ -213,11 +221,13 @@ export const useGroups = defineStore("groups", {
       return groups[0];
     },
     addLocalGroup(localGroup: ILocalGroup) {
+      const currentIndex = this.localGroupsArray.findIndex(
+        (x) => x.id === localGroup.id,
+      );
       // если группа уже существует - перезаписываем
-      if (this.localGroupsArray.some((x) => x.id === localGroup.id)) {
-        this.localGroupsArray = this.localGroupsArray.filter(
-          (x) => x.id !== localGroup.id,
-        );
+      if (currentIndex !== -1) {
+        this.localGroupsArray[currentIndex] = localGroup;
+        return;
       }
 
       this.localGroupsArray.push(localGroup);
@@ -303,13 +313,15 @@ export const useGroups = defineStore("groups", {
       try {
         const allData = this.localGroupsArray.reduce(
           (data, localGroup) => {
-            data[localGroup.folder] ??= [];
-            data[localGroup.folder].push(localGroup.id);
+            data[localGroup.folder] ??= new Set();
+            data[localGroup.folder].add(localGroup.id);
             return data;
           },
-          {} as Record<string, number[]>,
+          {} as Record<string, Set<number>>,
         );
-        const stringifyStr = JSON.stringify(allData);
+        const stringifyStr = JSON.stringify(allData, (_key, value) => {
+          return value instanceof Set ? [...value] : value;
+        });
         await useVk().setVkStorage("groups", stringifyStr);
       } finally {
         loadingFinisher();
