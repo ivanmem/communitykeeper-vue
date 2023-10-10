@@ -144,7 +144,6 @@ export const useGroups = defineStore("groups", {
     async updateCurrentLocalGroups() {
       this.localGroupsArray.length = 0;
       const dictLocalGroups = await this.getCurrentLocalGroups();
-      console.info({ dictLocalGroups });
       Object.keys(dictLocalGroups).forEach((folder) => {
         const groupsIds = dictLocalGroups[folder];
         if (!Array.isArray(groupsIds)) {

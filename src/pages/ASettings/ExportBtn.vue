@@ -3,6 +3,7 @@ import useClipboard from "vue-clipboard3";
 import { icons, styledIcons } from "@/common/consts";
 import { computed, ref } from "vue";
 import { useGroups } from "@/store/groups/groups";
+import AToolbar from "@/components/AToolbar.vue";
 
 const exportShow = ref(false);
 const onClose = () => (exportShow.value = false);
@@ -40,35 +41,24 @@ const win = window;
       </VBtn>
     </template>
     <VCard>
-      <VToolbar>
+      <AToolbar>
         <VBtn icon @click="onClose">
           <VIcon>mdi-close</VIcon>
         </VBtn>
-        <VToolbarTitle>Настройки экспорта</VToolbarTitle>
-        <VSpacer />
-        <VToolbarItems>
-          <VBtn
-            :icon="icons.Icon24DownloadOutline"
-            @click="groupsStore.downloadExport(groupsExport)"
-          />
-          <VBtn
-            :icon="styledIcons.Icon24CopyOutline"
-            @click="
-              toClipboard(JSON.stringify(groupsExport), $event.target);
-              win.alert('Данные для импорта помещены в буфер обмена.');
-            "
-          />
-        </VToolbarItems>
-      </VToolbar>
-      <VCardText>
-        Выберите папки и нажмите иконку <b>СКАЧАТЬ</b>. Если скачивание не
-        сработало, можете скопировать данные в буфер обмена с помощью иконки
-        <b>СКОПИРОВАТЬ</b> и вручную создать файл <b>.json</b> и поместить туда
-        скопированные данные.
+        <VToolbarTitle class="navigation-caption">Экспорт</VToolbarTitle>
+      </AToolbar>
+      <VCardText style="font-size: 14px">
+        Выберите папки и нажмите на кнопку загрузки. Если загрузка не началась, скопируйте данные в буфер обмена с помощью кнопки копирования
+        и вручную создайте файл с расширением
+        <b>.json</b>.
       </VCardText>
-      <VList density="compact">
+      <VList class="mb-2" density="compact" style="flex-grow: 100">
         <VListItem
+          v-if="groupsStore.folders.length > 1"
           :subtitle="`Групп: ${groupsStore.localGroupsArray.length}`"
+          :variant="
+            folders.size === groupsStore.folders.length ? 'tonal' : 'flat'
+          "
           title="Все"
           @click="
             folders.size === groupsStore.folders.length
@@ -89,6 +79,7 @@ const win = window;
           :key="folder"
           :subtitle="`Групп: ${groupsStore.groupIdsDictByFolderName[folder].length}`"
           :title="folder"
+          :variant="folders.has(folder) ? 'tonal' : 'flat'"
           @click="
             folders.has(folder) ? folders.delete(folder) : folders.add(folder)
           "
@@ -102,17 +93,52 @@ const win = window;
           </template>
         </VListItem>
       </VList>
-      <v-sheet
-        class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4"
+      <VSheet
+        class="mx-auto px-4 mb-2 d-flex justify-center align-center"
+        style="gap: 10px"
       >
+        <VBtn
+          :disabled="selectedGroupsCount === 0"
+          :icon="icons.Icon24DownloadOutline"
+          title="Скачать"
+          variant="tonal"
+          @click="groupsStore.downloadExport(groupsExport)"
+        />
         <div>
-          <h2 class="text-h6 font-weight-black">Выбрано</h2>
-          <VChip class="text-h7 font-weight-medium mb-2">
-            Папок: {{ folders.size }} &nbsp; &nbsp; Групп:
-            {{ selectedGroupsCount }}
+          <VChip
+            :disabled="selectedGroupsCount === 0"
+            hide-details
+            style="height: auto; padding-inline: 20px"
+          >
+            <div class="text-center">
+              <h2 class="text-md-h6">Выбрано</h2>
+              <span>
+                Папок:
+                <b class="a-export__counter">{{ folders.size }}</b> &nbsp;
+                &nbsp; Групп:
+                <b class="a-export__counter">{{ selectedGroupsCount }}</b>
+              </span>
+            </div>
           </VChip>
         </div>
-      </v-sheet>
+
+        <VBtn
+          :disabled="selectedGroupsCount === 0"
+          :icon="styledIcons.Icon24CopyOutline"
+          title="Скопировать"
+          variant="tonal"
+          @click="
+            toClipboard(JSON.stringify(groupsExport), $event.target);
+            win.alert('Данные для импорта помещены в буфер обмена.');
+          "
+        />
+      </VSheet>
     </VCard>
   </VDialog>
 </template>
+<style lang="scss">
+.a-export__counter {
+  display: inline-block;
+  min-width: 25px;
+}
+</style>

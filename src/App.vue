@@ -7,9 +7,9 @@ import { useApp } from "@/store/app/app";
 import { darkColorScheme, icons } from "@/common/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
-import { onBeforeMount, onMounted, ref, watch } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { switchFullscreen } from "@/helpers/switchFullscreen";
-import { VDefaultsProvider } from "vuetify/components";
+import { VDefaultsProvider, VToolbar } from "vuetify/components";
 import ASpinner from "@/components/ASpinner.vue";
 
 const route = useRoute();
@@ -17,38 +17,8 @@ const groupsStore = useGroups();
 const vkStore = useVk();
 const appStore = useApp();
 const { currentClasses } = useColorScheme();
-
 const fullscreenElement = ref(document.fullscreenElement);
-
-watch(fullscreenElement, () => {
-  appStore.isFullScreen = !!fullscreenElement.value;
-});
-
-const onKeyDown = (e: KeyboardEvent) => {
-  if (e.code === "F11" && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
-    e.preventDefault();
-    e.stopPropagation();
-    switchFullscreen();
-  }
-};
-
 const init = ref(false);
-
-onBeforeMount(async () => {
-  try {
-    await vkStore.init();
-    await groupsStore.init();
-  } finally {
-    init.value = true;
-  }
-});
-
-onMounted(() => {
-  document.documentElement.addEventListener("fullscreenchange", () => {
-    fullscreenElement.value = document.fullscreenElement;
-  });
-});
-
 const vuetifyDefaults: VDefaultsProvider["defaults"] = {
   VLabel: {},
   VDialog: {
@@ -59,7 +29,6 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
     clearable: true,
   },
 };
-
 const tabBarItems: Array<{
   caption: string;
   icon: any;
@@ -92,6 +61,41 @@ const tabBarItems: Array<{
   },
 ];
 const win = window;
+
+const onKeyDown = (e: KeyboardEvent) => {
+  if (e.code === "F11" && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+    e.preventDefault();
+    e.stopPropagation();
+    switchFullscreen();
+  }
+};
+
+onBeforeMount(async () => {
+  document.documentElement.addEventListener("fullscreenchange", () => {
+    fullscreenElement.value = document.fullscreenElement;
+  });
+  try {
+    await vkStore.init();
+    await groupsStore.init();
+  } finally {
+    init.value = true;
+  }
+});
+
+watch(fullscreenElement, () => {
+  appStore.isFullScreen = !!fullscreenElement.value;
+});
+
+watch(
+  () => vkStore.webAppConfig?.app,
+  () => {
+    document.body.style.setProperty(
+      "--navigation-header-height",
+      vkStore.webAppConfig?.app ? "56px" : "54px",
+    );
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -108,7 +112,10 @@ const win = window;
       >
         <ASpinner v-show="!groupsStore.isInit || appStore.isLoading" />
         <template v-if="groupsStore.isInit">
-          <v-toolbar class="navigation-header" density="compact">
+          <v-toolbar
+            class="navigation-header navigation-header-height navigation-header-padding-right"
+            density="compact"
+          >
             <v-toolbar-title style="flex-grow: 5">
               <div id="caption" class="overflow-block navigation-caption">
                 {{ appStore.caption }}
@@ -168,8 +175,19 @@ const win = window;
   align-items: center;
   display: flex;
   gap: 5px;
-  min-height: 30px;
+
   padding-inline: 10px;
+}
+
+.navigation-header-height {
+  min-height: var(--navigation-header-height);
+
+  .v-toolbar__content {
+    min-height: inherit;
+  }
+}
+
+.navigation-header-padding-right {
   padding-right: var(--navigation-header-padding-right, 10px);
 
   @at-root .root[data-fullscreen="true"] & {
@@ -194,7 +212,6 @@ const win = window;
   display: flex;
   font-size: min(calc(0.3em + 2vw), 18px);
   font-weight: bold;
-  justify-content: center;
   justify-items: center;
   max-width: 100%;
   overflow: hidden;

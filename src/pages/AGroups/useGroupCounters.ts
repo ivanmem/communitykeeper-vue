@@ -8,7 +8,7 @@ export interface IGroupCounter {
   url: string;
   name: string;
   count: number | string;
-  key: string;
+  key: keyof IGroupCounters;
 }
 
 const {

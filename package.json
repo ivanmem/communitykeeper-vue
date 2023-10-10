@@ -7,7 +7,8 @@
     "deploy": "npm run build && vk-miniapps-deploy",
     "dev": "vite",
     "dev-host": "vite --host",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev-tunnel": "vk-tunnel --insecure=1 --http-protocol=https --ws-protocol=wss --host=localhost --port=5173 --timeout=5000"
   },
   "dependencies": {
     "@floating-ui/vue": "1.0.2",
