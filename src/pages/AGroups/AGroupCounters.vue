@@ -1,16 +1,21 @@
 <script lang="ts" setup>
 import { openLink } from "@/helpers/openLink";
-import { useGroupCounters } from "@/pages/AGroups/useGroupCounters";
+import {
+  IGroupCounter,
+  useGroupCounters,
+} from "@/pages/AGroups/useGroupCounters";
 import { IGroup } from "@/store/groups/types";
 import { computed, ref, toRef, watch } from "vue";
 import ASpinner from "@/components/ASpinner.vue";
 import GroupHelper from "@/helpers/GroupHelper";
 import { useGroups } from "@/store/groups/groups";
+import { useHistory } from "@/store/history/history";
 
 const props = defineProps<{
   group: IGroup;
 }>();
 const groupsStore = useGroups();
+const historyStore = useHistory();
 const groupRef = toRef(() => props.group);
 const counters = useGroupCounters(groupRef);
 const groupState = computed(() => GroupHelper.getState(props.group));
@@ -31,6 +36,16 @@ watch(
   },
   { immediate: true },
 );
+
+const onClick = (counter: IGroupCounter) => {
+  historyStore.add({
+    type: "view_counter",
+    url: counter.url,
+    counter: counter.key,
+    ownerId: -props.group.id,
+  });
+  openLink(counter.url);
+};
 </script>
 <template>
   <div class="a-group-counters">
@@ -38,7 +53,7 @@ watch(
       v-for="counter in counters"
       :key="counter.name"
       :title="counter.name"
-      @click="openLink(counter.link)"
+      @click="onClick(counter)"
     >
       <div class="a-group-counters__counter">
         <component :is="counter.icon" class="a-group-counters__icon" />

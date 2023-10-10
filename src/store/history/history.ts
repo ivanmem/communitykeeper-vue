@@ -2,28 +2,27 @@ import { defineStore } from "pinia";
 import type { NavigationHookAfter, RouteLocationNormalized } from "vue-router";
 import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
 import { from } from "linq-to-typescript";
+import {
+  HistoryItem,
+  HistoryItemViewAlbum,
+  HistoryItemViewOwner,
+  HistoryKey,
+  HistoryKeyCounter,
+  HistoryKeyViewAlbum,
+  HistoryKeyViewOwner,
+  HistoryState,
+  HistoryType,
+} from "@/store/history/types";
 
-type HistoryKey =
-  | `view_owner_${number | string}`
-  | `view_album_${number | string}_${number | string}`;
-
-interface HistoryState {
-  history: Record<HistoryKey, HistoryItem>;
-}
-
-export type HistoryItem = HistoryItemViewOwner | HistoryItemViewAlbum;
-
-export interface HistoryItemViewOwner {
-  type: "view_owner";
-  ownerId: string | number;
-}
-
-export interface HistoryItemViewAlbum {
-  type: "view_album";
-  ownerId: string | number;
-  albumId: string | number;
-  photoId: string | number;
-  subtitle?: string;
+function getHistoryKey(historyItem: HistoryItem): HistoryKey {
+  switch (historyItem.type) {
+    case "view_owner":
+      return `view_owner_${historyItem.ownerId}` satisfies HistoryKeyViewOwner;
+    case "view_album":
+      return `view_album_${historyItem.ownerId}_${historyItem.albumId}}` satisfies HistoryKeyViewAlbum;
+    case "view_counter":
+      return `view_counter_${historyItem.ownerId}_${historyItem.counter}` satisfies HistoryKeyCounter;
+  }
 }
 
 export const useHistory = defineStore("history", {
@@ -31,13 +30,10 @@ export const useHistory = defineStore("history", {
     return { history: {} };
   },
   actions: {
-    getViewOwnerKey(ownerId: string | number): `view_owner_${number | string}` {
-      return `view_owner_${ownerId}`;
-    },
     getViewAlbumKey(
       ownerId: string | number,
       albumId: string | number,
-    ): `view_album_${number | string}_${string | number}` {
+    ): HistoryKeyViewAlbum {
       return `view_album_${ownerId}_${albumId}}`;
     },
     getViewAlbum(ownerId: string | number, albumId: string | number) {
@@ -69,17 +65,7 @@ export const useHistory = defineStore("history", {
       }
     },
     add(historyItem: HistoryItem) {
-      const key: HistoryKey = (() => {
-        if (historyItem.type === "view_owner") {
-          return this.getViewOwnerKey(historyItem.ownerId);
-        }
-
-        if (historyItem.type === "view_album") {
-          return this.getViewAlbumKey(historyItem.ownerId, historyItem.albumId);
-        }
-
-        throw new Error("not implemented: " + (historyItem as any).type);
-      })();
+      const key = getHistoryKey(historyItem);
       delete this.history[key];
       this.history[key] = historyItem;
       if (JSON.stringify(this.history).length >= MAX_SIZE_ONE_VK_VALUE) {
@@ -103,7 +89,7 @@ export const useHistory = defineStore("history", {
         .select((key) => this.history[key])
         .toArray();
     },
-    historyGroupByType(): Map<"view_owner" | "view_album", HistoryItem[]> {
+    historyGroupByType(): Map<HistoryType, HistoryItem[]> {
       return from(this.historyArray).toMap((x) => x.type);
     },
     historyArrayViewAlbum(): HistoryItemViewAlbum[] {
