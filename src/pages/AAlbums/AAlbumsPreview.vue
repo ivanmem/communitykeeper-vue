@@ -18,8 +18,8 @@ const { width, height } = toRefs(AlbumsPreviewSizes);
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
     {
-      label: "Открыть в ВК",
-      icon: h(icons.Icon16Link),
+      label: "Перейти к фото",
+      icon: h(icons.Icon16LogoVk),
       onClick: () => {
         openLink(
           `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`,

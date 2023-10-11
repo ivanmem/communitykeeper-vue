@@ -90,8 +90,8 @@ const onShowContextMenu = (e: MouseEvent) => {
   const items: MenuItem[] = [];
 
   items.push({
-    label: "Открыть в ВК",
-    icon: h(icons.Icon16Link),
+    label: "Перейти к фото",
+    icon: h(icons.Icon16LogoVk),
     onClick: () => {
       openLink(
         `//${PhotoHelper.getPhotoUrl(props.photo.owner_id, props.photo.id)}`,

@@ -8,7 +8,7 @@
     "dev": "vite",
     "dev-host": "vite --host",
     "preview": "vite preview",
-    "dev-tunnel": "concurrently \"npm run dev\" \"vk-tunnel --insecure=1 --http-protocol=https --ws-protocol=wss --host=localhost --port=5173 --timeout=5000\""
+    "dev-tunnel": "concurrently \"npm run dev\" \"vk-tunnel --insecure=1 --http-protocol=https --ws-protocol=wss --host=localhost --port=5173 --timeout=10000\""
   },
   "dependencies": {
     "@floating-ui/vue": "1.0.2",
