@@ -141,7 +141,7 @@ watch(showCounters, async () => {
     return;
   }
 
-  await groupsStore.loadGroupCounters(props.group);
+  groupState.value.needLoadingCounters = true;
 });
 </script>
 

@@ -59,9 +59,7 @@ const onClick = (counter: IGroupCounter) => {
         <component :is="counter.icon" class="a-group-counters__icon" />
         <div class="a-group-counter__count">
           <ASpinner v-if="loading" :absolute="false" />
-          <template v-else>
-            {{ counter.count }}
-          </template>
+          <template v-else> {{ counter.count }}</template>
         </div>
       </div>
     </VChip>
