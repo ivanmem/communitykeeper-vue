@@ -237,7 +237,8 @@ export const useGroups = defineStore("groups", {
       );
     },
     removeLocalGroups() {
-      this.localGroupsArray = [];
+      this.localGroupsArray.length = 0;
+      this.groupsMap.clear();
     },
     async loadGroupCounters(group: IGroup) {
       if (group.counters || isGroupBanned(group)) {

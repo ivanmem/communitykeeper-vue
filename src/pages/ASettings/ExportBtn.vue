@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import useClipboard from "vue-clipboard3";
 import { icons, styledIcons } from "@/common/consts";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import AToolbar from "@/components/AToolbar.vue";
 
@@ -9,7 +9,7 @@ const exportShow = ref(false);
 const onClose = () => (exportShow.value = false);
 const onShow = () => (exportShow.value = true);
 const groupsStore = useGroups();
-const folders = ref(new Set<string>(groupsStore.folders));
+const folders = ref(new Set<string>());
 const groupsExport = computed(() =>
   groupsStore.getExport(Array.from(folders.value)),
 );
@@ -21,6 +21,14 @@ const selectedGroupsCount = computed(() => {
 });
 const { toClipboard } = useClipboard({ appendToBody: true });
 const win = window;
+
+watch(
+  () => groupsStore.folders,
+  () => {
+    folders.value = new Set<string>(groupsStore.folders);
+  },
+  { immediate: true },
+);
 </script>
 <template>
   <VDialog
@@ -48,8 +56,9 @@ const win = window;
         <VToolbarTitle class="navigation-caption">Экспорт</VToolbarTitle>
       </AToolbar>
       <VCardText style="font-size: 14px">
-        Выберите папки и нажмите на кнопку загрузки. Если загрузка не началась, скопируйте данные в буфер обмена с помощью кнопки копирования
-        и вручную создайте файл с расширением
+        Выберите папки и нажмите на кнопку загрузки. Если загрузка не началась,
+        скопируйте данные в буфер обмена с помощью кнопки копирования и вручную
+        создайте файл с расширением
         <b>.json</b>.
       </VCardText>
       <VList class="mb-2" density="compact" style="flex-grow: 100">
