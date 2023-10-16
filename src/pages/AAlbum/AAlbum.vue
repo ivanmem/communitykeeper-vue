@@ -2,12 +2,11 @@
 import { useAppCaption } from "@/composables/useAppCaption";
 import AAlbumPreview from "@/pages/AAlbum/AAlbumPreview.vue";
 import APhoto from "@/pages/AAlbum/APhoto.vue";
-import { icons } from "@/common/consts";
+import { icons, styledIcons } from "@/common/consts";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useAlbum } from "@/pages/AAlbum/useAlbum";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { RecycleScroller } from "vue-virtual-scroller";
-import AButton from "@/components/AButton/AButton.vue";
 import { useGroups } from "@/store/groups/groups";
 import { openLink } from "@/helpers/openLink";
 import { computed } from "vue";
@@ -25,7 +24,6 @@ const {
   albumCount,
   currentPhoto,
   setCurrentPhotoIndex,
-  currentPhotoIndex,
   onScrollerUpdate,
   onSwitchPhoto,
   isInit,
@@ -73,22 +71,17 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
         <div
           style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
         >
-          <AButton
-            class="opacity"
-            icon="Icon24SortOutline"
-            style="margin-left: auto"
-            @click="
-              groupsStore.config.reverseOrder = !groupsStore.config.reverseOrder
-            "
-          >{{
-              groupsStore.config.reverseOrder
-                ? "Показать в прямом порядке"
-                : "Показать в обратном порядке"
-            }}
-          </AButton>
           <code v-if="screenError" class="vkuiFormField--status-error">
             {{ screenError }}
           </code>
+          <VSpacer />
+          <VSwitch
+            v-model="groupsStore.config.reverseOrder"
+            :false-icon="styledIcons.Icon24SortOutlineOpacity50"
+            :true-icon="icons.Icon24SortOutline"
+            hide-details
+            style="flex-grow: 0"
+          />
         </div>
       </div>
       <RecycleScroller
@@ -116,7 +109,6 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
       <APhoto
         v-if="currentPhoto"
         :count="albumCount"
-        :index="currentPhotoIndex"
         :photo="currentPhoto"
         @photo:prev="onSwitchPhoto('prev')"
         @photo:next="onSwitchPhoto('next')"

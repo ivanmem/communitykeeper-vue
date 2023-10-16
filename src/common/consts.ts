@@ -125,6 +125,9 @@ export const styledIcons = {
   Icon24CopyOutline: h(icons.Icon16CopyOutline, {
     style: `width: ${24}px; height: ${24}px;`,
   }) as any,
+  Icon24SortOutlineOpacity50: h(icons.Icon24SortOutline, {
+    style: `opacity: 0.5;`,
+  }) as any,
 };
 
 export const darkColorScheme = ref(false);
