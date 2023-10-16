@@ -242,10 +242,6 @@ const dateTime = computed(() => {
         <b>{{ photo.__state.index + 1 }}</b> из {{ count ?? "?" }}
       </div>
     </div>
-    <div
-      v-if="showInfo"
-      class="a-not-dragable-and-not-select a-photo__info-top-right"
-    ></div>
   </div>
   <VDialog v-model="showMoreInfo">
     <VCard>
