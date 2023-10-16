@@ -1,20 +1,7 @@
 import { isNullOrUndefined } from "@/helpers/isNullOrUndefined";
-import { IGroup } from "@/store/groups/types";
+import { GroupState, IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
 import { isGroupBanned } from "@/helpers/isGroupBanned";
-
-export interface GroupState {
-  /** @description Отображаемый текст под названием группы */
-  text: string;
-  /** @description Группа забанена в ВК */
-  isBanned?: boolean;
-  /** @description Требуется отображать кнопку вступления */
-  isVisibleJoin: boolean;
-  /** @description Требуется скрыть счётчики */
-  hideCounters?: boolean;
-  /** @description Требуется загрузить счётчики */
-  needLoadingCounters?: boolean;
-}
 
 export function getGroupState(group: IGroup): GroupState {
   const groupsService = useGroups();

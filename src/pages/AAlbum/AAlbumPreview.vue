@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { IPhoto } from "vkontakte-api";
 import { computed, h, toRefs } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
@@ -7,6 +6,7 @@ import { icons } from "@/common/consts";
 import { openLink } from "@/helpers/openLink";
 import { saveAs } from "file-saver";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
+import { IPhoto } from "@/store/groups/types";
 
 const props = defineProps<{ photo: IPhoto }>();
 const originalSize = computed(() =>

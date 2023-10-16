@@ -1,8 +1,9 @@
-import { IPhoto, IPhotoSize } from "vkontakte-api";
+import { IPhotoSize } from "vkontakte-api";
 import last from "lodash/last";
 import isNumeric from "@/helpers/isNumeric";
 import { VK_MAX_PHOTO_SIZE } from "@/common/consts";
 import { ComputedRef } from "vue";
+import { IPhoto, IPhotoKey } from "@/store/groups/types";
 
 export class PhotoHelper {
   static getOriginalSize(sizes: IPhotoSize[] | undefined) {
@@ -59,8 +60,25 @@ export class PhotoHelper {
     return `vk.com/id${ownerId}`;
   }
 
-  static getPhotoUrl(ownerId: number | string, photoId: number) {
+  static getPhotoUrl(ownerId: number | string, photoId: number | string) {
     return `vk.com/photo${ownerId}_${photoId}`;
+  }
+
+  static getPhotoKey(
+    ownerId: number | string,
+    photoId: number | string,
+  ): IPhotoKey {
+    return `photo${ownerId}_${photoId}`;
+  }
+
+  static getPhotoKeyOrUndefined(
+    ownerId: number | string | undefined,
+    photoId: number | string | undefined,
+  ): IPhotoKey | undefined {
+    if (ownerId === undefined || photoId === undefined) {
+      return undefined;
+    }
+    return this.getPhotoKey(ownerId, photoId);
   }
 
   static getPhotoFileName(photo: IPhoto) {

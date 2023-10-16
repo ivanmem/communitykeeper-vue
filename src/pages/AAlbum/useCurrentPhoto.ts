@@ -1,6 +1,4 @@
-import { computed, MaybeRefOrGetter, nextTick, Ref, ref, toValue, watch } from "vue";
-import { IPhoto } from "vkontakte-api";
-import { toStr } from "@/helpers/toStr";
+import { computed, nextTick, Ref, ref, watch } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useRoute, useRouter } from "vue-router";
 import { useGroups } from "@/store/groups/groups";
@@ -9,10 +7,13 @@ import { useElementDeviceSize } from "@/composables/useElementDeviceSize";
 import { SwitchPhotoMode } from "@/pages/AAlbum/types";
 import { getFirstRefChange } from "@/helpers/getFirstRefChange";
 import { useApp } from "@/store/app/app";
+import { IPhoto, IPhotoKey } from "@/store/groups/types";
 
 export function useCurrentPhoto(
-  photosGetter: MaybeRefOrGetter<IPhoto[] | undefined>,
-  photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
+  photos: Ref<IPhoto[] | undefined>,
+  photosMap: Ref<Map<IPhotoKey, IPhoto> | undefined>,
+  photoId: Ref<number | string | undefined>,
+  ownerId: Ref<string | number>,
   isLoadingPhotos: Ref<boolean>,
   isInit: Ref<boolean>,
   onMoreLoad: () => void,
@@ -21,9 +22,6 @@ export function useCurrentPhoto(
   const route = useRoute();
   const groupsStore = useGroups();
   const appStore = useApp();
-  const photos = computed(() => toValue(photosGetter));
-  const photoId = computed(() => toValue(photoIdGetter));
-  // Кэшируем индекс предыдущего найденного фото для оптимизации при перелистывании
   const currentPhotoIndex = ref<number | undefined>();
   const currentPhoto = computed(() => getPhotoByIndex(currentPhotoIndex.value));
 
@@ -77,54 +75,24 @@ export function useCurrentPhoto(
     return setCurrentPhotoId(photo?.id);
   };
 
-  const predictPhotoIndex = computed<number | undefined>(() => {
-    if (currentPhotoIndex.value === undefined || !photoId.value) {
-      return undefined;
-    }
-
-    const past = getPhotoByIndex(currentPhotoIndex.value);
-    if (past?.id == photoId.value) {
-      return currentPhotoIndex.value;
-    }
-
-    const next = getPhotoByIndex(+currentPhotoIndex.value + 1);
-    if (next?.id == photoId.value) {
-      return currentPhotoIndex.value + 1;
-    }
-
-    const prev = getPhotoByIndex(currentPhotoIndex.value - 1);
-    if (prev?.id == photoId.value) {
-      return currentPhotoIndex.value - 1;
-    }
-
-    return undefined;
-  });
-
   watch(
     [() => photos.value?.length, photoId, isLoadingPhotos],
     () => {
-      if (!photos.value || !toStr(photoId.value).length) {
+      if (!photos.value || photoId.value === undefined) {
         currentPhotoIndex.value = undefined;
         return;
       }
 
-      if (predictPhotoIndex.value !== undefined) {
-        currentPhotoIndex.value = predictPhotoIndex.value;
+      const photo = photosMap.value?.get(
+        PhotoHelper.getPhotoKey(ownerId.value, photoId.value),
+      );
+      if (photo !== undefined) {
+        currentPhotoIndex.value = photo.__state.index;
         return;
       }
 
-      // если идёт загрузка, то дождёмся её, прежде чем обходить все фото
+      // если идёт загрузка, то дождёмся её, прежде чем закрывать фото
       if (isLoadingPhotos.value) {
-        return;
-      }
-
-      for (let i = 0; i < photos.value.length; i++) {
-        const photo = photos.value[i];
-        if (photo.id != photoId.value) {
-          continue;
-        }
-
-        currentPhotoIndex.value = i;
         return;
       }
 
@@ -155,7 +123,7 @@ export function useCurrentPhoto(
         getPhotoByIndex(currentIndex)!,
         activeElSize,
       )
-      ) {
+    ) {
       currentIndex = getSwitchPhotoIndexByMode(currentIndex, mode);
       if (getPhotoByIndex(currentIndex) !== undefined) {
         continue;
@@ -166,8 +134,7 @@ export function useCurrentPhoto(
         await nextTick();
 
         if (isLoadingPhotos.value) {
-          while (await getFirstRefChange(isLoadingPhotos)) {
-          }
+          while (await getFirstRefChange(isLoadingPhotos)) {}
         }
 
         await nextTick();
@@ -182,7 +149,7 @@ export function useCurrentPhoto(
       return;
     }
 
-    let currentIndex = currentPhotoIndex.value;
+    let currentIndex = currentPhoto.value?.__state.index;
     if (currentIndex === undefined) {
       return;
     }

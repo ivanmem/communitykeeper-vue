@@ -1,4 +1,4 @@
-import { IGroup } from "@/store/groups/types";
+import { GroupState, IGroup } from "@/store/groups/types";
 import {
   FiltersType,
   GroupsSortEnum,
@@ -6,7 +6,7 @@ import {
   OnlyAccessEnum,
   useGroups,
 } from "@/store/groups/groups";
-import { getGroupState, GroupState } from "@/pages/AGroups/getGroupState";
+import { getGroupState } from "@/pages/AGroups/getGroupState";
 import bridge from "@vkontakte/vk-bridge";
 import { from, IEnumerable, NumberComparer } from "linq-to-typescript";
 

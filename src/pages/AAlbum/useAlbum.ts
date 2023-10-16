@@ -1,9 +1,20 @@
 import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { useVk } from "@/store/vk/vk";
 import { toString } from "lodash";
-import { AlbumsPreviewSizes, AlbumsPreviewSizesInitial, getStaticAlbums } from "@/pages/AAlbums/consts";
-import { computed, MaybeRefOrGetter, nextTick, ref, toRefs, toValue, watch } from "vue";
-import { IPhoto } from "vkontakte-api";
+import {
+  AlbumsPreviewSizes,
+  AlbumsPreviewSizesInitial,
+  getStaticAlbums,
+} from "@/pages/AAlbums/consts";
+import {
+  computed,
+  MaybeRefOrGetter,
+  nextTick,
+  ref,
+  toRefs,
+  toValue,
+  watch,
+} from "vue";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import { useCountGridColumns } from "@/composables/useCountGridColumns";
@@ -12,6 +23,8 @@ import { toStr } from "@/helpers/toStr";
 import { useGroups } from "@/store/groups/groups";
 import { useHistory } from "@/store/history/history";
 import { toNumberOrUndefined } from "@/helpers/toNumberOrUndefined";
+import { IPhoto, IPhotoKey } from "@/store/groups/types";
+import { PhotoHelper } from "@/helpers/PhotoHelper";
 
 const countOneLoad = 150;
 
@@ -20,11 +33,19 @@ export function useAlbum(
   albumIdGetter: MaybeRefOrGetter<number | string>,
   photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
 ) {
+  const photos = ref<IPhoto[]>([]);
+  const photosMap = ref<Map<IPhotoKey, IPhoto>>(new Map());
   const ownerId = computed(() => toValue(ownerIdGetter));
   const albumId = computed(() => toValue(albumIdGetter));
   const photoId = computed(() => toValue(photoIdGetter));
+  const photo = computed(
+    () =>
+      photosMap.value?.get(
+        PhotoHelper.getPhotoKeyOrUndefined(ownerId.value, photoId.value) ??
+          ("" as IPhotoKey),
+      ),
+  );
   const album = ref<IAlbumItem | undefined>();
-  const photos = ref<IPhoto[]>([]);
   const albumRef = ref<InstanceType<typeof RecycleScroller>>();
   const { width: widthColumn } = toRefs(AlbumsPreviewSizes);
   const initialWidth = computed(() => AlbumsPreviewSizesInitial.value.width);
@@ -66,10 +87,19 @@ export function useAlbum(
     setCurrentPhotoIndex,
     setCurrentPhotoId,
     onSwitchPhoto,
-  } = useCurrentPhoto(photos, photoId, isLoadingPhotos, isInit, onMoreLoad);
+  } = useCurrentPhoto(
+    photos,
+    photosMap,
+    photoId,
+    ownerId,
+    isLoadingPhotos,
+    isInit,
+    onMoreLoad,
+  );
 
   const onClearPhotos = () => {
     photos.value.length = 0;
+    photosMap.value.clear();
     photosMaxItems.value = 0;
     isLoadAllPhotos.value = false;
   };
@@ -91,17 +121,17 @@ export function useAlbum(
       albumId.value === "wall"
         ? []
         : (
-          await useVk()
-            .getAlbums(ownerId.value)
-            .catch((ex) => {
-              if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
-                screenError.value = ex;
-                console.warn("Необработанная ошибка:", ex.errorInfo);
-              }
+            await useVk()
+              .getAlbums(ownerId.value)
+              .catch((ex) => {
+                if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
+                  screenError.value = ex;
+                  console.warn("Необработанная ошибка:", ex.errorInfo);
+                }
 
-              return { items: [], count: 0 };
-            })
-        ).items;
+                return { items: [], count: 0 };
+              })
+          ).items;
     albums.push(...getStaticAlbums(ownerId.value));
     album.value = albums.find(
       (x) => toString(x.id) === toString(albumId.value),
@@ -144,7 +174,6 @@ export function useAlbum(
   watch(
     () => useGroups().config.reverseOrder,
     async () => {
-      onClearInit();
       onClearError();
       onClearPhotos();
       await onLoad();
@@ -179,7 +208,16 @@ export function useAlbum(
           isLoadAllPhotos.value = true;
         }
 
-        photos.value.push(...items);
+        for (let newPhoto of items) {
+          newPhoto.__state = {
+            index: photos.value.length,
+          };
+          photosMap.value.set(
+            PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id),
+            newPhoto,
+          );
+          photos.value.push(newPhoto);
+        }
       } catch (ex: any) {
         alert(ex.message);
         screenError.value = ex;
@@ -208,8 +246,8 @@ export function useAlbum(
     [photoId, isLoadingPhotos],
     () => {
       if (toStr(photoId.value).length && !isLoadingPhotos.value) {
-        if (currentPhotoIndex.value !== undefined) {
-          albumRef.value?.scrollToItem(currentPhotoIndex.value);
+        if (photo.value !== undefined) {
+          albumRef.value?.scrollToItem(photo.value.__state.index);
         } else if (!screenError.value) {
           onMoreLoad();
         }

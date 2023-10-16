@@ -1,4 +1,3 @@
-import { GroupState } from "@/pages/AGroups/getGroupState";
 import {
   IObjectSharedProps,
   IPhotoSize,
@@ -7,6 +6,19 @@ import {
 export interface ILocalGroup {
   id: number;
   folder: string;
+}
+
+export interface GroupState {
+  /** @description Отображаемый текст под названием группы */
+  text: string;
+  /** @description Группа забанена в ВК */
+  isBanned?: boolean;
+  /** @description Требуется отображать кнопку вступления */
+  isVisibleJoin: boolean;
+  /** @description Требуется скрыть счётчики */
+  hideCounters?: boolean;
+  /** @description Требуется загрузить счётчики */
+  needLoadingCounters?: boolean;
 }
 
 /** @link https://dev.vk.com/ru/reference/objects/group */
@@ -48,6 +60,10 @@ export interface IGroupsExport {
   groupIdsDictByFolderName: Record<string, number[]>;
 }
 
+export interface PhotoState {
+  index: number;
+}
+
 /** @link https://dev.vk.com/ru/reference/objects/photo */
 export interface IPhoto extends IObjectSharedProps {
   album_id: number;
@@ -71,4 +87,9 @@ export interface IPhoto extends IObjectSharedProps {
   tags?: {
     count: number;
   };
+  __state: PhotoState;
 }
+
+type OwnerId = number | string;
+type PhotoId = number | string;
+export type IPhotoKey = `photo${OwnerId}_${PhotoId}`;
