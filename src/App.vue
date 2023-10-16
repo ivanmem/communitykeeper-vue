@@ -11,6 +11,7 @@ import { onBeforeMount, ref, watch } from "vue";
 import { switchFullscreen } from "@/helpers/switchFullscreen";
 import { VDefaultsProvider, VToolbar } from "vuetify/components";
 import ASpinner from "@/components/ASpinner.vue";
+import ADynamicDialog from "@/components/ADynamicDialog.vue";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -159,6 +160,7 @@ watch(
               </AButton>
             </div>
           </VToolbar>
+          <ADynamicDialog />
         </template>
       </div>
     </VDefaultsProvider>

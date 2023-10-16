@@ -7,11 +7,14 @@ import { dateTimeFormatter, icons } from "@/common/consts";
 import { saveAs } from "file-saver";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { useGroups } from "@/store/groups/groups";
-import bridge from "@vkontakte/vk-bridge";
 import { useApp } from "@/store/app/app";
 import { IPhoto } from "@/store/groups/types";
 import useClipboard from "vue-clipboard3/dist/esm/index";
 import { useSwipes } from "@/composables/useSwipes";
+import { useDialog } from "@/store/dialog/dialog";
+import APhotoShareDialog, {
+  APhotoShareDialogProps,
+} from "@/pages/AAlbum/APhotoShareDialog.vue";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -52,6 +55,7 @@ const onClick = (event: MouseEvent) => {
 const photoDiv = ref<HTMLDivElement>();
 const showInfo = ref(true);
 const showMoreInfo = ref(false);
+const dialogStore = useDialog();
 
 watch(
   [photoDiv, () => useApp().isFullScreen, showMoreInfo],
@@ -110,9 +114,9 @@ const onShowContextMenu = (e: MouseEvent) => {
     label: "Поделиться",
     icon: h(icons.Icon16Share),
     onClick: () => {
-      bridge.send("VKWebAppShowWallPostBox", {
-        message: "",
-        attachments: originalSize.value?.url,
+      dialogStore.open<APhotoShareDialogProps>({
+        component: APhotoShareDialog,
+        props: { photo: props.photo },
       });
     },
   });
@@ -324,19 +328,19 @@ const dateTime = computed(() => {
 .a-photo__info-top-left,
 .a-photo__info-top-right {
   background-image: linear-gradient(
-      to right top,
-      rgba(209, 107, 165, 0.47),
-      rgba(199, 119, 185, 0.51),
-      rgba(186, 131, 202, 0.54),
-      rgba(170, 143, 216, 0.51),
-      rgba(154, 154, 225, 0.5),
-      rgba(138, 167, 236, 0.5),
-      rgba(121, 179, 244, 0.5),
-      rgba(105, 191, 248, 0.5),
-      rgba(82, 207, 254, 0.5),
-      rgba(65, 223, 255, 0.5),
-      rgba(70, 238, 250, 0.5),
-      rgba(95, 251, 241, 0.5)
+    to right top,
+    rgba(209, 107, 165, 0.47),
+    rgba(199, 119, 185, 0.51),
+    rgba(186, 131, 202, 0.54),
+    rgba(170, 143, 216, 0.51),
+    rgba(154, 154, 225, 0.5),
+    rgba(138, 167, 236, 0.5),
+    rgba(121, 179, 244, 0.5),
+    rgba(105, 191, 248, 0.5),
+    rgba(82, 207, 254, 0.5),
+    rgba(65, 223, 255, 0.5),
+    rgba(70, 238, 250, 0.5),
+    rgba(95, 251, 241, 0.5)
   );
   border-radius: 10px;
   color: #6effd2;
