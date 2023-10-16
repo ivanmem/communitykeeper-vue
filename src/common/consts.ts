@@ -137,3 +137,11 @@ export const VK_MAX_PHOTO_SIZE = {
 } as const;
 
 export const MAX_SIZE_ONE_VK_VALUE = 2236;
+
+export const dateTimeFormatter = new Intl.DateTimeFormat("ru", {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+});

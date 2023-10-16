@@ -3,7 +3,7 @@ import { computed, h, nextTick, ref, watch } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { openLink } from "@/helpers/openLink";
-import { icons } from "@/common/consts";
+import { dateTimeFormatter, icons } from "@/common/consts";
 import { saveAs } from "file-saver";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { useGroups } from "@/store/groups/groups";
@@ -21,7 +21,6 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   photo: IPhoto;
-  index?: number;
   count?: number | string;
 }>();
 
@@ -206,6 +205,10 @@ const swipes = useSwipes({
 
 const { toClipboard } = useClipboard({ appendToBody: true });
 const win = window;
+
+const dateTime = computed(() => {
+  return dateTimeFormatter.format(new Date(props.photo.date * 1000));
+});
 </script>
 <template>
   <div
@@ -229,18 +232,28 @@ const win = window;
       alt=""
     />
     <div
-      v-if="showInfo && index !== undefined"
-      class="a-not-dragable-and-not-select a-photo__info"
+      v-if="showInfo"
+      class="a-not-dragable-and-not-select a-photo__info-top-left"
     >
-      <div class="a-not-dragable-and-not-select a-photo__info-counter">
-        {{ index + 1 }} из {{ count ?? "?" }}
+      <div class="a-photo__info-date">
+        {{ dateTime }}
+      </div>
+      <div class="a-photo__info-counter">
+        <b>{{ photo.__state.index + 1 }}</b> из {{ count ?? "?" }}
       </div>
     </div>
+    <div
+      v-if="showInfo"
+      class="a-not-dragable-and-not-select a-photo__info-top-right"
+    ></div>
   </div>
   <VDialog v-model="showMoreInfo">
     <VCard>
       <VCardTitle>Расширенная информация</VCardTitle>
       <VCardText>
+        <div>
+          Дата: <b>{{ dateTime }}</b>
+        </div>
         <div v-if="photo.text">
           Описание: <b>{{ photo.text }}</b>
         </div>
@@ -312,29 +325,35 @@ const win = window;
   }
 }
 
-.a-photo__info {
+.a-photo__info-top-left,
+.a-photo__info-top-right {
+  background-color: rgb(154 0 0 / 66%);
   border-radius: 10px;
-  bottom: 0;
   color: white;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  left: 0;
-  padding: 3px;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 2;
-}
-
-.a-photo__info-counter {
-  background-color: rgba(0, 0, 0, 0.3);
-  display: flex;
-  flex-direction: column;
   height: max-content;
   margin-left: 15px;
   margin-top: 10px;
+  padding: 3px;
+  pointer-events: none;
+  position: absolute;
   width: max-content;
+  z-index: 2;
+}
+
+.a-photo__info-top-left {
+  left: 0;
+  top: 0;
+}
+
+.a-photo__info-top-right {
+  right: 0;
+  top: 0;
+}
+
+.a-photo__info-date {
+  font-size: 0.8em;
 }
 </style>
