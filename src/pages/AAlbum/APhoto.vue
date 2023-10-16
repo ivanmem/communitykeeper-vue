@@ -323,9 +323,23 @@ const dateTime = computed(() => {
 
 .a-photo__info-top-left,
 .a-photo__info-top-right {
-  background-color: rgb(154 0 0 / 66%);
+  background-image: linear-gradient(
+      to right top,
+      rgba(209, 107, 165, 0.47),
+      rgba(199, 119, 185, 0.51),
+      rgba(186, 131, 202, 0.54),
+      rgba(170, 143, 216, 0.51),
+      rgba(154, 154, 225, 0.5),
+      rgba(138, 167, 236, 0.5),
+      rgba(121, 179, 244, 0.5),
+      rgba(105, 191, 248, 0.5),
+      rgba(82, 207, 254, 0.5),
+      rgba(65, 223, 255, 0.5),
+      rgba(70, 238, 250, 0.5),
+      rgba(95, 251, 241, 0.5)
+  );
   border-radius: 10px;
-  color: white;
+  color: #6effd2;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -335,6 +349,8 @@ const dateTime = computed(() => {
   padding: 3px;
   pointer-events: none;
   position: absolute;
+  text-align: center;
+  text-shadow: #000000 1px 0 10px;
   width: max-content;
   z-index: 2;
 }
