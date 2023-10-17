@@ -1,15 +1,20 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/composables/useAppCaption";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onActivated, reactive, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { toNumber } from "lodash";
 import { icons } from "@/common/consts";
 import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
 import { IGroup } from "@/store/groups/types";
 import AGroupLink from "/src/pages/AGroups/AGroupLink.vue";
+import { useRoute } from "vue-router";
+import { toStr } from "@/helpers/toStr";
+import { AAddQueryParams } from "@/pages/AAdd/types";
 
 useAppCaption("Добавить группу");
-const store = useGroups();
+const route = useRoute();
+const groupsStore = useGroups();
+const queryParams = computed(() => route.query as AAddQueryParams);
 const newGroup = reactive({
   id: "",
   folder: "",
@@ -22,12 +27,12 @@ const addGroup = async () => {
     return;
   }
 
-  store.addLocalGroup({ id, folder: newGroup.folder });
+  groupsStore.addLocalGroup({ id, folder: newGroup.folder });
   newGroup.id = "";
   currentGroup.value = undefined;
   newGroup.linkOrId = "";
-  await store.loadNotLoadGroups();
-  await store.autoSaveCurrentLocalGroups();
+  await groupsStore.loadNotLoadGroups();
+  await groupsStore.autoSaveCurrentLocalGroups();
 };
 
 const removeGroup = async () => {
@@ -36,20 +41,20 @@ const removeGroup = async () => {
     return;
   }
 
-  store.removeLocalGroup(id);
+  groupsStore.removeLocalGroup(id);
   currentGroup.value = undefined;
   newGroup.linkOrId = "";
-  await store.autoSaveCurrentLocalGroups();
+  await groupsStore.autoSaveCurrentLocalGroups();
 };
 
 const isGroupAdded = computed(
-  () => newGroup.id && store.localGroups[newGroup.id],
+  () => newGroup.id && groupsStore.localGroups[newGroup.id],
 );
 
 const currentGroup = ref<undefined | IGroup>();
 
 const onLinkOrIdChanged = async () => {
-  if (currentGroup.value?.id.toString() === newGroup.linkOrId) {
+  if (toStr(currentGroup.value?.id) === toStr(newGroup.linkOrId)) {
     return;
   }
 
@@ -65,6 +70,13 @@ const onLinkOrIdChanged = async () => {
 watch(currentGroup, () => {
   newGroup.id = currentGroup.value?.id.toString() ?? "";
 });
+
+onActivated(() => {
+  const { groupId, folder } = queryParams.value;
+  newGroup.linkOrId = groupId || newGroup.linkOrId;
+  newGroup.folder = folder || newGroup.folder;
+  return onLinkOrIdChanged();
+});
 </script>
 
 <template>
@@ -79,7 +91,7 @@ watch(currentGroup, () => {
       />
       <VCombobox
         :append-inner-icon="icons.Icon16FolderOutline"
-        :items="useGroups().folders"
+        :items="groupsStore.folders"
         :model-value="newGroup.folder.length ? newGroup.folder : undefined"
         label="Папка"
         @update:model-value="newGroup.folder = $event ?? ''"
@@ -109,7 +121,7 @@ watch(currentGroup, () => {
         data-color="green"
       >
         Группа уже добавлена в папку "{{
-          store.localGroups[newGroup.id].folder
+          groupsStore.localGroups[newGroup.id].folder
         }}".
       </VCardText>
     </VCardItem>

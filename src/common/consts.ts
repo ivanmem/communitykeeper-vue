@@ -31,6 +31,8 @@ import Icon24SkipToAction from "@vkontakte/icons/src/svg/24/skip_to_action_24.sv
 import Icon24HistoryBackwardOutline from "@vkontakte/icons/src/svg/24/history_backward_outline_24.svg?component";
 import Icon24Share from "@vkontakte/icons/src/svg/24/share_24.svg?component";
 
+import Icon20FolderMoveOutline from "@vkontakte/icons/src/svg/20/folder_move_outline_20.svg?component";
+
 import Icon16AddSquareOutline from "@vkontakte/icons/src/svg/16/add_square_outline_16.svg?component";
 import Icon16Link from "@vkontakte/icons/src/svg/16/link_16.svg?component";
 import Icon16LogoVk from "@vkontakte/icons/src/svg/16/logo_vk_16.svg?component";
@@ -51,6 +53,7 @@ import Icon16Share from "@vkontakte/icons/src/svg/16/share_16.svg?component";
 import Icon16ArticleOutline from "@vkontakte/icons/src/svg/16/articles_outline_16.svg?component";
 import Icon16Delete from "@vkontakte/icons/src/svg/16/delete_16.svg?component";
 import Icon16CopyOutline from "@vkontakte/icons/src/svg/16/copy_outline_16.svg?component";
+import Icon16PictureOutline from "@vkontakte/icons/src/svg/16/picture_outline_16.svg?component";
 
 import Icon12ErrorCircle from "@vkontakte/icons/src/svg/12/error_circle_12.svg?component";
 import Icon12Tag from "@vkontakte/icons/src/svg/12/tag_12.svg?component";
@@ -59,6 +62,7 @@ import Icon12Flash from "@vkontakte/icons/src/svg/12/flash_12.svg?component";
 import Icon12Question from "@vkontakte/icons/src/svg/12/question_12.svg?component";
 import Icon12View from "@vkontakte/icons/src/svg/12/view_12.svg?component";
 import Icon12Cards from "@vkontakte/icons/src/svg/12/cards_2_12.svg?component";
+import { createStyledIcon } from "@/helpers/createStyledIcon";
 
 export const icons = {
   Icon28PictureOutline,
@@ -93,6 +97,8 @@ export const icons = {
   Icon24HistoryBackwardOutline,
   Icon24Share,
 
+  Icon20FolderMoveOutline,
+
   Icon16AddSquareOutline,
   Icon16Link,
   Icon16LogoVk,
@@ -113,6 +119,7 @@ export const icons = {
   Icon16ArticleOutline,
   Icon16Delete,
   Icon16CopyOutline,
+  Icon16PictureOutline,
 
   Icon12ErrorCircle,
   Icon12Tag,
@@ -124,9 +131,11 @@ export const icons = {
 };
 
 export const styledIcons = {
-  Icon24CopyOutline: h(icons.Icon16CopyOutline, {
-    style: `width: ${24}px; height: ${24}px;`,
-  }) as any,
+  Icon16FolderMoveOutline: createStyledIcon(icons.Icon20FolderMoveOutline, 16),
+  Icon16Fullscreen: createStyledIcon(icons.Icon24Fullscreen, 16),
+  Icon16FullscreenExit: createStyledIcon(icons.Icon24FullscreenExit, 16),
+  Icon16SkipToAction: createStyledIcon(icons.Icon24SkipToAction, 16),
+  Icon24CopyOutline: createStyledIcon(icons.Icon16CopyOutline, 24),
   Icon24SortOutlineOpacity50: h(icons.Icon24SortOutline, {
     style: `opacity: 0.5;`,
   }) as any,

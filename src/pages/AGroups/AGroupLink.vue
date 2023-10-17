@@ -7,19 +7,24 @@ import { computed, h, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useElementVisibility } from "@vueuse/core";
 import { sleep } from "@/helpers/sleep";
-import { icons } from "@/common/consts";
+import { icons, styledIcons } from "@/common/consts";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import GroupHelper from "../../helpers/GroupHelper";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import useClipboard from "vue-clipboard3/dist/esm/index";
-import { router } from "@/router";
+import { useRouter } from "vue-router";
+import { AAddQueryParams } from "@/pages/AAdd/types";
 
 const props = defineProps<{
   group: IGroup;
   index: number;
 }>();
+const router = useRouter();
 const groupsStore = useGroups();
 const groupState = computed(() => GroupHelper.getState(props.group));
+const localGroup = computed(() =>
+  groupsStore.getLocalGroupById(props.group.id),
+);
 const target = ref<HTMLDivElement | null>(null);
 const targetIsVisible = useElementVisibility(target);
 const isDeactivated = ref(false);
@@ -79,9 +84,22 @@ const onOpenContextMenu = (e: MouseEvent) => {
   });
   items.push({
     label: "Галерея (в разработке)",
-    icon: h(icons.Icon16FolderOutline),
+    icon: h(icons.Icon16PictureOutline),
     onClick: async () => {
       return router.push(`/albums/-${props.group.id}`);
+    },
+  });
+  items.push({
+    label: "Заменить",
+    icon: h(styledIcons.Icon16FolderMoveOutline),
+    onClick: () => {
+      return router.push({
+        name: "add",
+        query: {
+          groupId: props.group.id.toString(),
+          folder: localGroup.value?.folder,
+        } satisfies AAddQueryParams,
+      });
     },
   });
   if (props.group.is_member) {

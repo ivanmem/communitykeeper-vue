@@ -3,7 +3,7 @@ import { computed, h, nextTick, ref, watch } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { openLink } from "@/helpers/openLink";
-import { dateTimeFormatter, icons } from "@/common/consts";
+import { dateTimeFormatter, icons, styledIcons } from "@/common/consts";
 import { saveAs } from "file-saver";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { useGroups } from "@/store/groups/groups";
@@ -87,8 +87,6 @@ watch(
   { immediate: true },
 );
 
-const h16 = (icon: any) => h(icon, { width: "16px", height: "16px" });
-
 const onShowContextMenu = (e: MouseEvent) => {
   const items: MenuItem[] = [];
 
@@ -152,11 +150,9 @@ const onShowContextMenu = (e: MouseEvent) => {
     label: groupsStore.config.originalSizePhoto
       ? `Расширить на весь экран`
       : "Отображать в оригинальном размере",
-    icon: h16(
-      groupsStore.config.originalSizePhoto
-        ? icons.Icon24Fullscreen
-        : icons.Icon24FullscreenExit,
-    ),
+    icon: groupsStore.config.originalSizePhoto
+      ? styledIcons.Icon16Fullscreen
+      : styledIcons.Icon16FullscreenExit,
     onClick: () => {
       groupsStore.config.originalSizePhoto =
         !groupsStore.config.originalSizePhoto;
@@ -175,7 +171,7 @@ const onShowContextMenu = (e: MouseEvent) => {
         ? "Не пропускать"
         : "Пропускать"
     } фото с маленьким размером`,
-    icon: h16(icons.Icon24SkipToAction),
+    icon: styledIcons.Icon16SkipToAction,
     onClick: () => {
       groupsStore.config.skipLowResolutionPhotos =
         !groupsStore.config.skipLowResolutionPhotos;
