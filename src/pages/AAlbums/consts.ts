@@ -10,13 +10,13 @@ export const AlbumsPreviewSizes = reactive({
 export const AlbumsPreviewSizesInitial = computed(() => {
   return useApp().platform === "vkcom"
     ? {
-      width: 245,
-      height: 165,
-    }
+        width: 245,
+        height: 165,
+      }
     : {
-      width: 170,
-      height: 115,
-    };
+        width: 170,
+        height: 115,
+      };
 });
 
 watch(

@@ -32,7 +32,8 @@
   background: var(--vkui--color_background);
   border: 1px solid var(--separator_common);
   border-radius: var(--vkui--size_border_radius_paper--regular);
-  box-shadow: inset 0 0 0 var(--vkui_internal--thin_border) var(--vkui--color_field_border_alpha);
+  box-shadow: inset 0 0 0 var(--vkui_internal--thin_border)
+    var(--vkui--color_field_border_alpha);
   padding: 20px;
   position: relative;
   width: max-content;

@@ -1,4 +1,14 @@
-import { computed, MaybeRefOrGetter, onMounted, onUnmounted, reactive, Ref, ref, toValue, watch } from "vue";
+import {
+  computed,
+  MaybeRefOrGetter,
+  onMounted,
+  onUnmounted,
+  reactive,
+  Ref,
+  ref,
+  toValue,
+  watch,
+} from "vue";
 import { unrefElement, useElementSize } from "@vueuse/core";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
@@ -87,8 +97,7 @@ export function useCountGridColumns(
     unsubs.forEach((x) => {
       try {
         x();
-      } catch {
-      }
+      } catch {}
     });
   });
 

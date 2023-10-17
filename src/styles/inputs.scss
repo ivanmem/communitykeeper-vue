@@ -17,30 +17,30 @@ div[contenteditable="true"] {
   -webkit-box-shadow: none;
   box-shadow: none;
   font-family: var(
-                  --palette-vk-font,
-                  -apple-system,
-                  BlinkMacSystemFont,
-                  "Roboto",
-                  "Helvetica Neue",
-                  Geneva,
-                  "Noto Sans Armenian",
-                  "Noto Sans Bengali",
-                  "Noto Sans Cherokee",
-                  "Noto Sans Devanagari",
-                  "Noto Sans Ethiopic",
-                  "Noto Sans Georgian",
-                  "Noto Sans Hebrew",
-                  "Noto Sans Kannada",
-                  "Noto Sans Khmer",
-                  "Noto Sans Lao",
-                  "Noto Sans Osmanya",
-                  "Noto Sans Tamil",
-                  "Noto Sans Telugu",
-                  "Noto Sans Thai",
-                  arial,
-                  Tahoma,
-                  verdana,
-                  sans-serif
+    --palette-vk-font,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Roboto",
+    "Helvetica Neue",
+    Geneva,
+    "Noto Sans Armenian",
+    "Noto Sans Bengali",
+    "Noto Sans Cherokee",
+    "Noto Sans Devanagari",
+    "Noto Sans Ethiopic",
+    "Noto Sans Georgian",
+    "Noto Sans Hebrew",
+    "Noto Sans Kannada",
+    "Noto Sans Khmer",
+    "Noto Sans Lao",
+    "Noto Sans Osmanya",
+    "Noto Sans Tamil",
+    "Noto Sans Telugu",
+    "Noto Sans Thai",
+    arial,
+    Tahoma,
+    verdana,
+    sans-serif
   );
   font-size: var(--vkui--font_text--font_size--compact);
   outline: 0;
@@ -58,10 +58,12 @@ div[contenteditable="true"] {
   line-height: 100%;
   margin: 0;
   padding: 0 0 0 34px;
-  -webkit-transition: background-color 0.05s,
-  color 0.05s;
-  transition: background-color 0.05s,
-  color 0.05s;
+  -webkit-transition:
+    background-color 0.05s,
+    color 0.05s;
+  transition:
+    background-color 0.05s,
+    color 0.05s;
   width: 100%;
 
   &:focus-visible {
@@ -73,7 +75,8 @@ div[contenteditable="true"] {
   align-items: center;
   appearance: none;
   background-color: var(--vkui--color_field_background);
-  border: var(--vkui_internal--thin_border) solid var(--vkui--color_field_border_alpha);
+  border: var(--vkui_internal--thin_border) solid
+    var(--vkui--color_field_border_alpha);
   border-radius: var(--vkui--size_border_radius--regular);
   color: var(--vkui--color_text_primary);
   cursor: pointer;

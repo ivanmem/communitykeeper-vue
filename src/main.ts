@@ -24,12 +24,8 @@ import App from "@/App.vue";
     icons: {
       defaultSet: "mdi",
     },
-    components: isDev
-      ? (await import("vuetify/components"))
-      : undefined,
-    directives: isDev
-      ? (await import("vuetify/directives"))
-      : undefined,
+    components: isDev ? await import("vuetify/components") : undefined,
+    directives: isDev ? await import("vuetify/directives") : undefined,
   });
   try {
     document.documentElement.style.setProperty("background", "black");
