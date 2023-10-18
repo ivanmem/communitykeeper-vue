@@ -55,6 +55,15 @@ const onSaveSettings = () => {
 
   const newSettings = renameDialog.value.newSettings;
   let findChanges = false;
+  const newSettingsFolderLowerCase = newSettings.folder.toLowerCase();
+  const existsFolder = groupsStore.folders.find(
+    (folder) => folder.toLowerCase() === newSettingsFolderLowerCase,
+  );
+  if (existsFolder) {
+    // костыль для того, чтобы пользователь мог сделать слияние для существующей папки, даже если там отличается кейс
+    newSettings.folder = existsFolder;
+  }
+
   if (renameDialog.value.folder !== newSettings.folder) {
     if (groupsStore.folders.includes(renameDialog.value.newSettings.folder)) {
       if (
@@ -66,9 +75,9 @@ const onSaveSettings = () => {
       }
     }
 
-    const currentGroupsIds =
+    const transferredGroupsIds =
       groupsStore.groupIdsDictByFolderName[renameDialog.value.folder];
-    currentGroupsIds.forEach((groupId) => {
+    transferredGroupsIds.forEach((groupId) => {
       groupsStore.addLocalGroup({
         id: groupId,
         folder: newSettings.folder,
