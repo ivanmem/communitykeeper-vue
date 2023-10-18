@@ -14,13 +14,18 @@ import { MenuItem } from "@imengyu/vue3-context-menu";
 import useClipboard from "vue-clipboard3/dist/esm/index";
 import { useRouter } from "vue-router";
 import { AAddQueryParams } from "@/pages/AAdd/types";
+import { useDialog } from "@/store/dialog/dialog";
 
-const props = defineProps<{
-  group: IGroup;
-  index: number;
-}>();
+const props = withDefaults(
+  defineProps<{
+    group: IGroup;
+    index?: number;
+  }>(),
+  { index: 0 },
+);
 const router = useRouter();
 const groupsStore = useGroups();
+const dialogStore = useDialog();
 const groupState = computed(() => GroupHelper.getState(props.group));
 const localGroup = computed(() =>
   groupsStore.getLocalGroupById(props.group.id),
@@ -77,8 +82,12 @@ const onOpenContextMenu = (e: MouseEvent) => {
       try {
         await toClipboard(link.value);
       } catch (ex) {
-        console.error("Ошибка при копировании ссылки.", ex);
-        window.alert(link.value);
+        const title = "Ошибка при копировании ссылки";
+        console.error(title, ex);
+        dialogStore.alert({
+          title,
+          subtitle: link.value,
+        });
       }
     },
   });

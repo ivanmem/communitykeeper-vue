@@ -9,10 +9,12 @@ import { icons } from "@/common/consts";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { from } from "linq-to-typescript";
 import { openLink } from "@/helpers/openLink";
+import { useDialog } from "@/store/dialog/dialog";
 
 useAppCaption("История");
 const historyStore = useHistory();
 const groupsStore = useGroups();
+const dialogStore = useDialog();
 
 interface HistoryItemComputed {
   prependAvatar?: string;
@@ -78,8 +80,12 @@ const items = computed<HistoryItemComputed[]>(() =>
     .toArray(),
 );
 
-const onClear = () => {
-  if (!window.confirm("Вы уверены, что хотите отчистить историю просмотров?")) {
+const onClear = async () => {
+  const result = await dialogStore.confirm({
+    title: "Очистка истории просмотров",
+    subtitle: "Вы уверены, что хотите отчистить историю просмотров?",
+  });
+  if (!result) {
     return;
   }
 

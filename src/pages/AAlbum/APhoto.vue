@@ -276,7 +276,7 @@ const dateTime = computed(() => {
             <VCode
               @click="
                 toClipboard(JSON.stringify(photo), $event.target);
-                win.alert('JSON скопирован в буфер.');
+                dialogStore.alert('JSON скопирован в буфер.');
               "
             >
               {{ photo }}

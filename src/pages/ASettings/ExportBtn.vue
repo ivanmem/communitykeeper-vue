@@ -4,11 +4,13 @@ import { icons, styledIcons } from "@/common/consts";
 import { computed, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import AToolbar from "@/components/AToolbar.vue";
+import { useDialog } from "@/store/dialog/dialog";
 
 const exportShow = ref(false);
 const onClose = () => (exportShow.value = false);
 const onShow = () => (exportShow.value = true);
 const groupsStore = useGroups();
+const dialogStore = useDialog();
 const folders = ref(new Set<string>());
 const groupsExport = computed(() =>
   groupsStore.getExport(Array.from(folders.value)),
@@ -138,7 +140,7 @@ watch(
           variant="tonal"
           @click="
             toClipboard(JSON.stringify(groupsExport), $event.target);
-            win.alert('Данные для импорта помещены в буфер обмена.');
+            dialogStore.alert('Данные для импорта помещены в буфер обмена.');
           "
         />
       </VSheet>

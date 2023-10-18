@@ -126,7 +126,7 @@ onActivated(() => {
       </VCardText>
     </VCardItem>
     <VCardItem>
-      <AGroupLink v-if="currentGroup" :group="currentGroup" :index="-1" />
+      <AGroupLink v-if="currentGroup" :group="currentGroup" />
     </VCardItem>
   </VCard>
 </template>

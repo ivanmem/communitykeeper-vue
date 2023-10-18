@@ -6,10 +6,12 @@ import { useApp } from "@/store/app/app";
 import { useVk } from "@/store/vk/vk";
 import { icons } from "@/common/consts";
 import ExportBtn from "@/pages/ASettings/ExportBtn.vue";
+import { useDialog } from "@/store/dialog/dialog";
 
 useAppCaption("Настройки");
 const groupsStore = useGroups();
 const vkStore = useVk();
+const dialogStore = useDialog();
 
 const onImportFileChange = (event: any) => {
   if (!event.target?.files?.length) {
@@ -21,7 +23,10 @@ const onImportFileChange = (event: any) => {
   const onload = useApp().wrapLoading(async (e) => {
     const data = JSON.parse(e.target!.result as string);
     if (!isGroupsExport(data)) {
-      window.alert("Некорректные данные.");
+      dialogStore.alert({
+        title: "Ошибка импорта",
+        subtitle: "Некорректные данные.",
+      });
       return;
     }
 
@@ -29,11 +34,10 @@ const onImportFileChange = (event: any) => {
     groupsStore.saveImport(data);
     await groupsStore.autoSaveCurrentLocalGroups();
     const newGroupsCount = groupsStore.localGroupsArray.length;
-    window.alert(
-      `Импорт завершён данные. Новых групп: ${
-        newGroupsCount - oldGroupsCount
-      }.`,
-    );
+    dialogStore.alert({
+      title: "Импорт завершён",
+      subtitle: `Новых групп: ${newGroupsCount - oldGroupsCount}.`,
+    });
   });
 
   reader.onload = onload;

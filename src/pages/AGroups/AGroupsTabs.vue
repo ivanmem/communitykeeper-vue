@@ -4,12 +4,14 @@ import { useGroups } from "@/store/groups/groups";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { h, PropType, ref, StyleValue } from "vue";
 import { icons } from "@/common/consts";
+import { useDialog } from "@/store/dialog/dialog";
 
 const props = defineProps({
   style: { type: [String, Object, Array] as PropType<StyleValue> },
 });
 const appStore = useApp();
 const groupsStore = useGroups();
+const dialogStore = useDialog();
 
 const renameDialog = ref<
   { folder: string; newSettings: { folder: string } } | undefined
@@ -48,7 +50,7 @@ const onTabContextMenu = (e: MouseEvent, folder: string) => {
   ]);
 };
 
-const onSaveSettings = () => {
+const onSaveSettings = async () => {
   if (!renameDialog.value) {
     return;
   }
@@ -66,11 +68,11 @@ const onSaveSettings = () => {
 
   if (renameDialog.value.folder !== newSettings.folder) {
     if (groupsStore.folders.includes(renameDialog.value.newSettings.folder)) {
-      if (
-        !window.confirm(
-          `Папка с таким названием уже существует. Хотите произвести слияние?`,
-        )
-      ) {
+      const confirm = await dialogStore.confirm({
+        title: "Подтверждение слияния папок",
+        subtitle: `Папка с названием "${newSettings.folder}" уже существует. Хотите произвести слияние?`,
+      });
+      if (!confirm) {
         return;
       }
     }
