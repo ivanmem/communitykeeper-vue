@@ -35,12 +35,12 @@ const { toClipboard } = useClipboard({ appendToBody: true });
     @update:model-value="!$event && emits('close')"
   >
     <VCard>
-      <VCardTitle>Отправка фотографии</VCardTitle>
-      <VCol cols="auto">
+      <VCardItem>
+        <VCardTitle>Отправка фотографии</VCardTitle>
+      </VCardItem>
+      <VCardItem style="max-width: 450px">
         <VBtn
           :prepend-icon="styledIcons.Icon24CopyOutline"
-          style="width: 100%"
-          variant="tonal"
           @click="
             toClipboard(
               PhotoHelper.getPhotoUrl(props.photo.owner_id, props.photo.id),
@@ -50,28 +50,20 @@ const { toClipboard } = useClipboard({ appendToBody: true });
         >
           Скопировать ссылку
         </VBtn>
-      </VCol>
-      <VCol cols="auto">
         <VBtn
           :prepend-icon="styledIcons.Icon24CopyOutline"
-          style="width: 100%"
-          variant="tonal"
           @click="toClipboard(originalSize!.url, $event.target)"
         >
           Скопировать прямую ссылку
         </VBtn>
-      </VCol>
-
-      <VCol cols="auto">
-        <VBtn
-          :prepend-icon="icons.Icon24Share"
-          style="width: 100%"
-          variant="tonal"
-          @click="onShareWall"
-        >
+        <VBtn :prepend-icon="icons.Icon24Share" @click="onShareWall">
           Поделиться прямой ссылкой на стене
         </VBtn>
-      </VCol>
+      </VCardItem>
+      <VCardActions>
+        <VSpacer />
+        <VBtn @click="emits('close')">Закрыть</VBtn>
+      </VCardActions>
     </VCard>
   </VDialog>
 </template>

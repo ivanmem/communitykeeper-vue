@@ -177,6 +177,7 @@ watch(
             </div>
           </VCardItem>
           <VCardActions>
+            <VSpacer />
             <VBtn @click="showFilters = false">Закрыть</VBtn>
           </VCardActions>
         </VCard>

@@ -115,17 +115,20 @@ const onSaveSettings = () => {
     @update:model-value="renameDialog = undefined"
   >
     <VCard v-if="renameDialog" class="overflow-block a-group-filters">
-      <VCardTitle>Настройки папки "{{ renameDialog.folder }}"</VCardTitle>
+      <VCardItem>
+        <VCardTitle>Настройки папки "{{ renameDialog.folder }}"</VCardTitle>
+      </VCardItem>
       <VCardItem>
         <VTextField
           v-model="renameDialog.newSettings.folder"
           label="Название"
         />
-        <VCardActions>
-          <VBtn @click="renameDialog = undefined">Закрыть</VBtn>
-          <VBtn @click="onSaveSettings">Сохранить</VBtn>
-        </VCardActions>
       </VCardItem>
+      <VCardActions>
+        <VSpacer />
+        <VBtn @click="renameDialog = undefined">Закрыть</VBtn>
+        <VBtn @click="onSaveSettings">Сохранить</VBtn>
+      </VCardActions>
     </VCard>
   </VDialog>
 </template>

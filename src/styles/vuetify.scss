@@ -6,3 +6,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.v-dialog > .v-overlay__content > .v-card > .v-card-actions,
+.v-dialog > .v-overlay__content > form > .v-card > .v-card-actions {
+  padding-inline: 24px;
+}
