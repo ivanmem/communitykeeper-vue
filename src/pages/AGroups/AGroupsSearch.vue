@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import { autoUpdate, useFloating } from "@floating-ui/vue";
-import { icons } from "@/common/consts";
+import { icons, styledIcons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AButton from "@/components/AButton/AButton.vue";
 import {
@@ -152,7 +152,9 @@ watch(
       </div>
       <VDialog v-model="showFilters">
         <VCard class="overflow-block a-group-filters">
-          <VCardTitle>Фильтры</VCardTitle>
+          <VCardItem>
+            <VCardTitle>Фильтры</VCardTitle>
+          </VCardItem>
           <VCardItem>
             <VSelect
               v-model.number="groupsStore.filters.access"
@@ -168,6 +170,8 @@ watch(
               />
               <VSwitch
                 v-model="groupsStore.filters.sortDesc"
+                :false-icon="styledIcons.Icon24SortOutlineOpacity50"
+                :true-icon="icons.Icon24SortOutline"
                 label="В обратном порядке"
               />
             </div>

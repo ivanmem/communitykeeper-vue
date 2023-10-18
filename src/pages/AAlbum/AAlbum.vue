@@ -80,6 +80,7 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
             :false-icon="styledIcons.Icon24SortOutlineOpacity50"
             :true-icon="icons.Icon24SortOutline"
             hide-details
+            label="В обратном порядке"
             style="flex-grow: 0"
           />
         </div>
