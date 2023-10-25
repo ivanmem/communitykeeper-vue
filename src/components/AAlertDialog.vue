@@ -18,12 +18,13 @@ const emits = defineEmits<{
   <VDialog
     :model-value="true"
     :persistent="false"
+    class="a-alert-dialog"
     max-width="max-content"
     @update:model-value="!$event && emits('close')"
   >
     <VCard>
       <VCardItem>
-        <VCardTitle>{{ props.title }}</VCardTitle>
+        <VCardTitle class="a-alert-dialog__title">{{ props.title }}</VCardTitle>
       </VCardItem>
       <VCardText :style="props.subtitleStyle">
         {{ props.subtitle }}
@@ -43,3 +44,8 @@ const emits = defineEmits<{
     </VCard>
   </VDialog>
 </template>
+<style lang="scss">
+.a-alert-dialog__title {
+  white-space: pre-wrap;
+}
+</style>
