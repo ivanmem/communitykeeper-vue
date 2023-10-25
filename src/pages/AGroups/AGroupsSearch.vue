@@ -11,6 +11,7 @@ import {
 } from "@/store/groups/groups";
 import AGroupsTabs from "@/pages/AGroups/AGroupsTabs.vue";
 import { useApp } from "@/store/app/app";
+import { useDialog } from "@/store/dialog/dialog";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
@@ -18,7 +19,7 @@ const props = defineProps<{
 
 const { showFilters } = props.groupSearch;
 const groupsStore = useGroups();
-
+const dialogService = useDialog();
 const reference = ref(null);
 const floating = ref(null);
 const { x, y, strategy } = useFloating(reference, floating, {
@@ -89,7 +90,7 @@ const onLoadFolderCounters = useApp().wrapLoading(async () => {
 // Загружаем все счётчики, если текущая сортировка связана с ними
 watch(
   [() => groupsStore.isGroupCountersSort, () => groupsStore.filters.folder],
-  () => {
+  async () => {
     if (
       !groupsStore.isGroupCountersSort ||
       groupsStore.isGroupCountersCurrentFolderLoaded
@@ -98,12 +99,14 @@ watch(
     }
 
     if (
-      !confirm(
-        "Вы применили сортировку по счётчикам. " +
+      !(await dialogService.confirm({
+        title: "Подтверждение загрузки счётчиков",
+        subtitle:
+          "Вы применили сортировку по счётчикам. " +
           "\nОна будет работать только после загрузки счётчиков от всех групп текущей папки. " +
           "\nХотите запустить загрузку? " +
           "\nПри отмене сортировка будет сброшена.",
-      )
+      }))
     ) {
       groupsStore.filters.sort = GroupsSortEnum.date;
       return;
