@@ -7,6 +7,7 @@ import { useVk } from "@/store/vk/vk";
 import { icons } from "@/common/consts";
 import ExportBtn from "@/pages/ASettings/ExportBtn.vue";
 import { useDialog } from "@/store/dialog/dialog";
+import ASettingsDisabledCookies from "@/pages/ASettings/ASettingsDisabledCookies.vue";
 
 useAppCaption("Настройки");
 const groupsStore = useGroups();
@@ -56,47 +57,50 @@ const onRemoveAllGroups = async () => {
 
 <template>
   <VCard class="overflow-block a-settings">
-    <VCardItem style="max-width: 400px">
-      <VRow no-gutters style="gap: 10px">
-        <VBtn
-          :color="
-            groupsStore.spaceUsed >= 80
-              ? 'deep-orange-darken-4'
-              : 'green-darken-3'
-          "
-          :prepend-icon="icons.Icon24CloudOutline"
-          class="a-button__left-content"
-          style="pointer-events: none"
-        >
-          Занято места: {{ groupsStore.spaceUsed }}%
-        </VBtn>
-        <VBtn
-          :prepend-icon="icons.Icon24UploadOutline"
-          class="a-button__left-content"
-          color="green-darken-4"
-        >
-          <label>
-            Добавить группы (импорт)
-            <input
-              accept=".json"
-              style="display: none"
-              type="file"
-              @change="onImportFileChange"
-            />
-          </label>
-        </VBtn>
-        <ExportBtn />
-        <VBtn
-          :disabled="groupsStore.localGroupsArray.length === 0"
-          :prepend-icon="icons.Icon24DeleteOutline"
-          class="a-button__left-content"
-          color="deep-orange"
-          @click="onRemoveAllGroups"
-        >
-          Удалить все группы
-        </VBtn>
-      </VRow>
-    </VCardItem>
+    <div class="d-flex flex-wrap">
+      <ASettingsDisabledCookies />
+      <VCardItem style="max-width: 400px">
+        <VRow no-gutters style="gap: 10px">
+          <VBtn
+            :color="
+              groupsStore.spaceUsed >= 80
+                ? 'deep-orange-darken-4'
+                : 'green-darken-3'
+            "
+            :prepend-icon="icons.Icon24CloudOutline"
+            class="a-button__left-content"
+            style="pointer-events: none"
+          >
+            Занято места: {{ groupsStore.spaceUsed }}%
+          </VBtn>
+          <VBtn
+            :prepend-icon="icons.Icon24UploadOutline"
+            class="a-button__left-content"
+            color="green-darken-4"
+          >
+            <label>
+              Добавить группы (импорт)
+              <input
+                accept=".json"
+                style="display: none"
+                type="file"
+                @change="onImportFileChange"
+              />
+            </label>
+          </VBtn>
+          <ExportBtn />
+          <VBtn
+            :disabled="groupsStore.localGroupsArray.length === 0"
+            :prepend-icon="icons.Icon24DeleteOutline"
+            class="a-button__left-content"
+            color="deep-orange"
+            @click="onRemoveAllGroups"
+          >
+            Удалить все группы
+          </VBtn>
+        </VRow>
+      </VCardItem>
+    </div>
     <VCardItem>
       <VSwitch
         v-model="groupsStore.config.autoSave"
