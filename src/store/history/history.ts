@@ -13,6 +13,7 @@ import {
   HistoryState,
   HistoryType,
 } from "@/store/history/types";
+import { getPiniaPersist } from "@/helpers/getPiniaPersist";
 
 function getHistoryKey(historyItem: HistoryItem): HistoryKey {
   switch (historyItem.type) {
@@ -104,8 +105,7 @@ export const useHistory = defineStore("history", {
       return this.historyArray.at(-1) as any;
     },
   },
-  persist: {
-    storage: localStorage,
+  persist: getPiniaPersist({
     paths: ["history"],
-  },
+  }),
 });

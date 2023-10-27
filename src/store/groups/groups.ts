@@ -15,6 +15,7 @@ import { watch } from "vue";
 import GroupHelper from "@/helpers/GroupHelper";
 import { setEruda } from "@/helpers/setEruda";
 import { from } from "linq-to-typescript";
+import { getPiniaPersist } from "@/helpers/getPiniaPersist";
 
 export interface FiltersType {
   folder: string;
@@ -398,8 +399,7 @@ export const useGroups = defineStore("groups", {
       return key && countersKeys.has(key);
     },
   },
-  persist: {
-    storage: localStorage,
+  persist: getPiniaPersist({
     paths: ["cachedGroupsData", "filters"],
-  },
+  }),
 });
