@@ -8,6 +8,7 @@ import { icons } from "@/common/consts";
 import ExportBtn from "@/pages/ASettings/ExportBtn.vue";
 import { useDialog } from "@/store/dialog/dialog";
 import ASettingsDisabledCookies from "@/pages/ASettings/ASettingsDisabledCookies.vue";
+import FixedTeleport from "@/components/FixedTeleport.vue";
 
 useAppCaption("Настройки");
 const groupsStore = useGroups();
@@ -56,23 +57,25 @@ const onRemoveAllGroups = async () => {
 </script>
 
 <template>
+  <FixedTeleport to="#navigation-header__right">
+    <VBtn
+      :color="
+        groupsStore.spaceUsed >= 80 ? 'deep-orange-darken-4' : 'green-darken-3'
+      "
+      :icon="icons.Icon24CloudOutline"
+      variant="text"
+      @click="
+        dialogStore.alert(
+          `У вас занято ${groupsStore.spaceUsed}% из доступного для групп места. Если занять более 100%, то данные не смогут сохраниться.`,
+        )
+      "
+    />
+  </FixedTeleport>
   <VCard class="overflow-block a-settings">
     <div class="d-flex flex-wrap">
       <ASettingsDisabledCookies />
       <VCardItem style="max-width: 400px">
         <VRow no-gutters style="gap: 10px">
-          <VBtn
-            :color="
-              groupsStore.spaceUsed >= 80
-                ? 'deep-orange-darken-4'
-                : 'green-darken-3'
-            "
-            :prepend-icon="icons.Icon24CloudOutline"
-            class="a-button__left-content"
-            style="pointer-events: none"
-          >
-            Занято места: {{ groupsStore.spaceUsed }}%
-          </VBtn>
           <VBtn
             :prepend-icon="icons.Icon24UploadOutline"
             class="a-button__left-content"
@@ -149,6 +152,11 @@ const onRemoveAllGroups = async () => {
 
 <style lang="scss">
 .a-settings {
+  .v-card-item {
+    // убирает скролл на узких экранах
+    flex: auto;
+  }
+
   .v-card-item__content {
     overflow: visible;
   }

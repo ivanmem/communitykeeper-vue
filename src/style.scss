@@ -85,3 +85,7 @@ a {
 code.vkuiFormField--status-error {
   padding: 10px;
 }
+
+div, span {
+  text-wrap: pretty;
+}
