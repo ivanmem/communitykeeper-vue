@@ -62,13 +62,10 @@ export const useVk = defineStore("vk", {
     },
     async initVk() {
       try {
-        while (!this.token?.access_token) {
-          this.token = await bridge.send("VKWebAppGetAuthToken", {
-            scope: "groups",
-            app_id: 51658481,
-          });
-        }
-
+        this.token = await bridge.send("VKWebAppGetAuthToken", {
+          scope: "groups",
+          app_id: 51658481,
+        });
         useVk().api = new VKAPI({
           rps: 3,
           accessToken: this.token.access_token,
