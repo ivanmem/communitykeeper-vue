@@ -1,3 +1,5 @@
+@use "mixins";
+
 .vkui--vkBase--light,
 .vkui--vkCom--light,
 .vkui--vkIOS--light,
@@ -191,4 +193,9 @@
   --light-color-600: #d6d7d9;
   --dark-color-800: #242424;
   --light-color-800: #dee0e1;
+}
+
+body {
+  --vk-app-buttons-height: 36px;
+  @include mixins.platform-body(--vk-app-buttons-height, 36px, 36px, 32px);
 }

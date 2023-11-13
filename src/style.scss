@@ -22,7 +22,6 @@
 }
 
 html,
-body,
 pre {
   margin: 0;
   padding: 0;
@@ -39,6 +38,13 @@ body {
   font-family: var(--vkui--font_text--font_family--regular);
   height: 100vh;
   width: 100vw;
+}
+
+body {
+  background: var(--vkui--color_background_content);
+  margin: 0;
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
+    env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
 }
 
 #app {
@@ -86,6 +92,7 @@ code.vkuiFormField--status-error {
   padding: 10px;
 }
 
-div, span {
+div,
+span {
   text-wrap: pretty;
 }

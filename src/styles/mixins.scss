@@ -1,0 +1,88 @@
+@use "sass:list";
+@use "sass:meta";
+
+@mixin platform-universal(
+  $property,
+  $vkcom,
+  $android,
+  $ios,
+  $dark: "",
+  $at-root: true
+) {
+  $platforms: (
+    vkcom: $vkcom,
+    android: $android,
+    ios: $ios,
+  );
+  $selector: "body";
+
+  @if $dark != "" {
+    $selector: $selector + '[data-dark="#{$dark}"]';
+  }
+
+  @each $platform, $value in $platforms {
+    $current-platform-selector: $selector + "[data-platform=" #{$platform}"]";
+
+    @if ($at-root) {
+      @at-root #{$current-platform-selector} & {
+        #{$property}: $value;
+      }
+    } @else {
+      #{$current-platform-selector} {
+        #{$property}: $value;
+      }
+    }
+  }
+}
+
+/// Миксин для обозначения css-свойств для трёх платформ в текущем скоупе
+/// @example
+///   .current-scope {
+///     @include mixins.platform(padding-top, 5px, 10px, 8px);
+///   }
+///
+/// @return
+///   body[data-platform=vkcom] .current-scope {
+///     padding-top: 5px;
+///   }
+///   body[data-platform=android] .current-scope {
+///     padding-top: 10px;
+///   }
+///   body[data-platform=ios] .current-scope {
+///     padding-top: 8px;
+///   }
+@mixin platform($property, $vkcom, $android, $ios) {
+  @include platform-universal($property, $vkcom, $android, $ios, "", true);
+}
+
+/// Аналогично platform, но только для тёмной темы
+@mixin platform-dark($property, $vkcom, $android, $ios) {
+  @include platform-universal($property, $vkcom, $android, $ios, "true", true);
+}
+
+/// Аналогично platform, но только для светлой темы
+@mixin platform-light($property, $vkcom, $android, $ios) {
+  @include platform-universal($property, $vkcom, $android, $ios, "false", true);
+}
+
+// Аналогично platform, только без поддержки текущего скоупа
+@mixin platform-body($property, $vkcom, $android, $ios) {
+  @include platform-universal($property, $vkcom, $android, $ios, "", false);
+}
+
+/// Аналогично platform-body, но только для тёмной темы
+@mixin platform-body-dark($property, $vkcom, $android, $ios) {
+  @include platform-universal($property, $vkcom, $android, $ios, "true", false);
+}
+
+/// Аналогично platform-body, но только для светлой темы
+@mixin platform-body-light($property, $vkcom, $android, $ios) {
+  @include platform-universal(
+    $property,
+    $vkcom,
+    $android,
+    $ios,
+    "false",
+    false
+  );
+}

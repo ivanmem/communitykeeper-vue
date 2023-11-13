@@ -25,6 +25,12 @@ export const useApp = defineStore("app", {
     isVkCom(): boolean {
       return this.platform === "vkcom";
     },
+    isAppIos(): boolean {
+      return (
+        this.platform === "ios" &&
+        navigator.userAgent.startsWith("com.vk.vkclient")
+      );
+    },
   },
   actions: {
     getLoadingFinisher(): () => void {

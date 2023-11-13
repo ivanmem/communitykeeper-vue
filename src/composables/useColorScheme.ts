@@ -4,7 +4,7 @@ import bridge, {
   VKBridgeEvent,
 } from "@vkontakte/vk-bridge";
 import { Platform, platform } from "@vkontakte/vkui";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import {
   resolveAppearance,
   VKBridgeConfigData,
@@ -56,6 +56,22 @@ export function useColorScheme() {
   }
 
   bridge.subscribe(bridgeListener);
+
+  watch(
+    currentClasses,
+    () => {
+      document.body.className = "root " + currentClasses.value;
+    },
+    { immediate: true },
+  );
+
+  watch(
+    darkColorScheme,
+    () => {
+      document.body.dataset.dark = String(darkColorScheme.value);
+    },
+    { immediate: true },
+  );
 
   return {
     currentClasses,
