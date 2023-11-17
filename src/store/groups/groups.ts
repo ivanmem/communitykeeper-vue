@@ -161,9 +161,10 @@ export const useGroups = defineStore("groups", {
       });
     },
     async loadNotLoadGroups() {
-      const ids = Object.keys(this.localGroups)
-        .map(toNumber)
-        .filter((id) => !this.groupsMap.has(id));
+      const ids = from(Object.keys(this.localGroups))
+        .select(toNumber)
+        .where((id) => !this.groupsMap.has(id))
+        .toArray();
       const api = useVk().api;
       if (ids.length === 0 || !api) {
         return;

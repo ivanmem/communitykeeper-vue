@@ -1,3 +1,5 @@
+import { useApp } from "@/store/app/app";
+
 export interface UsableSwipesOptions {
   onLeft?: (e: TouchEvent) => any;
   onRight?: (e: TouchEvent) => any;
@@ -8,14 +10,33 @@ export interface UsableSwipesOptions {
    * Максимальное значение - 50%, тогда срабатывать будет в любом случае.
    * При 0% срабатывать будет только под полным прямым углом.*/
   precisionDirection?: number;
+  /** @description Останавливать навигацию на IOS?
+   *  @default true на IOS, false на остальных */
+  preventDefault?: boolean;
 }
 
 /** @description Функция позволяет установить обработчики на свайпы в определённые стороны */
 export function useSwipes(opts: UsableSwipesOptions) {
   let xDown: number | null = null;
   let yDown: number | null = null;
+  const appStore = useApp();
+  if (appStore.platform === "ios") {
+    opts.preventDefault ??= true;
+  }
 
   function touchstart(evt: TouchEvent) {
+    if (opts.preventDefault === true) {
+      if (evt.touches.length === 1) {
+        const touch = evt.touches[0];
+        if (
+          touch.clientX < window.innerWidth * 0.1 ||
+          touch.clientX > window.innerWidth * 0.9
+        ) {
+          evt.preventDefault();
+        }
+      }
+    }
+
     const firstTouch = evt.touches[0];
     xDown = firstTouch.clientX;
     yDown = firstTouch.clientY;
