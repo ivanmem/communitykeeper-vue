@@ -10,7 +10,7 @@ import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
 const props = defineProps<{ album: IAlbumItem }>();
 const previewSize = computed(() =>
-  PhotoHelper.getPreviewSize(props.album.sizes),
+  PhotoHelper.getPreviewSize(props.album.sizes, AlbumsPreviewSizes),
 );
 
 const { width, height } = toRefs(AlbumsPreviewSizes);

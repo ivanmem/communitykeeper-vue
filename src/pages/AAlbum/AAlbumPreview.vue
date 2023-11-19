@@ -13,7 +13,7 @@ const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes),
 );
 const previewSize = computed(() =>
-  PhotoHelper.getPreviewSize(props.photo.sizes),
+  PhotoHelper.getPreviewSize(props.photo.sizes, AlbumsPreviewSizes),
 );
 
 const { width, height } = toRefs(AlbumsPreviewSizes);

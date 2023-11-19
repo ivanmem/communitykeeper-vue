@@ -4,6 +4,7 @@ import isNumeric from "@/helpers/isNumeric";
 import { VK_MAX_PHOTO_SIZE } from "@/common/consts";
 import { ComputedRef } from "vue";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
+import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
 export class PhotoHelper {
   static getOriginalSize(sizes: IPhotoSize[] | undefined) {
@@ -20,15 +21,20 @@ export class PhotoHelper {
     return originalSize;
   }
 
-  static getPreviewSize(sizes: IPhotoSize[] | undefined) {
+  static getPreviewSize(
+    sizes: IPhotoSize[] | undefined,
+    previewSizes: typeof AlbumsPreviewSizes,
+  ) {
     if (!sizes?.length) {
       return undefined;
     }
 
     let originalSize: IPhotoSize = sizes[0]!;
+    const previewWidth = previewSizes.width * window.devicePixelRatio;
+    const previewHeight = previewSizes.height * window.devicePixelRatio;
     return (
       sizes.find((size) => {
-        if (size.width * size.height > 450 * 450) {
+        if (size.width >= previewWidth && size.height >= previewHeight) {
           originalSize = size;
           return true;
         }
