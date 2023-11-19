@@ -227,6 +227,7 @@ const dateTime = computed(() => {
   >
     <img
       v-if="originalSize"
+      :key="photo.id"
       :data-original-size-photo="groupsStore.config.originalSizePhoto"
       :src="originalSize.url"
       alt=""

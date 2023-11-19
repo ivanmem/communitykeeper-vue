@@ -2,7 +2,7 @@
 import { useAppCaption } from "@/composables/useAppCaption";
 import { icons } from "@/common/consts";
 
-useAppCaption("О приложении");
+useAppCaption("Source");
 </script>
 
 <template>

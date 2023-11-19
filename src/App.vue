@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
 import copy from "copy-to-clipboard";
-import AButton from "@/components/AButton/AButton.vue";
 import { useColorScheme } from "@/composables/useColorScheme";
 import { useApp } from "@/store/app/app";
 import { darkColorScheme, icons } from "@/common/consts";
@@ -12,6 +11,7 @@ import { switchFullscreen } from "@/helpers/switchFullscreen";
 import { VDefaultsProvider, VToolbar } from "vuetify/components";
 import ASpinner from "@/components/ASpinner.vue";
 import ADynamicDialog from "@/components/ADynamicDialog.vue";
+import ANavigationMenu from "@/components/ANavigationMenu.vue";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -30,37 +30,7 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
     clearable: true,
   },
 };
-const tabBarItems: Array<{
-  caption: string;
-  icon: any;
-  to: string;
-}> = [
-  {
-    caption: "Группы",
-    icon: icons.Icon24ArticleBoxOutline,
-    to: "/",
-  },
-  {
-    caption: "Добавить",
-    icon: icons.Icon24AddSquareOutline,
-    to: "/add",
-  },
-  {
-    caption: "История",
-    icon: icons.Icon24HistoryBackwardOutline,
-    to: "/history",
-  },
-  {
-    caption: "Настройки",
-    icon: icons.Icon24GearOutline,
-    to: "/settings",
-  },
-  {
-    caption: "О приложении",
-    icon: icons.Icon24LightbulbStarOutline,
-    to: "/about",
-  },
-];
+
 const win = window;
 
 const onKeyDown = (e: KeyboardEvent) => {
@@ -175,18 +145,8 @@ watch(
               </keep-alive>
             </router-view>
           </div>
-          <VToolbar class="navigation" color="transparent" density="compact">
-            <div class="navigation-bottom-buttons">
-              <AButton
-                v-for="item of tabBarItems"
-                :hide-content="!appStore.isVkCom"
-                :icon="item.icon"
-                :to="item.to"
-              >
-                <span> {{ item.caption }} </span>
-              </AButton>
-            </div>
-          </VToolbar>
+
+          <ANavigationMenu />
           <ADynamicDialog />
         </template>
       </div>
@@ -229,12 +189,6 @@ watch(
   gap: 5px;
 }
 
-.navigation {
-  align-items: center;
-  display: flex;
-  padding-inline: 5px;
-}
-
 .navigation-caption {
   align-items: flex-start;
   display: flex;
@@ -257,30 +211,6 @@ watch(
     text-overflow: inherit;
     text-transform: inherit;
     white-space: inherit;
-  }
-}
-
-.navigation-bottom-buttons {
-  align-items: center;
-  border-radius: 5px;
-  display: flex;
-  gap: 5px;
-  min-width: 100%;
-  overflow: auto;
-  padding: 10px;
-
-  & > * {
-    flex-grow: 1;
-  }
-
-  @at-root .root:not([data-platform="vkcom"]) & {
-    justify-content: space-around;
-    align-content: space-around;
-  }
-
-  .a-button {
-    min-height: 26px;
-    white-space: nowrap;
   }
 }
 </style>
