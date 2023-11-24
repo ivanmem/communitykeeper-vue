@@ -87,7 +87,7 @@ watch(
   { immediate: true },
 );
 
-const onShowContextMenu = (e: MouseEvent) => {
+const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
   const items: MenuItem[] = [];
 
   items.push({
@@ -201,6 +201,7 @@ const swipes = useSwipes({
   onRight: () => emit("photo:next"),
   onDown: () => emit("photo:exit"),
   onUp: () => (showMoreInfo.value = true),
+  onContextMenu: onShowContextMenu,
 });
 
 const { toClipboard } = useClipboard({ appendToBody: true });
@@ -217,7 +218,6 @@ const dateTime = computed(() => {
     tabindex="1"
     @click="onClick"
     v-on="swipes"
-    @contextmenu.prevent.stop="onShowContextMenu"
     @keydown.stop.prevent.esc="emit('photo:exit')"
     @keydown.stop.prevent.space="emit('photo:exit')"
     @keydown.stop.prevent.left="emit('photo:prev')"

@@ -57,7 +57,7 @@ const { toClipboard } = useClipboard({ appendToBody: true });
           Скопировать прямую ссылку
         </VBtn>
         <VBtn :prepend-icon="icons.Icon24Share" @click="onShareWall">
-          Поделиться прямой ссылкой на стене
+          Прямую ссылку на стену
         </VBtn>
       </VCardItem>
       <VCardActions>
