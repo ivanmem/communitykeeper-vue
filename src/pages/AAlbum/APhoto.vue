@@ -137,7 +137,7 @@ const onShowContextMenu = (e: MouseEvent) => {
       const isUseYandex = confirm(
         "Подтвердите для поиска с помощью яндекса. Отмените для поиска с помощью saucenao.",
       );
-      const url = escape(originalSize.value!.url);
+      const url = encodeURIComponent(originalSize.value!.url);
       if (isUseYandex) {
         openLink(`https://yandex.com/images/search?rpt=imageview&url=${url}`);
       } else {
@@ -232,7 +232,7 @@ const dateTime = computed(() => {
       alt=""
     />
     <div
-      v-if="showInfo"
+      v-show="showInfo"
       class="a-not-dragable-and-not-select a-photo__info-top-left"
     >
       <div class="a-photo__info-date">
@@ -356,13 +356,13 @@ const dateTime = computed(() => {
 }
 
 .a-photo__info-top-left {
-  left: 0;
-  top: 0;
+  left: env(safe-area-inset-left, 0);
+  top: env(safe-area-inset-top, 0);
 }
 
 .a-photo__info-top-right {
-  right: 0;
-  top: 0;
+  right: env(safe-area-inset-right, 0);
+  top: env(safe-area-inset-top, 0);
 }
 
 .a-photo__info-date {
