@@ -2,7 +2,7 @@
 import { useAppCaption } from "@/composables/useAppCaption";
 import { computed, onActivated, reactive, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
-import { toNumber } from "lodash";
+import toNumber from "lodash/toNumber";
 import { icons } from "@/common/consts";
 import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
 import { IGroup } from "@/store/groups/types";

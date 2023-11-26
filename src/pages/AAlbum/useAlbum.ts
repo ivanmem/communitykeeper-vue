@@ -1,6 +1,6 @@
 import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { useVk } from "@/store/vk/vk";
-import { toString } from "lodash";
+import toString from "lodash/toString";
 import {
   AlbumsPreviewSizes,
   AlbumsPreviewSizesInitial,

@@ -1,5 +1,6 @@
 import { IGroupsExport } from "@/store/groups/types";
-import { isNumber, isPlainObject } from "lodash";
+import isNumber from "lodash/isNumber";
+import isPlainObject from "lodash/isPlainObject";
 
 export function isGroupsExport(data: any): data is IGroupsExport {
   const exportObj = data as IGroupsExport;

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { random } from "lodash";
+import random from "lodash/random";
 import { platform } from "@vkontakte/vkui";
 
 interface AppState {
@@ -26,15 +26,10 @@ export const useApp = defineStore("app", {
       return this.platform === "vkcom";
     },
     isIos(): boolean {
-      return (
-        this.platform === "ios"
-      );
+      return this.platform === "ios";
     },
     isAppIos(): boolean {
-      return (
-        this.isIos &&
-        navigator.userAgent.startsWith("com.vk.vkclient")
-      );
+      return this.isIos && navigator.userAgent.startsWith("com.vk.vkclient");
     },
   },
   actions: {
