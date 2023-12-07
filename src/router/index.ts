@@ -45,6 +45,11 @@ const routes: RouteRecordRaw[] = [
     props: true,
     strict: true,
   },
+  {
+    path: "/:catchAll(.*)",
+    component: () => import("../components/PageNotFound.vue"),
+    strict: false,
+  },
 ];
 
 export const router = createRouter({

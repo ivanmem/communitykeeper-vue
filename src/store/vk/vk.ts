@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { VKAPI } from "vkontakte-api";
-import bridge from "@vkontakte/vk-bridge";
+import bridge, {
+  MobileUpdateConfigData,
+  MVKUpdateConfigData,
+  VKUpdateConfigData,
+} from "@vkontakte/vk-bridge";
 import { chunkString } from "@/helpers/chunkString";
 import { watchEffect } from "vue";
 import { useGroups } from "@/store/groups/groups";
@@ -11,7 +15,9 @@ import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
 
 interface VkState {
   api?: VKAPI;
-  webAppConfig?: Record<string, any>;
+  webAppConfig: Partial<
+    MobileUpdateConfigData & MVKUpdateConfigData & VKUpdateConfigData
+  >;
   chunksMaxCount: number;
   vkWebAppStorageSetCount: number;
   token?: {
