@@ -11,9 +11,7 @@ const isDev = process.env.NODE_ENV === "development";
 export default defineConfig({
   server: {
     https: true,
-    hmr: {
-      host: "localhost",
-    },
+    hmr: false,
   },
   plugins: [
     vue(),

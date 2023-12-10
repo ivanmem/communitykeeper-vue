@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import { autoUpdate, useFloating } from "@floating-ui/vue";
 import { icons, styledIcons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AButton from "@/components/AButton/AButton.vue";
@@ -22,12 +21,6 @@ const groupsStore = useGroups();
 const dialogService = useDialog();
 const reference = ref(null);
 const floating = ref(null);
-const { x, y, strategy } = useFloating(reference, floating, {
-  placement: "bottom-end",
-  middleware: [],
-  whileElementsMounted: autoUpdate,
-  open: showFilters,
-});
 
 const { Icon24Filter, Icon16CrossCircleSmall } = icons;
 

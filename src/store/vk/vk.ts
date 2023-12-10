@@ -103,7 +103,7 @@ export const useVk = defineStore("vk", {
             if (recentlyChanged) {
               requestAnimationFrame(updateConfig);
             } else {
-              setTimeout(updateConfig, 1);
+              setTimeout(updateConfig, 1000);
             }
           });
       };

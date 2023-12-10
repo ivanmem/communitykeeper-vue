@@ -125,7 +125,7 @@ watch(
               v-if="route.path !== '/'"
               :icon="icons.Icon24Linked"
               variant="text"
-              @click="copy('vk.com/app51658481#' + route.path)"
+              @click="copy(`vk.com/app${vkStore.appId}#` + route.path)"
             />
             <VBtn
               v-if="useApp().isVkCom"
