@@ -82,7 +82,7 @@ const onRemoveAllGroups = async () => {
             color="green-darken-4"
           >
             <label>
-              Добавить группы (импорт)
+              Загрузить резервную копию
               <input
                 accept=".json"
                 style="display: none"

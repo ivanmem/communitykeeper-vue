@@ -47,7 +47,7 @@ watch(
         color="light-blue-darken-4"
         @click="onShow"
       >
-        Скачать все группы (экспорт)
+        Создать резервную копию
       </VBtn>
     </template>
     <VCard>
