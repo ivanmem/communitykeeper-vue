@@ -10,10 +10,15 @@ import AGroupLink from "/src/pages/AGroups/AGroupLink.vue";
 import { useRoute } from "vue-router";
 import { toStr } from "@/helpers/toStr";
 import { AAddQueryParams } from "@/pages/AAdd/types";
+import { useApp } from "@/store/app/app";
+import { isGroupsExport } from "@/store/groups/isGroupsExport";
+import { useDialog } from "@/store/dialog/dialog";
+import ExportBtn from "@/pages/ASettings/ExportBtn.vue";
 
-useAppCaption("Добавить группу");
+useAppCaption("Добавление групп");
 const route = useRoute();
 const groupsStore = useGroups();
+const dialogStore = useDialog();
 const queryParams = computed(() => route.query as AAddQueryParams);
 const newGroup = reactive({
   id: "",
@@ -67,6 +72,46 @@ const onLinkOrIdChanged = async () => {
   currentGroup.value = groups[0];
 };
 
+const onImportFileChange = (event: any) => {
+  if (!event.target?.files?.length) {
+    return;
+  }
+
+  const reader = new FileReader();
+
+  const onload = useApp().wrapLoading(async (e) => {
+    const data = JSON.parse(e.target!.result as string);
+    if (!isGroupsExport(data)) {
+      dialogStore.alert({
+        title: "Ошибка импорта",
+        subtitle: "Некорректные данные.",
+      });
+      return;
+    }
+
+    const oldGroupsCount = groupsStore.localGroupsArray.length;
+    groupsStore.saveImport(data);
+    await groupsStore.autoSaveCurrentLocalGroups();
+    const newGroupsCount = groupsStore.localGroupsArray.length;
+    dialogStore.alert({
+      title: "Импорт завершён",
+      subtitle: `Новых групп: ${newGroupsCount - oldGroupsCount}.`,
+    });
+  });
+
+  reader.onload = onload;
+
+  reader.readAsText(event.target.files[0]);
+};
+
+const onRemoveAllGroups = async () => {
+  const isConfirm = confirm("Вы уверены, что хотите удалить все группы?");
+  if (isConfirm) {
+    groupsStore.removeLocalGroups();
+    await groupsStore.autoSaveCurrentLocalGroups();
+  }
+};
+
 watch(currentGroup, () => {
   newGroup.id = currentGroup.value?.id.toString() ?? "";
 });
@@ -82,6 +127,22 @@ onActivated(() => {
 <template>
   <VCard class="overflow-block a-add">
     <VCardItem>
+      <VCardTitle style="margin-bottom: 10px">Резервная копия</VCardTitle>
+      <VRow no-gutters style="gap: 10px">
+        <VBtn :prepend-icon="icons.Icon24UploadOutline" color="green-darken-4">
+          <label>
+            Загрузить
+            <input
+              accept=".json"
+              style="display: none"
+              type="file"
+              @change="onImportFileChange"
+            />
+          </label>
+        </VBtn>
+        <ExportBtn />
+      </VRow>
+      <VCardTitle style="margin-block: 10px">Добавить группу</VCardTitle>
       <VTextField
         :append-inner-icon="icons.Icon16Link"
         :model-value="newGroup.linkOrId.length ? newGroup.linkOrId : undefined"
@@ -111,6 +172,14 @@ onActivated(() => {
           @click="removeGroup"
         >
           <span>Удалить</span>
+        </VBtn>
+        <VBtn
+          :disabled="groupsStore.localGroupsArray.length === 0"
+          :prepend-icon="icons.Icon24DeleteOutline"
+          color="deep-orange"
+          @click="onRemoveAllGroups"
+        >
+          Удалить всё
         </VBtn>
       </VRow>
     </VCardItem>

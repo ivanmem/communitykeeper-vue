@@ -43,11 +43,10 @@ watch(
     <template v-slot:activator="{ props }">
       <VBtn
         :prepend-icon="icons.Icon24DownloadOutline"
-        class="a-button__left-content"
         color="light-blue-darken-4"
         @click="onShow"
       >
-        Создать резервную копию
+        Создать
       </VBtn>
     </template>
     <VCard>

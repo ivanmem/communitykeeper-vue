@@ -20,13 +20,12 @@ export type WebAppConfig = Partial<
 
 interface VkState {
   api?: VKAPI;
-  webAppConfig: WebAppConfig;
+  webAppConfig?: WebAppConfig;
   chunksMaxCount: number;
   vkWebAppStorageSetCount: number;
   token?: {
     access_token: string;
   };
-  appId: number;
 }
 
 export const useVk = defineStore("vk", {
@@ -153,7 +152,7 @@ export const useVk = defineStore("vk", {
         window.alert(
           "Приложение не может получить данные с групп без разрешения 'groups'. Предоставьте разрешение для продолжения работы.",
         );
-        await vkStore.initVk();
+        await bridge.send("VKWebAppClose");
       }
     },
     getChunkSplitter() {
@@ -257,9 +256,14 @@ export const useVk = defineStore("vk", {
         return await useVk().api!.addRequestToQueue<P, R>(config);
       } catch (ex: any) {
         console.warn("api error", { config, ex });
-        if (ex?.errorInfo?.error_code === 6) {
+        const errorCode = ex?.errorInfo?.error_code;
+        if (errorCode === 6) {
           await sleep(2000);
           // костыль для игнорирования Too many requests per second
+          return await useVk().addRequestToQueue<P, R>(config);
+        } else if (errorCode === 5) {
+          // костыль для повторной авторизации
+          await this.initVk();
           return await useVk().addRequestToQueue<P, R>(config);
         } else {
           throw ex;
@@ -285,8 +289,8 @@ export const useVk = defineStore("vk", {
     },
   },
   getters: {
-    appId() {
-      return +this.webAppConfig.app_id;
+    appId(): number {
+      return +(this.webAppConfig?.app_id ?? 0);
     },
   },
 });

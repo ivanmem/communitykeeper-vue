@@ -7,7 +7,6 @@ import {
 } from "@/store/groups/types";
 import toNumber from "lodash/toNumber";
 import { useVk } from "@/store/vk/vk";
-import { saveAs } from "file-saver";
 import { isGroupBanned } from "@/helpers/isGroupBanned";
 import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
 import { useApp } from "@/store/app/app";
@@ -16,6 +15,7 @@ import GroupHelper from "@/helpers/GroupHelper";
 import { setEruda } from "@/helpers/setEruda";
 import { from } from "linq-to-typescript";
 import { getPiniaPersist } from "@/helpers/getPiniaPersist";
+import { saveAs } from "file-saver";
 
 export interface FiltersType {
   folder: string;
@@ -198,8 +198,9 @@ export const useGroups = defineStore("groups", {
       const exportJson = JSON.stringify(groupsExport);
       // Создаем новый Blob-объект (данные в двоичном виде)
       const blob = new Blob([exportJson], { type: "text/plain;charset=utf-8" });
+      const filename = `xg-backup-${new Date().getTime()}.json`;
       // Сохраняем файл на компьютере пользователя
-      saveAs(blob, "xg-backup.json", { autoBom: true });
+      saveAs(blob, filename, { autoBom: true });
     },
     saveImport(data: IGroupsExport) {
       Object.keys(data.groupIdsDictByFolderName).forEach((folder) => {
