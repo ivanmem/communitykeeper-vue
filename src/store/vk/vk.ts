@@ -133,13 +133,15 @@ export const useVk = defineStore("vk", {
     async initVk() {
       const vkStore = useVk();
       try {
-        vkStore.token = await bridge.send("VKWebAppGetAuthToken", {
-          scope: "groups",
-          app_id: vkStore.appId,
-        });
+        while (!this.token?.access_token) {
+          vkStore.token = await bridge.send("VKWebAppGetAuthToken", {
+            scope: "groups",
+            app_id: vkStore.appId,
+          });
+        }
         vkStore.api = new VKAPI({
           rps: 3,
-          accessToken: vkStore.token.access_token,
+          accessToken: vkStore.token!.access_token,
           lang: "ru",
           v: "5.131",
           isBrowser: true,
