@@ -22,7 +22,7 @@ const originalSize = computed(() =>
 const onShareWall = () => {
   bridge.send("VKWebAppShowWallPostBox", {
     message: "",
-    attachments: originalSize.value?.url,
+    attachments: PhotoHelper.getPhotoKey(props.photo.owner_id, props.photo.id),
   });
 };
 const { toClipboard } = useClipboard({ appendToBody: true });
@@ -57,7 +57,7 @@ const { toClipboard } = useClipboard({ appendToBody: true });
           Скопировать прямую ссылку
         </VBtn>
         <VBtn :prepend-icon="icons.Icon24Share" @click="onShareWall">
-          Прямую ссылку на стену
+          Поделиться на стене
         </VBtn>
       </VCardItem>
       <VCardActions>
