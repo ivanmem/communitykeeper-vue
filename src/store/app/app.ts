@@ -7,6 +7,7 @@ interface AppState {
   loadingSet: Set<any>;
   platform: "android" | "ios" | "vkcom";
   isFullScreen: boolean;
+  urlParams: Record<any, any>;
 }
 
 export const useApp = defineStore("app", {
@@ -16,6 +17,7 @@ export const useApp = defineStore("app", {
       loadingSet: new Set(),
       platform: platform() as any,
       isFullScreen: false,
+      urlParams: {},
     };
   },
   getters: {
@@ -31,8 +33,16 @@ export const useApp = defineStore("app", {
     isAppIos(): boolean {
       return this.isIos && navigator.userAgent.startsWith("com.vk.vkclient");
     },
+    appId(): number {
+      return +(this.urlParams.vk_app_id ?? 0);
+    },
   },
   actions: {
+    init() {
+      this.urlParams = Object.fromEntries(
+        new URLSearchParams(location.search),
+      );
+    },
     getLoadingFinisher(): () => void {
       const id = random(true);
       this.loadingSet.add(id);

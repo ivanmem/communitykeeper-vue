@@ -46,6 +46,7 @@ onBeforeMount(async () => {
     fullscreenElement.value = document.fullscreenElement;
   });
   try {
+    appStore.init();
     await vkStore.init();
     await groupsStore.init();
   } finally {
@@ -125,7 +126,7 @@ watch(
               v-if="route.path !== '/'"
               :icon="icons.Icon24Linked"
               variant="text"
-              @click="copy(`vk.com/app${vkStore.appId}#` + route.path)"
+              @click="copy(`vk.com/app${appStore.appId}#` + route.path)"
             />
             <VBtn
               v-if="useApp().isVkCom"

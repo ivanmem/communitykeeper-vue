@@ -13,6 +13,7 @@ import { sleep } from "@/helpers/sleep";
 import { PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
 import { useUnmounted } from "@/composables/useUnmounted";
+import { useApp } from "@/store/app/app";
 
 export type WebAppConfig = Partial<
   MobileUpdateConfigData & MVKUpdateConfigData & VKUpdateConfigData
@@ -112,6 +113,7 @@ export const useVk = defineStore("vk", {
     // init выполняется в app onMounted, поэтому в нём должен срабатывать onUnmounted при размонтировании приложения
     async init() {
       const vkStore = useVk();
+      const appStore = useApp();
       try {
         bridge.subscribe((e) => {
           if (
@@ -131,12 +133,13 @@ export const useVk = defineStore("vk", {
       }
     },
     async initVk() {
+      const appStore = useApp();
       const vkStore = useVk();
       try {
         while (!this.token?.access_token) {
           vkStore.token = await bridge.send("VKWebAppGetAuthToken", {
             scope: "groups",
-            app_id: vkStore.appId,
+            app_id: appStore.appId,
           });
         }
         vkStore.api = new VKAPI({
@@ -152,7 +155,9 @@ export const useVk = defineStore("vk", {
           ex,
         );
         window.alert(
-          "Приложение не может получить данные с групп без разрешения 'groups'. Предоставьте разрешение для продолжения работы.",
+          `Приложение не может получить данные с групп без разрешения 'groups'. Предоставьте разрешение для продолжения работы.\n${JSON.stringify(
+            ex,
+          )}`,
         );
         await bridge.send("VKWebAppClose");
       }
@@ -291,8 +296,6 @@ export const useVk = defineStore("vk", {
     },
   },
   getters: {
-    appId(): number {
-      return +(this.webAppConfig?.app_id ?? 0);
-    },
+
   },
 });
