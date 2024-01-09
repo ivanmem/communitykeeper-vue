@@ -4,6 +4,7 @@
 
 ```shell
 npm install
+npm install @vkontakte/vk-tunnel concurrently -g
 ```
 
 ## Запуск
