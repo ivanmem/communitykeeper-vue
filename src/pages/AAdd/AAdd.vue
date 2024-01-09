@@ -10,10 +10,9 @@ import AGroupLink from "/src/pages/AGroups/AGroupLink.vue";
 import { useRoute } from "vue-router";
 import { toStr } from "@/helpers/toStr";
 import { AAddQueryParams } from "@/pages/AAdd/types";
-import { useApp } from "@/store/app/app";
-import { isGroupsExport } from "@/store/groups/isGroupsExport";
 import { useDialog } from "@/store/dialog/dialog";
-import ExportBtn from "@/pages/ASettings/ExportBtn.vue";
+import ExportBtn from "@/pages/AAdd/ExportBtn.vue";
+import ImportBtn from "@/pages/AAdd/ImportBtn.vue";
 
 useAppCaption("Добавление групп");
 const route = useRoute();
@@ -23,7 +22,7 @@ const queryParams = computed(() => route.query as AAddQueryParams);
 const newGroup = reactive({
   id: "",
   folder: "",
-  linkOrId: ""
+  linkOrId: "",
 });
 
 const addGroup = async () => {
@@ -53,7 +52,7 @@ const removeGroup = async () => {
 };
 
 const isGroupAdded = computed(
-  () => newGroup.id && groupsStore.localGroups[newGroup.id]
+  () => newGroup.id && groupsStore.localGroups[newGroup.id],
 );
 
 const currentGroup = ref<undefined | IGroup>();
@@ -72,41 +71,9 @@ const onLinkOrIdChanged = async () => {
   currentGroup.value = groups[0];
 };
 
-const onImportFileChange = (event: any) => {
-  if (!event.target?.files?.length) {
-    return;
-  }
-
-  const reader = new FileReader();
-
-  const onload = useApp().wrapLoading(async (e) => {
-    const data = JSON.parse(e.target!.result as string);
-    if (!isGroupsExport(data)) {
-      dialogStore.alert({
-        title: "Ошибка импорта",
-        subtitle: "Некорректные данные."
-      });
-      return;
-    }
-
-    const oldGroupsCount = groupsStore.localGroupsArray.length;
-    groupsStore.saveImport(data);
-    await groupsStore.autoSaveCurrentLocalGroups();
-    const newGroupsCount = groupsStore.localGroupsArray.length;
-    dialogStore.alert({
-      title: "Импорт завершён",
-      subtitle: `Новых групп: ${newGroupsCount - oldGroupsCount}.`
-    });
-  });
-
-  reader.onload = onload;
-
-  reader.readAsText(event.target.files[0]);
-};
-
 const onRemoveAllGroups = async () => {
   const isConfirm = await dialogStore.confirm(
-    "Вы уверены, что хотите удалить все группы?"
+    "Вы уверены, что хотите удалить все группы?",
   );
   if (isConfirm) {
     groupsStore.removeLocalGroups();
@@ -133,17 +100,7 @@ onActivated(() => {
         💾 Резервная копия
       </VCardSubtitle>
       <VRow no-gutters style="gap: 10px">
-        <VBtn :prepend-icon="icons.Icon24UploadOutline" color="green-darken-4">
-          <label>
-            Загрузить
-            <input
-              accept=".json"
-              style="display: none"
-              type="file"
-              @change="onImportFileChange"
-            />
-          </label>
-        </VBtn>
+        <ImportBtn />
         <ExportBtn />
       </VRow>
     </VCardItem>

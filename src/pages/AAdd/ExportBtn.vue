@@ -6,9 +6,9 @@ import { useGroups } from "@/store/groups/groups";
 import AToolbar from "@/components/AToolbar.vue";
 import { useDialog } from "@/store/dialog/dialog";
 
-const exportShow = ref(false);
-const onClose = () => (exportShow.value = false);
-const onShow = () => (exportShow.value = true);
+const show = ref(false);
+const onClose = () => (show.value = false);
+const onShow = () => (show.value = true);
 const groupsStore = useGroups();
 const dialogStore = useDialog();
 const folders = ref(new Set<string>());
@@ -35,10 +35,10 @@ watch(
 <template>
   <VDialog
     :fullscreen="true"
-    :model-value="exportShow"
+    :model-value="show"
     :scrim="false"
     transition="dialog-bottom-transition"
-    @update:model-value="exportShow = $event"
+    @update:model-value="show = $event"
   >
     <template v-slot:activator="{ props }">
       <VBtn
@@ -54,7 +54,9 @@ watch(
         <VBtn icon @click="onClose">
           <VIcon>mdi-close</VIcon>
         </VBtn>
-        <VToolbarTitle class="navigation-caption">Экспорт</VToolbarTitle>
+        <VToolbarTitle class="navigation-caption">
+          Экспортирование
+        </VToolbarTitle>
       </AToolbar>
       <VCardText style="font-size: 14px">
         Выберите папки и нажмите на кнопку загрузки. Если загрузка не началась,
