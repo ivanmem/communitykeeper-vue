@@ -21,14 +21,14 @@ const props = withDefaults(
     group: IGroup;
     index?: number;
   }>(),
-  { index: 0 },
+  { index: 0 }
 );
 const router = useRouter();
 const groupsStore = useGroups();
 const dialogStore = useDialog();
 const groupState = computed(() => GroupHelper.getState(props.group));
 const localGroup = computed(() =>
-  groupsStore.getLocalGroupById(props.group.id),
+  groupsStore.getLocalGroupById(props.group.id)
 );
 const target = ref<HTMLDivElement | null>(null);
 const targetIsVisible = useElementVisibility(target);
@@ -62,7 +62,7 @@ watch(
 
     groupState.value.needLoadingCounters = true;
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 onDeactivated(() => {
@@ -86,17 +86,17 @@ const onOpenContextMenu = (e: MouseEvent) => {
         console.error(title, ex);
         dialogStore.alert({
           title,
-          subtitle: link.value,
+          subtitle: link.value
         });
       }
-    },
+    }
   });
   items.push({
-    label: "Галерея (в разработке)",
+    label: "Галерея",
     icon: h(icons.Icon16PictureOutline),
     onClick: async () => {
       return router.push(`/albums/-${props.group.id}`);
-    },
+    }
   });
   items.push({
     label: "Заменить",
@@ -106,10 +106,10 @@ const onOpenContextMenu = (e: MouseEvent) => {
         name: "add",
         query: {
           groupId: props.group.id.toString(),
-          folder: localGroup.value?.folder,
-        } satisfies AAddQueryParams,
+          folder: localGroup.value?.folder
+        } satisfies AAddQueryParams
       });
-    },
+    }
   });
   if (props.group.is_member) {
     items.push({
@@ -117,7 +117,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
       icon: h(icons.Icon16DoorEnterArrowRightOutline),
       onClick: () => {
         return GroupHelper.setIsMember(props.group, false);
-      },
+      }
     });
   } else {
     items.push({
@@ -125,17 +125,17 @@ const onOpenContextMenu = (e: MouseEvent) => {
       icon: h(icons.Icon16AddSquareOutline),
       onClick: async () => {
         return GroupHelper.setIsMember(props.group, true);
-      },
+      }
     });
   }
 
   items.push({
     label: "Удалить",
     icon: h(icons.Icon16DeleteOutline, { style: { color: "red" } }),
-    onClick: () => {
-      useGroups().removeLocalGroup(props.group.id);
-      useGroups().autoSaveCurrentLocalGroups();
-    },
+    onClick: async () => {
+      groupsStore.removeLocalGroup(props.group.id);
+      await groupsStore.autoSaveCurrentLocalGroups();
+    }
   });
 
   showContextMenu(e, items);

@@ -23,7 +23,7 @@ const queryParams = computed(() => route.query as AAddQueryParams);
 const newGroup = reactive({
   id: "",
   folder: "",
-  linkOrId: "",
+  linkOrId: ""
 });
 
 const addGroup = async () => {
@@ -53,7 +53,7 @@ const removeGroup = async () => {
 };
 
 const isGroupAdded = computed(
-  () => newGroup.id && groupsStore.localGroups[newGroup.id],
+  () => newGroup.id && groupsStore.localGroups[newGroup.id]
 );
 
 const currentGroup = ref<undefined | IGroup>();
@@ -84,7 +84,7 @@ const onImportFileChange = (event: any) => {
     if (!isGroupsExport(data)) {
       dialogStore.alert({
         title: "Ошибка импорта",
-        subtitle: "Некорректные данные.",
+        subtitle: "Некорректные данные."
       });
       return;
     }
@@ -95,7 +95,7 @@ const onImportFileChange = (event: any) => {
     const newGroupsCount = groupsStore.localGroupsArray.length;
     dialogStore.alert({
       title: "Импорт завершён",
-      subtitle: `Новых групп: ${newGroupsCount - oldGroupsCount}.`,
+      subtitle: `Новых групп: ${newGroupsCount - oldGroupsCount}.`
     });
   });
 
@@ -105,7 +105,9 @@ const onImportFileChange = (event: any) => {
 };
 
 const onRemoveAllGroups = async () => {
-  const isConfirm = confirm("Вы уверены, что хотите удалить все группы?");
+  const isConfirm = await dialogStore.confirm(
+    "Вы уверены, что хотите удалить все группы?"
+  );
   if (isConfirm) {
     groupsStore.removeLocalGroups();
     await groupsStore.autoSaveCurrentLocalGroups();
@@ -127,7 +129,9 @@ onActivated(() => {
 <template>
   <VCard class="overflow-block a-add">
     <VCardItem>
-      <VCardTitle style="margin-bottom: 10px">Резервная копия</VCardTitle>
+      <VCardSubtitle style="margin-bottom: 10px">
+        💾 Резервная копия
+      </VCardSubtitle>
       <VRow no-gutters style="gap: 10px">
         <VBtn :prepend-icon="icons.Icon24UploadOutline" color="green-darken-4">
           <label>
@@ -142,7 +146,12 @@ onActivated(() => {
         </VBtn>
         <ExportBtn />
       </VRow>
-      <VCardTitle style="margin-block: 10px">Добавить группу</VCardTitle>
+    </VCardItem>
+    <VDivider />
+    <VCardItem style="max-width: max-content">
+      <VCardSubtitle style="margin-block: 10px">
+        🆕 Добавить группу
+      </VCardSubtitle>
       <VTextField
         :append-inner-icon="icons.Icon16Link"
         :model-value="newGroup.linkOrId.length ? newGroup.linkOrId : undefined"
@@ -175,7 +184,7 @@ onActivated(() => {
         </VBtn>
         <VBtn
           :disabled="groupsStore.localGroupsArray.length === 0"
-          :prepend-icon="icons.Icon24DeleteOutline"
+          :prepend-icon="icons.Icon24TrashSmileOutline"
           color="deep-orange"
           @click="onRemoveAllGroups"
         >

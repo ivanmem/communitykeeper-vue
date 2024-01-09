@@ -7,7 +7,7 @@ import { icons } from "@/common/consts";
 import { useDialog } from "@/store/dialog/dialog";
 
 const props = defineProps({
-  style: { type: [String, Object, Array] as PropType<StyleValue> },
+  style: { type: [String, Object, Array] as PropType<StyleValue> }
 });
 const appStore = useApp();
 const groupsStore = useGroups();
@@ -28,25 +28,24 @@ const onTabContextMenu = (e: MouseEvent, folder: string) => {
       icon: h(icons.Icon16Pen),
       onClick: () => {
         renameDialog.value = { folder, newSettings: { folder } };
-      },
+      }
     },
     {
       label: "Удалить",
       icon: h(icons.Icon16DeleteOutline, { style: { color: "red" } }),
-      onClick: () => {
+      onClick: async () => {
         const folderGroupsIds = groupsStore.groupIdsDictByFolderName[folder];
-        if (
-          !confirm(
-            `Вы уверены что хотите удалить папку "${folder}" с ${folderGroupsIds.length} группами?`,
-          )
-        ) {
+        const isConfirm = await dialogStore.confirm(
+          `Вы уверены что хотите удалить папку "${folder}" с ${folderGroupsIds.length} группами?`
+        );
+        if (!isConfirm) {
           return;
         }
 
         groupsStore.removeLocalGroup(new Set(folderGroupsIds));
-        useGroups().autoSaveCurrentLocalGroups();
-      },
-    },
+        await groupsStore.autoSaveCurrentLocalGroups();
+      }
+    }
   ]);
 };
 
@@ -59,7 +58,7 @@ const onSaveSettings = async () => {
   let findChanges = false;
   const newSettingsFolderLowerCase = newSettings.folder.toLowerCase();
   const existsFolder = groupsStore.folders.find(
-    (folder) => folder.toLowerCase() === newSettingsFolderLowerCase,
+    (folder) => folder.toLowerCase() === newSettingsFolderLowerCase
   );
   if (existsFolder) {
     // костыль для того, чтобы пользователь мог сделать слияние для существующей папки, даже если там отличается кейс
@@ -70,7 +69,7 @@ const onSaveSettings = async () => {
     if (groupsStore.folders.includes(renameDialog.value.newSettings.folder)) {
       const confirm = await dialogStore.confirm({
         title: "Подтверждение слияния папок",
-        subtitle: `Папка с названием "${newSettings.folder}" уже существует. Хотите произвести слияние?`,
+        subtitle: `Папка с названием "${newSettings.folder}" уже существует. Хотите произвести слияние?`
       });
       if (!confirm) {
         return;
@@ -82,7 +81,7 @@ const onSaveSettings = async () => {
     transferredGroupsIds.forEach((groupId) => {
       groupsStore.addLocalGroup({
         id: groupId,
-        folder: newSettings.folder,
+        folder: newSettings.folder
       });
       findChanges = true;
     });
@@ -92,11 +91,10 @@ const onSaveSettings = async () => {
     }
   }
 
-  if (findChanges) {
-    groupsStore.autoSaveCurrentLocalGroups();
-  }
-
   renameDialog.value = undefined;
+  if (findChanges) {
+    await groupsStore.autoSaveCurrentLocalGroups();
+  }
 };
 </script>
 <template>

@@ -1,18 +1,20 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/composables/useAppCaption";
-import { icons } from "@/common/consts";
+import { icons, styledIcons } from "@/common/consts";
 
 useAppCaption("Source");
 </script>
 
 <template>
   <VCard class="overflow-block a-about">
+    <VCardSubtitle>🤔 Описание</VCardSubtitle>
     <VCardItem>
-      Это приложение отображает добавленные вами группы в едином списке и
-      позволяет просматривать количество и в один клик переходить к
-      фото\альбомам\видео\статьям.
+      Это приложение позволяет вам группировать и сортировать группы, а так же быстро переходить к их
+      фото\альбомам\видео\статьям. В приложении имеется встроенная галерея для просмотра фото в максимальном качестве и
+      с возможностью листать фото нажатиями по краям, как в Telegram.
     </VCardItem>
-    <VCardItem> Вы можете перейти в полноэкранный режим нажав F11.</VCardItem>
+    <VDivider style="margin-bottom: 10px" />
+    <VCardSubtitle>❗ Важное</VCardSubtitle>
     <VCardItem>
       Периодически делайте бэкап данных. Они хранятся в VK Storage
       (dev.vk.com/method/storage.set). Так как в этом хранилище ограничено
@@ -21,6 +23,8 @@ useAppCaption("Source");
       приложение не сможет спарсить данные и они будут потеряны
       <b>навсегда</b>.
     </VCardItem>
+    <VDivider style="margin-bottom: 10px" />
+    <VCardSubtitle>🆓 Open Source</VCardSubtitle>
     <VCardItem>
       Это приложение с открытым исходным кодом. Вы можете внести свой вклад. Мы
       используем:
@@ -28,11 +32,12 @@ useAppCaption("Source");
     <VCardItem>
       <VCode>TypeScript, SCSS, Vite, Vue 3, Pinia, Vuetify</VCode>
     </VCardItem>
-    <VCardItem style="max-width: 200px">
+    <VDivider style="margin-bottom: 10px" />
+    <VCardSubtitle>🤝 Обратная связь</VCardSubtitle>
+    <VCardItem style="max-width: max-content">
       <VRow no-gutters style="gap: 10px">
         <VBtn
-          :prepend-icon="icons.Icon16Link"
-          class="a-button__left-content"
+          :prepend-icon="icons.Icon16Users2Outline"
           color="light-blue-darken-4"
           href="https://vk.com/communitykeeper"
           target="_blank"
@@ -40,8 +45,7 @@ useAppCaption("Source");
           Сообщество
         </VBtn>
         <VBtn
-          :prepend-icon="icons.Icon16Link"
-          class="a-button__left-content"
+          :prepend-icon="styledIcons.Icon16GitHub"
           color="light-blue-darken-4"
           href="https://github.com/ivanmem/local-vk-groups-catalog-vue"
           target="_blank"
@@ -50,6 +54,9 @@ useAppCaption("Source");
         </VBtn>
       </VRow>
     </VCardItem>
+    <VDivider style="margin-bottom: 10px" />
+    <VCardSubtitle>💡 Совет</VCardSubtitle>
+    <VCardItem>Вы можете перейти в полноэкранный режим нажав F11.</VCardItem>
   </VCard>
 </template>
 <style lang="scss"></style>

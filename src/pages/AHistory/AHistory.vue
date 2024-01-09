@@ -29,7 +29,7 @@ const items = computed<HistoryItemComputed[]>(() =>
     .select((item) => {
       if (item.type === "view_album") {
         const group: IGroup | undefined = groupsStore.getGroupById(
-          -item.ownerId,
+          -item.ownerId
         );
         const title = group?.name ?? item.ownerId;
         const prependAvatar = group?.photo_200;
@@ -39,13 +39,13 @@ const items = computed<HistoryItemComputed[]>(() =>
             item.subtitle || PhotoHelper.getAlbumUrl(item.ownerId, item.albumId)
           }`,
           prependAvatar,
-          to: `/albums/${item.ownerId}/${item.albumId}/${item.photoId}`,
+          to: `/albums/${item.ownerId}/${item.albumId}/${item.photoId}`
         };
       }
 
       if (item.type === "view_counter") {
         const group: IGroup | undefined = groupsStore.getGroupById(
-          -item.ownerId,
+          -item.ownerId
         );
         const title = group?.name ?? item.ownerId;
         const prependAvatar = group?.photo_200;
@@ -70,20 +70,20 @@ const items = computed<HistoryItemComputed[]>(() =>
           onClick: () => {
             historyStore.add(item);
             openLink(item.url);
-          },
+          }
         };
       }
 
       return undefined!;
     })
     .where(Boolean)
-    .toArray(),
+    .toArray()
 );
 
 const onClear = async () => {
   const result = await dialogStore.confirm({
     title: "Очистка истории просмотров",
-    subtitle: "Вы уверены, что хотите отчистить историю просмотров?",
+    subtitle: "Вы уверены, что хотите отчистить историю просмотров?"
   });
   if (!result) {
     return;
@@ -106,15 +106,19 @@ const onClear = async () => {
       <v-divider class="mb-4"></v-divider>
     </v-sheet>
     <VList :lines="'two'" density="compact">
-      <VListItem
-        v-for="item in items"
+      <template
+        v-for="(item, i) in items"
         :key="'' + item.title + item.subtitle + item.to"
-        :prepend-avatar="item.prependAvatar"
-        :subtitle="item.subtitle"
-        :title="item.title"
-        :to="item.to"
-        @click="item.onClick"
-      ></VListItem>
+      >
+        <VListItem
+          :prepend-avatar="item.prependAvatar"
+          :subtitle="item.subtitle"
+          :title="item.title"
+          :to="item.to"
+          @click="item.onClick"
+        />
+        <VDivider v-if="items.length - 1 > i" />
+      </template>
     </VList>
   </VCard>
 </template>

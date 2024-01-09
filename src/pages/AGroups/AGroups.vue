@@ -40,7 +40,8 @@ onActivated(async () => {
           :item="item"
           :size-dependencies="[item.counters]"
         >
-          <AGroupLink :key="item.id" :group="item" :index="index" />
+          <AGroupLink :group="item" :index="index" />
+          <VDivider v-if="groupsOrder.length - 1 > index" />
         </DynamicScrollerItem>
       </template>
     </DynamicScroller>

@@ -57,6 +57,7 @@ const dialogStore = useDialog();
         Сохранить группы
       </VBtn>
     </VCardItem>
+    <VDivider />
     <VCardItem>
       <VSwitch
         v-model="groupsStore.config.showCounters"
@@ -68,6 +69,7 @@ const dialogStore = useDialog();
         на аватарку группы.
       </span>
     </VCardItem>
+    <VDivider />
     <VCardItem>
       <VSwitch
         v-model="groupsStore.config.eruda"
