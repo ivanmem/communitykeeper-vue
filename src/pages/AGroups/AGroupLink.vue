@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { IGroup } from "@/store/groups/types";
 import AButton from "@/components/AButton/AButton.vue";
-import { openLink } from "@/helpers/openLink";
+import { openUrl } from "@/helpers/openUrl";
 import AGroupCounters from "@/pages/AGroups/AGroupCounters.vue";
 import { computed, h, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
@@ -21,14 +21,14 @@ const props = withDefaults(
     group: IGroup;
     index?: number;
   }>(),
-  { index: 0 }
+  { index: 0 },
 );
 const router = useRouter();
 const groupsStore = useGroups();
 const dialogStore = useDialog();
 const groupState = computed(() => GroupHelper.getState(props.group));
 const localGroup = computed(() =>
-  groupsStore.getLocalGroupById(props.group.id)
+  groupsStore.getLocalGroupById(props.group.id),
 );
 const target = ref<HTMLDivElement | null>(null);
 const targetIsVisible = useElementVisibility(target);
@@ -62,7 +62,7 @@ watch(
 
     groupState.value.needLoadingCounters = true;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onDeactivated(() => {
@@ -86,17 +86,17 @@ const onOpenContextMenu = (e: MouseEvent) => {
         console.error(title, ex);
         dialogStore.alert({
           title,
-          subtitle: link.value
+          subtitle: link.value,
         });
       }
-    }
+    },
   });
   items.push({
-    label: "Галерея",
+    label: "Встроенная галерея",
     icon: h(icons.Icon16PictureOutline),
     onClick: async () => {
       return router.push(`/albums/-${props.group.id}`);
-    }
+    },
   });
   items.push({
     label: "Заменить",
@@ -106,10 +106,10 @@ const onOpenContextMenu = (e: MouseEvent) => {
         name: "add",
         query: {
           groupId: props.group.id.toString(),
-          folder: localGroup.value?.folder
-        } satisfies AAddQueryParams
+          folder: localGroup.value?.folder,
+        } satisfies AAddQueryParams,
       });
-    }
+    },
   });
   if (props.group.is_member) {
     items.push({
@@ -117,7 +117,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
       icon: h(icons.Icon16DoorEnterArrowRightOutline),
       onClick: () => {
         return GroupHelper.setIsMember(props.group, false);
-      }
+      },
     });
   } else {
     items.push({
@@ -125,7 +125,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
       icon: h(icons.Icon16AddSquareOutline),
       onClick: async () => {
         return GroupHelper.setIsMember(props.group, true);
-      }
+      },
     });
   }
 
@@ -135,7 +135,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
     onClick: async () => {
       groupsStore.removeLocalGroup(props.group.id);
       await groupsStore.autoSaveCurrentLocalGroups();
-    }
+    },
   });
 
   showContextMenu(e, items);
@@ -179,10 +179,7 @@ watch(showCounters, async () => {
     class="a-button__root"
     @click.right.prevent.stop="onOpenContextMenu"
   >
-    <AButton
-      class="a-group-link a-button__block"
-      @click="openLink(`//` + link)"
-    >
+    <AButton class="a-group-link a-button__block" @click="openUrl(`//` + link)">
       <img
         :src="group.photo_200"
         alt=""

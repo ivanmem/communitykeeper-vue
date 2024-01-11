@@ -2,7 +2,7 @@
 import { computed, h, nextTick, ref, watch } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
-import { openLink } from "@/helpers/openLink";
+import { openUrl } from "@/helpers/openUrl";
 import { dateTimeFormatter, icons, styledIcons } from "@/common/consts";
 import { saveAs } from "file-saver";
 import { MenuItem } from "@imengyu/vue3-context-menu";
@@ -94,7 +94,7 @@ const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
     label: "Перейти к фото",
     icon: h(icons.Icon16LogoVk),
     onClick: () => {
-      openLink(
+      openUrl(
         `//${PhotoHelper.getPhotoUrl(props.photo.owner_id, props.photo.id)}`,
       );
     },
@@ -104,7 +104,7 @@ const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
     icon: h(icons.Icon16Link),
     onClick: () => {
       if (originalSize.value) {
-        openLink(originalSize.value.url);
+        openUrl(originalSize.value.url);
       }
     },
   });
@@ -139,9 +139,9 @@ const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
       );
       const url = encodeURIComponent(originalSize.value!.url);
       if (isUseYandex) {
-        openLink(`https://yandex.com/images/search?rpt=imageview&url=${url}`);
+        openUrl(`https://yandex.com/images/search?rpt=imageview&url=${url}`);
       } else {
-        openLink(`https://saucenao.com/search.php?url=${url}`);
+        openUrl(`https://saucenao.com/search.php?url=${url}`);
       }
     },
   });

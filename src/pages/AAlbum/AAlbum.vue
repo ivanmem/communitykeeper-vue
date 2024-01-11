@@ -8,7 +8,7 @@ import { useAlbum } from "@/pages/AAlbum/useAlbum";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { useGroups } from "@/store/groups/groups";
-import { openLink } from "@/helpers/openLink";
+import { openUrl } from "@/helpers/openUrl";
 import { computed } from "vue";
 import { router } from "@/router";
 
@@ -65,7 +65,7 @@ const group = computed(() => groupsStore.getGroupById(-props.ownerId));
             :href="`https://${albumUrl}`"
             :title="album?.title ?? 'Альбом'"
             style="opacity: 0.7"
-            @click.prevent="openLink(`//${albumUrl}`)"
+            @click.prevent="openUrl(`//${albumUrl}`)"
           />
         </VBreadcrumbs>
         <div

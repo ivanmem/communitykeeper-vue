@@ -6,7 +6,7 @@ import { RecycleScroller } from "vue-virtual-scroller";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { useAlbums } from "@/pages/AAlbums/useAlbums";
 import { icons } from "@/common/consts";
-import { openLink } from "@/helpers/openLink";
+import { openUrl } from "@/helpers/openUrl";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 
 useAppCaption("Галерея: Альбомы");
@@ -41,7 +41,7 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
             :href="`https://${ownerUrl}`"
             :title="group?.name ?? 'Источник'"
             style="opacity: 0.7"
-            @click.prevent="openLink(`//${ownerUrl}`)"
+            @click.prevent="openUrl(`//${ownerUrl}`)"
           />
         </VBreadcrumbs>
         <code v-if="screenError" class="vkuiFormField--status-error">

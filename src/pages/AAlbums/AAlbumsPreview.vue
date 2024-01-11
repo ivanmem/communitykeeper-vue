@@ -5,7 +5,7 @@ import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { router } from "@/router";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { icons } from "@/common/consts";
-import { openLink } from "@/helpers/openLink";
+import { openUrl } from "@/helpers/openUrl";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
 const props = defineProps<{ album: IAlbumItem }>();
@@ -21,7 +21,7 @@ const onShowContextMenu = (e: MouseEvent) => {
       label: "Перейти к фото",
       icon: h(icons.Icon16LogoVk),
       onClick: () => {
-        openLink(
+        openUrl(
           `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`,
         );
       },

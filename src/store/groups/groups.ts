@@ -86,6 +86,7 @@ export interface IGroupsConfig {
   originalSizePhoto?: boolean;
   reverseOrder?: boolean;
   skipLowResolutionPhotos?: boolean;
+  gallery?: boolean;
 }
 
 export const useGroups = defineStore("groups", {

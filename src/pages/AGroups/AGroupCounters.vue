@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { openLink } from "@/helpers/openLink";
 import {
   IGroupCounter,
   useGroupCounters,
@@ -10,6 +9,7 @@ import ASpinner from "@/components/ASpinner.vue";
 import GroupHelper from "@/helpers/GroupHelper";
 import { useGroups } from "@/store/groups/groups";
 import { useHistory } from "@/store/history/history";
+import { useSmartOpenUrl } from "@/composables/useSmartOpenLink";
 
 const props = defineProps<{
   group: IGroup;
@@ -20,6 +20,8 @@ const groupRef = toRef(() => props.group);
 const counters = useGroupCounters(groupRef);
 const groupState = computed(() => GroupHelper.getState(props.group));
 const loading = ref(false);
+const smartOpenUrl = useSmartOpenUrl();
+
 watch(
   () => groupState.value.needLoadingCounters,
   async () => {
@@ -44,7 +46,8 @@ const onClick = (counter: IGroupCounter) => {
     counter: counter.key,
     ownerId: -props.group.id,
   });
-  openLink(counter.url);
+
+  smartOpenUrl(counter.url);
 };
 </script>
 <template>

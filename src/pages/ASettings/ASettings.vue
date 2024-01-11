@@ -72,9 +72,21 @@ const dialogStore = useDialog();
     <VDivider />
     <VCardItem>
       <VSwitch
+        v-model="groupsStore.config.gallery"
+        hide-details
+        label="Встроенная галерея"
+      />
+      <span class="a-mini-text">
+        По возможности будет использоваться встроенная галерея. Например, при
+        клике по счётчикам фото/альбомов.
+      </span>
+    </VCardItem>
+    <VDivider />
+    <VCardItem>
+      <VSwitch
         v-model="groupsStore.config.eruda"
         hide-details
-        label=" Включить дебаг кнопку (eruda)"
+        label="Отладка (eruda)"
       />
     </VCardItem>
   </VCard>

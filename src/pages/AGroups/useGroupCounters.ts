@@ -2,6 +2,7 @@ import { computed, unref } from "vue";
 import { MaybeRef } from "@vueuse/core";
 import { IGroup, IGroupCounters } from "@/store/groups/types";
 import { icons } from "@/common/consts";
+import { useGroups } from "@/store/groups/groups";
 
 export interface IGroupCounter {
   icon: any;
@@ -19,6 +20,7 @@ const {
 } = icons;
 
 export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
+  const groupsStore = useGroups();
   return computed((): IGroupCounter[] => {
     const group = unref(groupRef);
     const result: IGroupCounter[] = [];
@@ -28,6 +30,7 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
       icon: any,
       name: string,
       link: string,
+      galleryLink?: string,
       addAlways = false,
     ) => {
       let count: number | string | undefined = (() => {
@@ -47,7 +50,7 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
           key,
           icon,
           name,
-          url: link,
+          url: groupsStore.config.gallery && galleryLink ? galleryLink : link,
           count,
         });
       }
@@ -58,9 +61,16 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
       Icon28PictureOutline,
       "Фотографий",
       `//vk.com/album-${group.id}_00`,
+      `/albums/-${group.id}/wall`,
       true,
     );
-    add("albums", Icon28Attachments, "Альбомов", `//vk.com/albums-${group.id}`);
+    add(
+      "albums",
+      Icon28Attachments,
+      "Альбомов",
+      `//vk.com/albums-${group.id}`,
+      `/albums/-${group.id}`,
+    );
     add("videos", Icon28Video, "Видеозаписей", `//vk.com/videos-${group.id}`);
     add(
       "articles",

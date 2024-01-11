@@ -8,13 +8,14 @@ import { IGroup } from "@/store/groups/types";
 import { icons } from "@/common/consts";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { from } from "linq-to-typescript";
-import { openLink } from "@/helpers/openLink";
 import { useDialog } from "@/store/dialog/dialog";
+import { useSmartOpenUrl } from "@/composables/useSmartOpenLink";
 
 useAppCaption("История");
 const historyStore = useHistory();
 const groupsStore = useGroups();
 const dialogStore = useDialog();
+const smartOpenUrl = useSmartOpenUrl();
 
 interface HistoryItemComputed {
   prependAvatar?: string;
@@ -29,7 +30,7 @@ const items = computed<HistoryItemComputed[]>(() =>
     .select((item) => {
       if (item.type === "view_album") {
         const group: IGroup | undefined = groupsStore.getGroupById(
-          -item.ownerId
+          -item.ownerId,
         );
         const title = group?.name ?? item.ownerId;
         const prependAvatar = group?.photo_200;
@@ -39,13 +40,13 @@ const items = computed<HistoryItemComputed[]>(() =>
             item.subtitle || PhotoHelper.getAlbumUrl(item.ownerId, item.albumId)
           }`,
           prependAvatar,
-          to: `/albums/${item.ownerId}/${item.albumId}/${item.photoId}`
+          to: `/albums/${item.ownerId}/${item.albumId}/${item.photoId}`,
         };
       }
 
       if (item.type === "view_counter") {
         const group: IGroup | undefined = groupsStore.getGroupById(
-          -item.ownerId
+          -item.ownerId,
         );
         const title = group?.name ?? item.ownerId;
         const prependAvatar = group?.photo_200;
@@ -69,21 +70,21 @@ const items = computed<HistoryItemComputed[]>(() =>
           prependAvatar,
           onClick: () => {
             historyStore.add(item);
-            openLink(item.url);
-          }
+            smartOpenUrl(item.url);
+          },
         };
       }
 
       return undefined!;
     })
     .where(Boolean)
-    .toArray()
+    .toArray(),
 );
 
 const onClear = async () => {
   const result = await dialogStore.confirm({
     title: "Очистка истории просмотров",
-    subtitle: "Вы уверены, что хотите отчистить историю просмотров?"
+    subtitle: "Вы уверены, что хотите отчистить историю просмотров?",
   });
   if (!result) {
     return;
