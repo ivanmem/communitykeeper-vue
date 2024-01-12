@@ -102,7 +102,7 @@ export const useGroups = defineStore("groups", {
         sortDesc: false,
       },
       isInit: false,
-      config: { autoSave: true, showCounters: true },
+      config: { autoSave: true, showCounters: true, gallery: true,  },
       spaceUsed: 0,
       cachedGroupsData: {},
     };
