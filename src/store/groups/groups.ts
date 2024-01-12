@@ -9,7 +9,7 @@ import toNumber from "lodash/toNumber";
 import { useVk } from "@/store/vk/vk";
 import { isGroupBanned } from "@/helpers/isGroupBanned";
 import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
-import { useApp } from "@/store/app/app";
+import { IAppInitOptions, useApp } from "@/store/app/app";
 import { watch } from "vue";
 import GroupHelper from "@/helpers/GroupHelper";
 import { setEruda } from "@/helpers/setEruda";
@@ -102,13 +102,13 @@ export const useGroups = defineStore("groups", {
         sortDesc: false,
       },
       isInit: false,
-      config: { autoSave: true, showCounters: true, gallery: true,  },
+      config: { autoSave: true, showCounters: true, gallery: true },
       spaceUsed: 0,
       cachedGroupsData: {},
     };
   },
   actions: {
-    async init() {
+    async init(opts: IAppInitOptions) {
       try {
         await this.updateConfig();
         await this.updateCurrentLocalGroups();
@@ -118,6 +118,7 @@ export const useGroups = defineStore("groups", {
       }
 
       this.isInit = true;
+
       watch(
         this.config,
         () => {
@@ -133,13 +134,6 @@ export const useGroups = defineStore("groups", {
             delete GroupHelper.getState(value).hideCounters;
           }
         },
-      );
-      watch(
-        () => this.config.eruda,
-        useApp().wrapLoading(() => {
-          return setEruda(Boolean(this.config.eruda));
-        }),
-        { immediate: this.config.eruda },
       );
       console.info("groups store init");
     },

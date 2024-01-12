@@ -12,8 +12,7 @@ import { IRequestConfig } from "vkontakte-api/dist/types/shared";
 import { sleep } from "@/helpers/sleep";
 import { PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
-import { useUnmounted } from "@/composables/useUnmounted";
-import { useApp } from "@/store/app/app";
+import { IAppInitOptions, useApp } from "@/store/app/app";
 import { useDialog } from "@/store/dialog/dialog";
 
 export type WebAppConfig = Partial<
@@ -38,7 +37,7 @@ export const useVk = defineStore("vk", {
     };
   },
   actions: {
-    async initDynamicResize() {
+    async initDynamicResize(opts: IAppInitOptions) {
       if (!bridge.supports("VKWebAppResizeWindow")) {
         return;
       }
@@ -79,11 +78,10 @@ export const useVk = defineStore("vk", {
         { immediate: true },
       );
 
-      let unmounted = useUnmounted();
       let sizeLastChanged = 0;
 
       const updateConfig = () => {
-        if (unmounted.value || !vkStore.webAppConfig) {
+        if (opts.unmounted.value || !vkStore.webAppConfig) {
           return;
         }
 
@@ -112,7 +110,7 @@ export const useVk = defineStore("vk", {
       setTimeout(updateConfig);
     },
     // init выполняется в app onMounted, поэтому в нём должен срабатывать onUnmounted при размонтировании приложения
-    async init() {
+    async init(opts: IAppInitOptions) {
       const vkStore = useVk();
       const appStore = useApp();
       try {
@@ -127,7 +125,7 @@ export const useVk = defineStore("vk", {
         });
 
         await bridge.send("VKWebAppInit");
-        await vkStore.initDynamicResize();
+        await vkStore.initDynamicResize(opts);
         await vkStore.initVk();
       } catch (ex) {
         console.error("init vk store", ex);

@@ -12,12 +12,14 @@ import { VDefaultsProvider, VToolbar } from "vuetify/components";
 import ASpinner from "@/components/ASpinner.vue";
 import ADynamicDialog from "@/components/ADynamicDialog.vue";
 import ANavigationMenu from "@/components/ANavigationMenu.vue";
+import { useUnmounted } from "@/composables/useUnmounted";
 
 const route = useRoute();
 const groupsStore = useGroups();
 const vkStore = useVk();
 const appStore = useApp();
-const { currentClasses } = useColorScheme();
+let unmounted = useUnmounted();
+useColorScheme();
 const fullscreenElement = ref(document.fullscreenElement);
 const init = ref(false);
 const vuetifyDefaults: VDefaultsProvider["defaults"] = {
@@ -46,9 +48,7 @@ onBeforeMount(async () => {
     fullscreenElement.value = document.fullscreenElement;
   });
   try {
-    appStore.init();
-    await vkStore.init();
-    await groupsStore.init();
+    await appStore.init({ unmounted });
   } finally {
     init.value = true;
   }

@@ -1,6 +1,14 @@
 import { defineStore } from "pinia";
 import random from "lodash/random";
 import { platform } from "@vkontakte/vkui";
+import { Ref, watch } from "vue";
+import { setEruda } from "@/helpers/setEruda";
+import { useVk } from "@/store/vk/vk";
+import { useGroups } from "@/store/groups/groups";
+import { imageUrlToBase64 } from "@/helpers/imageUrlToBase64";
+import mainUrl from "@/assets/slides/main.png";
+import bridge, { ShowSlidesSheetRequest } from "@vkontakte/vk-bridge";
+import { useRouter } from "vue-router";
 
 interface AppState {
   caption: string;
@@ -8,8 +16,17 @@ interface AppState {
   platform: "android" | "ios" | "vkcom";
   isFullScreen: boolean;
   urlParams: Record<any, any>;
+  config: IAppConfig;
 }
 
+export interface IAppConfig {
+  eruda?: boolean;
+  slides?: boolean;
+}
+
+export interface IAppInitOptions {
+  unmounted: Ref<boolean>;
+}
 export const useApp = defineStore("app", {
   state(): AppState {
     return {
@@ -18,6 +35,10 @@ export const useApp = defineStore("app", {
       platform: platform() as any,
       isFullScreen: false,
       urlParams: {},
+      config: {
+        eruda: false,
+        slides: true,
+      },
     };
   },
   getters: {
@@ -38,10 +59,30 @@ export const useApp = defineStore("app", {
     },
   },
   actions: {
-    init() {
-      this.urlParams = Object.fromEntries(
-        new URLSearchParams(location.search),
+    async init(opts: IAppInitOptions) {
+      const vkStore = useVk();
+      const groupsStore = useGroups();
+      const router = useRouter();
+
+      this.urlParams = Object.fromEntries(new URLSearchParams(location.search));
+      await vkStore.init(opts);
+      await groupsStore.init(opts);
+
+      watch(
+        () => this.config.eruda,
+        useApp().wrapLoading(() => {
+          return setEruda(Boolean(this.config.eruda));
+        }),
+        { immediate: this.config.eruda },
       );
+
+      if (this.config.slides) {
+        const { action } = await this.initSlides();
+        if (action === "confirm") {
+          // delete this.config.slides;
+          await router.push("/about/");
+        }
+      }
     },
     getLoadingFinisher(): () => void {
       const id = random(true);
@@ -57,6 +98,23 @@ export const useApp = defineStore("app", {
           loadingFinisher();
         }
       };
+    },
+    async initSlides() {
+      const [main] = await Promise.all([imageUrlToBase64(mainUrl)]);
+      const slides: ShowSlidesSheetRequest["slides"] = [
+        {
+          media: {
+            blob: main,
+            type: "image",
+          },
+          title: "Хранитель Групп",
+          subtitle:
+            "Группы, папки, сортировка, фильтрация, встроенная галерея с историей просмотров. Продолжим?",
+        },
+      ];
+      return await bridge.send("VKWebAppShowSlidesSheet", {
+        slides,
+      });
     },
   },
 });
