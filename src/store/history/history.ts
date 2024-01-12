@@ -69,7 +69,7 @@ export const useHistory = defineStore("history", {
       const key = getHistoryKey(historyItem);
       delete this.history[key];
       this.history[key] = historyItem;
-      if (JSON.stringify(this.history).length >= MAX_SIZE_ONE_VK_VALUE) {
+      while (JSON.stringify(this.history).length >= MAX_SIZE_ONE_VK_VALUE) {
         delete this.history[this.oldestKey!];
       }
     },
