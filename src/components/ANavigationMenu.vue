@@ -37,7 +37,7 @@ const tabBarItems: Array<{
     to: "/settings",
   },
   {
-    caption: "Source",
+    caption: "Проект",
     icon: icons.Icon24LightbulbStarOutline,
     to: "/about",
   },

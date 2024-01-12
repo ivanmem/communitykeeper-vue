@@ -2,7 +2,7 @@
 import { useAppCaption } from "@/composables/useAppCaption";
 import { icons, styledIcons } from "@/common/consts";
 
-useAppCaption("Source");
+useAppCaption("Проект");
 </script>
 
 <template>
@@ -12,7 +12,9 @@ useAppCaption("Source");
       Это приложение позволяет вам группировать и сортировать группы, а так же
       быстро переходить к их фото\альбомам\видео\статьям. В приложении имеется
       встроенная галерея для просмотра фото в максимальном качестве и с
-      возможностью листать фото нажатиями по краям, как в Telegram.
+      возможностью листать фото нажатиями по краям, как в Telegram. В качестве
+      бонуса - то что вы просматриваете сохраняется в историю, но она обнуляется
+      при каждом обновлении приложения, так как ВК меняет домен при публикации.
     </VCardItem>
     <VDivider style="margin-bottom: 10px" />
     <VCardSubtitle>❗ Важное</VCardSubtitle>
