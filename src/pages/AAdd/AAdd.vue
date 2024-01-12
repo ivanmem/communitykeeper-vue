@@ -145,7 +145,7 @@ onActivated(() => {
           color="deep-orange"
           @click="onRemoveAllGroups"
         >
-          Удалить всё
+          Удалить все группы
         </VBtn>
       </VRow>
     </VCardItem>
