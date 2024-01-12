@@ -14,6 +14,7 @@ import { PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
 import { useUnmounted } from "@/composables/useUnmounted";
 import { useApp } from "@/store/app/app";
+import { useDialog } from "@/store/dialog/dialog";
 
 export type WebAppConfig = Partial<
   MobileUpdateConfigData & MVKUpdateConfigData & VKUpdateConfigData
@@ -135,6 +136,7 @@ export const useVk = defineStore("vk", {
     async initVk() {
       const appStore = useApp();
       const vkStore = useVk();
+      const dialogStore = useDialog();
       try {
         while (!this.token?.access_token) {
           vkStore.token = await bridge.send("VKWebAppGetAuthToken", {
@@ -161,6 +163,24 @@ export const useVk = defineStore("vk", {
         );
         await bridge.send("VKWebAppClose");
       }
+
+      watch(
+        () => vkStore.vkWebAppStorageSetCount,
+        (count, oldCount) => {
+          const warnCount = 200;
+          if (oldCount < warnCount && count >= warnCount) {
+            dialogStore.alert({
+              title: "Внимание, возможна потеря данных!",
+              subtitle: `В текущем сеансе данные сохранились уже ${count} раз.
+              ВКонтакте позволяет обновлять данные до 1000 раз за час, а уже на 1001 раз отказывает в сохранении.
+              В зависимости от количества Ваших групп на одно сохранение может потребоваться несколько запросов.
+              В таком случае данные сохранятся не до конца и будут повреждены.
+              Если у Вас включено автосохранение, советуем его отключить, либо остановиться вовремя.
+              Советуем создать резервную копию на вкладке "Добавить".`,
+            });
+          }
+        },
+      );
     },
     getChunkSplitter() {
       return "__";
@@ -295,7 +315,5 @@ export const useVk = defineStore("vk", {
       });
     },
   },
-  getters: {
-
-  },
+  getters: {},
 });
