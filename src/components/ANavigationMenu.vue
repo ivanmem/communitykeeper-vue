@@ -24,22 +24,22 @@ const tabBarItems: Array<{
   {
     caption: "Добавить",
     icon: icons.Icon24AddSquareOutline,
-    to: "/add",
+    to: "/add/",
   },
   {
     caption: "История",
     icon: icons.Icon24HistoryBackwardOutline,
-    to: "/history",
+    to: "/history/",
   },
   {
     caption: "Настройки",
     icon: icons.Icon24GearOutline,
-    to: "/settings",
+    to: "/settings/",
   },
   {
     caption: "Проект",
     icon: icons.Icon24LightbulbStarOutline,
-    to: "/about",
+    to: "/about/",
   },
 ];
 </script>

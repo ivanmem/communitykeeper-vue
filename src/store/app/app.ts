@@ -8,8 +8,8 @@ import { IGroupsConfig, useGroups } from "@/store/groups/groups";
 import { imageUrlToBase64 } from "@/helpers/imageUrlToBase64";
 import mainUrl from "@/assets/slides/main.png";
 import bridge, { ShowSlidesSheetRequest } from "@vkontakte/vk-bridge";
-import { useRouter } from "vue-router";
 import { toStr } from "@/helpers/toStr";
+import { router } from "@/router";
 
 interface AppState {
   caption: string;
@@ -69,7 +69,6 @@ export const useApp = defineStore("app", {
     async init(opts: IAppInitOptions) {
       const vkStore = useVk();
       const groupsStore = useGroups();
-      const router = useRouter();
 
       this.urlParams = Object.fromEntries(new URLSearchParams(location.search));
       await vkStore.init(opts);

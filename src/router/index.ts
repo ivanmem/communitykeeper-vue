@@ -15,20 +15,20 @@ const routes: RouteRecordRaw[] = [
     component: () => import("@/pages/AGroups/AGroups.vue"),
   },
   {
-    path: "/settings",
+    path: "/settings/",
     component: () => import("@/pages/ASettings/ASettings.vue"),
   },
   {
-    path: "/about",
+    path: "/about/",
     component: () => import("@/pages/AAbout/AAbout.vue"),
   },
   {
     name: "add",
-    path: "/add",
+    path: "/add/",
     component: () => import("@/pages/AAdd/AAdd.vue"),
   },
   {
-    path: "/history",
+    path: "/history/",
     component: () => import("@/pages/AHistory/AHistory.vue"),
   },
   {
