@@ -104,7 +104,7 @@ const tabBarItems: Array<{
       font-family: var(--vkui--font_footnote--font_family--regular);
       font-size: 10px;
       font-weight: var(--vkui--font_weight_accent2);
-      line-height: 100%;
+      line-height: 125%;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
