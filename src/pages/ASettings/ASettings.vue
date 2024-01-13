@@ -41,8 +41,8 @@ const dialogStore = useDialog();
         label="Автосохранение групп"
       />
       <span class="a-mini-text">
-        Запросы ограничены до тысячи в час; За этот сеанс вы уже сделали:
-        {{ vkStore.vkWebAppStorageSetCount }}. Если вы попытаетесь сохраниться
+        Запросы ограничены до тысячи в час; За этот сеанс Вы уже сделали:
+        {{ vkStore.vkWebAppStorageSetCount }}. Если Вы попытаетесь сохраниться
         при лимите - все группы будут утеряны!
         <br />
         Этот параметр не влияет на сохранение настроек. Они будут сохраняться
@@ -66,7 +66,7 @@ const dialogStore = useDialog();
         label="Отображать счётчики количества фото\видео и так далее"
       />
       <span class="a-mini-text">
-        Если опция выключена, то вы можете вручную загрузить счётчики по клику
+        Если опция выключена, то Вы можете вручную загрузить счётчики по клику
         на аватарку группы.
       </span>
     </VCardItem>
@@ -90,7 +90,7 @@ const dialogStore = useDialog();
         label="Отладка (eruda)"
       />
     </VCardItem>
-    <VDivider />
+    <VDivider style="margin-bottom: 10px" />
     <VCardItem>
       <VBtn
         :prepend-icon="icons.Icon24QuestionOutline"
@@ -105,11 +105,6 @@ const dialogStore = useDialog();
 
 <style lang="scss">
 .a-settings {
-  .v-card-item {
-    // убирает скролл на узких экранах
-    flex: auto;
-  }
-
   .v-card-item__content {
     overflow: visible;
   }
