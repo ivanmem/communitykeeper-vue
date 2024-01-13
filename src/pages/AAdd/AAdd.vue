@@ -13,6 +13,7 @@ import { AAddQueryParams } from "@/pages/AAdd/types";
 import { useDialog } from "@/store/dialog/dialog";
 import ExportBtn from "@/pages/AAdd/ExportBtn.vue";
 import ImportBtn from "@/pages/AAdd/ImportBtn.vue";
+import FixedTeleport from "@/components/FixedTeleport.vue";
 
 useAppCaption("Добавление групп");
 const route = useRoute();
@@ -85,6 +86,15 @@ watch(currentGroup, () => {
   newGroup.id = currentGroup.value?.id.toString() ?? "";
 });
 
+const onHelp = () => {
+  dialogStore.alert({
+    title: "💡 Справка",
+    subtitle: `Во вкладке "Добавить" Вы можете:
+- добавить или удалить группы;
+- создать или применить резервную копию.`,
+  });
+};
+
 onActivated(() => {
   const { groupId, folder } = queryParams.value;
   newGroup.linkOrId = groupId || newGroup.linkOrId;
@@ -94,6 +104,9 @@ onActivated(() => {
 </script>
 
 <template>
+  <FixedTeleport to="#navigation-header__right">
+    <VBtn :icon="icons.Icon16InfoCircle" variant="text" @click="onHelp" />
+  </FixedTeleport>
   <VCard class="overflow-block a-add">
     <VCardItem>
       <VCardSubtitle style="margin-bottom: 10px">

@@ -187,18 +187,20 @@ export const useVk = defineStore("vk", {
       return `${key}${this.getChunkSplitter()}${index}`;
     },
     /** @description Получить все значения по указанным ключам в виде словаря */
-    async getVkStorageDict<T extends object = Record<any, any>>(
-      keys: string[],
-    ) {
-      const result = await this.sendVKWebAppStorageGet({ keys });
-      return result.keys.reduce(
-        (dict, { key, value }) => {
-          try {
-            dict[key] = value.length ? JSON.parse(value) : undefined;
-          } catch {}
-          return dict;
-        },
-        {} as Record<string, T | undefined>,
+    async getVkStorageDict<T extends object = Record<any, any>>(keys: T) {
+      const result = await this.sendVKWebAppStorageGet({
+        keys: Object.keys(keys),
+      });
+      return result.keys.reduce((dict, { key, value }) => {
+        try {
+          (dict as any)[key] = value.length ? JSON.parse(value) : undefined;
+        } catch {}
+        return dict;
+      }, {} as Partial<T>);
+    },
+    getVkStorageObject<T = any, K extends string = string>(key: K) {
+      return this.getVkStorageDict({ [key]: Object as T }).then(
+        (x) => x[key] as T | undefined,
       );
     },
     /** @description Сохранить каждое свойство словаря в отдельном ключе */

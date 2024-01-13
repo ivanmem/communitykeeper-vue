@@ -32,6 +32,7 @@ import Icon24SortOutline from "@vkontakte/icons/src/svg/24/sort_outline_24.svg?c
 import Icon24SkipToAction from "@vkontakte/icons/src/svg/24/skip_to_action_24.svg?component";
 import Icon24HistoryBackwardOutline from "@vkontakte/icons/src/svg/24/history_backward_outline_24.svg?component";
 import Icon24Share from "@vkontakte/icons/src/svg/24/share_24.svg?component";
+import Icon24QuestionOutline from "@vkontakte/icons/src/svg/24/question_outline_24.svg?component";
 
 import Icon20FolderMoveOutline from "@vkontakte/icons/src/svg/20/folder_move_outline_20.svg?component";
 
@@ -47,8 +48,7 @@ import Icon16KeyOutline from "@vkontakte/icons/src/svg/16/key_outline_16.svg?com
 import Icon16DeleteOutline from "@vkontakte/icons/src/svg/16/delete_outline_16.svg?component";
 import Icon16MoreVertical from "@vkontakte/icons/src/svg/16/more_vertical_16.svg?component";
 import Icon16FolderOutline from "@vkontakte/icons/src/svg/16/folder_outline_16.svg?component";
-import Icon16DoorEnterArrowRightOutline
-  from "@vkontakte/icons/src/svg/16/door_enter_arrow_right_outline_16.svg?component";
+import Icon16DoorEnterArrowRightOutline from "@vkontakte/icons/src/svg/16/door_enter_arrow_right_outline_16.svg?component";
 import Icon16ChainOutline from "@vkontakte/icons/src/svg/16/chain_outline_16.svg?component";
 import Icon16CrossCircleSmall from "@vkontakte/icons/src/svg/16/cross_circle_small_16.svg?component";
 import Icon16DownloadOutline from "@vkontakte/icons/src/svg/16/download_outline_16.svg?component";
@@ -59,6 +59,7 @@ import Icon16CopyOutline from "@vkontakte/icons/src/svg/16/copy_outline_16.svg?c
 import Icon16PictureOutline from "@vkontakte/icons/src/svg/16/picture_outline_16.svg?component";
 import Icon16Users2Outline from "@vkontakte/icons/src/svg/16/users_2_outline_16.svg?component";
 import Icon16MessageOutline from "@vkontakte/icons/src/svg/16/message_outline_16.svg?component";
+import Icon16InfoCircle from "@vkontakte/icons/src/svg/16/info_circle_16.svg?component";
 
 import Icon12ErrorCircle from "@vkontakte/icons/src/svg/12/error_circle_12.svg?component";
 import Icon12Tag from "@vkontakte/icons/src/svg/12/tag_12.svg?component";
@@ -79,6 +80,7 @@ export const icons = {
   Icon28UploadOutline,
   Icon28DeleteOutline,
 
+  Icon24GitHub,
   Icon24Back,
   Icon24MenuOutline,
   Icon24Linked,
@@ -103,7 +105,7 @@ export const icons = {
   Icon24SkipToAction,
   Icon24HistoryBackwardOutline,
   Icon24Share,
-  Icon24GitHub,
+  Icon24QuestionOutline,
 
   Icon20FolderMoveOutline,
 
@@ -130,6 +132,7 @@ export const icons = {
   Icon16PictureOutline,
   Icon16Users2Outline,
   Icon16MessageOutline,
+  Icon16InfoCircle,
 
   Icon12ErrorCircle,
   Icon12Tag,
@@ -148,8 +151,8 @@ export const styledIcons = {
   Icon16GitHub: createStyledIcon(icons.Icon24GitHub, 16),
   Icon24CopyOutline: createStyledIcon(icons.Icon16CopyOutline, 24),
   Icon24SortOutlineOpacity50: h(icons.Icon24SortOutline, {
-    style: `opacity: 0.5;`
-  }) as any
+    style: `opacity: 0.5;`,
+  }) as any,
 };
 
 export const darkColorScheme = ref(false);
@@ -158,7 +161,7 @@ export const isDev = process.env.NODE_ENV === "development";
 
 export const VK_MAX_PHOTO_SIZE = {
   width: 2560,
-  height: 2160
+  height: 2160,
 } as const;
 
 export const MAX_SIZE_ONE_VK_VALUE = 2236;
@@ -168,5 +171,5 @@ export const dateTimeFormatter = new Intl.DateTimeFormat("ru", {
   month: "numeric",
   day: "numeric",
   hour: "numeric",
-  minute: "numeric"
+  minute: "numeric",
 });

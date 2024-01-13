@@ -151,7 +151,7 @@ watch(importFolders, () => {
           <VIcon>mdi-close</VIcon>
         </VBtn>
         <VToolbarTitle class="navigation-caption">
-          Импортирование
+          Загрузка резервной копии
         </VToolbarTitle>
       </AToolbar>
       <VCardText style="font-size: 14px">

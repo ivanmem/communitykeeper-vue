@@ -4,11 +4,12 @@ import { platform } from "@vkontakte/vkui";
 import { Ref, watch } from "vue";
 import { setEruda } from "@/helpers/setEruda";
 import { useVk } from "@/store/vk/vk";
-import { useGroups } from "@/store/groups/groups";
+import { IGroupsConfig, useGroups } from "@/store/groups/groups";
 import { imageUrlToBase64 } from "@/helpers/imageUrlToBase64";
 import mainUrl from "@/assets/slides/main.png";
 import bridge, { ShowSlidesSheetRequest } from "@vkontakte/vk-bridge";
 import { useRouter } from "vue-router";
+import { toStr } from "@/helpers/toStr";
 
 interface AppState {
   caption: string;
@@ -24,9 +25,15 @@ export interface IAppConfig {
   slides?: boolean;
 }
 
+export interface IAppConfigs {
+  appConfig?: IAppConfig;
+  groupsConfig?: IGroupsConfig;
+}
+
 export interface IAppInitOptions {
   unmounted: Ref<boolean>;
 }
+
 export const useApp = defineStore("app", {
   state(): AppState {
     return {
@@ -66,6 +73,12 @@ export const useApp = defineStore("app", {
 
       this.urlParams = Object.fromEntries(new URLSearchParams(location.search));
       await vkStore.init(opts);
+      const configs = await vkStore.getVkStorageDict({
+        appConfig: {} as IAppConfig,
+        groupsConfig: {} as IGroupsConfig,
+      } satisfies IAppConfigs);
+      await this.updateAppConfig(configs.appConfig);
+      await groupsStore.updateGroupsConfig(configs.groupsConfig);
       await groupsStore.init(opts);
 
       watch(
@@ -76,10 +89,17 @@ export const useApp = defineStore("app", {
         { immediate: this.config.eruda },
       );
 
+      watch(
+        () => toStr(this.config),
+        () => {
+          return this.saveCurrentAppConfig();
+        },
+      );
+
       if (this.config.slides) {
         const { action } = await this.initSlides();
         if (action === "confirm") {
-          // delete this.config.slides;
+          delete this.config.slides;
           await router.push("/about/");
         }
       }
@@ -115,6 +135,22 @@ export const useApp = defineStore("app", {
       return await bridge.send("VKWebAppShowSlidesSheet", {
         slides,
       });
+    },
+    saveCurrentAppConfig() {
+      return useVk().setVkStorageDict({
+        appConfig: this.config,
+      });
+    },
+    async updateAppConfig(config?: IAppConfig) {
+      try {
+        config ??= await useVk().getVkStorageObject<IAppConfig>("appConfig");
+        // таким нехитрым образом мы убедимся в правильности формата сохранённого конфига
+        if (config && config.eruda !== undefined) {
+          this.config = config;
+        }
+      } catch (ex) {
+        console.error(ex);
+      }
     },
   },
 });

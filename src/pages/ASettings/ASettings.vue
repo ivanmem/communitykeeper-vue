@@ -6,8 +6,10 @@ import { icons } from "@/common/consts";
 import { useDialog } from "@/store/dialog/dialog";
 import ASettingsDisabledCookies from "@/pages/ASettings/ASettingsDisabledCookies.vue";
 import FixedTeleport from "@/components/FixedTeleport.vue";
+import { useApp } from "@/store/app/app";
 
 useAppCaption("Настройки");
+const appStore = useApp();
 const groupsStore = useGroups();
 const vkStore = useVk();
 const dialogStore = useDialog();
@@ -50,7 +52,6 @@ const dialogStore = useDialog();
     <VCardItem v-if="!groupsStore.config.autoSave">
       <VBtn
         :prepend-icon="icons.Icon24MemoryCard"
-        class="a-button__left-content"
         variant="tonal"
         @click="groupsStore.saveCurrentLocalGroups()"
       >
@@ -88,6 +89,16 @@ const dialogStore = useDialog();
         hide-details
         label="Отладка (eruda)"
       />
+    </VCardItem>
+    <VDivider />
+    <VCardItem>
+      <VBtn
+        :prepend-icon="icons.Icon24QuestionOutline"
+        variant="tonal"
+        @click="appStore.initSlides()"
+      >
+        Повторить приветствие
+      </VBtn>
     </VCardItem>
   </VCard>
 </template>

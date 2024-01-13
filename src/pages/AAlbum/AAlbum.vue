@@ -11,6 +11,8 @@ import { useGroups } from "@/store/groups/groups";
 import { openUrl } from "@/helpers/openUrl";
 import { computed } from "vue";
 import { router } from "@/router";
+import FixedTeleport from "@/components/FixedTeleport.vue";
+import { useDialog } from "@/store/dialog/dialog";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -39,14 +41,32 @@ const {
 useAppCaption("Галерея: Альбом");
 const { Icon16Link } = icons;
 const groupsStore = useGroups();
+const dialogStore = useDialog();
 const albumUrl = computed(() =>
   PhotoHelper.getAlbumUrl(props.ownerId, props.albumId),
 );
 const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 const group = computed(() => groupsStore.getGroupById(-props.ownerId));
+
+const onHelp = () => {
+  dialogStore.alert({
+    title: "💡 Справка",
+    subtitle: `При просмотре фото нажмите по центру экрана, чтобы выйти из просмотра.
+
+Для перехода к предыдущему или следующему фото используйте:
+- колёсико мыши;
+- нажатия по краям экрана;
+- проведите пальцем в нужную сторону.
+
+Вы можете перейти в полноэкранный режим клавишей F11, либо нажатием по специальной кнопке справа от справки.`,
+  });
+};
 </script>
 
 <template>
+  <FixedTeleport to="#navigation-header__right">
+    <VBtn :icon="icons.Icon16InfoCircle" variant="text" @click="onHelp" />
+  </FixedTeleport>
   <div class="a-album vkuiGroup__inner Group__inner">
     <template v-if="isInit">
       <div style="padding-inline: 10px">

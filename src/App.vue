@@ -13,6 +13,7 @@ import ASpinner from "@/components/ASpinner.vue";
 import ADynamicDialog from "@/components/ADynamicDialog.vue";
 import ANavigationMenu from "@/components/ANavigationMenu.vue";
 import { useUnmounted } from "@/composables/useUnmounted";
+import ASingleLineDynamicFont from "@/components/ASingleLineDynamicFont.vue";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -111,16 +112,19 @@ watch(
       >
         <ASpinner v-show="!groupsStore.isInit || appStore.isLoading" />
         <template v-if="groupsStore.isInit">
-          <v-toolbar
+          <VToolbar
             class="navigation-header navigation-header-height navigation-header-padding-right"
             density="compact"
           >
-            <v-toolbar-title style="flex-grow: 5">
-              <div id="caption" class="overflow-block navigation-caption">
+            <VToolbarTitle style="flex-grow: 5">
+              <ASingleLineDynamicFont
+                id="caption"
+                class="overflow-block navigation-caption"
+              >
                 {{ appStore.caption }}
-              </div>
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
+              </ASingleLineDynamicFont>
+            </VToolbarTitle>
+            <VSpacer></VSpacer>
             <div id="navigation-header__right"></div>
             <VBtn
               v-if="route.path !== '/'"
@@ -138,13 +142,13 @@ watch(
               variant="text"
               @click="switchFullscreen()"
             />
-          </v-toolbar>
+          </VToolbar>
           <div class="overflow-block route-view">
-            <router-view v-if="init" v-slot="{ Component }">
-              <keep-alive :max="3" exclude="AAlbum">
+            <RouterView v-if="init" v-slot="{ Component }">
+              <KeepAlive :max="3" exclude="AAlbum">
                 <component :is="Component" />
-              </keep-alive>
-            </router-view>
+              </KeepAlive>
+            </RouterView>
           </div>
 
           <ANavigationMenu />

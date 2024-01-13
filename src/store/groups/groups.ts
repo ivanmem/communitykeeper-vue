@@ -12,10 +12,10 @@ import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
 import { IAppInitOptions, useApp } from "@/store/app/app";
 import { watch } from "vue";
 import GroupHelper from "@/helpers/GroupHelper";
-import { setEruda } from "@/helpers/setEruda";
 import { from } from "linq-to-typescript";
 import { getPiniaPersist } from "@/helpers/getPiniaPersist";
 import { saveAs } from "file-saver";
+import { toStr } from "@/helpers/toStr";
 
 export interface FiltersType {
   folder: string;
@@ -110,7 +110,6 @@ export const useGroups = defineStore("groups", {
   actions: {
     async init(opts: IAppInitOptions) {
       try {
-        await this.updateConfig();
         await this.updateCurrentLocalGroups();
         await this.loadNotLoadGroups();
       } catch (ex: any) {
@@ -120,11 +119,10 @@ export const useGroups = defineStore("groups", {
       this.isInit = true;
 
       watch(
-        this.config,
+        () => toStr(this.config),
         () => {
-          return this.saveCurrentConfig();
+          return this.saveCurrentGroupsConfig();
         },
-        { deep: true },
       );
       // если меняется настройка showCounters - очищаем ручное состояние скрытия счётчиков
       watch(
@@ -284,16 +282,14 @@ export const useGroups = defineStore("groups", {
       };
       return counters;
     },
-    async saveCurrentConfig() {
+    async saveCurrentGroupsConfig() {
       await useVk().setVkStorageDict({
-        config: this.config,
+        groupsConfig: this.config,
       });
     },
-    async updateConfig() {
+    async updateGroupsConfig(config?: IGroupsConfig) {
       try {
-        const { config } = await useVk().getVkStorageDict<IGroupsConfig>([
-          "config",
-        ]);
+        config ??= await useVk().getVkStorageObject("groupsConfig");
         // таким нехитрым образом мы убедимся в правильности формата сохранённого конфига
         if (
           config &&

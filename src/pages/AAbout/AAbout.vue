@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/composables/useAppCaption";
-import { icons, styledIcons } from "@/common/consts";
+import { icons, MAX_SIZE_ONE_VK_VALUE, styledIcons } from "@/common/consts";
+import { useVk } from "@/store/vk/vk";
 
 useAppCaption("Проект");
+const vkStore = useVk();
 </script>
 
 <template>
@@ -17,23 +19,15 @@ useAppCaption("Проект");
       при каждом обновлении приложения, так как ВК меняет домен при публикации.
     </VCardItem>
     <VDivider style="margin-bottom: 10px" />
-    <VCardSubtitle>❗ Важное</VCardSubtitle>
+    <VCardSubtitle>❗ Важный совет</VCardSubtitle>
     <VCardItem>
       Периодически делайте бэкап данных. Они хранятся в VK Storage
       (dev.vk.com/method/storage.set). Так как в этом хранилище ограничено
-      количество символов на один ключ - данные делятся на части и сохраняются
-      подобно разделённому архиву. Если ваши группы сохранятся не до конца - то
-      приложение не сможет спарсить данные и они будут потеряны
-      <b>навсегда</b>.
-    </VCardItem>
-    <VDivider style="margin-bottom: 10px" />
-    <VCardSubtitle>🆓 Open Source</VCardSubtitle>
-    <VCardItem>
-      Это приложение с открытым исходным кодом. Вы можете внести свой вклад. Мы
-      используем:
-    </VCardItem>
-    <VCardItem>
-      <VCode>TypeScript, SCSS, Vite, Vue 3, Pinia, Vuetify</VCode>
+      количество символов на один ключ ({{ MAX_SIZE_ONE_VK_VALUE }}) - данные
+      делятся на части и сохраняются подобно разделённому архиву (сейчас
+      максимум на {{ vkStore.chunksMaxCount }} частей). Если ваши группы
+      сохранятся не до конца - то приложение не сможет спарсить данные и они
+      будут <b>повреждены</b>.
     </VCardItem>
     <VDivider style="margin-bottom: 10px" />
     <VCardSubtitle>🤝 Обратная связь</VCardSubtitle>
@@ -66,8 +60,14 @@ useAppCaption("Проект");
       </VRow>
     </VCardItem>
     <VDivider style="margin-bottom: 10px" />
-    <VCardSubtitle>💡 Совет</VCardSubtitle>
-    <VCardItem>Вы можете перейти в полноэкранный режим нажав F11.</VCardItem>
+    <VCardSubtitle>🆓 Open Source</VCardSubtitle>
+    <VCardItem>
+      Это приложение с открытым исходным кодом. Вы можете внести свой вклад. Мы
+      используем:
+    </VCardItem>
+    <VCardItem>
+      <VCode>TypeScript, SCSS, Vite, Vue 3, Pinia, Vuetify</VCode>
+    </VCardItem>
   </VCard>
 </template>
 <style lang="scss"></style>

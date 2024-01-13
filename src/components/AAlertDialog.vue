@@ -26,7 +26,7 @@ const emits = defineEmits<{
       <VCardItem>
         <VCardTitle class="a-alert-dialog__title">{{ props.title }}</VCardTitle>
       </VCardItem>
-      <VCardText :style="props.subtitleStyle">
+      <VCardText :style="props.subtitleStyle" class="a-alert-dialog__subtitle">
         {{ props.subtitle }}
       </VCardText>
       <VCardActions>
@@ -45,7 +45,8 @@ const emits = defineEmits<{
   </VDialog>
 </template>
 <style lang="scss">
-.a-alert-dialog__title {
+.a-alert-dialog__title,
+.a-alert-dialog__subtitle {
   white-space: pre-wrap;
 }
 </style>

@@ -55,7 +55,7 @@ watch(
           <VIcon>mdi-close</VIcon>
         </VBtn>
         <VToolbarTitle class="navigation-caption">
-          Экспортирование
+          Создание резервной копии
         </VToolbarTitle>
       </AToolbar>
       <VCardText style="font-size: 14px">
