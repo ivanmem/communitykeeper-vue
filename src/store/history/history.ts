@@ -101,8 +101,11 @@ export const useHistory = defineStore("history", {
       return (this.historyGroupByType.get("view_owner") ||
         []) as HistoryItemViewOwner[];
     },
+    oldest(): HistoryItem | undefined {
+      return this.historyArray.at(-1);
+    },
     oldestKey(): HistoryKey | undefined {
-      return this.historyArray.at(-1) as any;
+      return this.oldest ? getHistoryKey(this.oldest) : undefined;
     },
   },
   persist: getPiniaPersist({
