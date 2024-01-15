@@ -158,8 +158,16 @@ export const useGroups = defineStore("groups", {
         .select(toNumber)
         .where((id) => !this.groupsMap.has(id))
         .toArray();
-      const api = useVk().api;
-      if (ids.length === 0 || !api) {
+      if (ids.length === 0) {
+        return;
+      }
+
+      const vkStore = useVk();
+      if (!vkStore.api) {
+        await vkStore.initVk();
+      }
+
+      if (!vkStore.api) {
         return;
       }
 

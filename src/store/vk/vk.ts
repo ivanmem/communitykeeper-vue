@@ -112,7 +112,7 @@ export const useVk = defineStore("vk", {
     // init выполняется в app onMounted, поэтому в нём должен срабатывать onUnmounted при размонтировании приложения
     async init(opts: IAppInitOptions) {
       const vkStore = useVk();
-      const appStore = useApp();
+      const dialogStore = useDialog();
       try {
         bridge.subscribe((e) => {
           if (
@@ -126,59 +126,64 @@ export const useVk = defineStore("vk", {
 
         await bridge.send("VKWebAppInit");
         await vkStore.initDynamicResize(opts);
-        await vkStore.initVk();
-      } catch (ex) {
-        console.error("init vk store", ex);
-      }
-    },
-    async initVk() {
-      const appStore = useApp();
-      const vkStore = useVk();
-      const dialogStore = useDialog();
-      try {
-        while (!this.token?.access_token) {
-          vkStore.token = await bridge.send("VKWebAppGetAuthToken", {
-            scope: "groups",
-            app_id: appStore.appId,
-          });
-        }
-        vkStore.api = new VKAPI({
-          rps: 3,
-          accessToken: vkStore.token!.access_token,
-          lang: "ru",
-          v: "5.131",
-          isBrowser: true,
-        });
-      } catch (ex) {
-        console.warn(
-          "Ошибка при получении токена. Запущена повторная попытка.",
-          ex,
-        );
-        window.alert(
-          `Приложение не может получить данные с групп без разрешения 'groups'. Предоставьте разрешение для продолжения работы.\n${JSON.stringify(
-            ex,
-          )}`,
-        );
-        await bridge.send("VKWebAppClose");
-      }
-
-      watch(
-        () => vkStore.vkWebAppStorageSetCount,
-        (count, oldCount) => {
-          const warnCount = 200;
-          if (oldCount < warnCount && count >= warnCount) {
-            dialogStore.alert({
-              title: "Внимание, возможна потеря данных!",
-              subtitle: `В текущем сеансе данные сохранились уже ${count} раз.
+        watch(
+          () => vkStore.vkWebAppStorageSetCount,
+          (count, oldCount) => {
+            const warnCount = 200;
+            if (oldCount < warnCount && count >= warnCount) {
+              dialogStore.alert({
+                title: "Внимание, возможна потеря данных!",
+                subtitle: `В текущем сеансе данные сохранились уже ${count} раз.
               ВКонтакте позволяет обновлять данные до 1000 раз за час, а уже на 1001 раз отказывает в сохранении.
               В зависимости от количества Ваших групп на одно сохранение может потребоваться несколько запросов.
               В таком случае данные сохранятся не до конца и будут повреждены.
               Если у Вас включено автосохранение, советуем его отключить, либо остановиться вовремя.
               Советуем создать резервную копию на вкладке "Добавить".`,
-            });
-          }
-        },
-      );
+              });
+            }
+          },
+        );
+      } catch (ex) {
+        console.error("init vk store", ex);
+      }
+    },
+    async initVk(): Promise<boolean> {
+      if (this.api) {
+        return true;
+      }
+
+      try {
+        while (!this.token?.access_token) {
+          this.token = await bridge.send("VKWebAppGetAuthToken", {
+            scope: "groups",
+            app_id: useApp().appId,
+          });
+        }
+        this.api = new VKAPI({
+          rps: 3,
+          accessToken: this.token!.access_token,
+          lang: "ru",
+          v: "5.131",
+          isBrowser: true,
+        });
+        return true;
+      } catch (ex) {
+        console.warn(
+          "Ошибка при получении токена. Запущена повторная попытка.",
+          ex,
+        );
+        if (
+          await useDialog().confirm({
+            title: "Предупреждение",
+            subtitle:
+              "Приложение не может получить данные с групп без разрешения 'groups'. Для повторной попытки получения прав нажмите Ок.",
+          })
+        ) {
+          return await this.initVk();
+        }
+
+        return false;
+      }
     },
     getChunkSplitter() {
       return "__";
@@ -279,19 +284,24 @@ export const useVk = defineStore("vk", {
     async addRequestToQueue<P extends {} = any, R = any>(
       config: IRequestConfig<P>,
     ): Promise<R> {
+      const vkStore = useVk();
       try {
-        return await useVk().api!.addRequestToQueue<P, R>(config);
+        if (!vkStore.api) {
+          await this.initVk();
+        }
+
+        return await vkStore.api!.addRequestToQueue<P, R>(config);
       } catch (ex: any) {
         console.warn("api error", { config, ex });
         const errorCode = ex?.errorInfo?.error_code;
         if (errorCode === 6) {
           await sleep(2000);
           // костыль для игнорирования Too many requests per second
-          return await useVk().addRequestToQueue<P, R>(config);
+          return await vkStore.addRequestToQueue<P, R>(config);
         } else if (errorCode === 5) {
           // костыль для повторной авторизации
           await this.initVk();
-          return await useVk().addRequestToQueue<P, R>(config);
+          return await vkStore.addRequestToQueue<P, R>(config);
         } else {
           throw ex;
         }

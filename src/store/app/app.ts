@@ -67,18 +67,23 @@ export const useApp = defineStore("app", {
   },
   actions: {
     async init(opts: IAppInitOptions) {
-      const vkStore = useVk();
-      const groupsStore = useGroups();
-
-      this.urlParams = Object.fromEntries(new URLSearchParams(location.search));
-      await vkStore.init(opts);
-      const configs = await vkStore.getVkStorageDict({
-        appConfig: {} as IAppConfig,
-        groupsConfig: {} as IGroupsConfig,
-      } satisfies IAppConfigs);
-      await this.updateAppConfig(configs.appConfig);
-      await groupsStore.updateGroupsConfig(configs.groupsConfig);
-      await groupsStore.init(opts);
+      try {
+        const vkStore = useVk();
+        const groupsStore = useGroups();
+        this.urlParams = Object.fromEntries(
+          new URLSearchParams(location.search),
+        );
+        await vkStore.init(opts);
+        const configs = await vkStore.getVkStorageDict({
+          appConfig: {} as IAppConfig,
+          groupsConfig: {} as IGroupsConfig,
+        } satisfies IAppConfigs);
+        await this.updateAppConfig(configs.appConfig);
+        await groupsStore.updateGroupsConfig(configs.groupsConfig);
+        await groupsStore.init(opts);
+      } catch (ex: any) {
+        console.error("Произошла ошибка при инициализации appStore.", ex);
+      }
 
       watch(
         () => this.config.eruda,
