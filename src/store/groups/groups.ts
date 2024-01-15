@@ -111,7 +111,6 @@ export const useGroups = defineStore("groups", {
     async init(opts: IAppInitOptions) {
       try {
         await this.updateCurrentLocalGroups();
-        await this.loadNotLoadGroups();
       } catch (ex: any) {
         console.error("init groups", ex);
       }
@@ -159,7 +158,7 @@ export const useGroups = defineStore("groups", {
         .where((id) => !this.groupsMap.has(id))
         .toArray();
       if (ids.length === 0) {
-        return;
+        return false;
       }
 
       const vkStore = useVk();
@@ -168,13 +167,15 @@ export const useGroups = defineStore("groups", {
       }
 
       if (!vkStore.api) {
-        return;
+        return false;
       }
 
       const groups = await getGroupsByLinksOrIds(ids);
       for (const group of groups) {
         this.setGroup(group);
       }
+
+      return true;
     },
     setGroup(group: IGroup) {
       GroupHelper.getState(group);

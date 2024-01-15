@@ -1,20 +1,15 @@
 <script lang="ts" setup>
 import { useGroupSearch } from "@/pages/AGroups/useGroupSearch";
-import { useAppCaption } from "@/composables/useAppCaption";
 import AGroupsSearch from "@/pages/AGroups/AGroupsSearch.vue";
 import AGroupLink from "@/pages/AGroups/AGroupLink.vue";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
-import { onActivated } from "vue";
-import { useGroups } from "@/store/groups/groups";
 import { icons } from "@/common/consts";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useDialog } from "@/store/dialog/dialog";
-
-useAppCaption("Группы");
+import AButton from "@/components/AButton/AButton.vue";
 
 const groupSearch = useGroupSearch();
 const { groupsOrder, showFilters } = groupSearch;
-const groupsStore = useGroups();
 const dialogStore = useDialog();
 
 const onHelp = () => {
@@ -33,10 +28,6 @@ const onHelp = () => {
 - найти группу через поиск по названию или статусу (то, что написано мелким шрифтом под названием группы).`,
   });
 };
-
-onActivated(async () => {
-  await groupsStore.loadNotLoadGroups();
-});
 </script>
 
 <template>
@@ -50,25 +41,48 @@ onActivated(async () => {
     @wheel="showFilters = false"
   >
     <AGroupsSearch :group-search="groupSearch" />
-    <DynamicScroller
-      :items="groupsOrder"
-      :min-item-size="64"
-      class="a-groups__groups"
-      key-field="id"
-      v-on="groupSearch.swipes"
-    >
-      <template v-slot="{ item, index, active }">
-        <DynamicScrollerItem
-          :active="active"
-          :data-index="index"
-          :item="item"
-          :size-dependencies="[item.counters]"
+    <div v-if="!groupsOrder.length">
+      <VBanner
+        :icon="icons.Icon24ErrorCircleOutline"
+        color="deep-purple-accent-4"
+        lines="one"
+        style="padding-block: 8px"
+      >
+        <VBannerText>Группы отсутствуют</VBannerText>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: flex-end;
+          "
         >
-          <AGroupLink :group="item" :index="index" />
-          <VDivider v-if="groupsOrder.length - 1 > index" />
-        </DynamicScrollerItem>
-      </template>
-    </DynamicScroller>
+          <AButton to="/add/">Добавить</AButton>
+        </div>
+      </VBanner>
+    </div>
+    <template v-else>
+      <DynamicScroller
+        v-if="groupsOrder.length"
+        :items="groupsOrder"
+        :min-item-size="64"
+        class="a-groups__groups"
+        key-field="id"
+        v-on="groupSearch.swipes"
+      >
+        <template v-slot="{ item, index, active }">
+          <DynamicScrollerItem
+            :active="active"
+            :data-index="index"
+            :item="item"
+            :size-dependencies="[item.counters]"
+          >
+            <AGroupLink :group="item" :index="index" />
+            <VDivider v-if="groupsOrder.length - 1 > index" />
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
+    </template>
   </div>
 </template>
 
@@ -79,7 +93,6 @@ onActivated(async () => {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  gap: 5px;
   overflow: auto;
 }
 

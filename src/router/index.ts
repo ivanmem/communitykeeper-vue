@@ -12,7 +12,7 @@ import { useHistory } from "@/store/history/history";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    component: () => import("@/pages/AGroups/AGroups.vue"),
+    component: () => import("@/pages/AGroups/AGroupsWrapper.vue"),
   },
   {
     path: "/settings/",
@@ -29,19 +29,19 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/history/",
-    component: () => import("@/pages/AHistory/AHistory.vue"),
+    component: () => import("@/pages/AHistory/AHistoryWrapper.vue"),
   },
   {
     name: "album",
     path: "/albums/:ownerId/:albumId/:photoId?",
-    component: () => import("@/pages/AAlbum/AAlbum.vue"),
+    component: () => import("@/pages/AAlbum/AAlbumWrapper.vue"),
     props: true,
     strict: true,
   },
   {
     name: "albums",
     path: "/albums/:ownerId",
-    component: () => import("@/pages/AAlbums/AAlbums.vue"),
+    component: () => import("@/pages/AAlbums/AAlbumsWrapper.vue"),
     props: true,
     strict: true,
   },

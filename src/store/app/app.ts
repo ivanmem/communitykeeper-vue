@@ -68,11 +68,11 @@ export const useApp = defineStore("app", {
   actions: {
     async init(opts: IAppInitOptions) {
       try {
-        const vkStore = useVk();
-        const groupsStore = useGroups();
         this.urlParams = Object.fromEntries(
           new URLSearchParams(location.search),
         );
+        const vkStore = useVk();
+        const groupsStore = useGroups();
         await vkStore.init(opts);
         const configs = await vkStore.getVkStorageDict({
           appConfig: {} as IAppConfig,

@@ -219,7 +219,6 @@ export function useAlbum(
           photos.value.push(newPhoto);
         }
       } catch (ex: any) {
-        alert(ex.message);
         screenError.value = ex;
       }
       isInit.value = true;

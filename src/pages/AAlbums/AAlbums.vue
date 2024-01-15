@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { useAppCaption } from "@/composables/useAppCaption";
 import AAlbumsPreview from "@/pages/AAlbums/AAlbumsPreview.vue";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
@@ -9,7 +8,6 @@ import { icons } from "@/common/consts";
 import { openUrl } from "@/helpers/openUrl";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 
-useAppCaption("Галерея: Альбомы");
 const props = defineProps<{ ownerId: number | string }>();
 const {
   isInit,

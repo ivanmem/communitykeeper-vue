@@ -4,9 +4,11 @@ import { computed } from "vue";
 const props = withDefaults(
   defineProps<{
     absolute?: boolean;
+    zIndex?: number;
   }>(),
   {
     absolute: true,
+    zIndex: 10000,
   },
 );
 
@@ -22,7 +24,7 @@ const position = computed(() => (props.absolute ? "absolute" : "static"));
   position: v-bind(position);
   right: 0;
   top: 0;
-  z-index: 10000;
+  z-index: v-bind(zIndex);
 
   &:before {
     animation-duration: 700ms;

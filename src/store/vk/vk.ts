@@ -109,7 +109,6 @@ export const useVk = defineStore("vk", {
 
       setTimeout(updateConfig);
     },
-    // init выполняется в app onMounted, поэтому в нём должен срабатывать onUnmounted при размонтировании приложения
     async init(opts: IAppInitOptions) {
       const vkStore = useVk();
       const dialogStore = useDialog();
@@ -126,6 +125,7 @@ export const useVk = defineStore("vk", {
 
         await bridge.send("VKWebAppInit");
         await vkStore.initDynamicResize(opts);
+
         watch(
           () => vkStore.vkWebAppStorageSetCount,
           (count, oldCount) => {
@@ -168,20 +168,7 @@ export const useVk = defineStore("vk", {
         });
         return true;
       } catch (ex) {
-        console.warn(
-          "Ошибка при получении токена. Запущена повторная попытка.",
-          ex,
-        );
-        if (
-          await useDialog().confirm({
-            title: "Предупреждение",
-            subtitle:
-              "Приложение не может получить данные с групп без разрешения 'groups'. Для повторной попытки получения прав нажмите Ок.",
-          })
-        ) {
-          return await this.initVk();
-        }
-
+        console.warn("Ошибка при получении токена.", ex);
         return false;
       }
     },

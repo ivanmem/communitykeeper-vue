@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAppCaption } from "@/composables/useAppCaption";
 import AAlbumPreview from "@/pages/AAlbum/AAlbumPreview.vue";
 import APhoto from "@/pages/AAlbum/APhoto.vue";
 import { icons, styledIcons } from "@/common/consts";
@@ -38,7 +37,6 @@ const {
   () => props.albumId,
   () => props.photoId,
 );
-useAppCaption("Галерея: Альбом");
 const { Icon16Link } = icons;
 const groupsStore = useGroups();
 const dialogStore = useDialog();

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAppCaption } from "@/composables/useAppCaption";
 import { useHistory } from "@/store/history/history";
 import { computed } from "vue";
 import { useGroups } from "@/store/groups/groups";
@@ -11,7 +10,6 @@ import { from } from "linq-to-typescript";
 import { useDialog } from "@/store/dialog/dialog";
 import { useSmartOpenUrl } from "@/composables/useSmartOpenLink";
 
-useAppCaption("История");
 const historyStore = useHistory();
 const groupsStore = useGroups();
 const dialogStore = useDialog();
