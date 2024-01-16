@@ -161,7 +161,7 @@ watch(
 
 <style lang="scss">
 .app {
-  gap: 10px;
+
 }
 
 .navigation-header {
