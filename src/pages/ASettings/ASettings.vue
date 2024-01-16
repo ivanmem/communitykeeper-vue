@@ -34,7 +34,7 @@ const dialogStore = useDialog();
     <div class="d-flex flex-wrap">
       <ASettingsDisabledCookies />
     </div>
-    <VCardItem>
+    <VCardItem :append-icon="icons.Icon24MemoryCard">
       <VSwitch
         v-model="groupsStore.config.autoSave"
         hide-details
@@ -48,10 +48,9 @@ const dialogStore = useDialog();
         Этот параметр не влияет на сохранение настроек. Они будут сохраняться
         автоматически в любом случае.
       </span>
-    </VCardItem>
-    <VCardItem v-if="!groupsStore.config.autoSave">
       <VBtn
-        :prepend-icon="icons.Icon24MemoryCard"
+        v-if="!groupsStore.config.autoSave"
+        style="margin-top: 10px"
         variant="tonal"
         @click="groupsStore.saveCurrentLocalGroups()"
       >
@@ -59,7 +58,7 @@ const dialogStore = useDialog();
       </VBtn>
     </VCardItem>
     <VDivider />
-    <VCardItem>
+    <VCardItem :append-icon="icons.Icon240CircleOutline">
       <VSwitch
         v-model="groupsStore.config.showCounters"
         hide-details
@@ -71,7 +70,7 @@ const dialogStore = useDialog();
       </span>
     </VCardItem>
     <VDivider />
-    <VCardItem>
+    <VCardItem :append-icon="icons.Icon24Attachments">
       <VSwitch
         v-model="groupsStore.config.gallery"
         hide-details
@@ -83,7 +82,7 @@ const dialogStore = useDialog();
       </span>
     </VCardItem>
     <VDivider />
-    <VCardItem>
+    <VCardItem :append-icon="icons.Icon24Bug">
       <VSwitch
         v-model="appStore.config.eruda"
         hide-details
@@ -91,12 +90,8 @@ const dialogStore = useDialog();
       />
     </VCardItem>
     <VDivider style="margin-bottom: 10px" />
-    <VCardItem>
-      <VBtn
-        :prepend-icon="icons.Icon24QuestionOutline"
-        variant="tonal"
-        @click="appStore.initSlides()"
-      >
+    <VCardItem :append-icon="icons.Icon24QuestionOutline">
+      <VBtn variant="tonal" @click="appStore.initSlides()">
         Повторить приветствие
       </VBtn>
     </VCardItem>
