@@ -50,7 +50,7 @@ const isShowComponent = computed(
       lines="one"
       style="padding-block: 8px"
     >
-      <VBannerText>Требуется доступ</VBannerText>
+      <VBannerText>Требуется доступ к группам</VBannerText>
       <div
         style="
           display: flex;

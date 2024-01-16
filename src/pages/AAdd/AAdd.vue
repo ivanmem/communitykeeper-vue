@@ -15,7 +15,6 @@ import ExportBtn from "@/pages/AAdd/ExportBtn.vue";
 import ImportBtn from "@/pages/AAdd/ImportBtn.vue";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 
-useAppCaption("Добавление групп");
 const route = useRoute();
 const groupsStore = useGroups();
 const dialogStore = useDialog();

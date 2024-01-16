@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
   {
     name: "add",
     path: "/add/",
-    component: () => import("@/pages/AAdd/AAdd.vue"),
+    component: () => import("@/pages/AAdd/AAddWrapper.vue"),
   },
   {
     path: "/history/",
