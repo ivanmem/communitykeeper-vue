@@ -85,7 +85,7 @@ const dialogStore = useDialog();
     <VDivider />
     <VCardItem>
       <VSwitch
-        v-model="groupsStore.config.eruda"
+        v-model="appStore.config.eruda"
         hide-details
         label="Отладка (eruda)"
       />
