@@ -2,17 +2,22 @@ import { MaybeRefOrGetter, toValue, watch } from "vue";
 import { useApp } from "@/store/app/app";
 import random from "lodash/random";
 
-export function useScreenSpinner(loading: MaybeRefOrGetter<boolean>) {
-  const id = random(true);
+export function useScreenSpinner(
+  loading: MaybeRefOrGetter<boolean>,
+  id?: string | number,
+) {
+  id = id ?? random(true);
+  const appStore = useApp();
+
   watch(
     () => toValue(loading),
-    (loading) => {
-      if (!loading) {
-        useApp().loadingSet.delete(id);
+    async (loading) => {
+      if (loading) {
+        appStore.loadingSet.add(id);
       } else {
-        useApp().loadingSet.add(id);
+        appStore.loadingSet.delete(id);
       }
     },
-    { immediate: true },
+    { immediate: toValue(loading) },
   );
 }

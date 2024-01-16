@@ -2,20 +2,23 @@
 import { icons } from "@/common/consts";
 import { useVk } from "@/store/vk/vk";
 import AButton from "@/components/AButton/AButton.vue";
-import { useRoute } from "vue-router";
-import { onActivated, ref } from "vue";
+import { computed, onActivated, onBeforeMount, ref } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
+import { useActiveRoute } from "@/composables/useActiveRoute";
 
 const props = defineProps<{ component: any; forceShow?: boolean }>();
 const vkStore = useVk();
 const groupsStore = useGroups();
-const route = useRoute();
-
-const loading = ref(false);
+const activeRoute = useActiveRoute();
+const loading = ref(!vkStore.api && !props.forceShow);
 useScreenSpinner(loading);
 
 const onInit = async () => {
+  if (vkStore.api) {
+    return;
+  }
+
   loading.value = true;
   try {
     (await vkStore.initVk()) && (await groupsStore.loadNotLoadGroups());
@@ -31,9 +34,16 @@ onActivated(() => {
 
   return onInit();
 });
+
+const isShowBanner = computed(
+  () => !vkStore.api && !loading.value && !props.forceShow,
+);
+const isShowComponent = computed(
+  () => props.forceShow || (!loading.value && vkStore.api),
+);
 </script>
 <template>
-  <div v-if="!vkStore.api && !loading && !forceShow">
+  <div v-if="isShowBanner">
     <VBanner
       :icon="icons.Icon24KeyOutline"
       color="deep-purple-accent-4"
@@ -53,9 +63,7 @@ onActivated(() => {
       </div>
     </VBanner>
   </div>
-  <component
-    :is="component"
-    v-else-if="forceShow || !loading"
-    v-bind="route.params"
-  />
+  <template v-if="isShowComponent">
+    <component :is="component" v-bind="activeRoute.params" />
+  </template>
 </template>
