@@ -90,5 +90,10 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
   justify-content: space-evenly;
   overflow-x: auto;
   padding-block: 10px;
+  overflow-y: scroll !important;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
 }
 </style>

@@ -152,5 +152,10 @@ const onHelp = () => {
   flex-grow: 1;
   justify-content: space-evenly;
   overflow-x: auto;
+  overflow-y: scroll !important;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
 }
 </style>
