@@ -50,13 +50,16 @@ const isShowComponent = computed(
       lines="one"
       style="padding-block: 8px"
     >
-      <VBannerText>Требуется доступ к группам</VBannerText>
+      <div>
+        Требуется доступ. Без него приложение не может корректно отображать информацию о группах!
+      </div>
       <div
         style="
           display: flex;
           align-items: center;
           flex-grow: 1;
           justify-content: flex-end;
+          margin-left: 5px;
         "
       >
         <AButton @click="onInit()">Разрешить</AButton>
