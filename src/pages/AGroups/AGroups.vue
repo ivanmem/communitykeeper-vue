@@ -77,7 +77,7 @@ const onHelp = () => {
             :item="item"
             :size-dependencies="[item.counters]"
           >
-            <AGroupLink :group="item" :index="index" />
+            <AGroupLink :group="item" :index="index" apply-filters />
             <VDivider v-if="groupsOrder.length - 1 > index" />
           </DynamicScrollerItem>
         </template>

@@ -20,6 +20,7 @@ const props = withDefaults(
   defineProps<{
     group: IGroup;
     index?: number;
+    applyFilters?: boolean;
   }>(),
   { index: 0 },
 );
@@ -33,6 +34,11 @@ const localGroup = computed(() =>
 const target = ref<HTMLDivElement | null>(null);
 const targetIsVisible = useElementVisibility(target);
 const isDeactivated = ref(false);
+const isCurrentFolder = computed(
+  () =>
+    props.applyFilters &&
+    localGroup.value?.folder === groupsStore.filters.folder,
+);
 
 watch(
   targetIsVisible,
@@ -192,6 +198,9 @@ watch(showCounters, async () => {
       <div class="a-group-link__div">
         <span class="a-group-link__name">{{ group.name }}</span>
         <span class="a-group-link__help">
+          <template v-if="!isCurrentFolder && localGroup">
+            {{ localGroup.folder }};
+          </template>
           {{ groupState.text }}
         </span>
       </div>
