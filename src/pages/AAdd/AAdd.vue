@@ -13,6 +13,7 @@ import { useDialog } from "@/store/dialog/dialog";
 import ExportBtn from "@/pages/AAdd/ExportBtn.vue";
 import ImportBtn from "@/pages/AAdd/ImportBtn.vue";
 import FixedTeleport from "@/components/FixedTeleport.vue";
+import { useActivated } from "@/composables/useActivated";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -23,6 +24,7 @@ const newGroup = reactive({
   folder: "",
   linkOrId: "",
 });
+const isActivated = useActivated();
 
 const addGroup = async () => {
   const id = toNumber(newGroup.id);
@@ -93,12 +95,20 @@ const onHelp = () => {
   });
 };
 
-onActivated(() => {
-  const { groupId, folder } = queryParams.value;
-  newGroup.linkOrId = groupId || newGroup.linkOrId;
-  newGroup.folder = folder || newGroup.folder;
-  return onLinkOrIdChanged();
-});
+watch(
+  isActivated,
+  () => {
+    if (!isActivated.value) {
+      return;
+    }
+
+    const { groupId, folder } = queryParams.value;
+    newGroup.linkOrId = groupId || newGroup.linkOrId;
+    newGroup.folder = folder || newGroup.folder;
+    return onLinkOrIdChanged();
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
