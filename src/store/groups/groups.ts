@@ -213,7 +213,7 @@ export const useGroups = defineStore("groups", {
       const exportJson = JSON.stringify(groupsExport);
       // Создаем новый Blob-объект (данные в двоичном виде)
       const blob = new Blob([exportJson], { type: "text/plain;charset=utf-8" });
-      const filename = `xg-backup-${new Date().getTime()}.json`;
+      const filename = `xg-backup-${new Date().toLocaleDateString()}.json`;
       // Сохраняем файл на компьютере пользователя
       saveAs(blob, filename, { autoBom: true });
     },

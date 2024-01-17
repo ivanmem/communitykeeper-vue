@@ -5,11 +5,13 @@ import { computed, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import AToolbar from "@/components/AToolbar.vue";
 import { useDialog } from "@/store/dialog/dialog";
+import { useApp } from "@/store/app/app";
 
 const show = ref(false);
 const onClose = () => (show.value = false);
 const onShow = () => (show.value = true);
 const groupsStore = useGroups();
+const appStore = useApp();
 const dialogStore = useDialog();
 const folders = ref(new Set<string>());
 const groupsExport = computed(() =>
@@ -59,10 +61,15 @@ watch(
         </VToolbarTitle>
       </AToolbar>
       <VCardText style="font-size: 14px">
-        Выберите папки и нажмите на кнопку загрузки. Если загрузка не началась,
-        скопируйте данные в буфер обмена с помощью кнопки копирования и вручную
-        создайте файл с расширением
-        <b>.json</b>.
+        Выберите папки и нажмите на нужную кнопку.
+        <template v-if="appStore.isApp">
+          🆘 Создание файла резервной копии не работает с приложения ВКонтакте и
+          пока мы не знаем как это исправить. Воспользуйтесь альтернативным
+          способом. Скопируйте данные в буфер обмена с помощью кнопки
+          копирования и вручную создайте файл с расширением
+          <b>.json</b>, после чего с помощью любого текстового редактора
+          вставьте в него содержимое буфера обмена.
+        </template>
       </VCardText>
       <VList class="mb-2" density="compact" style="flex-grow: 100">
         <VListItem
