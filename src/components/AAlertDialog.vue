@@ -4,6 +4,9 @@ export interface AAlertDialogProps {
   subtitle?: string;
   subtitleStyle?: string;
   mode?: "alert" | "confirm";
+  confirmTitle?: string;
+  cancelTitle?: string;
+  cancelable?: false | undefined;
 }
 
 const props = withDefaults(defineProps<AAlertDialogProps>(), {
@@ -17,7 +20,7 @@ const emits = defineEmits<{
 <template>
   <VDialog
     :model-value="true"
-    :persistent="false"
+    :persistent="props.cancelable === false"
     class="a-alert-dialog"
     max-width="max-content"
     @update:model-value="!$event && emits('close')"
@@ -31,14 +34,16 @@ const emits = defineEmits<{
       </VCardText>
       <VCardActions>
         <VSpacer />
-        <VBtn v-if="mode === 'confirm'" @click="emits('close')">Отмена</VBtn>
+        <VBtn v-if="mode === 'confirm'" @click="emits('close')">
+          {{ props.cancelTitle ?? "Отмена" }}
+        </VBtn>
         <VBtn
           @click="
             mode === 'confirm' && emits('confirm');
             emits('close');
           "
         >
-          Ок
+          {{ props.confirmTitle ?? "Ок" }}
         </VBtn>
       </VCardActions>
     </VCard>

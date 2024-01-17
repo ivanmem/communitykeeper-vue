@@ -134,10 +134,13 @@ const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
   items.push({
     label: "Найти оригинал",
     icon: h(icons.Icon16SearchStarsOutline),
-    onClick: () => {
-      const isUseYandex = confirm(
-        "Подтвердите для поиска с помощью яндекса. Отмените для поиска с помощью saucenao.",
-      );
+    onClick: async () => {
+      const isUseYandex = await useDialog().confirm({
+        subtitle: `Выберите поисковую систему`,
+        confirmTitle: "Yandex",
+        cancelTitle: "SauceNAO",
+        cancelable: false,
+      });
       const url = encodeURIComponent(originalSize.value!.url);
       if (isUseYandex) {
         openUrl(`https://yandex.com/images/search?rpt=imageview&url=${url}`);
@@ -336,6 +339,4 @@ const dateTime = computed(() => {
   right: env(safe-area-inset-right, 0);
   top: env(safe-area-inset-top, 0);
 }
-
-
 </style>
