@@ -14,6 +14,7 @@ import {
   HistoryType,
 } from "@/store/history/types";
 import { getPiniaPersist } from "@/helpers/getPiniaPersist";
+import { Exception } from "sass";
 
 function getHistoryKey(historyItem: HistoryItem): HistoryKey {
   switch (historyItem.type) {
@@ -23,6 +24,10 @@ function getHistoryKey(historyItem: HistoryItem): HistoryKey {
       return `va_${historyItem.ownerId}_${historyItem.albumId}}` satisfies HistoryKeyViewAlbum;
     case "vc":
       return `vc_${historyItem.ownerId}_${historyItem.counter}` satisfies HistoryKeyCounter;
+    default:
+      throw new Error(
+        `history type "${(historyItem as HistoryItem).type}" not implemented`,
+      );
   }
 }
 
@@ -105,7 +110,7 @@ export const useHistory = defineStore("history", {
       return this.historyArray.at(-1);
     },
     oldestKey(): HistoryKey | undefined {
-      return this.oldest ? getHistoryKey(this.oldest) : undefined;
+      return this.historyKeys.at(0);
     },
   },
   persist: getPiniaPersist({
