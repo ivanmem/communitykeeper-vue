@@ -48,7 +48,7 @@ const onHelp = () => {
         lines="one"
         style="padding-block: 8px"
       >
-        <VBannerText>Группы отсутствуют</VBannerText>
+        <VBannerText>Элементы отсутствуют</VBannerText>
         <div
           style="
             display: flex;

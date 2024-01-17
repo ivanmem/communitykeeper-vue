@@ -101,7 +101,7 @@ const onClear = async () => {
       class="pa-4 text-center mx-auto"
       width="100%"
     >
-      <h2 class="text-h5 mb-6">История просмотров отсутствует</h2>
+      <h2 class="text-h5 mb-6">Элементы отсутствуют</h2>
       <v-divider class="mb-4"></v-divider>
     </v-sheet>
     <VList :lines="'two'" density="compact">
