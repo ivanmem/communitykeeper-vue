@@ -1,8 +1,9 @@
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import GroupHelper from "@/helpers/GroupHelper";
 import { useSwipes } from "@/composables/useSwipes";
 import last from "lodash/last";
+import { useActivated } from "@/composables/useActivated";
 
 export type UseGroupSearch = ReturnType<typeof useGroupSearch>;
 
@@ -12,7 +13,6 @@ export function useGroupSearch() {
     GroupHelper.getFiltered(store.groupsIdsReverse, store.filters),
   );
   const showFilters = ref(false);
-
   const swipes = useSwipes({
     onLeft: () => {
       if (!store.filters.folder) {
@@ -46,6 +46,18 @@ export function useGroupSearch() {
       store.filters.folder = store.folders[currentIndex + 1] ?? "";
     },
   });
+  const isActivated = useActivated();
+
+  watch(
+    isActivated,
+    () => {
+      if (isActivated.value) {
+        store.loadNotLoadGroups().then();
+      }
+    },
+    { immediate: true },
+  );
+
   return {
     groupsOrder,
     showFilters,

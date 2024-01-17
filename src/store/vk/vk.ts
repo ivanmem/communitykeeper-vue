@@ -249,7 +249,31 @@ export const useVk = defineStore("vk", {
           key: this.getChunkKey(key, i),
           value: chunk ?? "",
         };
-        await this.sendVKWebAppStorageSet(data);
+        let saved = false;
+        while (!saved) {
+          try {
+            await this.sendVKWebAppStorageSet(data);
+            saved = true;
+          } catch (e: any) {
+            console.warn("Ошибка при сохранении частей данных в VK Storage:", {
+              e,
+              key,
+              value,
+            });
+            useApp().setLoadingPause(true);
+            const result = await useDialog().confirm({
+              title: "Ошибка при сохранении!",
+              subtitle:
+                `Часть данных не удалось сохранить, поэтому их целостность может быть повреждена.` +
+                `\nНе выходите из приложения и восстановите доступ к интернету или подождите час, после чего нажмите Ок для повторной попытки сохранения.` +
+                `В случае, если Вы принимаете на себя риск и не хотите завершать сохранение - нажмите "Отмена", после чего на всякий случай создайте резервную копию.`,
+            });
+            useApp().setLoadingPause(false);
+            if (!result) {
+              return;
+            }
+          }
+        }
       }
 
       if (key === "groups") {

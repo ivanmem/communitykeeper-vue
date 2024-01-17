@@ -13,6 +13,7 @@ import { router } from "@/router";
 interface AppState {
   caption: string;
   loadingSet: Set<any>;
+  isLoadingPause: boolean;
   platform: "android" | "ios" | "vkcom";
   isFullScreen: boolean;
   urlParams: Record<any, any>;
@@ -38,6 +39,7 @@ export const useApp = defineStore("app", {
     return {
       caption: "",
       loadingSet: new Set(),
+      isLoadingPause: false,
       platform: platform() as any,
       isFullScreen: false,
       urlParams: {},
@@ -49,7 +51,7 @@ export const useApp = defineStore("app", {
   },
   getters: {
     isLoading(): boolean {
-      return this.loadingSet.size !== 0;
+      return this.loadingSet.size !== 0 && !this.isLoadingPause;
     },
     isVkCom(): boolean {
       return this.platform === "vkcom";
@@ -114,6 +116,9 @@ export const useApp = defineStore("app", {
       const id = Math.random();
       this.loadingSet.add(id);
       return () => this.loadingSet.delete(id);
+    },
+    setLoadingPause(pause : boolean) {
+      this.isLoadingPause = pause;
     },
     wrapLoading<T = any>(action: (...args: any) => T) {
       return async (...args: any) => {

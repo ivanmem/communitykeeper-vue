@@ -109,6 +109,7 @@ const onSaveImport = async () => {
   const oldGroupsCount = groupsStore.localGroupsArray.length;
   groupsStore.saveImport(selectedData.value);
   await groupsStore.autoSaveCurrentLocalGroups();
+  await groupsStore.loadNotLoadGroups();
   const newGroupsCount = groupsStore.localGroupsArray.length;
   dialogStore.alert({
     title: "Импорт завершён",

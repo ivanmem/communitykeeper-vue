@@ -52,8 +52,8 @@ const addGroup = async () => {
   newGroup.id = "";
   currentGroup.value = undefined;
   newGroup.linkOrId = "";
-  await groupsStore.loadNotLoadGroups();
   await groupsStore.autoSaveCurrentLocalGroups();
+  await groupsStore.loadNotLoadGroups();
 };
 
 const removeGroup = async () => {
