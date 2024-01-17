@@ -19,6 +19,8 @@ export interface GroupState {
   hideCounters?: boolean;
   /** @description Требуется загрузить счётчики */
   needLoadingCounters?: boolean;
+  /** @description Случайный индекс для рандомной сортировки. Он генерируется один раз, чтобы сортировка была стабильной и не прыгала при фильтрации и других случаях. */
+  randomIndex: number;
 }
 
 /** @link https://dev.vk.com/ru/reference/objects/group */

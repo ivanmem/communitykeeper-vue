@@ -20,7 +20,6 @@ const { showFilters } = props.groupSearch;
 const groupsStore = useGroups();
 const dialogService = useDialog();
 const reference = ref(null);
-const floating = ref(null);
 
 const { Icon24Filter, Icon16CrossCircleSmall } = icons;
 
@@ -157,7 +156,14 @@ watch(
               :items="accessEnumOptions"
               label="Фильтрация"
             />
-            <div style="display: flex; column-gap: 20px; flex-wrap: wrap">
+            <div
+              style="
+                display: flex;
+                column-gap: 20px;
+                flex-wrap: wrap;
+                align-items: center;
+              "
+            >
               <VSelect
                 v-model.number="groupsStore.filters.sort"
                 :items="sortEnumOptions"
@@ -170,6 +176,13 @@ watch(
                 :true-icon="icons.Icon24SortOutline"
                 label="В обратном порядке"
               />
+              <VBtn
+                v-if="groupsStore.filters.sort === GroupsSortEnum.random"
+                style="margin-bottom: 22px"
+                @click="groupsStore.updateRandomIndex()"
+              >
+                Пересортировать
+              </VBtn>
             </div>
           </VCardItem>
           <VCardActions>

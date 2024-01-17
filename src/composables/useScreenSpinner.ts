@@ -1,12 +1,11 @@
 import { MaybeRefOrGetter, toValue, watch } from "vue";
 import { useApp } from "@/store/app/app";
-import random from "lodash/random";
 
 export function useScreenSpinner(
   loading: MaybeRefOrGetter<boolean>,
   id?: string | number,
 ) {
-  id = id ?? random(true);
+  id = id ?? Math.random();
   const appStore = useApp();
 
   watch(

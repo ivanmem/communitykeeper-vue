@@ -33,30 +33,33 @@ const localGroup = computed(() =>
 const target = ref<HTMLDivElement | null>(null);
 const targetIsVisible = useElementVisibility(target);
 const isDeactivated = ref(false);
-const isLoaded = ref(false);
 
 watch(
   targetIsVisible,
   async () => {
-    if (
-      !targetIsVisible.value ||
-      isLoaded.value ||
-      !groupsStore.config.showCounters ||
-      props.group.counters
-    ) {
+    if (!groupsStore.config.showCounters) {
       return;
     }
 
-    isLoaded.value = true;
+    if (props.group.counters) {
+      return;
+    }
+
+    if (groupState.value.needLoadingCounters) {
+      return;
+    }
+
+    if (!targetIsVisible.value) {
+      return;
+    }
+
     // таким образом загрузка будет по порядку
     await sleep(props.index * 2);
-
     if (isDeactivated.value) {
       return;
     }
 
     if (!targetIsVisible.value) {
-      isLoaded.value = false;
       return;
     }
 

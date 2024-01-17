@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import random from "lodash/random";
 import { platform } from "@vkontakte/vkui";
 import { Ref, watch } from "vue";
 import { setEruda } from "@/helpers/setEruda";
@@ -109,7 +108,7 @@ export const useApp = defineStore("app", {
       }
     },
     getLoadingFinisher(): () => void {
-      const id = random(true);
+      const id = Math.random();
       this.loadingSet.add(id);
       return () => this.loadingSet.delete(id);
     },

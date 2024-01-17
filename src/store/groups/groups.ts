@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import {
+  GroupState,
   IGroup,
   IGroupCounters,
   IGroupsExport,
@@ -345,8 +346,20 @@ export const useGroups = defineStore("groups", {
 
       return JSON.parse(value);
     },
+    updateRandomIndex() {
+      this.groupStates.forEach((groupState) => {
+        groupState.randomIndex = Math.random();
+      });
+    },
   },
   getters: {
+    groupStates(): GroupState[] {
+      const array: GroupState[] = [];
+      this.groupsMap.forEach((group) => {
+        array.push(GroupHelper.getState(group));
+      });
+      return array;
+    },
     folders(): string[] {
       return from(this.localGroupsArray)
         .select((x) => x.folder)

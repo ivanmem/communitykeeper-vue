@@ -71,8 +71,7 @@ class GroupHelper {
     if (filters.sort !== undefined && filters.sort !== GroupsSortEnum.date) {
       switch (filters.sort) {
         case GroupsSortEnum.random: {
-          // Аналогично snuffle
-          groupsIter = groupsIter.orderBy(() => Math.random(), NumberComparer);
+          groupsIter = groupsIter.orderBy((x) => GroupHelper.getState(x).randomIndex);
           break;
         }
         default: {

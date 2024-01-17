@@ -41,5 +41,10 @@ export function getGroupState(group: IGroup): GroupState {
     text.push("Закрытая");
   }
 
-  return { text: text.join("; "), isBanned, isVisibleJoin };
+  return {
+    text: text.join("; "),
+    isBanned,
+    isVisibleJoin,
+    randomIndex: Math.random(),
+  };
 }
