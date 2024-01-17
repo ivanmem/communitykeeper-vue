@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onActivated, reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import toNumber from "lodash/toNumber";
 import { icons } from "@/common/consts";
@@ -25,6 +25,22 @@ const newGroup = reactive({
   linkOrId: "",
 });
 const isActivated = useActivated();
+const blackListFolderNames = new Set(["все", "all"]);
+const maxFolderLength = 30;
+const folderRules: any[] = [
+  (folder: string) => {
+    return (
+      !blackListFolderNames.has(folder?.trim().toLowerCase()) ||
+      "Это название зарезервировано системой."
+    );
+  },
+  (folder: string) => {
+    return (
+      (folder?.trim().length ?? 0) <= maxFolderLength ||
+      `Разрешено до ${maxFolderLength} символов.`
+    );
+  },
+];
 
 const addGroup = async () => {
   const id = toNumber(newGroup.id);
@@ -109,6 +125,8 @@ watch(
   },
   { immediate: true },
 );
+
+const valid = ref(false);
 </script>
 
 <template>
@@ -126,50 +144,58 @@ watch(
       </VRow>
     </VCardItem>
     <VDivider />
-    <VCardItem style="max-width: max-content">
-      <VCardSubtitle style="margin-block: 10px">
-        🆕 Добавить группу
-      </VCardSubtitle>
-      <VTextField
-        :append-inner-icon="icons.Icon16Link"
-        :model-value="newGroup.linkOrId.length ? newGroup.linkOrId : undefined"
-        label="Ссылка"
-        @blur="onLinkOrIdChanged"
-        @update:model-value="newGroup.linkOrId = $event ?? ''"
-      />
-      <VCombobox
-        :append-inner-icon="icons.Icon16FolderOutline"
-        :items="groupsStore.folders"
-        :model-value="newGroup.folder.length ? newGroup.folder : undefined"
-        label="Папка"
-        @update:model-value="newGroup.folder = $event ?? ''"
-      />
-      <VRow no-gutters style="gap: 10px">
-        <VBtn
-          :disabled="!currentGroup"
-          :prepend-icon="icons.Icon24AddSquareOutline"
-          @click="addGroup"
-        >
-          {{ isGroupAdded ? "Заменить" : "Добавить" }}
-        </VBtn>
-        <VBtn
-          :disabled="!isGroupAdded"
-          :prepend-icon="icons.Icon24DeleteOutline"
-          data-color="red"
-          @click="removeGroup"
-        >
-          <span>Удалить</span>
-        </VBtn>
-        <VBtn
-          :disabled="groupsStore.localGroupsArray.length === 0"
-          :prepend-icon="icons.Icon24TrashSmileOutline"
-          color="deep-orange"
-          @click="onRemoveAllGroups"
-        >
-          Удалить все группы
-        </VBtn>
-      </VRow>
-    </VCardItem>
+    <VForm v-model="valid">
+      <VCardItem style="max-width: max-content">
+        <VCardSubtitle style="margin-block: 10px">
+          🆕 Добавить группу
+        </VCardSubtitle>
+        <VTextField
+          :append-inner-icon="icons.Icon16Link"
+          :model-value="
+            newGroup.linkOrId.length ? newGroup.linkOrId : undefined
+          "
+          hide-details="auto"
+          label="Ссылка"
+          @blur="onLinkOrIdChanged"
+          @update:model-value="newGroup.linkOrId = $event ?? ''"
+        />
+        <VCombobox
+          :append-inner-icon="icons.Icon16FolderOutline"
+          :counter="maxFolderLength"
+          :items="groupsStore.folders"
+          :model-value="newGroup.folder.trim() || undefined"
+          :rules="folderRules"
+          label="Папка"
+          required
+          @update:model-value="newGroup.folder = $event ?? ''"
+        />
+        <VRow no-gutters style="gap: 10px; margin-top: 10px">
+          <VBtn
+            :disabled="!currentGroup || !valid || !newGroup.folder.trim()"
+            :prepend-icon="icons.Icon24AddSquareOutline"
+            @click="addGroup"
+          >
+            {{ isGroupAdded ? "Заменить" : "Добавить" }}
+          </VBtn>
+          <VBtn
+            :disabled="!isGroupAdded"
+            :prepend-icon="icons.Icon24DeleteOutline"
+            data-color="red"
+            @click="removeGroup"
+          >
+            <span>Удалить</span>
+          </VBtn>
+          <VBtn
+            :disabled="groupsStore.localGroupsArray.length === 0"
+            :prepend-icon="icons.Icon24TrashSmileOutline"
+            color="deep-orange"
+            @click="onRemoveAllGroups"
+          >
+            Удалить все группы
+          </VBtn>
+        </VRow>
+      </VCardItem>
+    </VForm>
     <VCardItem>
       <VCardText
         v-if="isGroupAdded"
