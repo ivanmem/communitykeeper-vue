@@ -26,8 +26,8 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 <template>
   <div class="a-albums vkuiGroup__inner Group__inner">
     <template v-if="isInit">
-      <div style="padding-inline: 10px">
-        <VBreadcrumbs density="compact" style="padding-left: 0">
+      <div style="padding-inline: 16px">
+        <VBreadcrumbs density="compact">
           <VBreadcrumbsItem
             replace
             style="padding-left: 0"
@@ -89,8 +89,8 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
   gap: 5px;
   justify-content: space-evenly;
   overflow-x: auto;
-  padding-block: 10px;
   overflow-y: scroll !important;
+  padding-block: 10px;
 
   &::-webkit-scrollbar {
     width: 0px;

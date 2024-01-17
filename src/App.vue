@@ -161,7 +161,6 @@ watch(
 
 <style lang="scss">
 .app {
-
 }
 
 .navigation-header {
@@ -177,6 +176,10 @@ watch(
 
   .v-toolbar__content {
     min-height: inherit;
+
+    & > .v-toolbar-title {
+      margin-inline-start: 6px;
+    }
   }
 }
 

@@ -7,6 +7,11 @@
   white-space: nowrap;
 }
 
+.v-breadcrumbs.v-breadcrumbs--density-compact {
+  padding-left: 0;
+  padding-top: 12px;
+}
+
 .v-dialog > .v-overlay__content > .v-card > .v-card-actions,
 .v-dialog > .v-overlay__content > form > .v-card > .v-card-actions {
   padding-inline: 24px;
@@ -15,11 +20,13 @@
 body {
   .v-theme--light {
     --v-high-emphasis-opacity: 1;
-    --v-theme-on-surface-variant: 245,245,245;
+    --v-theme-on-surface-variant: 245, 245, 245;
   }
+
   .v-card-subtitle {
     opacity: 1;
   }
+
   .v-label {
     opacity: 1;
   }

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useAppCaption } from "@/composables/useAppCaption";
 import { computed, onActivated, reactive, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import toNumber from "lodash/toNumber";
@@ -107,7 +106,7 @@ onActivated(() => {
     <VBtn :icon="icons.Icon16InfoCircle" variant="text" @click="onHelp" />
   </FixedTeleport>
   <VCard class="overflow-block a-add">
-    <VCardItem>
+    <VCardItem style="padding-top: 12px">
       <VCardSubtitle style="margin-bottom: 10px">
         💾 Резервная копия
       </VCardSubtitle>
@@ -177,4 +176,7 @@ onActivated(() => {
     </VCardItem>
   </VCard>
 </template>
-<style lang="scss"></style>
+<style lang="scss">
+.a-add {
+}
+</style>

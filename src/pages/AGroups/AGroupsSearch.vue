@@ -113,7 +113,7 @@ watch(
 
 <template>
   <div class="TopSearch">
-    <AGroupsTabs style="margin-bottom: 5px; padding-inline: 10px" />
+    <AGroupsTabs style="margin-bottom: 5px" />
     <div style="display: flex; gap: 5px; flex-grow: 1">
       <input
         ref="reference"

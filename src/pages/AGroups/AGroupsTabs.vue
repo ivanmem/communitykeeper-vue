@@ -98,10 +98,10 @@ const onSaveSettings = async () => {
 };
 </script>
 <template>
-  <div :style="style" v-show="groupsStore.folders.length > 0">
+  <div v-show="groupsStore.folders.length > 0" :style="style">
     <VTabs
       v-model="groupsStore.filters.folder"
-      :show-arrows="appStore.isVkCom"
+      :show-arrows="true"
       center-active
       density="compact"
       grow

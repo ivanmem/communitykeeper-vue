@@ -31,6 +31,8 @@ const dialogStore = useDialog();
     />
   </FixedTeleport>
   <VCard class="overflow-block a-settings">
+    <VCardSubtitle style="padding-block: 12px">🔧 Основные</VCardSubtitle>
+    <VDivider />
     <div class="d-flex flex-wrap">
       <ASettingsDisabledCookies />
     </div>
@@ -82,6 +84,10 @@ const dialogStore = useDialog();
       </span>
     </VCardItem>
     <VDivider />
+    <VCardSubtitle style="padding-block: 12px">
+      🐞 Дополнительные
+    </VCardSubtitle>
+    <VDivider />
     <VCardItem :append-icon="icons.Icon24Bug">
       <VSwitch
         v-model="appStore.config.eruda"
@@ -102,6 +108,9 @@ const dialogStore = useDialog();
 .a-settings {
   .v-card-item__content {
     overflow: visible;
+  }
+
+  .v-card-item {
   }
 }
 </style>

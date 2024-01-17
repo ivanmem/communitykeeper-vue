@@ -67,8 +67,8 @@ const onHelp = () => {
   </FixedTeleport>
   <div class="a-album vkuiGroup__inner Group__inner">
     <template v-if="isInit">
-      <div style="padding-inline: 10px">
-        <VBreadcrumbs density="compact" style="padding-left: 0">
+      <div style="padding-inline: 16px">
+        <VBreadcrumbs density="compact">
           <VBreadcrumbsItem style="padding-left: 0" to="/">
             Группы
           </VBreadcrumbsItem>
