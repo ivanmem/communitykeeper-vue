@@ -15,6 +15,7 @@ import { useDialog } from "@/store/dialog/dialog";
 import APhotoShareDialog, {
   APhotoShareDialogProps,
 } from "@/pages/AAlbum/APhotoShareDialog.vue";
+import APhotoCounter from "@/pages/AAlbum/APhotoCounter.vue";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -231,17 +232,13 @@ const dateTime = computed(() => {
       :src="originalSize.url"
       alt=""
     />
-    <div
-      v-show="showInfo"
-      class="a-not-dragable-and-not-select a-photo__info-top-left"
-    >
-      <div class="a-photo__info-date">
-        {{ dateTime }}
-      </div>
-      <div class="a-photo__info-counter">
-        <b>{{ photo.__state.index + 1 }}</b> из {{ count ?? "?" }}
-      </div>
-    </div>
+    <APhotoCounter
+      class="a-photo__info-top-left"
+      :date-time="dateTime"
+      :show-info="showInfo"
+      :photo-index="photo.__state.index"
+      :count="count"
+    />
   </div>
   <VDialog v-model="showMoreInfo">
     <VCard>
@@ -323,35 +320,10 @@ const dateTime = computed(() => {
 
 .a-photo__info-top-left,
 .a-photo__info-top-right {
-  background-image: linear-gradient(
-    to right top,
-    rgba(209, 107, 165, 0.47),
-    rgba(199, 119, 185, 0.51),
-    rgba(186, 131, 202, 0.54),
-    rgba(170, 143, 216, 0.51),
-    rgba(154, 154, 225, 0.5),
-    rgba(138, 167, 236, 0.5),
-    rgba(121, 179, 244, 0.5),
-    rgba(105, 191, 248, 0.5),
-    rgba(82, 207, 254, 0.5),
-    rgba(65, 223, 255, 0.5),
-    rgba(70, 238, 250, 0.5),
-    rgba(95, 251, 241, 0.5)
-  );
-  border-radius: 10px;
-  color: #6effd2;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  height: max-content;
   margin-left: 15px;
   margin-top: 10px;
-  padding: 3px;
   pointer-events: none;
   position: absolute;
-  text-align: center;
-  text-shadow: #000000 1px 0 10px;
-  width: max-content;
   z-index: 2;
 }
 
@@ -365,7 +337,5 @@ const dateTime = computed(() => {
   top: env(safe-area-inset-top, 0);
 }
 
-.a-photo__info-date {
-  font-size: 0.8em;
-}
+
 </style>

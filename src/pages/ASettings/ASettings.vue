@@ -7,6 +7,8 @@ import { useDialog } from "@/store/dialog/dialog";
 import ASettingsDisabledCookies from "@/pages/ASettings/ASettingsDisabledCookies.vue";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useApp } from "@/store/app/app";
+import APhotoCounter from "@/pages/AAlbum/APhotoCounter.vue";
+import { h } from "vue";
 
 useAppCaption("Настройки");
 const appStore = useApp();
@@ -82,6 +84,30 @@ const dialogStore = useDialog();
         По возможности будет использоваться встроенная галерея. Например, при
         клике по счётчикам фото/альбомов.
       </span>
+    </VCardItem>
+    <VDivider />
+    <VCardItem :append-icon="icons.Icon24SunOutline" style="margin-top: 10px">
+      <div>Непрозрачность счётчика при просмотре фото</div>
+      <VSlider
+        :max="100"
+        :min="0"
+        :model-value="groupsStore.config.opacityGalleryCounter ?? 100"
+        hide-details
+        thumb-label
+        :prepend-icon="h(icons.Icon12View, { style: { opacity: 0.1 } }) as any"
+        :append-icon="icons.Icon12View"
+        @update:model-value="groupsStore.config.opacityGalleryCounter = $event"
+      />
+      <span class="a-mini-text">
+        Вы можете установить минимальное значение, чтобы скрыть счётчик.
+      </span>
+      <APhotoCounter
+        style="margin-top: 5px"
+        show-info
+        date-time="01.01.2024, 00:00"
+        :photo-index="0"
+        :count="100"
+      />
     </VCardItem>
     <VDivider />
     <VCardSubtitle style="padding-block: 12px">

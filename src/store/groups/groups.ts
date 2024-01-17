@@ -17,6 +17,7 @@ import { from } from "linq-to-typescript";
 import { getPiniaPersist } from "@/helpers/getPiniaPersist";
 import { saveAs } from "file-saver";
 import { toStr } from "@/helpers/toStr";
+import { watchDebounced } from "@vueuse/core";
 
 export interface FiltersType {
   folder: string;
@@ -88,6 +89,7 @@ export interface IGroupsConfig {
   reverseOrder?: boolean;
   skipLowResolutionPhotos?: boolean;
   gallery?: boolean;
+  opacityGalleryCounter?: number;
 }
 
 export const useGroups = defineStore("groups", {
@@ -118,11 +120,12 @@ export const useGroups = defineStore("groups", {
 
       this.isInit = true;
 
-      watch(
+      watchDebounced(
         () => toStr(this.config),
         () => {
           return this.saveCurrentGroupsConfig();
         },
+        { debounce: 500 },
       );
       // если меняется настройка showCounters - очищаем ручное состояние скрытия счётчиков
       watch(

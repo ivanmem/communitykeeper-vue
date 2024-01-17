@@ -9,6 +9,7 @@ import mainUrl from "@/assets/slides/main.png";
 import bridge, { ShowSlidesSheetRequest } from "@vkontakte/vk-bridge";
 import { toStr } from "@/helpers/toStr";
 import { router } from "@/router";
+import { watchDebounced } from "@vueuse/core";
 
 interface AppState {
   caption: string;
@@ -97,11 +98,12 @@ export const useApp = defineStore("app", {
         { immediate: this.config.eruda },
       );
 
-      watch(
+      watchDebounced(
         () => toStr(this.config),
         () => {
           return this.saveCurrentAppConfig();
         },
+        { debounce: 500 },
       );
 
       if (this.config.slides) {
@@ -117,7 +119,7 @@ export const useApp = defineStore("app", {
       this.loadingSet.add(id);
       return () => this.loadingSet.delete(id);
     },
-    setLoadingPause(pause : boolean) {
+    setLoadingPause(pause: boolean) {
       this.isLoadingPause = pause;
     },
     wrapLoading<T = any>(action: (...args: any) => T) {
