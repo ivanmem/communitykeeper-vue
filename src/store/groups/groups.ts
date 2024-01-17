@@ -133,6 +133,18 @@ export const useGroups = defineStore("groups", {
           }
         },
       );
+
+      watch(
+        () => this.foldersSet,
+        () => {
+          if (this.foldersSet.has(this.filters.folder)) {
+            return;
+          }
+
+          this.filters.folder = "";
+        },
+        { immediate: true },
+      );
       console.info("groups store init");
     },
     async updateCurrentLocalGroups() {
@@ -365,6 +377,9 @@ export const useGroups = defineStore("groups", {
         .select((x) => x.folder)
         .distinct()
         .toArray();
+    },
+    foldersSet(): Set<string> {
+      return new Set(this.folders);
     },
     groupsIds(): number[] {
       return Array.from(this.groupsMap.keys());
