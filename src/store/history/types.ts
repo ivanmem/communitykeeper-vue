@@ -1,19 +1,19 @@
 import { IGroupCounters } from "@/store/groups/types";
 
-export type HistoryKeyViewOwner = `view_owner_${number | string}`;
-export type HistoryKeyViewAlbum = `view_album_${number | string}_${
+export type HistoryKeyViewOwner = `vo_${number | string}`;
+export type HistoryKeyViewAlbum = `va_${number | string}_${
   | number
   | string}`;
-export type HistoryKeyCounter = `view_counter_${number | string}_${string}`;
+export type HistoryKeyCounter = `vc_${number | string}_${string}`;
 
 export type HistoryKey =
   | HistoryKeyViewOwner
   | HistoryKeyViewAlbum
   | HistoryKeyCounter;
 
-export type HistoryTypeViewOwner = "view_owner";
-export type HistoryTypeViewAlbum = "view_album";
-export type HistoryTypeViewCounter = "view_counter";
+export type HistoryTypeViewOwner = "vo";
+export type HistoryTypeViewAlbum = "va";
+export type HistoryTypeViewCounter = "vc";
 
 export type HistoryType =
   | HistoryTypeViewOwner

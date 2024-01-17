@@ -41,7 +41,7 @@ watch(
 
 const onClick = (counter: IGroupCounter) => {
   historyStore.add({
-    type: "view_counter",
+    type: "vc",
     url: counter.url,
     counter: counter.key,
     ownerId: -props.group.id,

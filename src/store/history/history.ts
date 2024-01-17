@@ -17,12 +17,12 @@ import { getPiniaPersist } from "@/helpers/getPiniaPersist";
 
 function getHistoryKey(historyItem: HistoryItem): HistoryKey {
   switch (historyItem.type) {
-    case "view_owner":
-      return `view_owner_${historyItem.ownerId}` satisfies HistoryKeyViewOwner;
-    case "view_album":
-      return `view_album_${historyItem.ownerId}_${historyItem.albumId}}` satisfies HistoryKeyViewAlbum;
-    case "view_counter":
-      return `view_counter_${historyItem.ownerId}_${historyItem.counter}` satisfies HistoryKeyCounter;
+    case "vo":
+      return `vo_${historyItem.ownerId}` satisfies HistoryKeyViewOwner;
+    case "va":
+      return `va_${historyItem.ownerId}_${historyItem.albumId}}` satisfies HistoryKeyViewAlbum;
+    case "vc":
+      return `vc_${historyItem.ownerId}_${historyItem.counter}` satisfies HistoryKeyCounter;
   }
 }
 
@@ -35,7 +35,7 @@ export const useHistory = defineStore("history", {
       ownerId: string | number,
       albumId: string | number,
     ): HistoryKeyViewAlbum {
-      return `view_album_${ownerId}_${albumId}}`;
+      return `va_${ownerId}_${albumId}}`;
     },
     getViewAlbum(ownerId: string | number, albumId: string | number) {
       const key = this.getViewAlbumKey(ownerId, albumId);
@@ -46,7 +46,7 @@ export const useHistory = defineStore("history", {
       if (to.name === "albums" && `${ownerId ?? ""}`) {
         const ownerId = to.params.ownerId as string;
         this.add({
-          type: `view_owner`,
+          type: `vo`,
           ownerId,
         });
       }
@@ -58,7 +58,7 @@ export const useHistory = defineStore("history", {
         `${photoId ?? ""}`
       ) {
         this.add({
-          type: `view_album`,
+          type: `va`,
           ownerId,
           albumId,
           photoId,
@@ -94,11 +94,11 @@ export const useHistory = defineStore("history", {
       return from(this.historyArray).toMap((x) => x.type);
     },
     historyArrayViewAlbum(): HistoryItemViewAlbum[] {
-      return (this.historyGroupByType.get("view_album") ||
+      return (this.historyGroupByType.get("va") ||
         []) as HistoryItemViewAlbum[];
     },
     historyArrayViewOwner(): HistoryItemViewOwner[] {
-      return (this.historyGroupByType.get("view_owner") ||
+      return (this.historyGroupByType.get("vo") ||
         []) as HistoryItemViewOwner[];
     },
     oldest(): HistoryItem | undefined {

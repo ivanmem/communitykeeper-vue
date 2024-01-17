@@ -26,7 +26,7 @@ interface HistoryItemComputed {
 const items = computed<HistoryItemComputed[]>(() =>
   from(historyStore.historyArray)
     .select((item) => {
-      if (item.type === "view_album") {
+      if (item.type === "va") {
         const group: IGroup | undefined = groupsStore.getGroupById(
           -item.ownerId,
         );
@@ -42,7 +42,7 @@ const items = computed<HistoryItemComputed[]>(() =>
         };
       }
 
-      if (item.type === "view_counter") {
+      if (item.type === "vc") {
         const group: IGroup | undefined = groupsStore.getGroupById(
           -item.ownerId,
         );
