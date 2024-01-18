@@ -29,7 +29,7 @@ export async function getGroupsByLinksOrIds(
             method: "groups.getById",
             params: {
               group_ids: groupIdsChunk.join(),
-              fields: "counters",
+              fields: "counters,member_status",
             },
           }),
       )

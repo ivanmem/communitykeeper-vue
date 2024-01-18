@@ -40,7 +40,24 @@ export interface IGroup {
   type: string;
   counters?: IGroupCounters;
   countersSum?: number;
+  member_status?: IGroupMemberStatus;
   __state?: GroupState;
+}
+
+/** @link https://dev.vk.com/ru/reference/objects/group#member_status */
+export enum IGroupMemberStatus {
+  /** @description Не является участником */
+  NotMember,
+  /** @description Является участником */
+  Member,
+  /** @description Не уверен, что посетит мероприятие */
+  NotSureWillAttendEvent,
+  /** @description Отклонил приглашение */
+  DeclinedInvitation,
+  /** @description Запрос на вступление отправлен */
+  JoiningRequestSent,
+  /** @description Приглашён */
+  Invited,
 }
 
 /** @link https://dev.vk.com/ru/reference/objects/group#counters */

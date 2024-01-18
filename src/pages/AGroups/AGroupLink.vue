@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { IGroup } from "@/store/groups/types";
+import { IGroup, IGroupMemberStatus } from "@/store/groups/types";
 import AButton from "@/components/AButton/AButton.vue";
 import { openUrl } from "@/helpers/openUrl";
 import AGroupCounters from "@/pages/AGroups/AGroupCounters.vue";
@@ -121,13 +121,27 @@ const onOpenContextMenu = (e: MouseEvent) => {
     items.push({
       label: "Выйти",
       icon: h(icons.Icon16DoorEnterArrowRightOutline),
-      onClick: () => {
-        return GroupHelper.setIsMember(props.group, false);
+      onClick: async () => {
+        let confirm = true;
+        if (props.group.is_closed) {
+          confirm = await dialogStore.confirm({
+            title: "Выход из группы",
+            subtitle: `Вы выходите из закрытой группы "${props.group.name}".
+Вас могут не принять обратно. Всё равно хотите выйти?`,
+            confirmTitle: "Да",
+          });
+        }
+
+        if (confirm) {
+          return GroupHelper.setIsMember(props.group, false);
+        }
       },
     });
-  } else {
+  } else if (
+    props.group.member_status !== IGroupMemberStatus.JoiningRequestSent
+  ) {
     items.push({
-      label: "Вступить",
+      label: props.group.is_closed ? `Подать заявку` : "Подписаться",
       icon: h(icons.Icon16AddSquareOutline),
       onClick: async () => {
         return GroupHelper.setIsMember(props.group, true);
@@ -169,16 +183,13 @@ const showCounters = computed(() => {
   return !(groupState.value.hideCounters ?? !groupsStore.config.showCounters);
 });
 
-watch(
-  showCounters,
-  () => {
-    if (!showCounters.value) {
-      return;
-    }
+watch(showCounters, () => {
+  if (!showCounters.value) {
+    return;
+  }
 
-    groupState.value.needLoadingCounters = true;
-  },
-);
+  groupState.value.needLoadingCounters = true;
+});
 </script>
 
 <template>

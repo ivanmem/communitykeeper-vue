@@ -416,6 +416,10 @@ export const useGroups = defineStore("groups", {
       return !this.groupsIds.some((id) => {
         const group = this.groupsMap.get(id)!;
         const localGroup = this.localGroups[id];
+        if (!localGroup) {
+          return false;
+        }
+
         if (this.filters.folder && this.filters.folder !== localGroup.folder) {
           return false;
         }

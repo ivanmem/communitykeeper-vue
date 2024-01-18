@@ -1,5 +1,5 @@
 import { isNullOrUndefined } from "@/helpers/isNullOrUndefined";
-import { GroupState, IGroup } from "@/store/groups/types";
+import { GroupState, IGroup, IGroupMemberStatus } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
 import { isGroupBanned } from "@/helpers/isGroupBanned";
 
@@ -20,15 +20,26 @@ export function getGroupState(group: IGroup): GroupState {
   }
 
   if (!isPartialBan) {
-    if (group.is_member) {
-      text.push("Вы участник");
-    } else {
-      text.push("Вы не участник");
+    switch (group.member_status) {
+      case IGroupMemberStatus.NotMember:
+        text.push("Вы не участник");
+        break;
+      case IGroupMemberStatus.Member:
+        text.push("Вы участник");
+        break;
+      case IGroupMemberStatus.NotSureWillAttendEvent:
+        text.push("Вы не уверены, что посетите мероприятие");
+        break;
+      case IGroupMemberStatus.DeclinedInvitation:
+        text.push("Вы отклонили приглашение");
+        break;
+      case IGroupMemberStatus.JoiningRequestSent:
+        text.push("Заявка отправлена");
+        break;
+      case IGroupMemberStatus.Invited:
+        text.push("Вас пригласили");
+        break;
     }
-  }
-
-  if (group.is_request) {
-    text.push("Вы подали заявку на участие");
   }
 
   if (group.is_admin) {
