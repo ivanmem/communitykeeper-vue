@@ -6,7 +6,7 @@ export interface AAlertDialogProps {
   mode?: "alert" | "confirm";
   confirmTitle?: string;
   cancelTitle?: string;
-  cancelable?: false | undefined;
+  persistent?: boolean;
 }
 
 const props = withDefaults(defineProps<AAlertDialogProps>(), {
@@ -20,7 +20,7 @@ const emits = defineEmits<{
 <template>
   <VDialog
     :model-value="true"
-    :persistent="props.cancelable === false"
+    :persistent="props.persistent ?? false"
     class="a-alert-dialog"
     max-width="max-content"
     @update:model-value="!$event && emits('close')"

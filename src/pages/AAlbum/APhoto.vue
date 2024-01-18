@@ -132,14 +132,15 @@ const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
     },
   });
   items.push({
-    label: "Найти оригинал",
+    label: "Поиск оригинала",
     icon: h(icons.Icon16SearchStarsOutline),
     onClick: async () => {
       const isUseYandex = await useDialog().confirm({
-        subtitle: `Выберите поисковую систему`,
+        title: "Поиск оригинала",
+        subtitle: `Выберите поисковую систему:`,
         confirmTitle: "Yandex",
         cancelTitle: "SauceNAO",
-        cancelable: false,
+        persistent: true,
       });
       const url = encodeURIComponent(originalSize.value!.url);
       if (isUseYandex) {
