@@ -99,6 +99,7 @@ const onSaveSettings = async () => {
 };
 
 const valid = ref(false);
+const { Icon16FolderOutline } = icons;
 </script>
 <template>
   <div v-show="groupsStore.folders.length > 0" :style="style">
@@ -129,9 +130,22 @@ const valid = ref(false);
     <VForm v-if="renameDialog" v-model="valid">
       <VCard class="overflow-block a-group-filters">
         <VCardItem>
-          <VCardTitle>Настройки папки "{{ renameDialog.folder }}"</VCardTitle>
-        </VCardItem>
-        <VCardItem>
+          <VCardTitle>Настройки папки</VCardTitle>
+          <div
+            style="
+              display: flex;
+              justify-content: flex-start;
+              align-items: center;
+              gap: 5px;
+              padding-bottom: 10px;
+              margin-top: 4px;
+            "
+          >
+            <Icon16FolderOutline style="flex-shrink: 0" />
+            <div style="word-break: break-word">
+              {{ renameDialog.folder }}
+            </div>
+          </div>
           <VTextField
             v-model="renameDialog.newSettings.folder"
             :counter="maxFolderLength"
