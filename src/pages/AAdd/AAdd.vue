@@ -14,6 +14,7 @@ import ExportBtn from "@/pages/AAdd/ExportBtn.vue";
 import ImportBtn from "@/pages/AAdd/ImportBtn.vue";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useActivated } from "@/composables/useActivated";
+import { folderRules, maxFolderLength } from "@/common/formConsts";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -25,22 +26,6 @@ const newGroup = reactive({
   linkOrId: "",
 });
 const isActivated = useActivated();
-const blackListFolderNames = new Set(["все", "all"]);
-const maxFolderLength = 30;
-const folderRules: any[] = [
-  (folder: string) => {
-    return (
-      !blackListFolderNames.has(folder?.trim().toLowerCase()) ||
-      "Это название зарезервировано системой."
-    );
-  },
-  (folder: string) => {
-    return (
-      (folder?.trim().length ?? 0) <= maxFolderLength ||
-      `Разрешено до ${maxFolderLength} символов.`
-    );
-  },
-];
 
 const addGroup = async () => {
   const id = toNumber(newGroup.id);

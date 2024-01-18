@@ -5,6 +5,7 @@ import { showContextMenu } from "@/helpers/showContextMenu";
 import { h, PropType, ref, StyleValue } from "vue";
 import { icons } from "@/common/consts";
 import { useDialog } from "@/store/dialog/dialog";
+import { folderRules, maxFolderLength } from "@/common/formConsts";
 
 const props = defineProps({
   style: { type: [String, Object, Array] as PropType<StyleValue> },
@@ -96,6 +97,8 @@ const onSaveSettings = async () => {
     await groupsStore.autoSaveCurrentLocalGroups();
   }
 };
+
+const valid = ref(false);
 </script>
 <template>
   <div v-show="groupsStore.folders.length > 0" :style="style">
@@ -123,21 +126,25 @@ const onSaveSettings = async () => {
     :model-value="renameDialog !== undefined"
     @update:model-value="renameDialog = undefined"
   >
-    <VCard v-if="renameDialog" class="overflow-block a-group-filters">
-      <VCardItem>
-        <VCardTitle>Настройки папки "{{ renameDialog.folder }}"</VCardTitle>
-      </VCardItem>
-      <VCardItem>
-        <VTextField
-          v-model="renameDialog.newSettings.folder"
-          label="Название"
-        />
-      </VCardItem>
-      <VCardActions>
-        <VSpacer />
-        <VBtn @click="renameDialog = undefined">Закрыть</VBtn>
-        <VBtn @click="onSaveSettings">Сохранить</VBtn>
-      </VCardActions>
-    </VCard>
+    <VForm v-model="valid" v-if="renameDialog">
+      <VCard class="overflow-block a-group-filters">
+        <VCardItem>
+          <VCardTitle>Настройки папки "{{ renameDialog.folder }}"</VCardTitle>
+        </VCardItem>
+        <VCardItem>
+          <VTextField
+            v-model="renameDialog.newSettings.folder"
+            :counter="maxFolderLength"
+            :rules="folderRules"
+            label="Название"
+          />
+        </VCardItem>
+        <VCardActions>
+          <VSpacer />
+          <VBtn @click="renameDialog = undefined">Закрыть</VBtn>
+          <VBtn :disabled="!valid" @click="onSaveSettings">Сохранить</VBtn>
+        </VCardActions>
+      </VCard>
+    </VForm>
   </VDialog>
 </template>
