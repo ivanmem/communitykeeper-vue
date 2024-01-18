@@ -19,7 +19,7 @@ const opacity = computed(
       {{ dateTime }}
     </div>
     <div class="a-photo__info-counter">
-      <b>{{ photoIndex + 1 }}</b> из {{ count ?? "?" }}
+      <b>{{ photoIndex + 1 }}</b> из {{ count || "?" }}
     </div>
   </div>
 </template>
