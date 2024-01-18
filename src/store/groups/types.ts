@@ -45,14 +45,14 @@ export interface IGroup {
 
 /** @link https://dev.vk.com/ru/reference/objects/group#counters */
 export interface IGroupCounters {
-  photos: number;
-  albums: number;
-  topics: number;
-  videos: number;
-  market: number;
-  articles: number;
-  narratives: number;
-  addresses: number;
+  photos?: number;
+  albums?: number;
+  topics?: number;
+  videos?: number;
+  market?: number;
+  articles?: number;
+  narratives?: number;
+  addresses?: number;
   clips?: number;
   clips_followers?: number;
 }

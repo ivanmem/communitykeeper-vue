@@ -292,7 +292,7 @@ export const useGroups = defineStore("groups", {
         return cachedGroup.counters;
       }
 
-      const [{ counters }] = await useVk()
+      const counters = await useVk()
         .addRequestToQueue<any, IGroup[]>({
           method: "groups.getById",
           params: {
@@ -300,7 +300,8 @@ export const useGroups = defineStore("groups", {
             fields: "counters",
           },
         })
-        .catch(() => [{ counters: {} }] as IGroup[]);
+        .catch(() => [{ counters: {} }] as IGroup[])
+        .then(([resultGroup]) => resultGroup?.counters ?? {});
       this.cachedGroupsData[group.id] = {
         date: new Date().toISOString(),
         data: { counters },
