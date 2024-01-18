@@ -126,7 +126,7 @@ const valid = ref(false);
     :model-value="renameDialog !== undefined"
     @update:model-value="renameDialog = undefined"
   >
-    <VForm v-model="valid" v-if="renameDialog">
+    <VForm v-if="renameDialog" v-model="valid">
       <VCard class="overflow-block a-group-filters">
         <VCardItem>
           <VCardTitle>Настройки папки "{{ renameDialog.folder }}"</VCardTitle>
@@ -137,12 +137,18 @@ const valid = ref(false);
             :counter="maxFolderLength"
             :rules="folderRules"
             label="Название"
+            required
           />
         </VCardItem>
         <VCardActions>
           <VSpacer />
           <VBtn @click="renameDialog = undefined">Закрыть</VBtn>
-          <VBtn :disabled="!valid" @click="onSaveSettings">Сохранить</VBtn>
+          <VBtn
+            :disabled="!valid || !renameDialog.newSettings.folder.length"
+            @click="onSaveSettings"
+          >
+            Сохранить
+          </VBtn>
         </VCardActions>
       </VCard>
     </VForm>
