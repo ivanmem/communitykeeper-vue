@@ -159,7 +159,7 @@ export function useAlbum(
   });
 
   watch(
-    ownerId,
+    [ownerId, albumId],
     async () => {
       onClearInit();
       onClearError();
