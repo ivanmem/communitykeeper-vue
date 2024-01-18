@@ -40,6 +40,7 @@ import Icon24Attachments from "@vkontakte/icons/src/svg/24/attachments_24.svg?co
 import Icon240CircleOutline from "@vkontakte/icons/src/svg/24/0_circle_outline_24.svg?component";
 import Icon24Bug from "@vkontakte/icons/src/svg/24/bug_24.svg?component";
 import Icon24SunOutline from "@vkontakte/icons/src/svg/24/sun_outline_24.svg?component";
+import Icon24CopyOutline from "@vkontakte/icons/src/svg/24/copy_outline_24.svg?component";
 
 import Icon20FolderMoveOutline from "@vkontakte/icons/src/svg/20/folder_move_outline_20.svg?component";
 
@@ -120,6 +121,7 @@ export const icons = {
   Icon240CircleOutline,
   Icon24Bug,
   Icon24SunOutline,
+  Icon24CopyOutline,
 
   Icon20FolderMoveOutline,
 

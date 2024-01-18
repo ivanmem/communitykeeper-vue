@@ -6,7 +6,7 @@ import { useApp } from "@/store/app/app";
 import { darkColorScheme, icons } from "@/common/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
-import { onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref, shallowRef, watch } from "vue";
 import { switchFullscreen } from "@/helpers/switchFullscreen";
 import { VDefaultsProvider, VToolbar } from "vuetify/components";
 import ASpinner from "@/components/ASpinner.vue";
@@ -19,6 +19,7 @@ const route = useRoute();
 const groupsStore = useGroups();
 const vkStore = useVk();
 const appStore = useApp();
+const vkService = useVk();
 let unmounted = useUnmounted();
 useColorScheme();
 const fullscreenElement = ref(document.fullscreenElement);
@@ -98,6 +99,15 @@ watch(
   },
   { immediate: true },
 );
+
+const LinkIcon = shallowRef(icons.Icon24Linked);
+
+watch(
+  () => route.path,
+  () => {
+    LinkIcon.value = icons.Icon24Linked;
+  },
+);
 </script>
 
 <template>
@@ -128,9 +138,13 @@ watch(
             <div id="navigation-header__right"></div>
             <VBtn
               v-if="route.path !== '/'"
-              :icon="icons.Icon24Linked"
+              :icon="LinkIcon"
               variant="text"
-              @click="copy(`vk.com/app${appStore.appId}#` + route.path)"
+              title="Скопировать текущую ссылку"
+              @click="
+                vkService.copyText(`vk.com/app${appStore.appId}#` + route.path);
+                LinkIcon = icons.Icon24CopyOutline;
+              "
             />
             <VBtn
               v-if="useApp().isVkCom"

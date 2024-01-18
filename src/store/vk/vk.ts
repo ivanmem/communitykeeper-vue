@@ -14,6 +14,7 @@ import { PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
 import { IAppInitOptions, useApp } from "@/store/app/app";
 import { useDialog } from "@/store/dialog/dialog";
+import { toStr } from "@/helpers/toStr";
 
 export type WebAppConfig = Partial<
   MobileUpdateConfigData & MVKUpdateConfigData & VKUpdateConfigData
@@ -333,6 +334,11 @@ export const useVk = defineStore("vk", {
           offset,
           count,
         },
+      });
+    },
+    copyText(text: any) {
+      return bridge.send("VKWebAppCopyText", {
+        text: toStr(text),
       });
     },
   },
