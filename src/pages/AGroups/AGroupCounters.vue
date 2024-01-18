@@ -4,7 +4,7 @@ import {
   useGroupCounters,
 } from "@/pages/AGroups/useGroupCounters";
 import { IGroup } from "@/store/groups/types";
-import { computed, ref, toRef, watch } from "vue";
+import { ref, toRef, watch } from "vue";
 import ASpinner from "@/components/ASpinner.vue";
 import GroupHelper from "@/helpers/GroupHelper";
 import { useGroups } from "@/store/groups/groups";
@@ -18,7 +18,7 @@ const groupsStore = useGroups();
 const historyStore = useHistory();
 const groupRef = toRef(() => props.group);
 const counters = useGroupCounters(groupRef);
-const groupState = computed(() => GroupHelper.getState(props.group));
+const groupState = toRef(() => GroupHelper.getState(props.group));
 const loading = ref(false);
 const smartOpenUrl = useSmartOpenUrl();
 

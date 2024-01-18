@@ -3,7 +3,7 @@ import { IGroup } from "@/store/groups/types";
 import AButton from "@/components/AButton/AButton.vue";
 import { openUrl } from "@/helpers/openUrl";
 import AGroupCounters from "@/pages/AGroups/AGroupCounters.vue";
-import { computed, h, onDeactivated, ref, watch } from "vue";
+import { computed, h, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useElementVisibility } from "@vueuse/core";
 import { sleep } from "@/helpers/sleep";
@@ -15,6 +15,7 @@ import useClipboard from "vue-clipboard3/dist/esm/index";
 import { useRouter } from "vue-router";
 import { AAddQueryParams } from "@/pages/AAdd/types";
 import { useDialog } from "@/store/dialog/dialog";
+import { useActivated } from "@/composables/useActivated";
 
 const props = withDefaults(
   defineProps<{
@@ -33,7 +34,7 @@ const localGroup = computed(() =>
 );
 const target = ref<HTMLDivElement | null>(null);
 const targetIsVisible = useElementVisibility(target);
-const isDeactivated = ref(false);
+const isActivated = useActivated();
 const isCurrentFolder = computed(
   () =>
     props.applyFilters &&
@@ -41,7 +42,7 @@ const isCurrentFolder = computed(
 );
 
 watch(
-  targetIsVisible,
+  [targetIsVisible, isActivated],
   async () => {
     if (!groupsStore.config.showCounters) {
       return;
@@ -61,7 +62,7 @@ watch(
 
     // таким образом загрузка будет по порядку
     await sleep(props.index * 2);
-    if (isDeactivated.value) {
+    if (!isActivated.value) {
       return;
     }
 
@@ -73,10 +74,6 @@ watch(
   },
   { immediate: true },
 );
-
-onDeactivated(() => {
-  isDeactivated.value = true;
-});
 
 const link = computed(() => `vk.com/public${props.group.id}`);
 
@@ -172,13 +169,16 @@ const showCounters = computed(() => {
   return !(groupState.value.hideCounters ?? !groupsStore.config.showCounters);
 });
 
-watch(showCounters, async () => {
-  if (!showCounters.value) {
-    return;
-  }
+watch(
+  showCounters,
+  () => {
+    if (!showCounters.value) {
+      return;
+    }
 
-  groupState.value.needLoadingCounters = true;
-});
+    groupState.value.needLoadingCounters = true;
+  },
+);
 </script>
 
 <template>

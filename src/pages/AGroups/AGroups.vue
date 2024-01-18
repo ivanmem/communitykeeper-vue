@@ -7,10 +7,12 @@ import { icons } from "@/common/consts";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useDialog } from "@/store/dialog/dialog";
 import AButton from "@/components/AButton/AButton.vue";
+import { useGroups } from "@/store/groups/groups";
 
 const groupSearch = useGroupSearch();
 const { groupsOrder, showFilters } = groupSearch;
 const dialogStore = useDialog();
+const groupsStore = useGroups();
 
 const onHelp = () => {
   dialogStore.alert({
@@ -64,6 +66,7 @@ const onHelp = () => {
     <template v-else>
       <DynamicScroller
         v-if="groupsOrder.length"
+        :key="groupsStore.filters.folder"
         :items="groupsOrder"
         :min-item-size="64"
         class="a-groups__groups"
@@ -77,7 +80,7 @@ const onHelp = () => {
             :item="item"
             :size-dependencies="[item.counters]"
           >
-            <AGroupLink :group="item" :index="index" apply-filters />
+            <AGroupLink :key="item.id" :group="item" :index="index" apply-filters />
             <VDivider v-if="groupsOrder.length - 1 > index" />
           </DynamicScrollerItem>
         </template>
