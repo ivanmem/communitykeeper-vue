@@ -31,3 +31,10 @@ body {
     opacity: 1;
   }
 }
+
+.v-btn {
+  svg {
+    // убирает title от иконок при наведении на кнопку
+    pointer-events: none;
+  }
+}

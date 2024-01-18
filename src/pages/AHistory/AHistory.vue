@@ -82,7 +82,7 @@ const items = computed<HistoryItemComputed[]>(() =>
 const onClear = async () => {
   const result = await dialogStore.confirm({
     title: "Очистка истории просмотров",
-    subtitle: "Вы уверены, что хотите отчистить историю просмотров?",
+    subtitle: "Вы уверены, что хотите очистить историю просмотров?",
   });
   if (!result) {
     return;
@@ -93,7 +93,12 @@ const onClear = async () => {
 </script>
 <template>
   <FixedTeleport to="#navigation-header__right">
-    <VBtn :icon="icons.Icon16Delete" variant="text" @click="onClear" />
+    <VBtn
+      :icon="icons.Icon16Delete"
+      title="Очистить историю просмотров"
+      variant="text"
+      @click="onClear"
+    />
   </FixedTeleport>
   <VCard class="overflow-block">
     <v-sheet
