@@ -74,6 +74,10 @@ const dialogStore = useDialog();
       </span>
     </VCardItem>
     <VDivider />
+    <VCardSubtitle style="padding-block: 12px">
+      🌅 Галерея
+    </VCardSubtitle>
+    <VDivider />
     <VCardItem :append-icon="icons.Icon24Attachments">
       <VSwitch
         v-model="groupsStore.config.gallery"
@@ -111,7 +115,7 @@ const dialogStore = useDialog();
     </VCardItem>
     <VDivider />
     <VCardSubtitle style="padding-block: 12px">
-      🐞 Дополнительные
+      🐞 Тестирование
     </VCardSubtitle>
     <VDivider />
     <VCardItem :append-icon="icons.Icon24Bug">
