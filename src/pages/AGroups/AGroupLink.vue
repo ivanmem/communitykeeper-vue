@@ -16,6 +16,7 @@ import { useRouter } from "vue-router";
 import { AAddQueryParams } from "@/pages/AAdd/types";
 import { useDialog } from "@/store/dialog/dialog";
 import { useActivated } from "@/composables/useActivated";
+import { useApp } from "@/store/app/app";
 
 const props = withDefaults(
   defineProps<{
@@ -27,6 +28,7 @@ const props = withDefaults(
 );
 const router = useRouter();
 const groupsStore = useGroups();
+const appStore = useApp();
 const dialogStore = useDialog();
 const groupState = computed(() => GroupHelper.getState(props.group));
 const localGroup = computed(() =>
@@ -140,13 +142,17 @@ const onOpenContextMenu = (e: MouseEvent) => {
   } else if (
     props.group.member_status !== IGroupMemberStatus.JoiningRequestSent
   ) {
-    items.push({
-      label: props.group.is_closed ? `Подать заявку` : "Подписаться",
-      icon: h(icons.Icon16AddSquareOutline),
-      onClick: async () => {
-        return GroupHelper.setIsMember(props.group, true);
-      },
-    });
+    // отображаем кнопку только если группа открытая или если это не приложение,
+    // так как присоединиться к закрытой группе можно только с vk.com или m.vk.com из-за бага в VK Bridge или Приложении ВКонтакте
+    if (!props.group.is_closed || !appStore.isApp) {
+      items.push({
+        label: props.group.is_closed ? `Подать заявку` : "Подписаться",
+        icon: h(icons.Icon16AddSquareOutline),
+        onClick: async () => {
+          return GroupHelper.setIsMember(props.group, true);
+        },
+      });
+    }
   }
 
   items.push({
