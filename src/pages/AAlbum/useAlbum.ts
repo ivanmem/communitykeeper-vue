@@ -9,7 +9,6 @@ import {
 import {
   computed,
   MaybeRefOrGetter,
-  nextTick,
   ref,
   toRefs,
   toValue,
@@ -54,8 +53,10 @@ export function useAlbum(
   const isInit = ref(false);
   const isLoadingPhotos = ref(false);
   const isLoadAllPhotos = ref(false);
-  const photosMaxItems = ref(0);
+  const photosMaxItems = ref(countOneLoad);
   const historyStore = useHistory();
+  const groupsStore = useGroups();
+  const vkStore = useVk();
   const albumHistoryItem = computed(() =>
     historyStore.getViewAlbum(ownerId.value, albumId.value),
   );
@@ -100,7 +101,7 @@ export function useAlbum(
   const onClearPhotos = () => {
     photos.value.length = 0;
     photosMap.value.clear();
-    photosMaxItems.value = 0;
+    photosMaxItems.value = countOneLoad;
     isLoadAllPhotos.value = false;
   };
 
@@ -121,16 +122,14 @@ export function useAlbum(
       albumId.value === "wall"
         ? []
         : (
-            await useVk()
-              .getAlbums(ownerId.value)
-              .catch((ex) => {
-                if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
-                  screenError.value = ex;
-                  console.warn("Необработанная ошибка:", ex.errorInfo);
-                }
+            await vkStore.getAlbums(ownerId.value).catch((ex) => {
+              if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
+                screenError.value = ex;
+                console.warn("Необработанная ошибка:", ex.errorInfo);
+              }
 
-                return { items: [], count: 0 };
-              })
+              return { items: [], count: 0 };
+            })
           ).items;
     albums.push(...getStaticAlbums(ownerId.value));
     album.value = albums.find(
@@ -138,10 +137,65 @@ export function useAlbum(
     );
   };
 
-  const onLoad = () => {
-    return nextTick(() => {
-      photosMaxItems.value = countOneLoad; // это инициирует первую загрузку
-    });
+  const onLoad = async () => {
+    const currentPhotosMaxItems = photosMaxItems.value;
+    if (
+      isLoadingPhotos.value ||
+      currentPhotosMaxItems === 0 ||
+      isLoadAllPhotos.value
+    ) {
+      return;
+    }
+
+    isLoadingPhotos.value = true;
+    screenError.value = undefined;
+    const offset = photos.value.length;
+    const count = currentPhotosMaxItems - offset;
+    try {
+      const { items }: { items: IPhoto[] } = await vkStore.addRequestToQueue({
+        method: "photos.get",
+        params: {
+          album_id: albumId.value,
+          owner_id: ownerId.value,
+          offset,
+          count,
+          rev: groupsStore.config.reverseOrder ? 1 : 0,
+          extended: 1,
+        },
+      });
+      if (items.length === 0) {
+        isLoadAllPhotos.value = true;
+      }
+
+      for (let newPhoto of items) {
+        newPhoto.__state = {
+          index: photos.value.length,
+        };
+        photosMap.value.set(
+          PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id),
+          newPhoto,
+        );
+        photos.value.push(newPhoto);
+      }
+    } catch (ex: any) {
+      screenError.value = ex;
+    }
+    isInit.value = true;
+    isLoadingPhotos.value = false;
+    albumRef.value?.updateVisibleItems(true);
+  };
+
+  const onScrollerUpdate = (
+    startIndex: number,
+    endIndex: number,
+    visibleStartIndex: number,
+    visibleEndIndex: number,
+  ) => {
+    if (endIndex + countOneLoad / 3 < photosMaxItems.value) {
+      return;
+    }
+
+    onMoreLoad();
   };
 
   watch([albumHistoryItem, album, currentPhotoIndex], () => {
@@ -172,7 +226,7 @@ export function useAlbum(
   );
 
   watch(
-    () => useGroups().config.reverseOrder,
+    () => groupsStore.config.reverseOrder,
     async () => {
       onClearError();
       onClearPhotos();
@@ -180,66 +234,7 @@ export function useAlbum(
     },
   );
 
-  watch(
-    photosMaxItems,
-    async () => {
-      const maxItems = photosMaxItems.value;
-      if (isLoadingPhotos.value || maxItems === 0 || isLoadAllPhotos.value) {
-        return;
-      }
-
-      isLoadingPhotos.value = true;
-      screenError.value = undefined;
-      const offset = photos.value.length;
-      const count = maxItems - offset;
-      try {
-        const { items }: { items: IPhoto[] } = await useVk().addRequestToQueue({
-          method: "photos.get",
-          params: {
-            album_id: albumId.value,
-            owner_id: ownerId.value,
-            offset,
-            count,
-            rev: useGroups().config.reverseOrder ? 1 : 0,
-            extended: 1,
-          },
-        });
-        if (items.length === 0) {
-          isLoadAllPhotos.value = true;
-        }
-
-        for (let newPhoto of items) {
-          newPhoto.__state = {
-            index: photos.value.length,
-          };
-          photosMap.value.set(
-            PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id),
-            newPhoto,
-          );
-          photos.value.push(newPhoto);
-        }
-      } catch (ex: any) {
-        screenError.value = ex;
-      }
-      isInit.value = true;
-      isLoadingPhotos.value = false;
-      albumRef.value?.updateVisibleItems(true);
-    },
-    { immediate: true },
-  );
-
-  const onScrollerUpdate = (
-    startIndex: number,
-    endIndex: number,
-    visibleStartIndex: number,
-    visibleEndIndex: number,
-  ) => {
-    if (endIndex + countOneLoad / 3 < photosMaxItems.value) {
-      return;
-    }
-
-    onMoreLoad();
-  };
+  watch(photosMaxItems, onLoad, { immediate: true });
 
   watch(
     [photoId, isLoadingPhotos],
