@@ -45,7 +45,7 @@ const items = computedAsync<HistoryItemComputed[] | undefined>(() =>
       }
 
       if (item.type === "vc") {
-        const group: IGroup | undefined = groupsStore.getGroupById(
+        const group: IGroup | undefined = await groupsStore.getGroupByIdOrLoad(
           -item.ownerId,
         );
         const title = group?.name ?? item.ownerId;
