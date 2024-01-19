@@ -65,7 +65,8 @@ const onLinkOrIdChanged = async () => {
   }
 
   const groups = await getGroupsByLinksOrIds([newGroup.linkOrId]);
-  if (groups.length <= 0) {
+  // вк для несуществующих сообществ возвращает объект с пустым именем
+  if (groups.length <= 0 || !groups[0].name) {
     currentGroup.value = undefined;
     return;
   }
