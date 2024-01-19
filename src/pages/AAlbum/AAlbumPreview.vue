@@ -4,7 +4,6 @@ import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { icons } from "@/common/consts";
 import { openUrl } from "@/helpers/openUrl";
-import { saveAs } from "file-saver";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { IPhoto } from "@/store/groups/types";
 
@@ -33,12 +32,7 @@ const onShowContextMenu = (e: MouseEvent) => {
       label: "Скачать",
       icon: h(icons.Icon16DownloadOutline),
       onClick: () => {
-        if (originalSize.value) {
-          saveAs(
-            originalSize.value.url,
-            PhotoHelper.getPhotoFileName(props.photo),
-          );
-        }
+        return PhotoHelper.downloadPhoto(props.photo);
       },
     },
   ]);

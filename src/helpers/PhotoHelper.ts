@@ -5,6 +5,8 @@ import { VK_MAX_PHOTO_SIZE } from "@/common/consts";
 import { ComputedRef } from "vue";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
+import bridge from "@vkontakte/vk-bridge";
+import { saveAs } from "file-saver";
 
 export class PhotoHelper {
   static getOriginalSize(sizes: IPhotoSize[] | undefined) {
@@ -89,6 +91,24 @@ export class PhotoHelper {
 
   static getPhotoFileName(photo: IPhoto) {
     return `photo${photo.owner_id}_${photo.id}.jpg`;
+  }
+
+  static async downloadPhoto(photo: IPhoto) {
+    const originalSize = PhotoHelper.getOriginalSize(photo.sizes);
+    const filename = PhotoHelper.getPhotoFileName(photo);
+    if (originalSize) {
+      try {
+        await bridge.send("VKWebAppDownloadFile", {
+          url: originalSize.url,
+          filename,
+        });
+      } catch (ex: any) {
+        // 6 - VKWebAppDownloadFile. Unsupported platform
+        if (ex?.error_data?.error_code === 6) {
+          saveAs(originalSize.url, filename);
+        }
+      }
+    }
   }
 
   /** @description Это максимальный размер фото для ВКонтакте? */

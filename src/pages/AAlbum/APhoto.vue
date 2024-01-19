@@ -4,7 +4,6 @@ import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { openUrl } from "@/helpers/openUrl";
 import { dateTimeFormatter, icons, styledIcons } from "@/common/consts";
-import { saveAs } from "file-saver";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { useGroups } from "@/store/groups/groups";
 import { useApp } from "@/store/app/app";
@@ -123,12 +122,7 @@ const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
     label: "Скачать",
     icon: h(icons.Icon16DownloadOutline),
     onClick: () => {
-      if (originalSize.value) {
-        saveAs(
-          originalSize.value.url,
-          PhotoHelper.getPhotoFileName(props.photo),
-        );
-      }
+      return PhotoHelper.downloadPhoto(props.photo);
     },
   });
   items.push({
