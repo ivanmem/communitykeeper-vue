@@ -147,7 +147,7 @@ const { Icon16FolderOutline } = icons;
             </div>
           </div>
           <VTextField
-            v-model="renameDialog.newSettings.folder"
+            v-model.trim="renameDialog.newSettings.folder"
             :counter="maxFolderLength"
             :rules="folderRules"
             label="Название"
@@ -158,7 +158,7 @@ const { Icon16FolderOutline } = icons;
           <VSpacer />
           <VBtn @click="renameDialog = undefined">Закрыть</VBtn>
           <VBtn
-            :disabled="!valid || !renameDialog.newSettings.folder.length"
+            :disabled="!valid || !renameDialog.newSettings.folder"
             @click="onSaveSettings"
           >
             Сохранить

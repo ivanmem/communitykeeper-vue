@@ -152,7 +152,7 @@ const valid = ref(false);
           :rules="folderRules"
           label="Папка"
           required
-          @update:model-value="newGroup.folder = $event ?? ''"
+          @update:model-value="newGroup.folder = ($event ?? '').trim()"
         />
         <VRow no-gutters style="gap: 10px; margin-top: 10px">
           <VBtn
