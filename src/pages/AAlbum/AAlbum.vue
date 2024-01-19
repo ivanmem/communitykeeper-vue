@@ -8,10 +8,13 @@ import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { useGroups } from "@/store/groups/groups";
 import { openUrl } from "@/helpers/openUrl";
-import { computed } from "vue";
+import { computed, toRef } from "vue";
 import { router } from "@/router";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useDialog } from "@/store/dialog/dialog";
+import { computedAsync } from "@vueuse/core";
+import { IGroup } from "@/store/groups/types";
+import { useScreenSpinner } from "@/composables/useScreenSpinner";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -44,7 +47,12 @@ const albumUrl = computed(() =>
   PhotoHelper.getAlbumUrl(props.ownerId, props.albumId),
 );
 const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
-const group = computed(() => groupsStore.getGroupById(-props.ownerId));
+const group = computedAsync<IGroup | undefined>(
+  () => groupsStore.getGroupByIdOrLoad(-props.ownerId),
+  undefined,
+);
+
+useScreenSpinner(toRef(() => !group.value));
 
 const onHelp = () => {
   dialogStore.alert({
@@ -77,7 +85,7 @@ const onHelp = () => {
     <VBtn :icon="icons.Icon16InfoCircle" variant="text" @click="onHelp" />
   </FixedTeleport>
   <div class="a-album vkuiGroup__inner Group__inner">
-    <template v-if="isInit">
+    <template v-if="isInit && group">
       <div style="padding-inline: 16px">
         <VBreadcrumbs density="compact">
           <VBreadcrumbsItem style="padding-left: 0" to="/">
@@ -86,7 +94,7 @@ const onHelp = () => {
           <VIcon icon="mdi-chevron-right" size="small" />
           <VBreadcrumbsItem
             :href="`https://${ownerUrl}`"
-            :title="group?.name ?? 'Источник'"
+            :title="group.name || 'Источник'"
             @click.prevent="router.replace(`/albums/${ownerId}`)"
           />
           <VIcon icon="mdi-chevron-right" size="small" />

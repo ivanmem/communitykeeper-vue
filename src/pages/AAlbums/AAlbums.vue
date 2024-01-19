@@ -37,7 +37,7 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
           <VIcon icon="mdi-chevron-right" size="small" />
           <VBreadcrumbsItem
             :href="`https://${ownerUrl}`"
-            :title="group?.name ?? 'Источник'"
+            :title="group?.name || 'Источник'"
             style="opacity: 0.7"
             @click.prevent="openUrl(`//${ownerUrl}`)"
           />

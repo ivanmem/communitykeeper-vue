@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useHistory } from "@/store/history/history";
-import { computed } from "vue";
+import { toRef } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { IGroup } from "@/store/groups/types";
@@ -9,6 +9,8 @@ import FixedTeleport from "@/components/FixedTeleport.vue";
 import { from } from "linq-to-typescript";
 import { useDialog } from "@/store/dialog/dialog";
 import { useSmartOpenUrl } from "@/composables/useSmartOpenLink";
+import { computedAsync } from "@vueuse/core";
+import { useScreenSpinner } from "@/composables/useScreenSpinner";
 
 const historyStore = useHistory();
 const groupsStore = useGroups();
@@ -23,11 +25,11 @@ interface HistoryItemComputed {
   onClick?: () => any;
 }
 
-const items = computed<HistoryItemComputed[]>(() =>
+const items = computedAsync<HistoryItemComputed[] | undefined>(() =>
   from(historyStore.historyArray)
-    .select((item) => {
+    .selectAsync(async (item) => {
       if (item.type === "va") {
-        const group: IGroup | undefined = groupsStore.getGroupById(
+        const group: IGroup | undefined = await groupsStore.getGroupByIdOrLoad(
           -item.ownerId,
         );
         const title = group?.name ?? item.ownerId;
@@ -79,6 +81,8 @@ const items = computed<HistoryItemComputed[]>(() =>
     .toArray(),
 );
 
+useScreenSpinner(toRef(() => items.value === undefined));
+
 const onClear = async () => {
   const result = await dialogStore.confirm({
     title: "Очистка истории просмотров",
@@ -100,7 +104,7 @@ const onClear = async () => {
       @click="onClear"
     />
   </FixedTeleport>
-  <VCard class="overflow-block">
+  <VCard class="overflow-block" v-if="items !== undefined">
     <v-sheet
       v-if="items.length === 0"
       class="pa-4 text-center mx-auto"

@@ -1,5 +1,6 @@
-import { MaybeRefOrGetter, toValue, watch } from "vue";
+import { computed, MaybeRefOrGetter, toRef, toValue, watch } from "vue";
 import { useApp } from "@/store/app/app";
+import { useActivated } from "@/composables/useActivated";
 
 export function useScreenSpinner(
   loading: MaybeRefOrGetter<boolean>,
@@ -7,16 +8,18 @@ export function useScreenSpinner(
 ) {
   id = id ?? Math.random();
   const appStore = useApp();
+  const isActivated = useActivated();
+  const finallyLoading = computed(() => isActivated.value && toValue(loading));
 
   watch(
-    () => toValue(loading),
-    async (loading) => {
-      if (loading) {
+    finallyLoading,
+    async (finallyLoading) => {
+      if (finallyLoading) {
         appStore.loadingSet.add(id);
       } else {
         appStore.loadingSet.delete(id);
       }
     },
-    { immediate: toValue(loading) },
+    { immediate: finallyLoading.value },
   );
 }

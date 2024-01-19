@@ -15,6 +15,7 @@ import { useScreenSpinner } from "@/composables/useScreenSpinner";
 const countOneLoad = 100;
 
 export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
+  const groupsStore = useGroups();
   const ownerId = computed(() => toValue(ownerIdGetter));
   const isInit = ref(false);
   useScreenSpinner(() => !isInit.value);
@@ -48,7 +49,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       onClearComponent();
       if (+ownerId.value < 0) {
         try {
-          group.value = await useGroups().getGroupByIdOrLoad(-ownerId.value);
+          group.value = await groupsStore.getGroupByIdOrLoad(-ownerId.value);
         } catch {}
       }
 
