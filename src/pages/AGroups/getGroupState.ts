@@ -20,25 +20,27 @@ export function getGroupState(group: IGroup): GroupState {
   }
 
   if (!isPartialBan) {
-    switch (group.member_status) {
-      case IGroupMemberStatus.NotMember:
-        text.push("Вы не участник");
-        break;
-      case IGroupMemberStatus.Member:
-        text.push("Вы участник");
-        break;
-      case IGroupMemberStatus.NotSureWillAttendEvent:
-        text.push("Вы не уверены, что посетите мероприятие");
-        break;
-      case IGroupMemberStatus.DeclinedInvitation:
-        text.push("Вы отклонили приглашение");
-        break;
-      case IGroupMemberStatus.JoiningRequestSent:
-        text.push("Заявка отправлена");
-        break;
-      case IGroupMemberStatus.Invited:
-        text.push("Вас пригласили");
-        break;
+    if (group.member_status === IGroupMemberStatus.Member || group.is_member) {
+      text.push("Вы участник");
+    } else {
+      switch (group.member_status) {
+        case IGroupMemberStatus.NotMember:
+        case undefined:
+          text.push("Вы не участник");
+          break;
+        case IGroupMemberStatus.NotSureWillAttendEvent:
+          text.push("Вы не уверены, что посетите мероприятие");
+          break;
+        case IGroupMemberStatus.DeclinedInvitation:
+          text.push("Вы отклонили приглашение");
+          break;
+        case IGroupMemberStatus.JoiningRequestSent:
+          text.push("Заявка отправлена");
+          break;
+        case IGroupMemberStatus.Invited:
+          text.push("Вас пригласили");
+          break;
+      }
     }
   }
 

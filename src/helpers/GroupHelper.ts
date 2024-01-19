@@ -1,4 +1,4 @@
-import { GroupState, IGroup } from "@/store/groups/types";
+import { GroupState, IGroup, IGroupMemberStatus } from "@/store/groups/types";
 import {
   FiltersType,
   GroupsSortEnum,
@@ -71,7 +71,9 @@ class GroupHelper {
     if (filters.sort !== undefined && filters.sort !== GroupsSortEnum.date) {
       switch (filters.sort) {
         case GroupsSortEnum.random: {
-          groupsIter = groupsIter.orderBy((x) => GroupHelper.getState(x).randomIndex);
+          groupsIter = groupsIter.orderBy(
+            (x) => GroupHelper.getState(x).randomIndex,
+          );
           break;
         }
         default: {
@@ -112,7 +114,18 @@ class GroupHelper {
       { group_id: group.id },
     );
     if (result.result) {
-      group.is_member = isMember;
+      if (isMember) {
+        if (group.is_closed) {
+          group.member_status = IGroupMemberStatus.JoiningRequestSent;
+          group.is_member = false;
+        } else {
+          group.is_member = true;
+        }
+      } else {
+        group.is_member = false;
+        group.member_status = IGroupMemberStatus.NotMember;
+      }
+
       group.__state = undefined;
     }
 

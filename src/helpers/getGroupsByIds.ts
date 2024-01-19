@@ -7,6 +7,7 @@ export async function getGroupsByLinksOrIds(
   linksOrIds: (string | number)[],
 ): Promise<IGroup[]> {
   try {
+    const vkStore = useVk();
     return await from(linksOrIds)
       .select((value) => {
         if (isNumber(value)) {
@@ -25,7 +26,7 @@ export async function getGroupsByLinksOrIds(
       .chunk(500)
       .selectManyAsync(
         (groupIdsChunk): Promise<IGroup[]> =>
-          useVk().addRequestToQueue({
+          vkStore.addRequestToQueue({
             method: "groups.getById",
             params: {
               group_ids: groupIdsChunk.join(),

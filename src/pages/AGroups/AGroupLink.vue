@@ -292,7 +292,7 @@ watch(showCounters, () => {
   opacity: 0.7;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: pre-line;
 }
 
 .a-group-link__avatar {
