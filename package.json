@@ -1,6 +1,6 @@
 {
   "name": "local-vk-groups-catalog-vue",
-  "version": "0.0.2",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "build": "vue-tsc && vite build",

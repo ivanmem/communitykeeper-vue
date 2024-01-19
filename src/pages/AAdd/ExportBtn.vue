@@ -117,7 +117,7 @@ watch(
         style="gap: 10px"
       >
         <VBtn
-          :disabled="selectedGroupsCount === 0"
+          :disabled="selectedGroupsCount === 0 || appStore.isApp"
           :icon="icons.Icon24DownloadOutline"
           title="Скачать"
           variant="tonal"
