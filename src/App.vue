@@ -30,6 +30,9 @@ const vuetifyDefaults: VDefaultsProvider["defaults"] = {
     closeOnBack: true,
     scrim: "black",
   },
+  VSwitch: {
+    color: "primary",
+  },
   global: {
     clearable: true,
   },
