@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { onBeforeRouteUpdate } from "vue-router";
+
 export interface AAlertDialogProps {
   title?: string;
   subtitle?: string;
@@ -16,11 +18,20 @@ const emits = defineEmits<{
   close: [];
   confirm: [];
 }>();
+
+onBeforeRouteUpdate((to, from, next) => {
+  if (!props.persistent) {
+    emits("close");
+  }
+
+  next();
+});
 </script>
 <template>
   <VDialog
     :model-value="true"
     :persistent="props.persistent ?? false"
+    :close-on-back="true"
     class="a-alert-dialog"
     max-width="max-content"
     @update:model-value="!$event && emits('close')"

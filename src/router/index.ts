@@ -8,6 +8,7 @@ import {
 import bridge from "@vkontakte/vk-bridge";
 import { useVk } from "@/store/vk/vk";
 import { useHistory } from "@/store/history/history";
+import { useDialog } from "@/store/dialog/dialog";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -53,6 +54,15 @@ const routes: RouteRecordRaw[] = [
 export const router = createRouter({
   history: createWebHashHistory("https://vk.com/app51658481"),
   routes,
+});
+
+router.beforeResolve((to, from, next) => {
+  const dialogStore = useDialog();
+  if (dialogStore.windows.size > 0) {
+    return false;
+  }
+
+  next();
 });
 
 router.afterEach(async (to, from) => {
