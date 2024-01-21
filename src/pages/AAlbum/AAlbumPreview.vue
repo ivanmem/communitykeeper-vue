@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import { computed, h, toRefs } from "vue";
+import { computed, h } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { icons } from "@/common/consts";
 import { openUrl } from "@/helpers/openUrl";
-import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { IPhoto } from "@/store/groups/types";
 
-const props = defineProps<{ photo: IPhoto }>();
+const props = defineProps<{
+  photo: IPhoto;
+  sizes: { width: number; height: number };
+}>();
 const originalSize = computed(() =>
-  PhotoHelper.getOriginalSize(props.photo.sizes),
+  PhotoHelper.getOriginalSize(props.photo.sizes)
 );
 const previewSize = computed(() =>
-  PhotoHelper.getPreviewSize(props.photo.sizes, AlbumsPreviewSizes),
+  PhotoHelper.getPreviewSize(props.photo.sizes, props.sizes)
 );
-
-const { width, height } = toRefs(AlbumsPreviewSizes);
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
@@ -26,15 +26,15 @@ const onShowContextMenu = (e: MouseEvent) => {
         if (originalSize.value) {
           openUrl(originalSize.value.url);
         }
-      },
+      }
     },
     {
       label: "Скачать",
       icon: h(icons.Icon16DownloadOutline),
       onClick: () => {
         return PhotoHelper.downloadPhoto(props.photo);
-      },
-    },
+      }
+    }
   ]);
 };
 </script>
@@ -60,12 +60,12 @@ const onShowContextMenu = (e: MouseEvent) => {
   background-size: cover;
   cursor: pointer;
   display: inline-block;
-  height: v-bind("`${height}px`");
-  min-height: v-bind("`${height}px`");
-  min-width: v-bind("`${width}px`");
+  height: v-bind("`${props.sizes.height}px`");
+  min-height: v-bind("`${props.sizes.height}px`");
+  min-width: v-bind("`${props.sizes.width}px`");
   position: relative;
   vertical-align: top;
-  width: v-bind("`${width}px`");
+  width: v-bind("`${props.sizes.width}px`");
 
   img {
     height: 100%;

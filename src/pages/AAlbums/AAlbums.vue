@@ -2,7 +2,6 @@
 import { computed } from "vue";
 import AAlbumsPreview from "@/pages/AAlbums/AAlbumsPreview.vue";
 import { RecycleScroller } from "vue-virtual-scroller";
-import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { useAlbums } from "@/pages/AAlbums/useAlbums";
 import { icons } from "@/common/consts";
 import { openUrl } from "@/helpers/openUrl";
@@ -18,6 +17,7 @@ const {
   onScrollerUpdate,
   albumsRef,
   screenError,
+  sizes
 } = useAlbums(() => props.ownerId);
 const { Icon16Link } = icons;
 const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
@@ -50,8 +50,8 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
         ref="albumsRef"
         v-slot="{ item, index }"
         :gridItems="gridItems"
-        :item-size="AlbumsPreviewSizes.height"
-        :itemSecondarySize="AlbumsPreviewSizes.width"
+        :item-size="sizes.height"
+        :itemSecondarySize="sizes.width"
         :items="albums"
         :ready="!isLoadingAlbums"
         :total-size="albums.length"
@@ -61,7 +61,12 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
         key-field="id"
         @update="onScrollerUpdate"
       >
-        <AAlbumsPreview :key="item.id" :album="item" :index="index" />
+        <AAlbumsPreview
+          :key="item.id"
+          :album="item"
+          :index="index"
+          :sizes="sizes"
+        />
       </RecycleScroller>
     </template>
 

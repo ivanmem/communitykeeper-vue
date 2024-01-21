@@ -1,19 +1,19 @@
 <script lang="ts" setup>
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
-import { computed, h, toRefs } from "vue";
+import { computed, h } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { router } from "@/router";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { icons } from "@/common/consts";
 import { openUrl } from "@/helpers/openUrl";
-import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 
-const props = defineProps<{ album: IAlbumItem }>();
+const props = defineProps<{
+  album: IAlbumItem;
+  sizes: { width: number; height: number };
+}>();
 const previewSize = computed(() =>
-  PhotoHelper.getPreviewSize(props.album.sizes, AlbumsPreviewSizes),
+  PhotoHelper.getPreviewSize(props.album.sizes, props.sizes)
 );
-
-const { width, height } = toRefs(AlbumsPreviewSizes);
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
@@ -22,10 +22,10 @@ const onShowContextMenu = (e: MouseEvent) => {
       icon: h(icons.Icon16LogoVk),
       onClick: () => {
         openUrl(
-          `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`,
+          `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`
         );
-      },
-    },
+      }
+    }
   ]);
 };
 </script>
@@ -53,11 +53,11 @@ const onShowContextMenu = (e: MouseEvent) => {
   background-repeat: no-repeat;
   background-size: cover;
   cursor: pointer;
-  height: v-bind("`${height}px`");
-  min-height: v-bind("`${height}px`");
-  min-width: v-bind("`${width}px`");
+  height: v-bind("`${props.sizes.height}px`");
+  min-height: v-bind("`${props.sizes.height}px`");
+  min-width: v-bind("`${props.sizes.width}px`");
   position: relative;
-  width: v-bind("`${width}px`");
+  width: v-bind("`${props.sizes.width}px`");
 
   img {
     height: 100%;
@@ -69,9 +69,9 @@ const onShowContextMenu = (e: MouseEvent) => {
 .photos_album_title_wrap {
   background: rgb(2, 0, 36);
   background: linear-gradient(
-    0deg,
-    rgba(2, 0, 36, 0.8968181022408963) 12%,
-    rgba(255, 255, 255, 0) 100%
+      0deg,
+      rgba(2, 0, 36, 0.8968181022408963) 12%,
+      rgba(255, 255, 255, 0) 100%
   );
   bottom: 0;
   box-shadow: -2px -2px 4px 0px rgba(0, 0, 0, 0.4) inset;

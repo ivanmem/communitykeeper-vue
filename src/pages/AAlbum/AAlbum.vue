@@ -4,7 +4,6 @@ import APhoto from "@/pages/AAlbum/APhoto.vue";
 import { icons, styledIcons } from "@/common/consts";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useAlbum } from "@/pages/AAlbum/useAlbum";
-import { AlbumsPreviewSizes } from "@/pages/AAlbums/consts";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { useGroups } from "@/store/groups/groups";
 import { openUrl } from "@/helpers/openUrl";
@@ -35,21 +34,22 @@ const {
   albumRef,
   gridItems,
   isLoadingPhotos,
+  sizes
 } = useAlbum(
   () => props.ownerId,
   () => props.albumId,
-  () => props.photoId,
+  () => props.photoId
 );
 const { Icon16Link } = icons;
 const groupsStore = useGroups();
 const dialogStore = useDialog();
 const albumUrl = computed(() =>
-  PhotoHelper.getAlbumUrl(props.ownerId, props.albumId),
+  PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)
 );
 const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 const group = computedAsync<IGroup | undefined>(
   () => groupsStore.getGroupByIdOrLoad(-props.ownerId),
-  undefined,
+  undefined
 );
 
 useScreenSpinner(toRef(() => !group.value));
@@ -75,7 +75,7 @@ const onHelp = () => {
 
 При просмотре фото сделайте свайп вниз, чтобы открыть дополнительную информацию.
 
-Вы можете перейти в полноэкранный режим клавишей F11, либо нажатием по специальной кнопке справа от справки.`,
+Вы можете перейти в полноэкранный режим клавишей F11, либо нажатием по специальной кнопке справа от справки.`
   });
 };
 </script>
@@ -126,10 +126,10 @@ const onHelp = () => {
         ref="albumRef"
         v-slot="{ item, index }"
         :gridItems="gridItems"
-        :item-size="AlbumsPreviewSizes.height"
-        :itemSecondarySize="AlbumsPreviewSizes.width"
+        :item-size="sizes.height"
+        :itemSecondarySize="sizes.width"
         :items="photos"
-        :min-item-size="AlbumsPreviewSizes.height"
+        :min-item-size="sizes.height"
         :ready="!isLoadingPhotos"
         :total-size="photos.length"
         class="a-album__items"
@@ -141,6 +141,7 @@ const onHelp = () => {
           :key="item.id"
           :index="index"
           :photo="item"
+          :sizes="sizes"
           @click="setCurrentPhotoIndex(index)"
         />
       </RecycleScroller>
