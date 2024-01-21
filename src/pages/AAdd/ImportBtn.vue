@@ -79,10 +79,40 @@ const onImportFileChange = (event: any) => {
     return;
   }
 
+  const file = event.target.files[0];
+  const mb = file.size / 1000000;
+  if (mb > 1) {
+    dialogStore.alert({
+      title: "Ошибка",
+      subtitle:
+        "Слишком большой размер файла. Резервная копия не может быть больше мегабайта.",
+    });
+    return;
+  }
+
+  if (!file.name?.endsWith(".json")) {
+    dialogStore.alert({
+      title: "Ошибка",
+      subtitle:
+        "Неверный формат файла. Резервная копия должна быть в формате .json.",
+    });
+    return;
+  }
+
   const reader = new FileReader();
 
   const onload = appStore.wrapLoading(async (e) => {
-    const data = JSON.parse(e.target!.result as string);
+    let data: any;
+    try {
+      data = JSON.parse(e.target!.result as string);
+    } catch {
+      dialogStore.alert({
+        title: "Ошибка",
+        subtitle: "Выбранный файл повреждён.",
+      });
+      return;
+    }
+
     if (!isGroupsExport(data)) {
       dialogStore.alert({
         title: "Ошибка импорта",
@@ -101,7 +131,7 @@ const onImportFileChange = (event: any) => {
   });
 
   reader.onload = onload;
-  reader.readAsText(event.target.files[0]);
+  reader.readAsText(file);
 };
 
 const onSaveImport = async () => {
