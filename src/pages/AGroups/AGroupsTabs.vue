@@ -2,7 +2,7 @@
 import { useApp } from "@/store/app/app";
 import { useGroups } from "@/store/groups/groups";
 import { showContextMenu } from "@/helpers/showContextMenu";
-import { h, PropType, ref, StyleValue } from "vue";
+import { h, onDeactivated, PropType, ref, StyleValue } from "vue";
 import { icons } from "@/common/consts";
 import { useDialog } from "@/store/dialog/dialog";
 import { folderRules, maxFolderLength } from "@/common/formConsts";
@@ -100,6 +100,10 @@ const onSaveSettings = async () => {
 
 const valid = ref(false);
 const { Icon16FolderOutline } = icons;
+
+onDeactivated(() => {
+  renameDialog.value = undefined;
+});
 </script>
 <template>
   <div v-show="groupsStore.folders.length > 0" :style="style">
@@ -125,6 +129,7 @@ const { Icon16FolderOutline } = icons;
 
   <VDialog
     :model-value="renameDialog !== undefined"
+    close-on-back
     @update:model-value="renameDialog = undefined"
   >
     <VForm v-if="renameDialog" v-model="valid">

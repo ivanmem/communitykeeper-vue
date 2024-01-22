@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, h, nextTick, ref, watch } from "vue";
+import { computed, h, nextTick, onDeactivated, ref, watch } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { openUrl } from "@/helpers/openUrl";
@@ -209,6 +209,10 @@ const win = window;
 const dateTime = computed(() => {
   return dateTimeFormatter.format(new Date(props.photo.date * 1000));
 });
+
+onDeactivated(() => {
+  showMoreInfo.value = false;
+});
 </script>
 <template>
   <div
@@ -231,14 +235,14 @@ const dateTime = computed(() => {
       alt=""
     />
     <APhotoCounter
-      class="a-photo__info-top-left"
-      :date-time="dateTime"
-      :show-info="showInfo"
-      :photo-index="photo.__state.index"
       :count="count"
+      :date-time="dateTime"
+      :photo-index="photo.__state.index"
+      :show-info="showInfo"
+      class="a-photo__info-top-left"
     />
   </div>
-  <VDialog v-model="showMoreInfo">
+  <VDialog v-model="showMoreInfo" close-on-back>
     <VCard>
       <VCardTitle>Расширенная информация</VCardTitle>
       <VCardText>

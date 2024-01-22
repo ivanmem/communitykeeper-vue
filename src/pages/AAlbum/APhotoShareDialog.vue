@@ -3,7 +3,7 @@ import useClipboard from "vue-clipboard3";
 import { IPhoto } from "@/store/groups/types";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import bridge from "@vkontakte/vk-bridge";
-import { computed, onActivated, shallowRef } from "vue";
+import { computed, onActivated, onDeactivated, shallowRef } from "vue";
 import Icon24CopyOutline from "@vkontakte/icons/src/svg/24/copy_outline_24.svg?component";
 import Icon24Linked from "@vkontakte/icons/src/svg/24/linked_24.svg?component";
 import { icons } from "@/common/consts";
@@ -36,11 +36,16 @@ onActivated(() => {
   IconCopyLink.value = Icon24Linked;
   IconCopyDirectLink.value = Icon24Linked;
 });
+
+onDeactivated(() => {
+  emits("close");
+});
 </script>
 <template>
   <VDialog
     :model-value="true"
     :persistent="false"
+    close-on-back
     max-width="max-content"
     @update:model-value="!$event && emits('close')"
   >

@@ -159,6 +159,7 @@ watch(importFolders, () => {
     :fullscreen="true"
     :model-value="show"
     :scrim="false"
+    close-on-back
     transition="dialog-bottom-transition"
     @update:model-value="show = $event"
   >

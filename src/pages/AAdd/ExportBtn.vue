@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import useClipboard from "vue-clipboard3";
 import { icons, styledIcons } from "@/common/consts";
-import { computed, ref, watch } from "vue";
+import { computed, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import AToolbar from "@/components/AToolbar.vue";
 import { useDialog } from "@/store/dialog/dialog";
@@ -33,12 +33,17 @@ watch(
   },
   { immediate: true },
 );
+
+onDeactivated(() => {
+  show.value = false;
+});
 </script>
 <template>
   <VDialog
     :fullscreen="true"
     :model-value="show"
     :scrim="false"
+    close-on-back
     transition="dialog-bottom-transition"
     @update:model-value="show = $event"
   >
