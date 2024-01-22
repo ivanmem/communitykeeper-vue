@@ -61,7 +61,7 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
       Icon28PictureOutline,
       "Фотографий",
       `//vk.com/album-${group.id}_00`,
-      `/albums/-${group.id}/wall`,
+      `/albums/-${group.id}/-7`,
       true,
     );
     add(

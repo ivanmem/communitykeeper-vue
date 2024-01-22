@@ -67,10 +67,11 @@ router.beforeResolve((to, from, next) => {
 
 router.afterEach(async (to, from) => {
   if (to.path.startsWith("/album")) {
-    let [ownerId, albumId] = to.path
+    let [ownerIdStr, albumIdStr] = to.path
       .substring("/album".length)
-      .split("_")
-      .map(parseFloat);
+      .split("_");
+    const ownerId = parseFloat(ownerIdStr);
+    let albumId = albumIdStr == "wall" ? -7 : parseFloat(albumIdStr);
     if (albumId == 0) {
       albumId = -6;
     }

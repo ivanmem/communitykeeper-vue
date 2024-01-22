@@ -48,7 +48,7 @@ export class PhotoHelper {
       albumId = 0;
     }
 
-    if (albumId === "wall") {
+    if (albumId === "wall" || albumId == -7) {
       albumId = "00";
     }
 

@@ -331,6 +331,7 @@ export const useVk = defineStore("vk", {
           need_system: 1,
           need_covers: 1,
           photo_sizes: 1,
+          album_ids: -7,
           offset,
           count,
         },

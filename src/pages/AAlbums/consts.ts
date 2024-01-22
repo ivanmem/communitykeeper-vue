@@ -18,8 +18,8 @@ export const AlbumsPreviewSizesInitial = computed(() => {
 export function getStaticAlbums(owner_id: string | number): IAlbumItem[] {
   return [
     {
-      title: "Фото на стене",
-      id: "wall",
+      title: "Фотографии сообщества",
+      id: -7,
       size: "?",
       owner_id: +owner_id
     }

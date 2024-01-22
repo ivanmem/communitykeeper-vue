@@ -1,7 +1,10 @@
 import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { useVk } from "@/store/vk/vk";
 import toString from "lodash/toString";
-import { AlbumsPreviewSizesInitial, getStaticAlbums } from "@/pages/AAlbums/consts";
+import {
+  AlbumsPreviewSizesInitial,
+  getStaticAlbums,
+} from "@/pages/AAlbums/consts";
 import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
@@ -19,23 +22,29 @@ const countOneLoad = 150;
 export function useAlbum(
   ownerIdGetter: MaybeRefOrGetter<number | string>,
   albumIdGetter: MaybeRefOrGetter<number | string>,
-  photoIdGetter: MaybeRefOrGetter<number | string | undefined>
+  photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
 ) {
   const photos = ref<IPhoto[]>([]);
   const photosMap = ref<Map<IPhotoKey, IPhoto>>(new Map());
   const ownerId = computed(() => toValue(ownerIdGetter));
-  const albumId = computed(() => toValue(albumIdGetter));
+  const albumId = computed(() => {
+    const value = toValue(albumIdGetter);
+    return value == "wall" ? -7 : value;
+  });
   const photoId = computed(() => toValue(photoIdGetter));
   const photo = computed(
     () =>
       photosMap.value?.get(
         PhotoHelper.getPhotoKeyOrUndefined(ownerId.value, photoId.value) ??
-        ("" as IPhotoKey)
-      )
+          ("" as IPhotoKey),
+      ),
   );
   const album = ref<IAlbumItem | undefined>();
   const albumRef = ref<InstanceType<typeof RecycleScroller>>();
-  const { sizes, gridItems } = useSizesColumns(albumRef, AlbumsPreviewSizesInitial);
+  const { sizes, gridItems } = useSizesColumns(
+    albumRef,
+    AlbumsPreviewSizesInitial,
+  );
   const screenError = ref<any>();
   const isInit = ref(false);
   const isLoadingPhotos = ref(false);
@@ -45,12 +54,12 @@ export function useAlbum(
   const groupsStore = useGroups();
   const vkStore = useVk();
   const albumHistoryItem = computed(() =>
-    historyStore.getViewAlbum(ownerId.value, albumId.value)
+    historyStore.getViewAlbum(ownerId.value, albumId.value),
   );
   const albumCount = computed(
     () =>
       toNumberOrUndefined(album.value?.size) ??
-      (isLoadAllPhotos ? photos.value.length : `${photos.value.length}+`)
+      (isLoadAllPhotos ? photos.value.length : `${photos.value.length}+`),
   );
 
   useScreenSpinner(() => !isInit.value);
@@ -74,7 +83,7 @@ export function useAlbum(
     currentPhotoIndex,
     setCurrentPhotoIndex,
     setCurrentPhotoId,
-    onSwitchPhoto
+    onSwitchPhoto,
   } = useCurrentPhoto(
     photos,
     photosMap,
@@ -82,7 +91,7 @@ export function useAlbum(
     ownerId,
     isLoadingPhotos,
     isInit,
-    onMoreLoad
+    onMoreLoad,
   );
 
   const onClearPhotos = () => {
@@ -105,22 +114,18 @@ export function useAlbum(
   };
 
   const onUpdateAlbum = async () => {
-    const albums: PhotosGetAlbums["items"] =
-      albumId.value === "wall"
-        ? []
-        : (
-          await vkStore.getAlbums(ownerId.value).catch((ex) => {
-            if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
-              screenError.value = ex;
-              console.warn("Необработанная ошибка:", ex.errorInfo);
-            }
+    const albums: PhotosGetAlbums["items"] = (
+      await vkStore.getAlbums(ownerId.value).catch((ex) => {
+        if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
+          screenError.value = ex;
+          console.warn("Необработанная ошибка:", ex.errorInfo);
+        }
 
-            return { items: [], count: 0 };
-          })
-        ).items;
-    albums.push(...getStaticAlbums(ownerId.value));
+        return { items: getStaticAlbums(ownerId.value), count: 0 };
+      })
+    ).items;
     album.value = albums.find(
-      (x) => toString(x.id) === toString(albumId.value)
+      (x) => toString(x.id) === toString(albumId.value),
     );
   };
 
@@ -147,8 +152,8 @@ export function useAlbum(
           offset,
           count,
           rev: groupsStore.config.reverseOrder ? 1 : 0,
-          extended: 1
-        }
+          extended: 1,
+        },
       });
       if (items.length === 0) {
         isLoadAllPhotos.value = true;
@@ -156,11 +161,11 @@ export function useAlbum(
 
       for (let newPhoto of items) {
         newPhoto.__state = {
-          index: photos.value.length
+          index: photos.value.length,
         };
         photosMap.value.set(
           PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id),
-          newPhoto
+          newPhoto,
         );
         photos.value.push(newPhoto);
       }
@@ -176,7 +181,7 @@ export function useAlbum(
     startIndex: number,
     endIndex: number,
     visibleStartIndex: number,
-    visibleEndIndex: number
+    visibleEndIndex: number,
   ) => {
     if (endIndex + countOneLoad / 3 < photosMaxItems.value) {
       return;
@@ -209,7 +214,7 @@ export function useAlbum(
       await onUpdateAlbum();
       await onLoad();
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   watch(
@@ -218,7 +223,7 @@ export function useAlbum(
       onClearError();
       onClearPhotos();
       await onLoad();
-    }
+    },
   );
 
   watch(photosMaxItems, onLoad, { immediate: true });
@@ -234,7 +239,7 @@ export function useAlbum(
         }
       }
     },
-    { immediate: true, deep: true }
+    { immediate: true, deep: true },
   );
 
   return {
@@ -253,6 +258,6 @@ export function useAlbum(
     albumRef,
     gridItems,
     isLoadAllPhotos,
-    sizes
+    sizes,
   };
 }
