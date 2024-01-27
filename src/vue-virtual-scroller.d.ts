@@ -43,6 +43,8 @@ declare module "vue-virtual-scroller" {
     scrollToPosition(position: number);
 
     updateVisibleItems(checkItem?: boolean, checkPositionDiff?: boolean);
+
+    getListenerTarget(): Window;
   }
 
   export class DynamicScroller extends RecycleScroller {

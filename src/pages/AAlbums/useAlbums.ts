@@ -1,4 +1,10 @@
-import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
+import {
+  computed,
+  MaybeRefOrGetter,
+  ref,
+  toValue,
+  watch,
+} from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
@@ -10,6 +16,7 @@ import { useVk } from "@/store/vk/vk";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { useSizesColumns } from "@/composables/useSizesColumns";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
+import { useScrollRestore } from "@/composables/useScrollRestore";
 
 const countOneLoad = 100;
 
@@ -29,6 +36,8 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     AlbumsPreviewSizesInitial,
   );
   const screenError = ref<any>();
+
+  useScrollRestore(() => albumsRef.value?.$el);
 
   const onClearComponent = () => {
     isInit.value = false;
@@ -64,14 +73,16 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       isLoadingAlbums.value = true;
       const offset = albums.value.length;
       const count = albumsMaxItems.value - offset;
-      try {
-        const { items } = await useVk().getAlbums(ownerId.value, offset, count);
-        albums.value.push(...items);
-      } catch (ex: any) {
-        albums.value.push(...staticAlbums.value);
-        if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
-          screenError.value = ex;
-          console.warn("Необработанная ошибка:", ex.errorInfo);
+      if (count > 0) {
+        try {
+          const { items } = await useVk().getAlbums(ownerId.value, offset, count);
+          albums.value.push(...items);
+        } catch (ex: any) {
+          albums.value.push(...staticAlbums.value);
+          if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
+            screenError.value = ex;
+            console.warn("Необработанная ошибка:", ex.errorInfo);
+          }
         }
       }
 
