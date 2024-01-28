@@ -26,6 +26,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const isLoadingAlbums = ref(false);
   const group = ref<IGroup | undefined>();
   const staticAlbums = computed(() => getStaticAlbums(ownerId.value));
+  const staticAlbumsCount = ref(0);
   const albumsRef = ref<InstanceType<typeof RecycleScroller>>();
   const { sizes, gridItems } = useSizesColumns(
     albumsRef,
@@ -52,6 +53,18 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
         try {
           group.value = await groupsStore.getGroupByIdOrLoad(-ownerId.value);
         } catch {}
+        try {
+          const wallAlbum = await vkStore.createAlbumItem({
+            title: wallAlbumStatic.title,
+            album_id: wallAlbumStatic.id,
+            owner_id: +ownerId.value,
+          });
+          albums.value.push(wallAlbum);
+          staticAlbumsCount.value = 1;
+        } catch {
+          albums.value.push(...staticAlbums.value);
+          staticAlbumsCount.value = staticAlbums.value.length;
+        }
       }
 
       albumsMaxItems.value = countOneLoad; // это инициирует первую загрузку
@@ -67,9 +80,8 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       }
 
       isLoadingAlbums.value = true;
-      // -1 из-за wallAlbum. Чтоб в минус не уходило оборачиваем в max.
-      const offset = Math.max(0, albums.value.length - 1);
-      const count = Math.max(0, albumsMaxItems.value - offset - 1);
+      const offset = albums.value.length - staticAlbumsCount.value;
+      const count = albumsMaxItems.value - offset - staticAlbumsCount.value;
       if (count > 0) {
         try {
           const { items } = await vkStore.getAlbums(
@@ -77,15 +89,8 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
             offset,
             count,
           );
-          const wallAlbum = await vkStore.createAlbumItem({
-            title: wallAlbumStatic.title,
-            album_id: wallAlbumStatic.id,
-            owner_id: +ownerId.value,
-          });
-          albums.value.push(wallAlbum);
           albums.value.push(...items);
         } catch (ex: any) {
-          albums.value.push(...staticAlbums.value);
           if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
             screenError.value = ex;
             console.warn("Необработанная ошибка:", ex.errorInfo);
