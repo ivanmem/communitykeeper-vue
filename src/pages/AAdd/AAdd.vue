@@ -15,6 +15,7 @@ import ImportBtn from "@/pages/AAdd/ImportBtn.vue";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useActivated } from "@/composables/useActivated";
 import { folderRules, maxFolderLength } from "@/common/formConsts";
+import { watchDebounced } from "@vueuse/core";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -23,7 +24,7 @@ const queryParams = computed(() => route.query as AAddQueryParams);
 const newGroup = reactive({
   id: "",
   folder: "",
-  linkOrId: "",
+  linkOrId: ""
 });
 const isActivated = useActivated();
 
@@ -54,7 +55,7 @@ const removeGroup = async () => {
 };
 
 const isGroupAdded = computed(
-  () => newGroup.id && groupsStore.localGroups[newGroup.id],
+  () => newGroup.id && groupsStore.localGroups[newGroup.id]
 );
 
 const currentGroup = ref<undefined | IGroup>();
@@ -76,7 +77,7 @@ const onLinkOrIdChanged = async () => {
 
 const onRemoveAllGroups = async () => {
   const isConfirm = await dialogStore.confirm(
-    "Вы уверены, что хотите удалить все группы?",
+    "Вы уверены, что хотите удалить все группы?"
   );
   if (isConfirm) {
     groupsStore.removeLocalGroups();
@@ -93,9 +94,14 @@ const onHelp = () => {
     title: "💡 Справка",
     subtitle: `Во вкладке "Добавить" Вы можете:
 - добавить или удалить группы;
-- создать или применить резервную копию.`,
+- создать или применить резервную копию.`
   });
 };
+
+// для подгрузки текущей группы без смены фокуса на поле используем debounce
+watchDebounced(() => newGroup.linkOrId, () => {
+  onLinkOrIdChanged();
+}, { debounce: 1000 });
 
 watch(
   isActivated,
@@ -109,7 +115,7 @@ watch(
     newGroup.folder = folder || newGroup.folder;
     return onLinkOrIdChanged();
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 const valid = ref(false);
