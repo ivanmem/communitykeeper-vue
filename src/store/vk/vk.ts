@@ -10,11 +10,12 @@ import { watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { IRequestConfig } from "vkontakte-api/dist/types/shared";
 import { sleep } from "@/helpers/sleep";
-import { PhotosGetAlbums } from "@/store/vk/IAlbumItem";
+import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
 import { IAppInitOptions, useApp } from "@/store/app/app";
 import { useDialog } from "@/store/dialog/dialog";
 import { toStr } from "@/helpers/toStr";
+import { IPhoto } from "@/store/groups/types";
 
 export type WebAppConfig = Partial<
   MobileUpdateConfigData & MVKUpdateConfigData & VKUpdateConfigData
@@ -331,11 +332,46 @@ export const useVk = defineStore("vk", {
           need_system: 1,
           need_covers: 1,
           photo_sizes: 1,
-          album_ids: -7,
           offset,
           count,
         },
       });
+    },
+    photosGet(params: {
+      owner_id: number | string;
+      album_id: number | string;
+      offset?: number;
+      count?: number;
+      rev: 1 | 0;
+      extended: 1 | 0;
+      photo_sizes: 1 | 0;
+    }): Promise<{ items: IPhoto[]; count: number }> {
+      return this.addRequestToQueue({
+        method: "photos.get",
+        params,
+      });
+    },
+    async createAlbumItem(params: {
+      owner_id: number;
+      album_id: number;
+      title: string;
+    }): Promise<IAlbumItem> {
+      const result = await this.photosGet({
+        owner_id: params.owner_id,
+        album_id: params.album_id,
+        count: 1,
+        offset: 0,
+        rev: 0,
+        extended: 0,
+        photo_sizes: 1,
+      });
+      return {
+        owner_id: params.owner_id,
+        size: result.count,
+        title: params.title,
+        id: params.album_id,
+        sizes: result.items[0]?.sizes,
+      };
     },
     copyText(text: any) {
       return bridge.send("VKWebAppCopyText", {

@@ -1,16 +1,11 @@
-import {
-  computed,
-  MaybeRefOrGetter,
-  ref,
-  toValue,
-  watch,
-} from "vue";
+import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
 import {
   AlbumsPreviewSizesInitial,
   getStaticAlbums,
+  wallAlbumStatic,
 } from "@/pages/AAlbums/consts";
 import { useVk } from "@/store/vk/vk";
 import { RecycleScroller } from "vue-virtual-scroller";
@@ -22,6 +17,7 @@ const countOneLoad = 100;
 
 export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const groupsStore = useGroups();
+  const vkStore = useVk();
   const ownerId = computed(() => toValue(ownerIdGetter));
   const isInit = ref(false);
   useScreenSpinner(() => !isInit.value);
@@ -71,11 +67,22 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       }
 
       isLoadingAlbums.value = true;
-      const offset = albums.value.length;
-      const count = albumsMaxItems.value - offset;
+      // -1 из-за wallAlbum. Чтоб в минус не уходило оборачиваем в max.
+      const offset = Math.max(0, albums.value.length - 1);
+      const count = Math.max(0, albumsMaxItems.value - offset - 1);
       if (count > 0) {
         try {
-          const { items } = await useVk().getAlbums(ownerId.value, offset, count);
+          const { items } = await vkStore.getAlbums(
+            ownerId.value,
+            offset,
+            count,
+          );
+          const wallAlbum = await vkStore.createAlbumItem({
+            title: wallAlbumStatic.title,
+            album_id: wallAlbumStatic.id,
+            owner_id: +ownerId.value,
+          });
+          albums.value.push(wallAlbum);
           albums.value.push(...items);
         } catch (ex: any) {
           albums.value.push(...staticAlbums.value);

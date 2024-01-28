@@ -144,16 +144,14 @@ export function useAlbum(
     const offset = photos.value.length;
     const count = currentPhotosMaxItems - offset;
     try {
-      const { items }: { items: IPhoto[] } = await vkStore.addRequestToQueue({
-        method: "photos.get",
-        params: {
-          album_id: albumId.value,
-          owner_id: ownerId.value,
-          offset,
-          count,
-          rev: groupsStore.config.reverseOrder ? 1 : 0,
-          extended: 1,
-        },
+      const { items }: { items: IPhoto[] } = await vkStore.photosGet({
+        album_id: albumId.value,
+        owner_id: ownerId.value,
+        offset,
+        count,
+        rev: groupsStore.config.reverseOrder ? 1 : 0,
+        extended: 1,
+        photo_sizes: 1,
       });
       if (items.length === 0) {
         isLoadAllPhotos.value = true;
