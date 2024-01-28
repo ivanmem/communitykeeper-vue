@@ -24,7 +24,7 @@ const queryParams = computed(() => route.query as AAddQueryParams);
 const newGroup = reactive({
   id: "",
   folder: "",
-  linkOrId: ""
+  linkOrId: "",
 });
 const isActivated = useActivated();
 
@@ -34,12 +34,31 @@ const addGroup = async () => {
     return;
   }
 
-  groupsStore.addLocalGroup({ id, folder: newGroup.folder });
-  newGroup.id = "";
-  currentGroup.value = undefined;
-  newGroup.linkOrId = "";
-  await groupsStore.autoSaveCurrentLocalGroups();
-  await groupsStore.loadNotLoadGroups();
+  const group = currentGroup.value;
+  const linkOrId = newGroup.linkOrId;
+  try {
+    groupsStore.addLocalGroup({ id, folder: newGroup.folder });
+    newGroup.id = "";
+    currentGroup.value = undefined;
+    newGroup.linkOrId = "";
+    await groupsStore.autoSaveCurrentLocalGroups();
+    await groupsStore.loadNotLoadGroups();
+    const name = group?.name ?? linkOrId;
+    let subtitle = `Группа "${name}" добавлена в папку "${newGroup.folder}".`;
+    if (!groupsStore.config.autoSave) {
+      subtitle += `\nНе забудьте сохраниться во вкладке "Настройки".`;
+    }
+
+    dialogStore.alert({
+      title: "Добавление завершено",
+      subtitle,
+    });
+  } catch (ex: any) {
+    dialogStore.alert({
+      title: "Ошибка",
+      subtitle: `Группа не была добавлена из-за ошибки:\n${toStr(ex)}`,
+    });
+  }
 };
 
 const removeGroup = async () => {
@@ -55,7 +74,7 @@ const removeGroup = async () => {
 };
 
 const isGroupAdded = computed(
-  () => newGroup.id && groupsStore.localGroups[newGroup.id]
+  () => newGroup.id && groupsStore.localGroups[newGroup.id],
 );
 
 const currentGroup = ref<undefined | IGroup>();
@@ -77,7 +96,7 @@ const onLinkOrIdChanged = async () => {
 
 const onRemoveAllGroups = async () => {
   const isConfirm = await dialogStore.confirm(
-    "Вы уверены, что хотите удалить все группы?"
+    "Вы уверены, что хотите удалить все группы?",
   );
   if (isConfirm) {
     groupsStore.removeLocalGroups();
@@ -94,14 +113,18 @@ const onHelp = () => {
     title: "💡 Справка",
     subtitle: `Во вкладке "Добавить" Вы можете:
 - добавить или удалить группы;
-- создать или применить резервную копию.`
+- создать или применить резервную копию.`,
   });
 };
 
 // для подгрузки текущей группы без смены фокуса на поле используем debounce
-watchDebounced(() => newGroup.linkOrId, () => {
-  onLinkOrIdChanged();
-}, { debounce: 1000 });
+watchDebounced(
+  () => newGroup.linkOrId,
+  () => {
+    onLinkOrIdChanged();
+  },
+  { debounce: 1000 },
+);
 
 watch(
   isActivated,
@@ -115,7 +138,7 @@ watch(
     newGroup.folder = folder || newGroup.folder;
     return onLinkOrIdChanged();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const valid = ref(false);
