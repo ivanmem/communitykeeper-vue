@@ -27,7 +27,7 @@ const dialogStore = useDialog();
       variant="text"
       @click="
         dialogStore.alert(
-          `У вас занято ${groupsStore.spaceUsed}% из доступного для групп места. Если занять более 100%, то данные не смогут сохраниться.`,
+          `У Вас занято ${groupsStore.spaceUsed}% из доступного для групп места. Если занять более 100%, то данные не смогут сохраниться.`,
         )
       "
     />
