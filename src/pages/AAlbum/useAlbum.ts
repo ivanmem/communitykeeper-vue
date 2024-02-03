@@ -1,10 +1,6 @@
-import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
+import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { useVk } from "@/store/vk/vk";
-import toString from "lodash/toString";
-import {
-  AlbumsPreviewSizesInitial,
-  getStaticAlbums,
-} from "@/pages/AAlbums/consts";
+import { AlbumsPreviewSizesInitial } from "@/pages/AAlbums/consts";
 import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
@@ -16,6 +12,7 @@ import { useHistory } from "@/store/history/history";
 import { toNumberOrUndefined } from "@/helpers/toNumberOrUndefined";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
+import { errorToString } from "@/helpers/errorToString";
 
 const countOneLoad = 150;
 
@@ -114,19 +111,16 @@ export function useAlbum(
   };
 
   const onUpdateAlbum = async () => {
-    const albums: PhotosGetAlbums["items"] = (
-      await vkStore.getAlbums(ownerId.value).catch((ex) => {
+    album.value = await vkStore
+      .getAlbum(ownerId.value, albumId.value)
+      .catch((ex) => {
         if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
-          screenError.value = ex;
+          screenError.value = errorToString(ex);
           console.warn("Необработанная ошибка:", ex.errorInfo);
         }
 
-        return { items: getStaticAlbums(ownerId.value), count: 0 };
-      })
-    ).items;
-    album.value = albums.find(
-      (x) => toString(x.id) === toString(albumId.value),
-    );
+        return undefined;
+      });
   };
 
   const onLoad = async () => {
@@ -168,7 +162,7 @@ export function useAlbum(
         photos.value.push(newPhoto);
       }
     } catch (ex: any) {
-      screenError.value = ex;
+      screenError.value = errorToString(ex);
     }
     isInit.value = true;
     isLoadingPhotos.value = false;

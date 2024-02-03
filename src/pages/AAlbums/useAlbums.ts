@@ -12,6 +12,7 @@ import { RecycleScroller } from "vue-virtual-scroller";
 import { useSizesColumns } from "@/composables/useSizesColumns";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import { useScrollRestore } from "@/composables/useScrollRestore";
+import { errorToString } from "@/helpers/errorToString";
 
 const countOneLoad = 100;
 
@@ -92,7 +93,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
           albums.value.push(...items);
         } catch (ex: any) {
           if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
-            screenError.value = ex;
+            screenError.value = errorToString(ex);
             console.warn("Необработанная ошибка:", ex.errorInfo);
           }
         }

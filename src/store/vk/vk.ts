@@ -337,6 +337,19 @@ export const useVk = defineStore("vk", {
         },
       });
     },
+    getAlbum(
+      owner_id: number | string,
+      album_id: number | string,
+    ): Promise<IAlbumItem | undefined> {
+      return this.addRequestToQueue({
+        method: "photos.get",
+        params: {
+          owner_id,
+          album_id,
+          photo_sizes: 1,
+        },
+      });
+    },
     photosGet(params: {
       owner_id: number | string;
       album_id: number | string;

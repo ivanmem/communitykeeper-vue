@@ -34,22 +34,22 @@ const {
   albumRef,
   gridItems,
   isLoadingPhotos,
-  sizes
+  sizes,
 } = useAlbum(
   () => props.ownerId,
   () => props.albumId,
-  () => props.photoId
+  () => props.photoId,
 );
 const { Icon16Link } = icons;
 const groupsStore = useGroups();
 const dialogStore = useDialog();
 const albumUrl = computed(() =>
-  PhotoHelper.getAlbumUrl(props.ownerId, props.albumId)
+  PhotoHelper.getAlbumUrl(props.ownerId, props.albumId),
 );
 const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 const group = computedAsync<IGroup | undefined>(
   () => groupsStore.getGroupByIdOrLoad(-props.ownerId),
-  undefined
+  undefined,
 );
 
 useScreenSpinner(toRef(() => !group.value));
@@ -75,7 +75,7 @@ const onHelp = () => {
 
 При просмотре фото сделайте свайп вниз, чтобы открыть дополнительную информацию.
 
-Вы можете перейти в полноэкранный режим клавишей F11, либо нажатием по специальной кнопке справа от справки.`
+Вы можете перейти в полноэкранный режим клавишей F11, либо нажатием по специальной кнопке справа от справки.`,
   });
 };
 </script>
@@ -113,6 +113,7 @@ const onHelp = () => {
           </code>
           <VSpacer />
           <VSwitch
+            v-if="!screenError"
             v-model="groupsStore.config.reverseOrder"
             :false-icon="styledIcons.Icon24SortOutlineOpacity50"
             :true-icon="icons.Icon24SortOutline"
