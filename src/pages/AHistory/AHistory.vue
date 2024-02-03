@@ -30,7 +30,7 @@ const items = computedAsync<HistoryItemComputed[] | undefined>(() =>
     .selectAsync(async (item) => {
       if (item.type === "va") {
         const group: IGroup | undefined = await groupsStore.getGroupByIdOrLoad(
-          -item.ownerId,
+          -item.ownerId
         );
         const title = group?.name ?? item.ownerId;
         const prependAvatar = group?.photo_200;
@@ -40,13 +40,13 @@ const items = computedAsync<HistoryItemComputed[] | undefined>(() =>
             item.subtitle || PhotoHelper.getAlbumUrl(item.ownerId, item.albumId)
           }`,
           prependAvatar,
-          to: `/albums/${item.ownerId}/${item.albumId}/${item.photoId}`,
+          to: `/albums/${item.ownerId}/${item.albumId}/${item.photoId}`
         };
       }
 
       if (item.type === "vc") {
         const group: IGroup | undefined = await groupsStore.getGroupByIdOrLoad(
-          -item.ownerId,
+          -item.ownerId
         );
         const title = group?.name ?? item.ownerId;
         const prependAvatar = group?.photo_200;
@@ -71,14 +71,14 @@ const items = computedAsync<HistoryItemComputed[] | undefined>(() =>
           onClick: () => {
             historyStore.add(item);
             smartOpenUrl(item.url);
-          },
+          }
         };
       }
 
       return undefined!;
     })
     .where(Boolean)
-    .toArray(),
+    .toArray()
 );
 
 useScreenSpinner(toRef(() => items.value === undefined));
@@ -86,13 +86,22 @@ useScreenSpinner(toRef(() => items.value === undefined));
 const onClear = async () => {
   const result = await dialogStore.confirm({
     title: "Очистка истории просмотров",
-    subtitle: "Вы уверены, что хотите очистить историю просмотров?",
+    subtitle: "Вы уверены, что хотите очистить историю просмотров?"
   });
   if (!result) {
     return;
   }
 
   historyStore.clear();
+};
+
+const onHelp = () => {
+  dialogStore.alert({
+    title: "💡 Справка",
+    subtitle: `История обнуляется при каждом обновлении приложения, так как ВК меняет домен при публикации.`
+      + `\nРазмер истории ограничен ${historyStore.maxSize} символами (примерно ${Math.floor(historyStore.maxSize / 110)} записей).`
+      + `\nИстория хранится на Вашем устройстве.`
+  });
 };
 </script>
 <template>
@@ -103,8 +112,9 @@ const onClear = async () => {
       variant="text"
       @click="onClear"
     />
+    <VBtn :icon="icons.Icon16InfoCircle" variant="text" @click="onHelp" />
   </FixedTeleport>
-  <VCard class="overflow-block" v-if="items !== undefined">
+  <VCard v-if="items !== undefined" class="overflow-block">
     <v-sheet
       v-if="items.length === 0"
       class="pa-4 text-center mx-auto"

@@ -47,4 +47,5 @@ export type HistoryItem =
 
 export interface HistoryState {
   history: Record<HistoryKey, HistoryItem>;
+  maxSize: number;
 }
