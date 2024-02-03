@@ -29,7 +29,8 @@ export interface IGroup {
   is_admin: boolean;
   is_advertiser: boolean;
   deactivated?: "banned" | "deleted";
-  is_closed: boolean;
+  /** @description 0 - открытое, 1 - закрытое, 2 - частное */
+  is_closed: 0 | 1 | 2;
   is_member: boolean;
   is_request?: boolean;
   name: string;
