@@ -18,6 +18,8 @@ import { getPiniaPersist } from "@/helpers/getPiniaPersist";
 import { saveAs } from "file-saver";
 import { toStr } from "@/helpers/toStr";
 import { watchDebounced } from "@vueuse/core";
+import { getMapGroupsByIds } from "@/helpers/getMapGroupsByIds";
+import { folderRules, maxFolderLength } from "@/common/formConsts";
 
 export interface FiltersType {
   folder: string;
@@ -186,11 +188,18 @@ export const useGroups = defineStore("groups", {
         return false;
       }
 
-      const groups = await getGroupsByLinksOrIds(ids);
-      for (const group of groups) {
+      const groups = await getMapGroupsByIds(ids);
+      const badGroups = new Set<number>();
+      for (let [id, group] of groups) {
+        if (group == undefined) {
+          badGroups.add(id);
+          continue;
+        }
+
         this.setGroup(group);
       }
 
+      this.removeLocalGroup(badGroups);
       return true;
     },
     setGroup(group: IGroup) {
@@ -241,6 +250,25 @@ export const useGroups = defineStore("groups", {
       return groups[0];
     },
     addLocalGroup(localGroup: ILocalGroup) {
+      // группы с пустым, запрещённым или длинным названием папки запрещены
+      if (
+        typeof (localGroup.folder as any) !== "string" ||
+        !localGroup.folder.trim() ||
+        localGroup.folder.trim().length > maxFolderLength ||
+        folderRules.some((x) => x(localGroup.folder) !== true)
+      ) {
+        return;
+      }
+
+      // группы с некорректным ID запрещены
+      if (
+        typeof (localGroup.id as any) !== "number" ||
+        localGroup.id < 0 ||
+        !Number.isInteger(localGroup.id)
+      ) {
+        return;
+      }
+
       const currentIndex = this.localGroupsArray.findIndex(
         (x) => x.id === localGroup.id,
       );

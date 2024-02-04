@@ -14,6 +14,7 @@ import { useDialog } from "@/store/dialog/dialog";
 import { computedAsync } from "@vueuse/core";
 import { IGroup } from "@/store/groups/types";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
+import GroupHelper from "@/helpers/GroupHelper";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -95,7 +96,7 @@ const onHelp = () => {
           <VIcon icon="mdi-chevron-right" size="small" />
           <VBreadcrumbsItem
             :href="`https://${ownerUrl}`"
-            :title="group.name || 'Источник'"
+            :title="GroupHelper.getName(group)"
             @click.prevent="router.replace(`/albums/${ownerId}`)"
           />
           <VIcon icon="mdi-chevron-right" size="small" />

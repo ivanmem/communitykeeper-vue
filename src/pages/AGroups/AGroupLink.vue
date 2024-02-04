@@ -128,7 +128,9 @@ const onOpenContextMenu = (e: MouseEvent) => {
         if (props.group.is_closed) {
           confirm = await dialogStore.confirm({
             title: "Выход из группы",
-            subtitle: `Вы выходите из закрытой группы "${props.group.name}".
+            subtitle: `Вы выходите из закрытой группы "${GroupHelper.getName(
+              props.group,
+            )}".
 Вас могут не принять обратно. Всё равно хотите выйти?`,
             confirmTitle: "Да",
           });
@@ -144,7 +146,11 @@ const onOpenContextMenu = (e: MouseEvent) => {
   ) {
     // отображаем кнопку только если группа открытая или если это не приложение,
     // так как присоединиться к закрытой группе можно только с vk.com или m.vk.com из-за бага в VK Bridge или Приложении ВКонтакте
-    if (!props.group.deactivated && props.group.is_closed !== 2 && (!props.group.is_closed || !appStore.isApp)) {
+    if (
+      !props.group.deactivated &&
+      props.group.is_closed !== 2 &&
+      (!props.group.is_closed || !appStore.isApp)
+    ) {
       items.push({
         label: props.group.is_closed ? `Подать заявку` : "Подписаться",
         icon: h(icons.Icon16AddSquareOutline),
@@ -213,7 +219,7 @@ watch(showCounters, () => {
         @click.stop="onClickAvatar"
       />
       <div class="a-group-link__div">
-        <span class="a-group-link__name">{{ group.name }}</span>
+        <span class="a-group-link__name">{{ GroupHelper.getName(group) }}</span>
         <span class="a-group-link__help">
           <template v-if="!isCurrentFolder && localGroup">
             {{ localGroup.folder }};

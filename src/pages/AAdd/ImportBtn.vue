@@ -122,10 +122,10 @@ const onImportFileChange = (event: any) => {
     }
 
     const dict = data.groupIdsDictByFolderName;
-    Object.keys(dict).forEach((folder) => {
+    for (const folder of Object.keys(dict)) {
       // убираем возможные дубли в данных
       dict[folder] = [...new Set(dict[folder])];
-    });
+    }
     importData.value = data;
     show.value = true;
   });

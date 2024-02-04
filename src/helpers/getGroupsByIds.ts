@@ -2,6 +2,7 @@ import isNumber from "lodash/isNumber";
 import { useVk } from "@/store/vk/vk";
 import { IGroup } from "@/store/groups/types";
 import { from } from "linq-to-typescript";
+import { getGroupsByIdsRaw } from "@/helpers/getGroupsByIdsRaw";
 
 export async function getGroupsByLinksOrIds(
   linksOrIds: (string | number)[],
@@ -24,16 +25,7 @@ export async function getGroupsByLinksOrIds(
         return value.substring(value.lastIndexOf("/") + 1);
       })
       .chunk(500)
-      .selectManyAsync(
-        (groupIdsChunk): Promise<IGroup[]> =>
-          vkStore.addRequestToQueue({
-            method: "groups.getById",
-            params: {
-              group_ids: groupIdsChunk.join(),
-              fields: "counters,member_status",
-            },
-          }),
-      )
+      .selectManyAsync(getGroupsByIdsRaw)
       .toArray();
   } catch (ex: any) {
     console.warn(ex);

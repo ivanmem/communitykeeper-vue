@@ -59,7 +59,7 @@ class GroupHelper {
 
       if (
         search?.length > 0 &&
-        !group.name.toLowerCase().includes(search) &&
+        !GroupHelper.getName(group).toLowerCase().includes(search) &&
         !GroupHelper.getState(group).text.toLowerCase().includes(search)
       ) {
         return false;
@@ -130,6 +130,10 @@ class GroupHelper {
     }
 
     return result.result;
+  }
+
+  static getName(group: IGroup) {
+    return group.name.trim() || `vk.com/public${group.id}`;
   }
 }
 
