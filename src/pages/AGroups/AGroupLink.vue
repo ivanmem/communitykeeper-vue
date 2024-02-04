@@ -144,7 +144,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
   ) {
     // отображаем кнопку только если группа открытая или если это не приложение,
     // так как присоединиться к закрытой группе можно только с vk.com или m.vk.com из-за бага в VK Bridge или Приложении ВКонтакте
-    if (props.group.is_closed !== 2 && (!props.group.is_closed || !appStore.isApp)) {
+    if (!props.group.deactivated && props.group.is_closed !== 2 && (!props.group.is_closed || !appStore.isApp)) {
       items.push({
         label: props.group.is_closed ? `Подать заявку` : "Подписаться",
         icon: h(icons.Icon16AddSquareOutline),
