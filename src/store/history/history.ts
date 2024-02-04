@@ -14,7 +14,6 @@ import {
   HistoryType,
 } from "@/store/history/types";
 import { getPiniaPersist } from "@/helpers/getPiniaPersist";
-import { Exception } from "sass";
 
 function getHistoryKey(historyItem: HistoryItem): HistoryKey {
   switch (historyItem.type) {
@@ -72,7 +71,6 @@ export const useHistory = defineStore("history", {
     },
     add(historyItem: HistoryItem) {
       const key = getHistoryKey(historyItem);
-      delete this.history[key];
       this.history[key] = historyItem;
       while (JSON.stringify(this.history).length >= this.maxSize) {
         delete this.history[this.oldestKey!];

@@ -6,14 +6,16 @@ import { router } from "@/router";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { icons } from "@/common/consts";
 import { openUrl } from "@/helpers/openUrl";
+import { useVk } from "@/store/vk/vk";
 
 const props = defineProps<{
   album: IAlbumItem;
   sizes: { width: number; height: number };
 }>();
 const previewSize = computed(() =>
-  PhotoHelper.getPreviewSize(props.album.sizes, props.sizes)
+  PhotoHelper.getPreviewSize(props.album.sizes, props.sizes),
 );
+const vkStore = useVk();
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
@@ -22,17 +24,22 @@ const onShowContextMenu = (e: MouseEvent) => {
       icon: h(icons.Icon16LogoVk),
       onClick: () => {
         openUrl(
-          `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`
+          `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`,
         );
-      }
-    }
+      },
+    },
   ]);
+};
+
+const onOpenAlbum = () => {
+  vkStore.cache.currentAlbum = props.album;
+  return router.push(`/albums/${props.album.owner_id}/${props.album.id}`);
 };
 </script>
 <template>
   <div
     class="a-album-item"
-    @click="router.push(`/albums/${props.album.owner_id}/${props.album.id}`)"
+    @click="onOpenAlbum"
     @contextmenu.stop.prevent="onShowContextMenu"
   >
     <img v-if="previewSize" :src="previewSize.url" alt="" />
@@ -69,9 +76,9 @@ const onShowContextMenu = (e: MouseEvent) => {
 .photos_album_title_wrap {
   background: rgb(2, 0, 36);
   background: linear-gradient(
-      0deg,
-      rgba(2, 0, 36, 0.8968181022408963) 12%,
-      rgba(255, 255, 255, 0) 100%
+    0deg,
+    rgba(2, 0, 36, 0.8968181022408963) 12%,
+    rgba(255, 255, 255, 0) 100%
   );
   bottom: 0;
   box-shadow: -2px -2px 4px 0px rgba(0, 0, 0, 0.4) inset;

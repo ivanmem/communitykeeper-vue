@@ -29,6 +29,9 @@ interface VkState {
   token?: {
     access_token: string;
   };
+  cache: {
+    currentAlbum?: IAlbumItem;
+  };
 }
 
 export const useVk = defineStore("vk", {
@@ -36,6 +39,7 @@ export const useVk = defineStore("vk", {
     return {
       chunksMaxCount: 20, // можно получить не более десяти за 1 запрос
       vkWebAppStorageSetCount: 0,
+      cache: {},
     };
   },
   actions: {
@@ -337,18 +341,29 @@ export const useVk = defineStore("vk", {
         },
       });
     },
-    getAlbum(
+    async getCachedAlbum(
       owner_id: number | string,
       album_id: number | string,
     ): Promise<IAlbumItem | undefined> {
-      return this.addRequestToQueue({
-        method: "photos.get",
+      const album = this.cache.currentAlbum;
+      if (album && album.owner_id == owner_id && album.id == album_id) {
+        return this.cache.currentAlbum;
+      }
+
+      let response = await this.addRequestToQueue({
+        method: "photos.getAlbums",
         params: {
           owner_id,
-          album_id,
+          album_ids: album_id,
+          need_system: 1,
+          need_covers: 1,
           photo_sizes: 1,
         },
       });
+      this.cache.currentAlbum = await response.items.find(
+        (x: IAlbumItem) => x.id == album_id,
+      );
+      return this.cache.currentAlbum;
     },
     photosGet(params: {
       owner_id: number | string;

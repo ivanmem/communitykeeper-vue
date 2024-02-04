@@ -112,7 +112,7 @@ export function useAlbum(
 
   const onUpdateAlbum = async () => {
     album.value = await vkStore
-      .getAlbum(ownerId.value, albumId.value)
+      .getCachedAlbum(ownerId.value, albumId.value)
       .catch((ex) => {
         if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
           screenError.value = errorToString(ex);
