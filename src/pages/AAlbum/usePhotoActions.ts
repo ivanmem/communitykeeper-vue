@@ -4,13 +4,11 @@ import { useDialog } from "@/store/dialog/dialog";
 import { openUrl } from "@/helpers/openUrl";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useGroups } from "@/store/groups/groups";
-import APhotoShareDialog, {
-  APhotoShareDialogProps,
-} from "@/pages/AAlbum/APhotoShareDialog.vue";
 import { IPhotoEmit } from "@/pages/AAlbum/APhoto.vue";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { icons, styledIcons } from "@/common/consts";
 import { showContextMenu } from "@/helpers/showContextMenu";
+import APhotoShareDialog, { APhotoShareDialogProps } from "@/pages/AAlbum/APhotoShareDialog.vue";
 
 export function usePhotoActions(
   photoGetter: MaybeRefOrGetter<IPhoto>,

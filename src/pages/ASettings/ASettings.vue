@@ -2,7 +2,12 @@
 import { useAppCaption } from "@/composables/useAppCaption";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
-import { icons } from "@/common/consts";
+import {
+  actionSwipesDefaults,
+  actionSwipesOptions,
+  actionSwipesSelectLabels,
+  icons,
+} from "@/common/consts";
 import { useDialog } from "@/store/dialog/dialog";
 import ASettingsDisabledCookies from "@/pages/ASettings/ASettingsDisabledCookies.vue";
 import FixedTeleport from "@/components/FixedTeleport.vue";
@@ -74,9 +79,7 @@ const dialogStore = useDialog();
       </span>
     </VCardItem>
     <VDivider />
-    <VCardSubtitle style="padding-block: 12px">
-      🌅 Галерея
-    </VCardSubtitle>
+    <VCardSubtitle style="padding-block: 12px"> 🌅 Галерея</VCardSubtitle>
     <VDivider />
     <VCardItem :append-icon="icons.Icon24Attachments">
       <VSwitch
@@ -91,32 +94,52 @@ const dialogStore = useDialog();
     </VCardItem>
     <VDivider />
     <VCardItem :append-icon="icons.Icon24SunOutline" style="margin-top: 10px">
-      <div>Непрозрачность счётчика при просмотре фото</div>
+      <div style="margin-bottom: 10px">
+        Непрозрачность счётчика при просмотре фото
+      </div>
       <VSlider
+        :append-icon="icons.Icon12View"
         :max="100"
         :min="0"
         :model-value="groupsStore.config.opacityGalleryCounter ?? 100"
+        :prepend-icon="h(icons.Icon12View, { style: { opacity: 0.1 } }) as any"
         hide-details
         thumb-label
-        :prepend-icon="h(icons.Icon12View, { style: { opacity: 0.1 } }) as any"
-        :append-icon="icons.Icon12View"
         @update:model-value="groupsStore.config.opacityGalleryCounter = $event"
       />
       <span class="a-mini-text">
         Вы можете установить минимальное значение, чтобы скрыть счётчик.
       </span>
       <APhotoCounter
-        style="margin-top: 5px"
-        show-info
-        date-time="01.01.2024, 00:00"
-        :photo-index="0"
         :count="100"
+        :photo-index="0"
+        date-time="01.01.2024, 00:00"
+        show-info
+        style="margin-top: 5px"
       />
     </VCardItem>
     <VDivider />
-    <VCardSubtitle style="padding-block: 12px">
-      🐞 Тестирование
-    </VCardSubtitle>
+    <VCardItem
+      :append-icon="icons.Icon24RectrangleHandPointUp"
+      style="margin-top: 10px"
+    >
+      <div style="margin-bottom: 10px">
+        Действия жестов для сенсорного экрана при просмотре фото
+      </div>
+      <VSelect
+        v-for="swipeKey of Object.keys(actionSwipesDefaults)"
+        :items="actionSwipesOptions"
+        :label="actionSwipesSelectLabels[swipeKey as never]"
+        :model-value="groupsStore.swipesConfig[swipeKey as never]"
+        item-title="title"
+        item-value="value"
+        style="max-width: 450px"
+        @update:model-value="groupsStore.setSwipeKey(swipeKey as never, $event)"
+      >
+      </VSelect>
+    </VCardItem>
+    <VDivider />
+    <VCardSubtitle style="padding-block: 12px"> 🐞 Тестирование</VCardSubtitle>
     <VDivider />
     <VCardItem :append-icon="icons.Icon24Bug">
       <VSwitch

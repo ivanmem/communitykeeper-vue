@@ -41,6 +41,7 @@ import Icon240CircleOutline from "@vkontakte/icons/src/svg/24/0_circle_outline_2
 import Icon24Bug from "@vkontakte/icons/src/svg/24/bug_24.svg?component";
 import Icon24SunOutline from "@vkontakte/icons/src/svg/24/sun_outline_24.svg?component";
 import Icon24CopyOutline from "@vkontakte/icons/src/svg/24/copy_outline_24.svg?component";
+import Icon24RectrangleHandPointUp from "@vkontakte/icons/src/svg/24/rectrangle_hand_point_up_24.svg?component";
 
 import Icon20FolderMoveOutline from "@vkontakte/icons/src/svg/20/folder_move_outline_20.svg?component";
 
@@ -78,6 +79,8 @@ import Icon12View from "@vkontakte/icons/src/svg/12/view_12.svg?component";
 import Icon12Cards from "@vkontakte/icons/src/svg/12/cards_2_12.svg?component";
 
 import { createStyledIcon } from "@/helpers/createStyledIcon";
+import { usePhotoActions } from "@/pages/AAlbum/usePhotoActions";
+import { GallerySwipesConfig } from "@/store/groups/groups";
 
 export const icons = {
   Icon28PictureOutline,
@@ -122,6 +125,7 @@ export const icons = {
   Icon24Bug,
   Icon24SunOutline,
   Icon24CopyOutline,
+  Icon24RectrangleHandPointUp,
 
   Icon20FolderMoveOutline,
 
@@ -189,3 +193,58 @@ export const dateTimeFormatter = new Intl.DateTimeFormat("ru", {
   hour: "numeric",
   minute: "numeric",
 });
+
+type IActionDictValue = {
+  label: string;
+  name: keyof ReturnType<typeof usePhotoActions>;
+};
+
+// ключи короткие, чтобы меньше места занимать в VK Storage
+export const actionSwipesDict = new Map<string, IActionDictValue>([
+  ["op", { label: "Перейти к фото", name: "onOpenPhoto" }],
+  ["oosp", { label: "Открыть оригинал", name: "onOpenOriginalSizePhoto" }],
+  ["s", { label: "Поделиться", name: "onShare" }],
+  ["d", { label: "Скачать", name: "onDownload" }],
+  ["so", { label: "Поиск оригинала", name: "onSearchOriginal" }],
+  [
+    "sos",
+    {
+      label: "Отображать фото в оригинальном размере",
+      name: "onSwitchOriginalSize",
+    },
+  ],
+  ["smi", { label: "Информация", name: "onShowMoreInfo" }],
+  [
+    "sslrp",
+    {
+      label: "Пропускать фото с маленьким размером",
+      name: "onSwitchSkipLowResolutionPhotos",
+    },
+  ],
+  ["pe", { label: "Выйти из просмотра фото", name: "onPhotoExit" }],
+  ["pp", { label: "Предыдущее фото", name: "onPhotoPrev" }],
+  ["pn", { label: "Следующее фото", name: "onPhotoNext" }],
+]);
+
+export const actionSwipesOptions = Array.from(actionSwipesDict.keys()).map(
+  (value) => {
+    return {
+      title: actionSwipesDict.get(value)!.label,
+      value,
+    };
+  },
+);
+
+export const actionSwipesDefaults: Required<GallerySwipesConfig> = {
+  onLeft: "pp",
+  onRight: "pn",
+  onUp: "smi",
+  onDown: "pe",
+};
+
+export const actionSwipesSelectLabels = {
+  onLeft: "Свайп влево",
+  onRight: "Свайп вправо",
+  onUp: "Свайп вниз",
+  onDown: "Свайп вверх",
+};

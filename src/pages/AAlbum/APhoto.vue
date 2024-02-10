@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { computed, nextTick, onDeactivated, ref, watch } from "vue";
+import { computed, nextTick, onDeactivated, ref, toRef, watch } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
-import { dateTimeFormatter } from "@/common/consts";
-import { useGroups } from "@/store/groups/groups";
+import { actionSwipesDict, dateTimeFormatter } from "@/common/consts";
+import { GallerySwipesConfig, useGroups } from "@/store/groups/groups";
 import { useApp } from "@/store/app/app";
 import { IPhoto } from "@/store/groups/types";
 import useClipboard from "vue-clipboard3/dist/esm/index";
-import { useSwipes } from "@/composables/useSwipes";
+import { UsableSwipesOptions, useSwipes } from "@/composables/useSwipes";
 import { useDialog } from "@/store/dialog/dialog";
 import APhotoCounter from "@/pages/AAlbum/APhotoCounter.vue";
 import { usePhotoActions } from "@/pages/AAlbum/usePhotoActions";
@@ -98,16 +98,26 @@ const onWheel = (e: WheelEvent) => {
   }
 };
 
-const swipes = useSwipes({
-  onLeft: actions.onPhotoPrev,
-  onRight: actions.onPhotoNext,
-  onDown: actions.onPhotoExit,
-  onUp: actions.onShowMoreInfo,
+const swipesConfig = toRef(() => groupsStore.swipesConfig);
+const swipesOptions: UsableSwipesOptions = {
   onContextMenu: actions.onShowContextMenu,
-});
+};
+
+watch(
+  swipesConfig,
+  () => {
+    for (const key in swipesConfig.value) {
+      const swipeKey = key as keyof GallerySwipesConfig;
+      const name = actionSwipesDict.get(swipesConfig.value[swipeKey])?.name!;
+      swipesOptions[swipeKey] = actions[name];
+    }
+  },
+  { immediate: true },
+);
+
+const swipes = useSwipes(swipesOptions);
 
 const { toClipboard } = useClipboard({ appendToBody: true });
-const win = window;
 
 const dateTime = computed(() => {
   return dateTimeFormatter.format(new Date(props.photo.date * 1000));

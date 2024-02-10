@@ -20,6 +20,7 @@ import { toStr } from "@/helpers/toStr";
 import { watchDebounced } from "@vueuse/core";
 import { getMapGroupsByIds } from "@/helpers/getMapGroupsByIds";
 import { folderRules, maxFolderLength } from "@/common/formConsts";
+import { actionSwipesDefaults, actionSwipesDict } from "@/common/consts";
 
 export interface FiltersType {
   folder: string;
@@ -83,6 +84,13 @@ interface GroupsState {
   >;
 }
 
+export interface GallerySwipesConfig {
+  onLeft?: string;
+  onRight?: string;
+  onUp?: string;
+  onDown?: string;
+}
+
 export interface IGroupsConfig {
   autoSave: boolean;
   showCounters: boolean;
@@ -92,6 +100,7 @@ export interface IGroupsConfig {
   skipLowResolutionPhotos?: boolean;
   gallery?: boolean;
   opacityGalleryCounter?: number;
+  swipes?: GallerySwipesConfig;
 }
 
 export const useGroups = defineStore("groups", {
@@ -395,8 +404,27 @@ export const useGroups = defineStore("groups", {
         groupState.randomIndex = Math.random();
       });
     },
+    setSwipeKey(swipeKey: keyof GallerySwipesConfig, value?: string) {
+      console.log(value);
+      const swipes = { ...this.config.swipes };
+      console.log(swipes);
+      swipes[swipeKey] = value || undefined;
+      this.config.swipes = swipes;
+    },
   },
   getters: {
+    swipesConfig(): Required<GallerySwipesConfig> {
+      return Object.keys(actionSwipesDefaults).reduce((config, key) => {
+        const configKey = key as keyof GallerySwipesConfig;
+        const value = this.config.swipes?.[configKey];
+        config[configKey] = value ?? "";
+        if (!actionSwipesDict.has(config[configKey])) {
+          config[configKey] = actionSwipesDefaults[configKey];
+        }
+
+        return config;
+      }, {} as Required<GallerySwipesConfig>);
+    },
     groupStates(): GroupState[] {
       const array: GroupState[] = [];
       this.groupsMap.forEach((group) => {
