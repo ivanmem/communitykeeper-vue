@@ -244,8 +244,8 @@ export const actionSwipesDefaults: Required<GallerySwipesConfig> = {
 };
 
 export const actionSwipesSelectLabels = {
+  onDown: "Свайп вверх",
+  onUp: "Свайп вниз",
   onLeft: "Свайп влево",
   onRight: "Свайп вправо",
-  onUp: "Свайп вниз",
-  onDown: "Свайп вверх",
 };
