@@ -1,20 +1,15 @@
 <script lang="ts" setup>
-import { computed, h, nextTick, onDeactivated, ref, watch } from "vue";
+import { computed, nextTick, onDeactivated, ref, watch } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
-import { showContextMenu } from "@/helpers/showContextMenu";
-import { openUrl } from "@/helpers/openUrl";
-import { dateTimeFormatter, icons, styledIcons } from "@/common/consts";
-import { MenuItem } from "@imengyu/vue3-context-menu";
+import { dateTimeFormatter } from "@/common/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useApp } from "@/store/app/app";
 import { IPhoto } from "@/store/groups/types";
 import useClipboard from "vue-clipboard3/dist/esm/index";
 import { useSwipes } from "@/composables/useSwipes";
 import { useDialog } from "@/store/dialog/dialog";
-import APhotoShareDialog, {
-  APhotoShareDialogProps,
-} from "@/pages/AAlbum/APhotoShareDialog.vue";
 import APhotoCounter from "@/pages/AAlbum/APhotoCounter.vue";
+import { usePhotoActions } from "@/pages/AAlbum/usePhotoActions";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -22,16 +17,27 @@ const emit = defineEmits<{
   (e: "photo:exit"): void;
 }>();
 
+export type IPhotoEmit = typeof emit;
+
 const props = defineProps<{
   photo: IPhoto;
   count?: number | string;
 }>();
 
+const dialogStore = useDialog();
+const groupsStore = useGroups();
+const photoDiv = ref<HTMLDivElement>();
+const showInfo = ref(true);
+const showMoreInfo = ref(false);
 const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes),
 );
-
-const groupsStore = useGroups();
+const actions = usePhotoActions(
+  () => props.photo,
+  showMoreInfo,
+  emit,
+  photoDiv,
+);
 
 const onClick = (event: MouseEvent) => {
   const clickX = event.offsetX;
@@ -52,10 +58,6 @@ const onClick = (event: MouseEvent) => {
   emit("photo:next");
   return;
 };
-const photoDiv = ref<HTMLDivElement>();
-const showInfo = ref(true);
-const showMoreInfo = ref(false);
-const dialogStore = useDialog();
 
 watch(
   [photoDiv, () => useApp().isFullScreen, showMoreInfo],
@@ -87,120 +89,21 @@ watch(
   { immediate: true },
 );
 
-const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
-  const items: MenuItem[] = [];
-
-  items.push({
-    label: "Перейти к фото",
-    icon: h(icons.Icon16LogoVk),
-    onClick: () => {
-      openUrl(
-        `//${PhotoHelper.getPhotoUrl(props.photo.owner_id, props.photo.id)}`,
-      );
-    },
-  });
-  items.push({
-    label: "Открыть оригинал",
-    icon: h(icons.Icon16Link),
-    onClick: () => {
-      if (originalSize.value) {
-        openUrl(originalSize.value.url);
-      }
-    },
-  });
-  items.push({
-    label: "Поделиться",
-    icon: h(icons.Icon16Share),
-    onClick: () => {
-      dialogStore.open<APhotoShareDialogProps>({
-        component: APhotoShareDialog,
-        props: { photo: props.photo },
-      });
-    },
-  });
-  items.push({
-    label: "Скачать",
-    icon: h(icons.Icon16DownloadOutline),
-    onClick: () => {
-      return PhotoHelper.downloadPhoto(props.photo);
-    },
-  });
-  items.push({
-    label: "Поиск оригинала",
-    icon: h(icons.Icon16SearchStarsOutline),
-    onClick: async () => {
-      const isUseYandex = await useDialog().confirm({
-        title: "Поиск оригинала",
-        subtitle: `Выберите поисковую систему:`,
-        confirmTitle: "Yandex",
-        cancelTitle: "SauceNAO",
-        persistent: true,
-      });
-      const url = encodeURIComponent(originalSize.value!.url);
-      if (isUseYandex) {
-        openUrl(`https://yandex.com/images/search?rpt=imageview&url=${url}`);
-      } else {
-        openUrl(`https://saucenao.com/search.php?url=${url}`);
-      }
-    },
-  });
-
-  items.push({
-    label: groupsStore.config.originalSizePhoto
-      ? `Расширить на весь экран`
-      : "Отображать в оригинальном размере",
-    icon: groupsStore.config.originalSizePhoto
-      ? styledIcons.Icon16Fullscreen
-      : styledIcons.Icon16FullscreenExit,
-    onClick: () => {
-      groupsStore.config.originalSizePhoto =
-        !groupsStore.config.originalSizePhoto;
-    },
-  });
-  items.push({
-    label: "Информация",
-    icon: h(icons.Icon16ArticleOutline),
-    onClick: () => {
-      showMoreInfo.value = true;
-    },
-  });
-  items.push({
-    label: `${
-      groupsStore.config.skipLowResolutionPhotos
-        ? "Не пропускать"
-        : "Пропускать"
-    } фото с маленьким размером`,
-    icon: styledIcons.Icon16SkipToAction,
-    onClick: () => {
-      groupsStore.config.skipLowResolutionPhotos =
-        !groupsStore.config.skipLowResolutionPhotos;
-    },
-  });
-  items.push({
-    label: "Выйти из просмотра фото",
-    icon: h(icons.Icon16DoorEnterArrowRightOutline),
-    onClick: () => {
-      emit("photo:exit");
-    },
-  });
-  showContextMenu(e, items, () => photoDiv.value?.focus());
-};
-
 const onWheel = (e: WheelEvent) => {
   const delta = e.deltaY || e.detail;
   if (delta > 0) {
-    emit("photo:next");
+    actions.onPhotoNext();
   } else {
-    emit("photo:prev");
+    actions.onPhotoPrev();
   }
 };
 
 const swipes = useSwipes({
-  onLeft: () => emit("photo:prev"),
-  onRight: () => emit("photo:next"),
-  onDown: () => emit("photo:exit"),
-  onUp: () => (showMoreInfo.value = true),
-  onContextMenu: onShowContextMenu,
+  onLeft: actions.onPhotoPrev,
+  onRight: actions.onPhotoNext,
+  onDown: actions.onPhotoExit,
+  onUp: actions.onShowMoreInfo,
+  onContextMenu: actions.onShowContextMenu,
 });
 
 const { toClipboard } = useClipboard({ appendToBody: true });
