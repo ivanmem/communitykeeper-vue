@@ -213,6 +213,7 @@ onDeactivated(() => {
   top: 0;
   vertical-align: top;
   z-index: 1;
+  touch-action: none;
 
   img {
     align-content: center;
