@@ -237,15 +237,15 @@ export const actionSwipesOptions = Array.from(actionSwipesDict.keys()).map(
 );
 
 export const actionSwipesDefaults: Required<GallerySwipesConfig> = {
+  onUp: "pe",
+  onDown: "smi",
   onLeft: "pp",
   onRight: "pn",
-  onUp: "smi",
-  onDown: "pe",
 };
 
 export const actionSwipesSelectLabels = {
-  onDown: "Свайп вверх",
-  onUp: "Свайп вниз",
+  onUp: "Свайп вверх",
+  onDown: "Свайп вниз",
   onLeft: "Свайп влево",
   onRight: "Свайп вправо",
 };

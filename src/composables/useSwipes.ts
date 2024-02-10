@@ -6,8 +6,8 @@ const touchMoveThreshold = 10; // Минимальное смещение для
 export interface UsableSwipesOptions {
   onLeft?: (e: TouchEvent) => any;
   onRight?: (e: TouchEvent) => any;
-  onUp?: (e: TouchEvent) => any;
   onDown?: (e: TouchEvent) => any;
+  onUp?: (e: TouchEvent) => any;
   /** @description contextmenu работающий на IOS mobile */
   onContextMenu?: (e: MouseEvent | TouchEvent) => any;
   minDiffTrigger?: number;
@@ -96,9 +96,9 @@ export function useSwipes(opts: UsableSwipesOptions) {
       }
 
       if (yDiff > 0) {
-        opts.onDown?.(evt);
-      } else {
         opts.onUp?.(evt);
+      } else {
+        opts.onDown?.(evt);
       }
     }
   }
