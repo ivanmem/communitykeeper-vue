@@ -265,7 +265,7 @@ onDeactivated(() => {
           Репостов: <b>{{ photo.reposts.count }}</b>
         </div>
         <div v-if="photo.tags">
-          Тэгов: <b>{{ photo.tags.count }}</b>
+          Тегов: <b>{{ photo.tags.count }}</b>
         </div>
       </VCardText>
 
