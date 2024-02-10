@@ -224,6 +224,7 @@ export const actionSwipesDict = new Map<string, IActionDictValue>([
   ["pe", { label: "Выйти из просмотра фото", name: "onPhotoExit" }],
   ["pp", { label: "Предыдущее фото", name: "onPhotoPrev" }],
   ["pn", { label: "Следующее фото", name: "onPhotoNext" }],
+  ["passive", { label: "Ничего не делать", name: "onPassive" }],
 ]);
 
 export const actionSwipesOptions = Array.from(actionSwipesDict.keys()).map(

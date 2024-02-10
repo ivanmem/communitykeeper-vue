@@ -159,5 +159,6 @@ export function usePhotoActions(
     onPhotoPrev,
     onPhotoNext,
     onShowContextMenu,
+    onPassive: () => void 0,
   };
 }
