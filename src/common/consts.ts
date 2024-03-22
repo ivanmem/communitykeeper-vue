@@ -6,6 +6,7 @@ import Icon28ArticleOutline from "@vkontakte/icons/src/svg/28/articles_outline_2
 import Icon28DownloadOutline from "@vkontakte/icons/src/svg/28/download_outline_28.svg?component";
 import Icon28UploadOutline from "@vkontakte/icons/src/svg/28/upload_outline_28.svg?component";
 import Icon28DeleteOutline from "@vkontakte/icons/src/svg/28/delete_outline_28.svg?component";
+import Icon28ClearDataOutline from "@vkontakte/icons/src/svg/28/clear_data_outline_28.svg";
 
 import Icon24GitHub from "@/assets/svg/24/github_24.svg?component";
 import Icon24Back from "@vkontakte/icons/src/svg/24/back_24.svg?component";
@@ -90,6 +91,7 @@ export const icons = {
   Icon28DownloadOutline,
   Icon28UploadOutline,
   Icon28DeleteOutline,
+  Icon28ClearDataOutline,
 
   Icon24GitHub,
   Icon24Back,
@@ -173,6 +175,7 @@ export const styledIcons = {
   Icon24SortOutlineOpacity50: h(icons.Icon24SortOutline, {
     style: `opacity: 0.5;`,
   }) as any,
+  Icon24ClearDataOutline: createStyledIcon(icons.Icon28ClearDataOutline, 24),
 };
 
 export const darkColorScheme = ref(false);

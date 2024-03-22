@@ -7,6 +7,7 @@ import {
   actionSwipesOptions,
   actionSwipesSelectLabels,
   icons,
+  styledIcons,
 } from "@/common/consts";
 import { useDialog } from "@/store/dialog/dialog";
 import ASettingsDisabledCookies from "@/pages/ASettings/ASettingsDisabledCookies.vue";
@@ -149,6 +150,11 @@ const dialogStore = useDialog();
       />
     </VCardItem>
     <VDivider style="margin-bottom: 10px" />
+    <VCardItem :append-icon="styledIcons.Icon24ClearDataOutline">
+      <VBtn variant="tonal" @click="groupsStore.clearCachedGroups()">
+        Очистить кэш счётчиков
+      </VBtn>
+    </VCardItem>
     <VCardItem :append-icon="icons.Icon24QuestionOutline">
       <VBtn variant="tonal" @click="appStore.initSlides()">
         Повторить приветствие
