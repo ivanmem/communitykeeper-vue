@@ -6,10 +6,12 @@ import { GallerySwipesConfig, useGroups } from "@/store/groups/groups";
 import { useApp } from "@/store/app/app";
 import { IPhoto } from "@/store/groups/types";
 import useClipboard from "vue-clipboard3/dist/esm/index";
-import { UsableSwipesOptions, useSwipes } from "@/composables/useSwipes";
+import { UsableSwipesOptions } from "@/composables/useSwipes";
 import { useDialog } from "@/store/dialog/dialog";
 import APhotoCounter from "@/pages/AAlbum/APhotoCounter.vue";
 import { usePhotoActions } from "@/pages/AAlbum/usePhotoActions";
+import { useSwipesAndZoom } from "@/composables/useSwipesAndZoom";
+import { UsableZoomOptions } from "@/composables/useZoom";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -27,6 +29,7 @@ const props = defineProps<{
 const dialogStore = useDialog();
 const groupsStore = useGroups();
 const photoDiv = ref<HTMLDivElement>();
+const imageRef = ref<HTMLImageElement>();
 const showInfo = ref(true);
 const showMoreInfo = ref(false);
 const originalSize = computed(() =>
@@ -102,6 +105,11 @@ const swipesConfig = toRef(() => groupsStore.swipesConfig);
 const swipesOptions: UsableSwipesOptions = {
   onContextMenu: actions.onShowContextMenu,
 };
+const zoomOpts: UsableZoomOptions = {
+  image: imageRef,
+  key: () => props.photo.id,
+  enabled: ref(false),
+};
 
 watch(
   swipesConfig,
@@ -115,7 +123,7 @@ watch(
   { immediate: true },
 );
 
-const swipes = useSwipes(swipesOptions);
+const swipes = useSwipesAndZoom(swipesOptions, zoomOpts);
 
 const { toClipboard } = useClipboard({ appendToBody: true });
 
@@ -143,6 +151,7 @@ onDeactivated(() => {
   >
     <img
       v-if="originalSize"
+      ref="imageRef"
       :data-original-size-photo="groupsStore.config.originalSizePhoto"
       :src="originalSize.url"
       alt=""
@@ -211,9 +220,9 @@ onDeactivated(() => {
   position: fixed;
   right: 0;
   top: 0;
+  touch-action: none;
   vertical-align: top;
   z-index: 1;
-  touch-action: none;
 
   img {
     align-content: center;
