@@ -140,6 +140,18 @@ const dialogStore = useDialog();
       </VSelect>
     </VCardItem>
     <VDivider />
+    <VCardItem :append-icon="icons.Icon24ShadowsOutline">
+      <VSwitch
+        v-model="groupsStore.config.previewSizeShadow"
+        hide-details
+        label="Подсвечивать миниатюры с учётом разрешения фото"
+      />
+      <span class="a-mini-text">
+        Фото с низким разрешением будет подсвечено красным цветом, а с высоким -
+        зелёным.
+      </span>
+    </VCardItem>
+    <VDivider />
     <VCardSubtitle style="padding-block: 12px"> 🐞 Тестирование</VCardSubtitle>
     <VDivider />
     <VCardItem :append-icon="icons.Icon24Bug">

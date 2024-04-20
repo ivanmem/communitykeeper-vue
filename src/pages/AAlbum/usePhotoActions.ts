@@ -8,13 +8,15 @@ import { IPhotoEmit } from "@/pages/AAlbum/APhoto.vue";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { icons, styledIcons } from "@/common/consts";
 import { showContextMenu } from "@/helpers/showContextMenu";
-import APhotoShareDialog, { APhotoShareDialogProps } from "@/pages/AAlbum/APhotoShareDialog.vue";
+import APhotoShareDialog, {
+  APhotoShareDialogProps,
+} from "@/pages/AAlbum/APhotoShareDialog.vue";
 
 export function usePhotoActions(
   photoGetter: MaybeRefOrGetter<IPhoto>,
   showMoreInfo: Ref<boolean>,
   emit: IPhotoEmit,
-  photoDivGetter: MaybeRefOrGetter<HTMLDivElement | undefined>
+  photoDivGetter: MaybeRefOrGetter<HTMLDivElement | undefined>,
 ) {
   const groupsStore = useGroups();
   const dialogStore = useDialog();
@@ -96,7 +98,7 @@ export function usePhotoActions(
       onClick: onOpenPhoto,
     });
     items.push({
-      label: "Открыть оригинал",
+      label: `Открыть оригинал (${originalSize.value?.width}x${originalSize.value?.height})`,
       icon: h(icons.Icon16Link),
       onClick: onOpenOriginalSizePhoto,
     });

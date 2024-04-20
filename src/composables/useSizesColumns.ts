@@ -1,4 +1,13 @@
-import { computed, MaybeRefOrGetter, onMounted, onUnmounted, reactive, ref, toValue, watch } from "vue";
+import {
+  computed,
+  MaybeRefOrGetter,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  toValue,
+  watch,
+} from "vue";
 import { unrefElement, useElementSize, useWindowSize } from "@vueuse/core";
 import { useActivated } from "@/composables/useActivated";
 import { useApp } from "@/store/app/app";
@@ -7,7 +16,7 @@ import { useApp } from "@/store/app/app";
 export function useSizesColumns(
   maybeElement: MaybeRefOrGetter,
   initialSizes: MaybeRefOrGetter<{ width: number; height: number }>,
-  containerIndent = 0
+  containerIndent = 0,
 ) {
   const isActivated = useActivated();
   const windowSize = useWindowSize();
@@ -26,7 +35,7 @@ export function useSizesColumns(
     () => {
       sizes.value.width = toValue(initialSizes).width;
     },
-    { immediate: true, flush: "sync" }
+    { immediate: true, flush: "sync" },
   );
   // при каждом изменении изначальных размеров - сбрасываем размер столбца до первоначального значения
   watch(
@@ -34,7 +43,7 @@ export function useSizesColumns(
     () => {
       sizes.value = { ...toValue(initialSizes) };
     },
-    { immediate: true, flush: "sync" }
+    { immediate: true, flush: "sync" },
   );
 
   watch(
@@ -42,9 +51,9 @@ export function useSizesColumns(
     (newWidth, prevWidth) => {
       const height = sizes.value.height;
       const percent = newWidth / prevWidth;
-      sizes.value.height = height * percent;
+      sizes.value.height = Math.round(height * percent);
     },
-    { flush: "sync" }
+    { flush: "sync" },
   );
 
   const updateCount = () => {
@@ -84,7 +93,7 @@ export function useSizesColumns(
         sizes.value.width = newWidthColumn;
       }
     },
-    { immediate: true, flush: "post" }
+    { immediate: true, flush: "post" },
   );
 
   watch(
@@ -99,25 +108,24 @@ export function useSizesColumns(
       element.addEventListener("resize", updateCount);
       document.documentElement.addEventListener(
         "fullscreenchange",
-        updateCount
+        updateCount,
       );
       unsubs.push(() => {
         element.removeEventListener("resize", updateCount);
         document.documentElement.removeEventListener(
           "fullscreenchange",
-          updateCount
+          updateCount,
         );
       });
     },
-    { flush: "post" }
+    { flush: "post" },
   );
 
   onUnmounted(() => {
     unsubs.forEach((x) => {
       try {
         x();
-      } catch {
-      }
+      } catch {}
     });
   });
 

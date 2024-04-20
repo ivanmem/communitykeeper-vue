@@ -1,42 +1,53 @@
 <script lang="ts" setup>
-import { computed, h } from "vue";
+import { computed, CSSProperties, h } from "vue";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import { icons } from "@/common/consts";
 import { openUrl } from "@/helpers/openUrl";
 import { IPhoto } from "@/store/groups/types";
+import { getTitleBoxShadow } from "./getTitleBoxShadow";
+import { useGroups } from "@/store/groups/groups";
 
 const props = defineProps<{
   photo: IPhoto;
   sizes: { width: number; height: number };
 }>();
 const originalSize = computed(() =>
-  PhotoHelper.getOriginalSize(props.photo.sizes)
+  PhotoHelper.getOriginalSize(props.photo.sizes),
 );
 const previewSize = computed(() =>
-  PhotoHelper.getPreviewSize(props.photo.sizes, props.sizes)
+  PhotoHelper.getPreviewSize(props.photo.sizes, props.sizes),
 );
+const groupsStore = useGroups();
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
     {
-      label: "Открыть оригинал",
+      label: `Открыть оригинал (${originalSize.value?.width}x${originalSize.value?.height})`,
       icon: h(icons.Icon16Link),
       onClick: () => {
         if (originalSize.value) {
           openUrl(originalSize.value.url);
         }
-      }
+      },
     },
     {
       label: "Скачать",
       icon: h(icons.Icon16DownloadOutline),
       onClick: () => {
         return PhotoHelper.downloadPhoto(props.photo);
-      }
-    }
+      },
+    },
   ]);
 };
+
+const titleStyle = computed<CSSProperties | undefined>(() => {
+  const size = originalSize.value;
+  if (!groupsStore.config.previewSizeShadow || !size) return undefined;
+  return {
+    boxShadow: getTitleBoxShadow(size),
+  };
+});
 </script>
 <template>
   <div
@@ -49,7 +60,10 @@ const onShowContextMenu = (e: MouseEvent) => {
       alt=""
       class="a-not-dragable-and-not-select"
     />
-    <div class="a-not-dragable-and-not-select photos_row__title_wrap"></div>
+    <div
+      :style="titleStyle"
+      class="a-not-dragable-and-not-select photos_row__title_wrap"
+    ></div>
   </div>
 </template>
 <style lang="scss">
