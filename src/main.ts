@@ -17,6 +17,7 @@ import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
 import "@/style.scss";
 import App from "@/App.vue";
 
+
 (async () => {
   const vuetify = createVuetify({
     icons: {
