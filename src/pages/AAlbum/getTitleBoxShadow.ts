@@ -10,7 +10,7 @@ export function getTitleBoxShadow(size: IPhotoSize): string {
       : size.height / VK_MAX_PHOTO_SIZE.height;
   factor = Math.min(Math.max(factor, 0), 1);
   // При factor равным 0.5 opacity равен 0. Чем дальше от середины, тем больше opacity
-  let opacity = factor >= 0.5 ? 1 - (factor - 0.5) * 2 : factor * 2;
+  let opacity = factor >= 0.5 ? (factor - 0.5) * 2 : factor * 2;
   // Умножаем на 2, чтобы усилить эффект
   opacity *= 2;
   opacity = Math.min(Math.max(opacity, 0.2), 1);
