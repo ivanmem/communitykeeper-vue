@@ -1,4 +1,7 @@
-import { MaybeRefOrGetter, Ref, toRef, watch } from "vue";
+import { MaybeRefOrGetter, onMounted, onUpdated, Ref, toRef, watch } from "vue";
+import { useMonitor } from "@/composables/useMonitor";
+import { useInterval } from "@vueuse/core";
+import { isDev } from "@/common/consts";
 
 export interface UsableZoomOptions {
   /*** Изображение в [image] будет увеличено с помощью style.transform */
@@ -24,12 +27,46 @@ export function useZoom({ image, key, enabled }: UsableZoomOptions) {
   let initialPosition: { x: number; y: number } = { x: 0, y: 0 };
   let position: { x: number; y: number } = { x: 0, y: 0 };
 
+  if (isDev) {
+    const paneParams: Record<string, any> = {};
+    onPaneUpdated();
+    useMonitor(paneParams);
+
+    function onPaneUpdated() {
+      paneParams.initialDistance = initialDistance;
+      paneParams.initialScale = initialScale;
+      paneParams.scale = scale;
+      paneParams.initialOrigin = initialOrigin;
+      paneParams.initialTouch = initialTouch;
+      paneParams.initialPosition = initialPosition;
+      paneParams.position = position;
+    }
+
+
+    useInterval(100, {
+      callback() {
+        onPaneUpdated();
+      }
+    });
+
+
+    onUpdated(() => {
+      onPaneUpdated();
+    });
+
+    onMounted(() => {
+      onPaneUpdated();
+    });
+  }
+
   function reset() {
     initialOrigin = null;
     scale = 1;
     initialScale = 1;
     initialDistance = null;
     enabled.value = false;
+    initialPosition = { x: 0, y: 0 };
+    position = { x: 0, y: 0 };
     image.value?.style.removeProperty("transform");
   }
 
