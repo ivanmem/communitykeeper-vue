@@ -7,21 +7,28 @@ import { openUrl } from "@/helpers/openUrl";
 import { IPhoto } from "@/store/groups/types";
 import { getTitleBoxShadow } from "./getTitleBoxShadow";
 import { useGroups } from "@/store/groups/groups";
+import { useOpenPhoto } from "@/pages/AAlbum/useOpenPhoto";
 
 const props = defineProps<{
   photo: IPhoto;
   sizes: { width: number; height: number };
 }>();
+const groupsStore = useGroups();
 const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes),
 );
 const previewSize = computed(() =>
   PhotoHelper.getPreviewSize(props.photo.sizes, props.sizes),
 );
-const groupsStore = useGroups();
+const onOpenPhoto = useOpenPhoto(() => props.photo);
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
+   {
+      label: "Перейти к фото",
+      icon: h(icons.Icon16LogoVk),
+      onClick: onOpenPhoto,
+    },
     {
       label: `Открыть оригинал (${originalSize.value?.width}x${originalSize.value?.height})`,
       icon: h(icons.Icon16Link),

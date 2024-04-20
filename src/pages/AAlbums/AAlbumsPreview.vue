@@ -20,7 +20,7 @@ const vkStore = useVk();
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
     {
-      label: "Перейти к фото",
+      label: "Перейти к альбому",
       icon: h(icons.Icon16LogoVk),
       onClick: () => {
         openUrl(

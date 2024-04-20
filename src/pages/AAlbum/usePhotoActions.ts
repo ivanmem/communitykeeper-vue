@@ -8,9 +8,8 @@ import { IPhotoEmit } from "@/pages/AAlbum/APhoto.vue";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { icons, styledIcons } from "@/common/consts";
 import { showContextMenu } from "@/helpers/showContextMenu";
-import APhotoShareDialog, {
-  APhotoShareDialogProps,
-} from "@/pages/AAlbum/APhotoShareDialog.vue";
+import APhotoShareDialog, { APhotoShareDialogProps } from "@/pages/AAlbum/APhotoShareDialog.vue";
+import { useOpenPhoto } from "@/pages/AAlbum/useOpenPhoto";
 
 export function usePhotoActions(
   photoGetter: MaybeRefOrGetter<IPhoto>,
@@ -50,11 +49,7 @@ export function usePhotoActions(
     showMoreInfo.value = true;
   };
 
-  const onOpenPhoto = () => {
-    openUrl(
-      `//${PhotoHelper.getPhotoUrl(photo.value.owner_id, photo.value.id)}`,
-    );
-  };
+  const onOpenPhoto = useOpenPhoto(photo);
 
   const onOpenOriginalSizePhoto = () => {
     if (originalSize.value) {
