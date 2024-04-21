@@ -1,16 +1,17 @@
-## Ваш Каталог Групп (vk mini app)
+## Хранитель групп (vk mini app)
 
 ## Зависимости
 
 ```shell
-npm install
 npm install @vkontakte/vk-tunnel concurrently -g
+npm install
 ```
 
 ## Запуск
+Предварительно поменяйте `app_id` в [vk-tunnel-config.json](./vk-tunnel-config.json) на своё приложение.
 
 ```shell
-npm run dev
+npm run dev-tunnel
 ```
 
 ### Отладка
@@ -22,14 +23,8 @@ npm run dev
 vue-devtools
 ```
 
-Это настроено только для режима разработки. Но для использования Вам потребуется раскомментировать devtools.connect в
-main.ts.
-
-## Сборка
-
-```shell
-npm run build
-```
+Это настроено только для режима разработки. Но для использования Вам потребуется раскомментировать `devtools.connect` в
+`main.ts`.
 
 ## Публикация
 
