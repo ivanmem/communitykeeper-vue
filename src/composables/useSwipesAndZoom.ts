@@ -25,7 +25,7 @@ export function useSwipesAndZoom(
           return;
         }
 
-        return swipeHandlers["contextmenu"](e);
+        return swipeHandlers.contextmenu?.(e);
       }
     : undefined;
 
@@ -34,6 +34,7 @@ export function useSwipesAndZoom(
     contextmenu,
     touchstart: (evt: TouchEvent) => {
       if (isZoomEvent(zoomHandlers.touchstart(evt))) {
+        swipeHandlers.touchstart(evt, true)
         return;
       }
 
@@ -51,7 +52,7 @@ export function useSwipesAndZoom(
         return;
       }
 
-      return swipeHandlers.touchend(evt);
+      return swipeHandlers.touchend?.(evt);
     },
   };
 }

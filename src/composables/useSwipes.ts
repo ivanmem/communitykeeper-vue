@@ -29,13 +29,25 @@ export function useSwipes(opts: UsableSwipesOptions) {
   let touchMoved = false;
   let checkLongTouchTimeout: NodeJS.Timeout | undefined;
 
+  function touchendOrTouchCancel() {
+    touchMoved = false;
+    touchStartX = undefined;
+    touchStartY = undefined;
+    clearTimeout(checkLongTouchTimeout);
+  }
+
   const appStore = useApp();
 
-  function touchstart(evt: TouchEvent) {
+  function touchstart(evt: TouchEvent, cancelled = false) {
+    if (cancelled) {
+      touchendOrTouchCancel();
+      return;
+    }
+
     const firstTouch = evt.touches[0];
     xDown = firstTouch.clientX;
     yDown = firstTouch.clientY;
-    if (opts.onContextMenu && appStore.isIos) {
+    if (opts.onContextMenu && appStore.isIos && evt.touches.length === 1) {
       touchMoved = false;
       touchStartX = firstTouch.clientX;
       touchStartY = firstTouch.clientY;
@@ -115,7 +127,10 @@ export function useSwipes(opts: UsableSwipesOptions) {
   }
 
   function contextmenu(e: MouseEvent | TouchEvent) {
-    if (!opts.onContextMenu) {
+    if (
+      !opts.onContextMenu ||
+      (e instanceof TouchEvent && e.touches.length !== 1)
+    ) {
       return;
     }
 
@@ -124,18 +139,18 @@ export function useSwipes(opts: UsableSwipesOptions) {
     opts.onContextMenu?.(e);
   }
 
-  const events: Record<any, any> = {
+  const events: {
+    touchmove(evt: TouchEvent): void;
+    touchstart(evt: TouchEvent, cancelled?: boolean): void;
+    touchend?(evt: TouchEvent): void;
+    touchcancel?(): void;
+    contextmenu?(evt: MouseEvent | TouchEvent): void;
+  } = {
     touchstart,
     touchmove,
   };
   if (opts.onContextMenu) {
     if (appStore.isIos) {
-      function touchendOrTouchCancel() {
-        touchMoved = false;
-        touchStartX = undefined;
-        touchStartY = undefined;
-        clearTimeout(checkLongTouchTimeout);
-      }
 
       events.touchend = touchendOrTouchCancel;
       events.touchcancel = touchendOrTouchCancel;
