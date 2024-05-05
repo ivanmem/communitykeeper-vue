@@ -3,8 +3,9 @@ import { useAppCaption } from "@/composables/useAppCaption";
 import { icons, MAX_SIZE_ONE_VK_VALUE, styledIcons } from "@/common/consts";
 import { useVk } from "@/store/vk/vk";
 
-useAppCaption("Проект");
+useAppCaption(`Проект`);
 const vkStore = useVk();
+const buildDate = new Date(BUILD_DATE).toLocaleString();
 </script>
 
 <template>
@@ -14,8 +15,9 @@ const vkStore = useVk();
       Приложение позволяет группировать, фильтровать и сортировать группы, а
       также быстро переходить к их фото\альбомам\видео\статьям. Встроенная
       галерея позволяет смотреть фото в максимальном качестве и листать фото
-      нажатиями по краям, как в Telegram. Просматриваемый контент сохраняется
-      в историю.
+      нажатиями по краям, как в Telegram. Просматриваемый контент сохраняется в
+      историю. <br />
+      Последнее обновление: <b>{{ buildDate }}</b>.
     </VCardItem>
     <VDivider style="margin-bottom: 10px" />
     <VCardSubtitle>❗ Важный совет</VCardSubtitle>

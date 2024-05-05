@@ -38,4 +38,7 @@ export default defineConfig({
     minify: false,
     target: "ES2019",
   },
+  define: {
+    BUILD_DATE: JSON.stringify(new Date().toISOString()),
+  },
 });
