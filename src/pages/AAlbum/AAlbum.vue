@@ -4,7 +4,6 @@ import APhoto from "@/pages/AAlbum/APhoto.vue";
 import { icons, styledIcons } from "@/common/consts";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { useAlbum } from "@/pages/AAlbum/useAlbum";
-import { RecycleScroller } from "vue-virtual-scroller";
 import { useGroups } from "@/store/groups/groups";
 import { openUrl } from "@/helpers/openUrl";
 import { computed, toRef } from "vue";
@@ -15,6 +14,8 @@ import { computedAsync } from "@vueuse/core";
 import { IGroup } from "@/store/groups/types";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import GroupHelper from "@/helpers/GroupHelper";
+// @ts-ignore
+import { VList } from "virtua/vue";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -125,29 +126,24 @@ const onHelp = () => {
           />
         </div>
       </div>
-      <RecycleScroller
+      <VList
         ref="albumRef"
-        v-slot="{ item, index }"
-        :gridItems="gridItems"
-        :item-size="sizes.height"
-        :itemSecondarySize="sizes.width"
-        :items="photos"
-        :min-item-size="sizes.height"
-        :ready="!isLoadingPhotos"
-        :total-size="photos.length"
+        #default="indexes"
+        :data="photos.indexes"
         class="a-album__items"
-        emit-update
-        key-field="id"
-        @update="onScrollerUpdate"
+        @range-change="onScrollerUpdate"
       >
-        <AAlbumPreview
-          :key="item.id"
-          :index="index"
-          :photo="item"
-          :sizes="sizes"
-          @click="setCurrentPhotoIndex(index)"
-        />
-      </RecycleScroller>
+        <div class="a-album-row">
+          <AAlbumPreview
+            v-for="index in indexes"
+            :key="photos.items[index].id"
+            :index="index"
+            :photo="photos.items[index]"
+            :sizes="sizes"
+            @click="setCurrentPhotoIndex(index)"
+          />
+        </div>
+      </VList>
       <APhoto
         v-if="currentPhoto"
         :count="albumCount"
@@ -169,6 +165,10 @@ const onHelp = () => {
   flex-grow: 1;
   gap: 5px;
   overflow: auto;
+}
+
+.a-album-row {
+  display: flex;
 }
 
 .a-album__items {

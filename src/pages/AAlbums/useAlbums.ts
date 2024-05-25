@@ -8,11 +8,13 @@ import {
   wallAlbumStatic,
 } from "@/pages/AAlbums/consts";
 import { useVk } from "@/store/vk/vk";
-import { RecycleScroller } from "vue-virtual-scroller";
 import { useSizesColumns } from "@/composables/useSizesColumns";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import { useScrollRestore } from "@/composables/useScrollRestore";
 import { errorToString } from "@/helpers/errorToString";
+// @ts-ignore
+import { VList } from "virtua/vue";
+import { useGridArray } from "@/composables/useGridArray";
 
 const countOneLoad = 100;
 
@@ -22,17 +24,17 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const ownerId = computed(() => toValue(ownerIdGetter));
   const isInit = ref(false);
   useScreenSpinner(() => !isInit.value);
-  const albums = ref<IAlbumItem[]>([]);
   const albumsMaxItems = ref(0);
   const isLoadingAlbums = ref(false);
   const group = ref<IGroup | undefined>();
   const staticAlbums = computed(() => getStaticAlbums(ownerId.value));
   const staticAlbumsCount = ref(0);
-  const albumsRef = ref<InstanceType<typeof RecycleScroller>>();
+  const albumsRef = ref<InstanceType<typeof VList>>();
   const { sizes, gridItems } = useSizesColumns(
     albumsRef,
     AlbumsPreviewSizesInitial,
   );
+  const albums = useGridArray<IAlbumItem>(gridItems);
   const screenError = ref<any>();
 
   useScrollRestore(() => albumsRef.value?.$el);
@@ -40,7 +42,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const onClearComponent = () => {
     isInit.value = false;
     isLoadingAlbums.value = false;
-    albums.value.length = 0;
+    albums.clear();
     albumsMaxItems.value = 0;
     group.value = undefined;
     screenError.value = undefined;
@@ -60,10 +62,10 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
             album_id: wallAlbumStatic.id,
             owner_id: +ownerId.value,
           });
-          albums.value.push(wallAlbum);
+          albums.push(wallAlbum);
           staticAlbumsCount.value = 1;
         } catch {
-          albums.value.push(...staticAlbums.value);
+          albums.push(...staticAlbums.value);
           staticAlbumsCount.value = staticAlbums.value.length;
         }
       }
@@ -81,7 +83,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       }
 
       isLoadingAlbums.value = true;
-      const offset = albums.value.length - staticAlbumsCount.value;
+      const offset = albums.items.length - staticAlbumsCount.value;
       const count = albumsMaxItems.value - offset - staticAlbumsCount.value;
       if (count > 0) {
         try {
@@ -90,7 +92,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
             offset,
             count,
           );
-          albums.value.push(...items);
+          albums.push(...items);
         } catch (ex: any) {
           if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
             screenError.value = errorToString(ex);
@@ -101,17 +103,12 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
 
       isLoadingAlbums.value = false;
       isInit.value = true;
-      albumsRef.value?.updateVisibleItems(true);
     },
     { immediate: true },
   );
 
-  const onScrollerUpdate = (
-    startIndex: number,
-    endIndex: number,
-    visibleStartIndex: number,
-    visibleEndIndex: number,
-  ) => {
+  const onScrollerUpdate = (_: number, endRowIndex: number) => {
+    const endIndex = gridItems.value * endRowIndex;
     if (endIndex + countOneLoad / 3 < albumsMaxItems.value) {
       return;
     }

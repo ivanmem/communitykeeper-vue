@@ -8,9 +8,10 @@ import { SwitchPhotoMode } from "@/pages/AAlbum/types";
 import { getFirstRefChange } from "@/helpers/getFirstRefChange";
 import { useApp } from "@/store/app/app";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
+import { GridArray } from "@/composables/useGridArray";
 
 export function useCurrentPhoto(
-  photos: Ref<IPhoto[] | undefined>,
+  photos: GridArray<IPhoto>,
   photosMap: Ref<Map<IPhotoKey, IPhoto> | undefined>,
   photoId: Ref<number | string | undefined>,
   ownerId: Ref<string | number>,
@@ -30,7 +31,7 @@ export function useCurrentPhoto(
       return undefined;
     }
 
-    return photos.value?.[index];
+    return photos.items[index];
   };
 
   const prefetchPhoto = (photo: IPhoto | undefined) => {
@@ -52,10 +53,6 @@ export function useCurrentPhoto(
     index: number | undefined,
     mode?: SwitchPhotoMode,
   ) => {
-    if (photos.value === undefined) {
-      return;
-    }
-
     if (index === undefined) {
       return setCurrentPhotoId(undefined);
     }
@@ -76,9 +73,9 @@ export function useCurrentPhoto(
   };
 
   watch(
-    [() => photos.value?.length, photoId, isLoadingPhotos],
+    [() => photos.items?.length, photoId, isLoadingPhotos],
     () => {
-      if (!photos.value || photoId.value === undefined) {
+      if (photoId.value === undefined) {
         currentPhotoIndex.value = undefined;
         return;
       }

@@ -3,7 +3,6 @@ import { createPinia } from "pinia";
 import { createVuetify } from "vuetify";
 import { router } from "@/router";
 import { isDev } from "@/common/consts";
-import VueVirtualScroller from "vue-virtual-scroller";
 import Vue3ContextMenu from "@imengyu/vue3-context-menu";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import "vuetify/styles";
@@ -12,11 +11,9 @@ import "@/styles/icons.scss";
 import "@/styles/inputs.scss";
 import "@/styles/buttons.scss";
 import "@vkontakte/vkui/dist/vkui.css";
-import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
 import "@/style.scss";
 import App from "@/App.vue";
-
 
 (async () => {
   const vuetify = createVuetify({
@@ -37,7 +34,6 @@ import App from "@/App.vue";
     const app = createApp(App)
       .use(router)
       .use(pinia)
-      .use(VueVirtualScroller)
       .use(Vue3ContextMenu)
       .use(vuetify);
     app.mount("#app");

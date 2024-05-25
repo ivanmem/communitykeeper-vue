@@ -6,7 +6,6 @@ import AGroupCounters from "@/pages/AGroups/AGroupCounters.vue";
 import { computed, h, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useElementVisibility } from "@vueuse/core";
-import { sleep } from "@/helpers/sleep";
 import { icons, styledIcons } from "@/common/consts";
 import { showContextMenu } from "@/helpers/showContextMenu";
 import GroupHelper from "../../helpers/GroupHelper";
@@ -18,14 +17,10 @@ import { useDialog } from "@/store/dialog/dialog";
 import { useActivated } from "@/composables/useActivated";
 import { useApp } from "@/store/app/app";
 
-const props = withDefaults(
-  defineProps<{
-    group: IGroup;
-    index?: number;
-    applyFilters?: boolean;
-  }>(),
-  { index: 0 },
-);
+const props = defineProps<{
+  group: IGroup;
+  applyFilters?: boolean;
+}>();
 const router = useRouter();
 const groupsStore = useGroups();
 const appStore = useApp();
@@ -62,8 +57,6 @@ watch(
       return;
     }
 
-    // таким образом загрузка будет по порядку
-    await sleep(props.index * 2);
     if (!isActivated.value) {
       return;
     }

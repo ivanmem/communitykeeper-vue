@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import AAlbumsPreview from "@/pages/AAlbums/AAlbumsPreview.vue";
-import { RecycleScroller } from "vue-virtual-scroller";
 import { useAlbums } from "@/pages/AAlbums/useAlbums";
 import { icons } from "@/common/consts";
 import { openUrl } from "@/helpers/openUrl";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
+// @ts-ignore
+import { VList } from "virtua/vue";
 
 const props = defineProps<{ ownerId: number | string }>();
 const {
@@ -17,7 +18,7 @@ const {
   onScrollerUpdate,
   albumsRef,
   screenError,
-  sizes
+  sizes,
 } = useAlbums(() => props.ownerId);
 const { Icon16Link } = icons;
 const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
@@ -46,28 +47,22 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
           {{ screenError }}
         </code>
       </div>
-      <RecycleScroller
+      <VList
         ref="albumsRef"
-        v-slot="{ item, index }"
-        :gridItems="gridItems"
-        :item-size="sizes.height"
-        :itemSecondarySize="sizes.width"
-        :items="albums"
-        :ready="!isLoadingAlbums"
-        :total-size="albums.length"
-        :updateInterval="100"
+        #default="indexes"
+        :data="albums.indexes"
         class="a-albums__items"
-        emit-update
-        key-field="id"
-        @update="onScrollerUpdate"
+        @range-change="onScrollerUpdate"
       >
-        <AAlbumsPreview
-          :key="item.id"
-          :album="item"
-          :index="index"
-          :sizes="sizes"
-        />
-      </RecycleScroller>
+        <div class="a-albums-row">
+          <AAlbumsPreview
+            v-for="index in indexes"
+            :key="albums.items[index].id"
+            :album="albums.items[index]"
+            :sizes="sizes"
+          />
+        </div>
+      </VList>
     </template>
 
     <div></div>
@@ -83,6 +78,10 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
   flex-grow: 1;
   gap: 5px;
   overflow: auto;
+}
+
+.a-albums-row {
+  display: flex;
 }
 
 .a-albums__items {

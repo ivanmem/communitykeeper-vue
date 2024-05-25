@@ -2,12 +2,13 @@
 import { useGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AGroupsSearch from "@/pages/AGroups/AGroupsSearch.vue";
 import AGroupLink from "@/pages/AGroups/AGroupLink.vue";
-import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import { icons } from "@/common/consts";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useDialog } from "@/store/dialog/dialog";
 import AButton from "@/components/AButton/AButton.vue";
 import { useGroups } from "@/store/groups/groups";
+// @ts-ignore
+import { VList } from "virtua/vue";
 
 const groupSearch = useGroupSearch();
 const { groupsOrder, showFilters } = groupSearch;
@@ -64,27 +65,18 @@ const onHelp = () => {
       </VBanner>
     </div>
     <template v-else>
-      <DynamicScroller
-        v-if="groupsOrder.length"
+      <VList
         :key="groupsStore.filters.folder"
-        :items="groupsOrder"
-        :min-item-size="64"
+        #default="item"
+        :data="groupsOrder"
         class="a-groups__groups"
-        key-field="id"
         v-on="groupSearch.swipes"
       >
-        <template v-slot="{ item, index, active }">
-          <DynamicScrollerItem
-            :active="active"
-            :data-index="index"
-            :item="item"
-            :size-dependencies="[item.counters]"
-          >
-            <AGroupLink :key="item.id" :group="item" :index="index" apply-filters />
-            <VDivider v-if="groupsOrder.length - 1 > index" />
-          </DynamicScrollerItem>
-        </template>
-      </DynamicScroller>
+        <div :key="item.id">
+          <AGroupLink :key="item.id" :group="item" apply-filters />
+          <VDivider v-if="groupsOrder[groupsOrder.length - 1] !== item" />
+        </div>
+      </VList>
     </template>
   </div>
 </template>

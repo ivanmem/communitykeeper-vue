@@ -5,7 +5,6 @@ import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import { useSizesColumns } from "@/composables/useSizesColumns";
-import { RecycleScroller } from "vue-virtual-scroller";
 import { toStr } from "@/helpers/toStr";
 import { useGroups } from "@/store/groups/groups";
 import { useHistory } from "@/store/history/history";
@@ -13,6 +12,9 @@ import { toNumberOrUndefined } from "@/helpers/toNumberOrUndefined";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
 import { errorToString } from "@/helpers/errorToString";
+import { useGridArray } from "@/composables/useGridArray";
+// @ts-ignore
+import { VList } from "virtua/vue";
 
 const countOneLoad = 150;
 
@@ -21,7 +23,6 @@ export function useAlbum(
   albumIdGetter: MaybeRefOrGetter<number | string>,
   photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
 ) {
-  const photos = ref<IPhoto[]>([]);
   const photosMap = ref<Map<IPhotoKey, IPhoto>>(new Map());
   const ownerId = computed(() => toValue(ownerIdGetter));
   const albumId = computed(() => {
@@ -29,15 +30,14 @@ export function useAlbum(
     return value == "wall" ? -7 : value;
   });
   const photoId = computed(() => toValue(photoIdGetter));
-  const photo = computed(
-    () =>
-      photosMap.value?.get(
-        PhotoHelper.getPhotoKeyOrUndefined(ownerId.value, photoId.value) ??
-          ("" as IPhotoKey),
-      ),
+  const photo = computed(() =>
+    photosMap.value?.get(
+      PhotoHelper.getPhotoKeyOrUndefined(ownerId.value, photoId.value) ??
+        ("" as IPhotoKey),
+    ),
   );
   const album = ref<IAlbumItem | undefined>();
-  const albumRef = ref<InstanceType<typeof RecycleScroller>>();
+  const albumRef = ref<InstanceType<typeof VList>>();
   const { sizes, gridItems } = useSizesColumns(
     albumRef,
     AlbumsPreviewSizesInitial,
@@ -53,10 +53,11 @@ export function useAlbum(
   const albumHistoryItem = computed(() =>
     historyStore.getViewAlbum(ownerId.value, albumId.value),
   );
+  const photos = useGridArray<IPhoto>(gridItems);
   const albumCount = computed(
     () =>
       toNumberOrUndefined(album.value?.size) ??
-      (isLoadAllPhotos ? photos.value.length : `${photos.value.length}+`),
+      (isLoadAllPhotos ? photos.items.length : `${photos.items.length}+`),
   );
 
   useScreenSpinner(() => !isInit.value);
@@ -68,7 +69,7 @@ export function useAlbum(
 
     // защищаем от переполнения
     if (
-      photosMaxItems.value - photos.value.length < 1000 &&
+      photosMaxItems.value - photos.items.length < 1000 &&
       !isLoadAllPhotos.value
     ) {
       photosMaxItems.value += countOneLoad;
@@ -92,7 +93,7 @@ export function useAlbum(
   );
 
   const onClearPhotos = () => {
-    photos.value.length = 0;
+    photos.clear();
     photosMap.value.clear();
     photosMaxItems.value = countOneLoad;
     isLoadAllPhotos.value = false;
@@ -135,7 +136,7 @@ export function useAlbum(
 
     isLoadingPhotos.value = true;
     screenError.value = undefined;
-    const offset = photos.value.length;
+    const offset = photos.items.length;
     const count = currentPhotosMaxItems - offset;
     try {
       const { items }: { items: IPhoto[] } = await vkStore.photosGet({
@@ -153,28 +154,23 @@ export function useAlbum(
 
       for (let newPhoto of items) {
         newPhoto.__state = {
-          index: photos.value.length,
+          index: photos.items.length,
         };
         photosMap.value.set(
           PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id),
           newPhoto,
         );
-        photos.value.push(newPhoto);
+        photos.push(newPhoto);
       }
     } catch (ex: any) {
       screenError.value = errorToString(ex);
     }
     isInit.value = true;
     isLoadingPhotos.value = false;
-    albumRef.value?.updateVisibleItems(true);
   };
 
-  const onScrollerUpdate = (
-    startIndex: number,
-    endIndex: number,
-    visibleStartIndex: number,
-    visibleEndIndex: number,
-  ) => {
+  const onScrollerUpdate = (_: number, endRowIndex: number) => {
+    const endIndex = gridItems.value * endRowIndex;
     if (endIndex + countOneLoad / 3 < photosMaxItems.value) {
       return;
     }
@@ -225,7 +221,9 @@ export function useAlbum(
     () => {
       if (toStr(photoId.value).length && !isLoadingPhotos.value) {
         if (photo.value !== undefined) {
-          albumRef.value?.scrollToItem(photo.value.__state.index);
+          albumRef.value?.scrollToIndex(
+            Math.round(photo.value.__state.index / gridItems.value),
+          );
         } else if (!screenError.value) {
           onMoreLoad();
         }

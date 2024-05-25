@@ -2,7 +2,7 @@ import { isNullOrUndefined } from "./isNullOrUndefined";
 import { replaceCommaNumber } from "./replaceCommaNumber";
 
 export default function isNumeric(
-  str: string | number | undefined | null,
+  str: string | number | undefined | null | Symbol,
   replaceComma = false,
 ): str is number | string {
   if (isNullOrUndefined(str)) {
