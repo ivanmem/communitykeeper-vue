@@ -9,11 +9,15 @@ import AButton from "@/components/AButton/AButton.vue";
 import { useGroups } from "@/store/groups/groups";
 // @ts-ignore
 import { VList } from "virtua/vue";
+import { ref } from "vue";
+import { useScrollRestore } from "@/composables/useScrollRestore";
 
 const groupSearch = useGroupSearch();
 const { groupsOrder, showFilters } = groupSearch;
 const dialogStore = useDialog();
 const groupsStore = useGroups();
+const groupsRef = ref<any>();
+useScrollRestore(() => groupsRef.value?.$el);
 
 const onHelp = () => {
   dialogStore.alert({
@@ -66,6 +70,7 @@ const onHelp = () => {
     </div>
     <template v-else>
       <VList
+        ref="groupsRef"
         :key="groupsStore.filters.folder"
         #default="item"
         :data="groupsOrder"
