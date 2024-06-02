@@ -13,15 +13,15 @@ export function useGridArray<T>(columns: Ref<number>): GridArray<T> {
 
   watch(columns, () => {
     indexes.length = 0;
-    pushItemsToArrayRows(items);
+    pushIndexes(items);
   });
 
   const push = (...newItems: T[]) => {
     items.push(...newItems);
-    pushItemsToArrayRows(newItems);
+    pushIndexes(newItems);
   };
 
-  function pushItemsToArrayRows(newItems: T[]) {
+  const pushIndexes = (newItems: T[]) => {
     if (indexes.length === 0) indexes.push([]);
     for (let index = 0; index < newItems.length; index++) {
       const itemsIndex = index + items.length - newItems.length;
@@ -30,7 +30,7 @@ export function useGridArray<T>(columns: Ref<number>): GridArray<T> {
         lastIndexedRow.push(itemsIndex);
       else indexes.push([itemsIndex]);
     }
-  }
+  };
 
   const clear = () => {
     items.length = 0;
