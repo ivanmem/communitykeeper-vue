@@ -2,7 +2,11 @@ import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
-import { AlbumsPreviewSizesInitial, getStaticAlbums, wallAlbumStatic } from "@/pages/AAlbums/consts";
+import {
+  AlbumsPreviewSizesInitial,
+  getStaticAlbums,
+  wallAlbumStatic,
+} from "@/pages/AAlbums/consts";
 import { useVk } from "@/store/vk/vk";
 import { useSizesColumns } from "@/composables/useSizesColumns";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
@@ -13,10 +17,12 @@ import { VList } from "virtua/vue";
 import { useGridArray } from "@/composables/useGridArray";
 import { prefetchPhotoFromUrl } from "@/helpers/prefetchPhotoFromUrl";
 import { PhotoHelper } from "@/helpers/PhotoHelper";
+import { useApp } from "@/store/app/app";
 
 const countOneLoad = 100;
 
 export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
+  const appStore = useApp();
   const groupsStore = useGroups();
   const vkStore = useVk();
   const ownerId = computed(() => toValue(ownerIdGetter));
@@ -30,7 +36,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const albumsRef = ref<InstanceType<typeof VList>>();
   const { sizes, gridItems } = useSizesColumns(
     albumsRef,
-    AlbumsPreviewSizesInitial
+    AlbumsPreviewSizesInitial,
   );
   const albums = useGridArray<IAlbumItem>(gridItems);
   const screenError = ref<any>();
@@ -53,13 +59,12 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       if (+ownerId.value < 0) {
         try {
           group.value = await groupsStore.getGroupByIdOrLoad(-ownerId.value);
-        } catch {
-        }
+        } catch {}
         try {
           const wallAlbum = await vkStore.createAlbumItem({
             title: wallAlbumStatic.title,
             album_id: wallAlbumStatic.id,
-            owner_id: +ownerId.value
+            owner_id: +ownerId.value,
           });
           albums.push(wallAlbum);
           staticAlbumsCount.value = 1;
@@ -71,7 +76,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
 
       albumsMaxItems.value = countOneLoad; // это инициирует первую загрузку
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   watch(
@@ -89,12 +94,19 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
           const { items } = await vkStore.getAlbums(
             ownerId.value,
             offset,
-            count
+            count,
           );
-          await Promise.all(items.map(item => {
-            const size = PhotoHelper.getPreviewSize(item.sizes, sizes.value);
-            return prefetchPhotoFromUrl(size?.url)?.catch(e => e);
-          }));
+          if (appStore.isVkCom) {
+            await Promise.all(
+              items.map((item) => {
+                const size = PhotoHelper.getPreviewSize(
+                  item.sizes,
+                  sizes.value,
+                );
+                return prefetchPhotoFromUrl(size?.url)?.catch((e) => e);
+              }),
+            );
+          }
           albums.push(...items);
         } catch (ex: any) {
           if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
@@ -107,7 +119,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       isLoadingAlbums.value = false;
       isInit.value = true;
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   const onScrollerUpdate = (_: number, endRowIndex: number) => {
@@ -128,6 +140,6 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     onScrollerUpdate,
     albumsRef,
     screenError,
-    sizes
+    sizes,
   };
 }

@@ -16,14 +16,16 @@ import { useGridArray } from "@/composables/useGridArray";
 // @ts-ignore
 import { VList } from "virtua/vue";
 import { prefetchPhotoFromUrl } from "@/helpers/prefetchPhotoFromUrl";
+import { useApp } from "@/store/app/app";
 
 const countOneLoad = 150;
 
 export function useAlbum(
   ownerIdGetter: MaybeRefOrGetter<number | string>,
   albumIdGetter: MaybeRefOrGetter<number | string>,
-  photoIdGetter: MaybeRefOrGetter<number | string | undefined>
+  photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
 ) {
+  const appStore = useApp();
   const photosMap = ref<Map<IPhotoKey, IPhoto>>(new Map());
   const ownerId = computed(() => toValue(ownerIdGetter));
   const albumId = computed(() => {
@@ -34,14 +36,14 @@ export function useAlbum(
   const photo = computed(() =>
     photosMap.value?.get(
       PhotoHelper.getPhotoKeyOrUndefined(ownerId.value, photoId.value) ??
-      ("" as IPhotoKey)
-    )
+        ("" as IPhotoKey),
+    ),
   );
   const album = ref<IAlbumItem | undefined>();
   const albumRef = ref<InstanceType<typeof VList>>();
   const { sizes, gridItems } = useSizesColumns(
     albumRef,
-    AlbumsPreviewSizesInitial
+    AlbumsPreviewSizesInitial,
   );
   const screenError = ref<any>();
   const isInit = ref(false);
@@ -52,13 +54,13 @@ export function useAlbum(
   const groupsStore = useGroups();
   const vkStore = useVk();
   const albumHistoryItem = computed(() =>
-    historyStore.getViewAlbum(ownerId.value, albumId.value)
+    historyStore.getViewAlbum(ownerId.value, albumId.value),
   );
   const photos = useGridArray<IPhoto>(gridItems);
   const albumCount = computed(
     () =>
       toNumberOrUndefined(album.value?.size) ??
-      (isLoadAllPhotos ? photos.items.length : `${photos.items.length}+`)
+      (isLoadAllPhotos ? photos.items.length : `${photos.items.length}+`),
   );
 
   useScreenSpinner(() => !isInit.value);
@@ -82,7 +84,7 @@ export function useAlbum(
     currentPhotoIndex,
     setCurrentPhotoIndex,
     setCurrentPhotoId,
-    onSwitchPhoto
+    onSwitchPhoto,
   } = useCurrentPhoto(
     photos,
     photosMap,
@@ -90,7 +92,7 @@ export function useAlbum(
     ownerId,
     isLoadingPhotos,
     isInit,
-    onMoreLoad
+    onMoreLoad,
   );
 
   const onClearPhotos = () => {
@@ -147,27 +149,29 @@ export function useAlbum(
         count,
         rev: groupsStore.config.reverseOrder ? 1 : 0,
         extended: 1,
-        photo_sizes: 1
+        photo_sizes: 1,
       });
       if (items.length === 0) {
         isLoadAllPhotos.value = true;
       }
 
       // подгружаем превью только в том случае, если пользователь не открыл фото
-      if (currentPhoto.value == null) {
-        await Promise.all(items.map(item => {
-          const size = PhotoHelper.getPreviewSize(item.sizes, sizes.value);
-          return prefetchPhotoFromUrl(size?.url)?.catch(e => e);
-        }));
+      if (currentPhoto.value == null && appStore.isVkCom) {
+        await Promise.all(
+          items.map((item) => {
+            const size = PhotoHelper.getPreviewSize(item.sizes, sizes.value);
+            return prefetchPhotoFromUrl(size?.url)?.catch((e) => e);
+          }),
+        );
       }
 
       for (let newPhoto of items) {
         newPhoto.__state = {
-          index: photos.items.length
+          index: photos.items.length,
         };
         photosMap.value.set(
           PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id),
-          newPhoto
+          newPhoto,
         );
         photos.push(newPhoto);
       }
@@ -211,7 +215,7 @@ export function useAlbum(
       await onUpdateAlbum();
       await onLoad();
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   watch(
@@ -220,7 +224,7 @@ export function useAlbum(
       onClearError();
       onClearPhotos();
       await onLoad();
-    }
+    },
   );
 
   watch(photosMaxItems, onLoad, { immediate: true });
@@ -231,14 +235,14 @@ export function useAlbum(
       if (toStr(photoId.value).length && !isLoadingPhotos.value) {
         if (photo.value !== undefined) {
           albumRef.value?.scrollToIndex(
-            Math.round(photo.value.__state.index / gridItems.value)
+            Math.round(photo.value.__state.index / gridItems.value),
           );
         } else if (!screenError.value) {
           onMoreLoad();
         }
       }
     },
-    { immediate: true, deep: true }
+    { immediate: true, deep: true },
   );
 
   return {
@@ -257,6 +261,6 @@ export function useAlbum(
     albumRef,
     gridItems,
     isLoadAllPhotos,
-    sizes
+    sizes,
   };
 }

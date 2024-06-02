@@ -51,14 +51,16 @@ export function useCurrentPhoto(
     }
 
     // кэшируем текущее фото и следующее
-    prefetchPhoto(getPhotoByIndex(index));
-    if (!mode || mode === "next") {
-      let prefetchIndex = index + 1;
-      if (groupsStore.config.skipLowResolutionPhotos) {
-        prefetchIndex = await getSwitchPhotoBig(prefetchIndex, "next");
-      }
+    if (appStore.isVkCom) {
+      prefetchPhoto(getPhotoByIndex(index));
+      if (!mode || mode === "next") {
+        let prefetchIndex = index + 1;
+        if (groupsStore.config.skipLowResolutionPhotos) {
+          prefetchIndex = await getSwitchPhotoBig(prefetchIndex, "next");
+        }
 
-      prefetchPhoto(getPhotoByIndex(prefetchIndex));
+        prefetchPhoto(getPhotoByIndex(prefetchIndex));
+      }
     }
 
     const photo = getPhotoByIndex(index);
