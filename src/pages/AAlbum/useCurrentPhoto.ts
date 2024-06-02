@@ -9,6 +9,7 @@ import { getFirstRefChange } from "@/helpers/getFirstRefChange";
 import { useApp } from "@/store/app/app";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { GridArray } from "@/composables/useGridArray";
+import { prefetchPhoto } from "@/helpers/prefetchPhotoFromUrl";
 
 export function useCurrentPhoto(
   photos: GridArray<IPhoto>,
@@ -17,7 +18,7 @@ export function useCurrentPhoto(
   ownerId: Ref<string | number>,
   isLoadingPhotos: Ref<boolean>,
   isInit: Ref<boolean>,
-  onMoreLoad: () => void,
+  onMoreLoad: () => void
 ) {
   const router = useRouter();
   const route = useRoute();
@@ -34,24 +35,16 @@ export function useCurrentPhoto(
     return photos.items[index];
   };
 
-  const prefetchPhoto = (photo: IPhoto | undefined) => {
-    if (!photo) {
-      return;
-    }
-
-    const img = new Image();
-    img.src = PhotoHelper.getOriginalSize(photo.sizes)?.url ?? "";
-  };
 
   const setCurrentPhotoId = async (photoId: number | string | undefined) => {
     await router.replace({
-      params: { ...route.params, photoId: photoId ?? "" },
+      params: { ...route.params, photoId: photoId ?? "" }
     });
   };
 
   const setCurrentPhotoIndex = async (
     index: number | undefined,
-    mode?: SwitchPhotoMode,
+    mode?: SwitchPhotoMode
   ) => {
     if (index === undefined) {
       return setCurrentPhotoId(undefined);
@@ -81,7 +74,7 @@ export function useCurrentPhoto(
       }
 
       const photo = photosMap.value?.get(
-        PhotoHelper.getPhotoKey(ownerId.value, photoId.value),
+        PhotoHelper.getPhotoKey(ownerId.value, photoId.value)
       );
       if (photo !== undefined) {
         currentPhotoIndex.value = photo.__state.index;
@@ -95,32 +88,32 @@ export function useCurrentPhoto(
 
       currentPhotoIndex.value = undefined;
     },
-    { immediate: true },
+    { immediate: true }
   );
 
   const activeEl = useActiveElement();
   const activeElSize = useElementDeviceSize(activeEl, undefined, {
-    box: "border-box",
+    box: "border-box"
   });
   // Получить новый индекс для фото в зависимости от mode
   const getSwitchPhotoIndexByMode = (
     currentIndex: number,
-    mode: SwitchPhotoMode,
+    mode: SwitchPhotoMode
   ) => {
     return currentIndex + (mode === "prev" ? -1 : 1);
   };
 
   const getSwitchPhotoBig = async (
     currentIndex: number,
-    mode: SwitchPhotoMode,
+    mode: SwitchPhotoMode
   ) => {
     while (
       getPhotoByIndex(currentIndex) !== undefined &&
       PhotoHelper.isPhotoLessSizeAndNotMaxSize(
         getPhotoByIndex(currentIndex)!,
-        activeElSize,
+        activeElSize
       )
-    ) {
+      ) {
       currentIndex = getSwitchPhotoIndexByMode(currentIndex, mode);
       if (getPhotoByIndex(currentIndex) !== undefined) {
         continue;
@@ -131,7 +124,8 @@ export function useCurrentPhoto(
         await nextTick();
 
         if (isLoadingPhotos.value) {
-          while (await getFirstRefChange(isLoadingPhotos)) {}
+          while (await getFirstRefChange(isLoadingPhotos)) {
+          }
         }
 
         await nextTick();
@@ -166,6 +160,6 @@ export function useCurrentPhoto(
     getSwitchPhotoBig,
     setCurrentPhotoIndex,
     setCurrentPhotoId,
-    onSwitchPhoto,
+    onSwitchPhoto
   };
 }
