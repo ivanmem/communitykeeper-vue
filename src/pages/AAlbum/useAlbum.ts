@@ -235,7 +235,7 @@ export function useAlbum(
       if (toStr(photoId.value).length && !isLoadingPhotos.value) {
         if (photo.value !== undefined) {
           albumRef.value?.scrollToIndex(
-            Math.round(photo.value.__state.index / gridItems.value),
+            Math.floor(photo.value.__state.index / gridItems.value),
           );
         } else if (!screenError.value) {
           onMoreLoad();
