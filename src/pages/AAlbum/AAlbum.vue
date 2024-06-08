@@ -43,7 +43,6 @@ const {
   () => props.albumId,
   () => props.photoId,
 );
-const positionDebounced = refDebounced(position, 200, { maxWait: () => 1000 });
 const groupsStore = useGroups();
 const dialogStore = useDialog();
 const albumUrl = computed(() =>
@@ -112,8 +111,8 @@ const onHelp = () => {
         <div
           style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
         >
-          <div v-if="album && positionDebounced != 0">
-            {{ positionDebounced }} из {{ album.size }} фото
+          <div v-if="album && (position != 0 || album.size === 0)">
+            {{ position }} из {{ album.size }} фото
           </div>
           <code v-if="screenError" class="vkuiFormField--status-error">
             {{ screenError }}

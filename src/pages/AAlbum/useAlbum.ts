@@ -1,7 +1,13 @@
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { useVk } from "@/store/vk/vk";
 import { AlbumsPreviewSizesInitial } from "@/pages/AAlbums/consts";
-import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
+import {
+  computed,
+  MaybeRefOrGetter,
+  ref,
+  toValue,
+  watch,
+} from "vue";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import { useSizesColumns } from "@/composables/useSizesColumns";
@@ -102,6 +108,7 @@ export function useAlbum(
   const onClearPhotos = () => {
     photos.clear();
     photosMap.value.clear();
+    endIndex.value = 0;
     photosMaxItems.value = countOneLoad;
     isLoadAllPhotos.value = false;
   };

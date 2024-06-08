@@ -31,21 +31,20 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
       name: string,
       link: string,
       galleryLink?: string,
-      addAlways = false,
     ) => {
       let label: string = (() => {
         switch (key) {
-            // group.counters.photos не совпадает с количеством фото на стене
+          // group.counters.photos не совпадает с количеством фото на стене
           case "photos":
             return "";
           case "albums":
-            if (!group.counters?.albums) return '';
+            if (!group.counters?.albums) return "0";
             return `${group.counters.albums}  ~${group.counters.photos ?? 0}`;
           default:
-            return `${group.counters?.[key] ?? ""}`;
+            return `${group.counters?.[key] ?? "0"}`;
         }
       })();
-      if (label != "" || addAlways) {
+      if (label != "0") {
         result.push({
           key,
           icon,
@@ -62,7 +61,6 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
       "Фотографий",
       `//vk.com/album-${group.id}_00`,
       `/albums/-${group.id}/-7`,
-      true,
     );
     add(
       "albums",
