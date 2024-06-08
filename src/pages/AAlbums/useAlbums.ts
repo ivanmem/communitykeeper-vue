@@ -15,14 +15,10 @@ import { errorToString } from "@/helpers/errorToString";
 // @ts-ignore
 import { VList } from "virtua/vue";
 import { useGridArray } from "@/composables/useGridArray";
-import { prefetchPhotoFromUrl } from "@/helpers/prefetchPhotoFromUrl";
-import { PhotoHelper } from "@/helpers/PhotoHelper";
-import { useApp } from "@/store/app/app";
 
 const countOneLoad = 100;
 
 export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
-  const appStore = useApp();
   const groupsStore = useGroups();
   const vkStore = useVk();
   const ownerId = computed(() => toValue(ownerIdGetter));
@@ -96,17 +92,17 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
             offset,
             count,
           );
-          if (appStore.isVkCom) {
-            await Promise.all(
-              items.map((item) => {
-                const size = PhotoHelper.getPreviewSize(
-                  item.sizes,
-                  sizes.value,
-                );
-                return prefetchPhotoFromUrl(size?.url)?.catch((e) => e);
-              }),
-            );
-          }
+          // if (appStore.isVkCom) {
+          //   await Promise.all(
+          //     items.map((item) => {
+          //       const size = PhotoHelper.getPreviewSize(
+          //         item.sizes,
+          //         sizes.value,
+          //       );
+          //       return prefetchPhotoFromUrl(size?.url)?.catch((e) => e);
+          //     }),
+          //   );
+          // }
           albums.push(...items);
         } catch (ex: any) {
           if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {

@@ -2,7 +2,7 @@
 import { computed, StyleValue, useSlots, VueElement } from "vue";
 import { icons } from "@/common/consts";
 import { RouteLocationRaw, useRoute, useRouter } from "vue-router";
-import isString from "lodash/isString";
+import isString from "lodash-es/isString";
 
 const props = defineProps<{
   icon?: VueElement | keyof typeof icons;

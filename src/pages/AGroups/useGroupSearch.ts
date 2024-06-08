@@ -2,7 +2,7 @@ import { computed, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import GroupHelper from "@/helpers/GroupHelper";
 import { useSwipes } from "@/composables/useSwipes";
-import last from "lodash/last";
+import last from "lodash-es/last";
 import { useActivated } from "@/composables/useActivated";
 
 export type UseGroupSearch = ReturnType<typeof useGroupSearch>;

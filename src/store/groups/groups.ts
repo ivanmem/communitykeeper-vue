@@ -6,7 +6,7 @@ import {
   IGroupsExport,
   ILocalGroup,
 } from "@/store/groups/types";
-import toNumber from "lodash/toNumber";
+import toNumber from "lodash-es/toNumber";
 import { useVk } from "@/store/vk/vk";
 import { isGroupBanned } from "@/helpers/isGroupBanned";
 import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";

@@ -40,6 +40,10 @@ export function useAlbum(
     ),
   );
   const album = ref<IAlbumItem | undefined>();
+  const endIndex = ref<number>(0);
+  const position = computed<number>(() =>
+    Math.min(+(album.value?.size ?? 0), endIndex.value + gridItems.value),
+  );
   const albumRef = ref<InstanceType<typeof VList>>();
   const { sizes, gridItems } = useSizesColumns(
     albumRef,
@@ -156,14 +160,14 @@ export function useAlbum(
       }
 
       // подгружаем превью только в том случае, если пользователь не открыл фото
-      if (currentPhoto.value == null && appStore.isVkCom) {
-        await Promise.all(
-          items.map((item) => {
-            const size = PhotoHelper.getPreviewSize(item.sizes, sizes.value);
-            return prefetchPhotoFromUrl(size?.url)?.catch((e) => e);
-          }),
-        );
-      }
+      // if (currentPhoto.value == null && appStore.isVkCom) {
+      //   await Promise.all(
+      //     items.map((item) => {
+      //       const size = PhotoHelper.getPreviewSize(item.sizes, sizes.value);
+      //       return prefetchPhotoFromUrl(size?.url)?.catch((e) => e);
+      //     }),
+      //   );
+      // }
 
       for (let newPhoto of items) {
         newPhoto.__state = {
@@ -183,8 +187,8 @@ export function useAlbum(
   };
 
   const onScrollerUpdate = (_: number, endRowIndex: number) => {
-    const endIndex = gridItems.value * endRowIndex;
-    if (endIndex + countOneLoad / 3 < photosMaxItems.value) {
+    endIndex.value = gridItems.value * endRowIndex;
+    if (endIndex.value + countOneLoad / 3 < photosMaxItems.value) {
       return;
     }
 
@@ -262,5 +266,6 @@ export function useAlbum(
     gridItems,
     isLoadAllPhotos,
     sizes,
+    position,
   };
 }

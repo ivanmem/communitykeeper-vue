@@ -1,4 +1,4 @@
-import isNumber from "lodash/isNumber";
+import isNumber from "lodash-es/isNumber";
 import { useVk } from "@/store/vk/vk";
 import { IGroup } from "@/store/groups/types";
 import { from } from "linq-to-typescript";

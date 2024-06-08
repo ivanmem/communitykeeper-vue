@@ -8,7 +8,7 @@ export interface IGroupCounter {
   icon: any;
   url: string;
   name: string;
-  count: number | string;
+  label: string;
   key: keyof IGroupCounters;
 }
 
@@ -33,25 +33,25 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
       galleryLink?: string,
       addAlways = false,
     ) => {
-      let count: number | string | undefined = (() => {
+      let label: string = (() => {
         switch (key) {
+            // group.counters.photos не совпадает с количеством фото на стене
           case "photos":
-            return !group.counters?.photos ? "?" : group.counters.photos;
+            return "";
+          case "albums":
+            if (!group.counters?.albums) return '';
+            return `${group.counters.albums}  ~${group.counters.photos ?? 0}`;
           default:
-            return group.counters?.[key];
+            return `${group.counters?.[key] ?? ""}`;
         }
       })();
-      if (count || addAlways) {
-        if (count === undefined) {
-          count = 0;
-        }
-
+      if (label != "" || addAlways) {
         result.push({
           key,
           icon,
           name,
           url: groupsStore.config.gallery && galleryLink ? galleryLink : link,
-          count,
+          label: label,
         });
       }
     };
@@ -78,6 +78,7 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
       "Статей",
       `//vk.com/@public${group.id}`,
     );
+
     return result;
   });
 }

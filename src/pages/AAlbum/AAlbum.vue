@@ -10,7 +10,7 @@ import { computed, toRef } from "vue";
 import { router } from "@/router";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useDialog } from "@/store/dialog/dialog";
-import { computedAsync } from "@vueuse/core";
+import { computedAsync, refDebounced } from "@vueuse/core";
 import { IGroup } from "@/store/groups/types";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import GroupHelper from "@/helpers/GroupHelper";
@@ -37,12 +37,13 @@ const {
   gridItems,
   isLoadingPhotos,
   sizes,
+  position,
 } = useAlbum(
   () => props.ownerId,
   () => props.albumId,
   () => props.photoId,
 );
-const { Icon16Link } = icons;
+const positionDebounced = refDebounced(position, 200, { maxWait: () => 1000 });
 const groupsStore = useGroups();
 const dialogStore = useDialog();
 const albumUrl = computed(() =>
@@ -111,6 +112,9 @@ const onHelp = () => {
         <div
           style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
         >
+          <div v-if="album && positionDebounced != 0">
+            {{ positionDebounced }} из {{ album.size }} фото
+          </div>
           <code v-if="screenError" class="vkuiFormField--status-error">
             {{ screenError }}
           </code>

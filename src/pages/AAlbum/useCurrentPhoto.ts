@@ -9,7 +9,6 @@ import { getFirstRefChange } from "@/helpers/getFirstRefChange";
 import { useApp } from "@/store/app/app";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { GridArray } from "@/composables/useGridArray";
-import { prefetchPhoto } from "@/helpers/prefetchPhotoFromUrl";
 
 export function useCurrentPhoto(
   photos: GridArray<IPhoto>,
@@ -51,17 +50,17 @@ export function useCurrentPhoto(
     }
 
     // кэшируем текущее фото и следующее
-    if (appStore.isVkCom) {
-      prefetchPhoto(getPhotoByIndex(index));
-      if (!mode || mode === "next") {
-        let prefetchIndex = index + 1;
-        if (groupsStore.config.skipLowResolutionPhotos) {
-          prefetchIndex = await getSwitchPhotoBig(prefetchIndex, "next");
-        }
-
-        prefetchPhoto(getPhotoByIndex(prefetchIndex));
-      }
-    }
+    // if (appStore.isVkCom) {
+    //   prefetchPhoto(getPhotoByIndex(index));
+    //   if (!mode || mode === "next") {
+    //     let prefetchIndex = index + 1;
+    //     if (groupsStore.config.skipLowResolutionPhotos) {
+    //       prefetchIndex = await getSwitchPhotoBig(prefetchIndex, "next");
+    //     }
+    //
+    //     prefetchPhoto(getPhotoByIndex(prefetchIndex));
+    //   }
+    // }
 
     const photo = getPhotoByIndex(index);
     return setCurrentPhotoId(photo?.id);
