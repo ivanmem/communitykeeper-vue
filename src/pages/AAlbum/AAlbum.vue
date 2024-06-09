@@ -111,7 +111,7 @@ const onHelp = () => {
         <div
           style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
         >
-          <div v-if="album && (position != 0 || album.size === 0)">
+          <div class="a-album__position" v-if="album && (position != 0 || album.size === 0)">
             {{ position }} из {{ album.size }} фото
           </div>
           <code v-if="screenError" class="vkuiFormField--status-error">
@@ -125,7 +125,8 @@ const onHelp = () => {
             :true-icon="icons.Icon24SortOutline"
             hide-details
             label="В обратном порядке"
-            style="flex-grow: 0"
+            class="a-album__reverse-order"
+            style="flex-grow: 0;"
           />
         </div>
       </div>
@@ -182,6 +183,16 @@ const onHelp = () => {
 
   &::-webkit-scrollbar {
     width: 0px;
+  }
+}
+
+.a-album__position {
+  font-size: 12px;
+}
+
+.a-album__reverse-order {
+  .v-label {
+    font-size: 12px;
   }
 }
 </style>
