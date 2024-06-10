@@ -46,7 +46,7 @@ const buildDate = new Date(BUILD_DATE).toLocaleString();
         <VBtn
           :prepend-icon="styledIcons.Icon16GitHub"
           color="light-blue-darken-4"
-          href="https://github.com/ivanmem/local-vk-groups-catalog-vue"
+          href="https://github.com/ivanmem/communitykeeper-vue"
           target="_blank"
         >
           Github
