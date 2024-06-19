@@ -59,7 +59,8 @@ import Icon16KeyOutline from "@vkontakte/icons/src/svg/16/key_outline_16.svg?com
 import Icon16DeleteOutline from "@vkontakte/icons/src/svg/16/delete_outline_16.svg?component";
 import Icon16MoreVertical from "@vkontakte/icons/src/svg/16/more_vertical_16.svg?component";
 import Icon16FolderOutline from "@vkontakte/icons/src/svg/16/folder_outline_16.svg?component";
-import Icon16DoorEnterArrowRightOutline from "@vkontakte/icons/src/svg/16/door_enter_arrow_right_outline_16.svg?component";
+import Icon16DoorEnterArrowRightOutline
+  from "@vkontakte/icons/src/svg/16/door_enter_arrow_right_outline_16.svg?component";
 import Icon16ChainOutline from "@vkontakte/icons/src/svg/16/chain_outline_16.svg?component";
 import Icon16CrossCircleSmall from "@vkontakte/icons/src/svg/16/cross_circle_small_16.svg?component";
 import Icon16DownloadOutline from "@vkontakte/icons/src/svg/16/download_outline_16.svg?component";
@@ -164,7 +165,7 @@ export const icons = {
   Icon12Flash,
   Icon12Question,
   Icon12View,
-  Icon12Cards,
+  Icon12Cards
 };
 
 export const styledIcons = {
@@ -175,9 +176,9 @@ export const styledIcons = {
   Icon16GitHub: createStyledIcon(icons.Icon24GitHub, 16),
   Icon24CopyOutline: createStyledIcon(icons.Icon16CopyOutline, 24),
   Icon24SortOutlineOpacity50: h(icons.Icon24SortOutline, {
-    style: `opacity: 0.5;`,
+    style: `opacity: 0.5;`
   }) as any,
-  Icon24ClearDataOutline: createStyledIcon(icons.Icon28ClearDataOutline, 24),
+  Icon24ClearDataOutline: createStyledIcon(icons.Icon28ClearDataOutline, 24)
 };
 
 export const darkColorScheme = ref(false);
@@ -186,17 +187,22 @@ export const isDev = process.env.NODE_ENV === "development";
 
 export const VK_MAX_PHOTO_SIZE = {
   width: 2560,
-  height: 2160,
+  height: 2160
 } as const;
 
-export const MAX_SIZE_ONE_VK_VALUE = 2236;
+export const VK_STORAGE = {
+  // Можно получить не более десяти чанков за 1 запрос
+  chunksMaxCount: 20,
+  chunksSplitter: "__",
+  chunkMaxSize: 2236,
+} as const;
 
 export const dateTimeFormatter = new Intl.DateTimeFormat("ru", {
   year: "numeric",
   month: "numeric",
   day: "numeric",
   hour: "numeric",
-  minute: "numeric",
+  minute: "numeric"
 });
 
 type IActionDictValue = {
@@ -215,42 +221,43 @@ export const actionSwipesDict = new Map<string, IActionDictValue>([
     "sos",
     {
       label: "Отображать фото в оригинальном размере",
-      name: "onSwitchOriginalSize",
-    },
+      name: "onSwitchOriginalSize"
+    }
   ],
   ["smi", { label: "Информация", name: "onShowMoreInfo" }],
   [
     "sslrp",
     {
       label: "Пропускать фото с маленьким размером",
-      name: "onSwitchSkipLowResolutionPhotos",
-    },
+      name: "onSwitchSkipLowResolutionPhotos"
+    }
   ],
   ["pe", { label: "Выйти из просмотра фото", name: "onPhotoExit" }],
   ["pp", { label: "Предыдущее фото", name: "onPhotoPrev" }],
   ["pn", { label: "Следующее фото", name: "onPhotoNext" }],
-  ["passive", { label: "Ничего не делать", name: "onPassive" }],
+  ["passive", { label: "Ничего не делать", name: "onPassive" }]
 ]);
 
 export const actionSwipesOptions = Array.from(actionSwipesDict.keys()).map(
   (value) => {
     return {
       title: actionSwipesDict.get(value)!.label,
-      value,
+      value
     };
-  },
+  }
 );
 
 export const actionSwipesDefaults: Required<GallerySwipesConfig> = {
   onUp: "pe",
   onDown: "smi",
   onLeft: "pp",
-  onRight: "pn",
+  onRight: "pn"
 };
 
 export const actionSwipesSelectLabels = {
   onUp: "Свайп вверх",
   onDown: "Свайп вниз",
   onLeft: "Свайп влево",
-  onRight: "Свайп вправо",
+  onRight: "Свайп вправо"
 };
+

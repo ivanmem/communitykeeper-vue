@@ -11,11 +11,11 @@ import { useGroups } from "@/store/groups/groups";
 import { IRequestConfig } from "vkontakte-api/dist/types/shared";
 import { sleep } from "@/helpers/sleep";
 import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
-import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
 import { IAppInitOptions, useApp } from "@/store/app/app";
 import { useDialog } from "@/store/dialog/dialog";
 import { toStr } from "@/helpers/toStr";
 import { IPhoto } from "@/store/groups/types";
+import { VK_STORAGE } from "@/common/consts";
 
 export type WebAppConfig = Partial<
   MobileUpdateConfigData & MVKUpdateConfigData & VKUpdateConfigData
@@ -24,7 +24,6 @@ export type WebAppConfig = Partial<
 interface VkState {
   api?: VKAPI;
   webAppConfig?: WebAppConfig;
-  chunksMaxCount: number;
   vkWebAppStorageSetCount: number;
   token?: {
     access_token: string;
@@ -37,7 +36,6 @@ interface VkState {
 export const useVk = defineStore("vk", {
   state: (): VkState => {
     return {
-      chunksMaxCount: 20, // можно получить не более десяти за 1 запрос
       vkWebAppStorageSetCount: 0,
       cache: {},
     };
@@ -178,11 +176,8 @@ export const useVk = defineStore("vk", {
         return false;
       }
     },
-    getChunkSplitter() {
-      return "__";
-    },
     getChunkKey(key: string, index: number) {
-      return `${key}${this.getChunkSplitter()}${index}`;
+      return `${key}${VK_STORAGE.chunksSplitter}${index}`;
     },
     /** @description Получить все значения по указанным ключам в виде словаря */
     async getVkStorageDict<T extends object = Record<any, any>>(keys: T) {
@@ -196,10 +191,9 @@ export const useVk = defineStore("vk", {
         return dict;
       }, {} as Partial<T>);
     },
-    getVkStorageObject<T = any, K extends string = string>(key: K) {
-      return this.getVkStorageDict({ [key]: Object as T }).then(
-        (x) => x[key] as T | undefined,
-      );
+    async getVkStorageObject<T = any, K extends string = string>(key: K): Promise<T | undefined> {
+      const dict = await  this.getVkStorageDict({ [key]: Object as T });
+      return dict[key] as T | undefined;
     },
     /** @description Сохранить каждое свойство словаря в отдельном ключе */
     async setVkStorageDict(dataDictArray: Record<string, Record<any, any>>) {
@@ -212,15 +206,14 @@ export const useVk = defineStore("vk", {
     },
     async getVkStorage(key: string) {
       const keys: string[] = [];
-      for (let i = 0; i < this.chunksMaxCount; i++) {
+      for (let i = 0; i < VK_STORAGE.chunksMaxCount; i++) {
         keys.push(this.getChunkKey(key, i));
       }
       const result = await this.sendVKWebAppStorageGet({ keys });
       const chunks: string[] = [];
 
-      const chunkSplitter = this.getChunkSplitter();
       const getIndexBySplitKey = (splitKey: string) => {
-        return +splitKey.substring(key.length + chunkSplitter.length);
+        return +splitKey.substring(key.length + VK_STORAGE.chunksSplitter.length);
       };
 
       const sortComparer = (x: { key: string }, y: { key: string }) => {
@@ -231,7 +224,9 @@ export const useVk = defineStore("vk", {
 
       for (const { value } of result.keys.sort(sortComparer)) {
         if (value === "") {
-          // при встрече первого пустого - останавливаемся. Только один будет гарантированно пуст, он и последний. В остальных могут быть старые значения.
+          // При встрече первого пустого - останавливаемся.
+          // Только один будет гарантированно пуст, он и последний.
+          // В остальных могут быть старые значения.
           break;
         }
 
@@ -240,14 +235,13 @@ export const useVk = defineStore("vk", {
 
       result.keys.forEach((x) => x.value);
       if (key === "groups") {
-        this.setSpaceUsed(chunks.length);
+        useGroups().setSpaceUsed(chunks.length);
       }
 
-      const compressData = chunks.join("");
-      return compressData; //await decompressStr(compressData);
+      return chunks.join("")
     },
     async setVkStorage(key: string, value: string) {
-      const chunks = chunkString(value, MAX_SIZE_ONE_VK_VALUE);
+      const chunks = chunkString(value, VK_STORAGE.chunkMaxSize);
       // проходим на один больше, чтобы последний чанк был пустой
       for (let i = 0; i < chunks.length + 1; i++) {
         let chunk = chunks[i];
@@ -266,7 +260,8 @@ export const useVk = defineStore("vk", {
               key,
               value,
             });
-            useApp().setLoadingPause(true);
+            const appStore = useApp();
+            appStore.setLoadingPause(true);
             const result = await useDialog().confirm({
               title: "Ошибка при сохранении!",
               subtitle:
@@ -274,7 +269,7 @@ export const useVk = defineStore("vk", {
                 `\nНе выходите из приложения и восстановите доступ к интернету или подождите час, после чего нажмите Ок для повторной попытки сохранения.` +
                 `В случае, если Вы принимаете на себя риск и не хотите завершать сохранение - нажмите "Отмена", после чего на всякий случай создайте резервную копию.`,
             });
-            useApp().setLoadingPause(false);
+            appStore.setLoadingPause(false);
             if (!result) {
               return;
             }
@@ -283,7 +278,7 @@ export const useVk = defineStore("vk", {
       }
 
       if (key === "groups") {
-        this.setSpaceUsed(chunks.length);
+        useGroups().setSpaceUsed(chunks.length);
       }
     },
     sendVKWebAppStorageSet(data: { key: string; value: string }) {
@@ -292,11 +287,6 @@ export const useVk = defineStore("vk", {
     },
     sendVKWebAppStorageGet(data: { keys: string[] }) {
       return bridge.send("VKWebAppStorageGet", data);
-    },
-    setSpaceUsed(chunksCount: number) {
-      useGroups().spaceUsed = +(
-        chunksCount === 0 ? 0 : chunksCount / (this.chunksMaxCount * 0.01)
-      ).toFixed(0);
     },
     async addRequestToQueue<P extends {} = any, R = any>(
       config: IRequestConfig<P>,

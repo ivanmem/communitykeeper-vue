@@ -79,13 +79,13 @@ const onSaveSettings = async () => {
 
     const transferredGroupsIds =
       groupsStore.groupIdsDictByFolderName[renameDialog.value.folder];
-    transferredGroupsIds.forEach((groupId) => {
+    for (const groupId of transferredGroupsIds) {
       groupsStore.addLocalGroup({
         id: groupId,
         folder: newSettings.folder,
       });
       findChanges = true;
-    });
+    }
 
     if (groupsStore.filters.folder === renameDialog.value.folder) {
       groupsStore.filters.folder = newSettings.folder;

@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/composables/useAppCaption";
-import { icons, MAX_SIZE_ONE_VK_VALUE, styledIcons } from "@/common/consts";
-import { useVk } from "@/store/vk/vk";
+import { icons, styledIcons, VK_STORAGE } from "@/common/consts";
 
 useAppCaption(`Проект`);
-const vkStore = useVk();
 const buildDate = new Date(BUILD_DATE).toLocaleString();
 </script>
 
@@ -24,10 +22,8 @@ const buildDate = new Date(BUILD_DATE).toLocaleString();
     <VCardItem>
       Периодически создавайте резервную копию во вкладке "Добавить". Ваши данные
       хранятся в VK Storage (dev.vk.com/method/storage.set). Так как в этом
-      хранилище ограничено количество символов на один ключ ({{
-        MAX_SIZE_ONE_VK_VALUE
-      }}) - данные делятся на части и сохраняются подобно разделённому архиву
-      (сейчас максимум на {{ vkStore.chunksMaxCount }} частей). Если Ваши группы
+      хранилище ограничено количество символов на один ключ ({{ VK_STORAGE.chunkMaxSize }}) - данные делятся на части и сохраняются подобно разделённому архиву
+      (сейчас максимум на {{ VK_STORAGE.chunksMaxCount }} частей). Если Ваши группы
       сохранятся не до конца - то приложение не сможет спарсить данные и они
       будут <b>повреждены</b>.
     </VCardItem>

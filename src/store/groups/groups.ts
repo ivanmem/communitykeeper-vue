@@ -1,11 +1,5 @@
 import { defineStore } from "pinia";
-import {
-  GroupState,
-  IGroup,
-  IGroupCounters,
-  IGroupsExport,
-  ILocalGroup,
-} from "@/store/groups/types";
+import { GroupState, IGroup, IGroupCounters, IGroupsExport, ILocalGroup } from "@/store/groups/types";
 import toNumber from "lodash-es/toNumber";
 import { useVk } from "@/store/vk/vk";
 import { isGroupBanned } from "@/helpers/isGroupBanned";
@@ -20,7 +14,8 @@ import { toStr } from "@/helpers/toStr";
 import { watchDebounced } from "@vueuse/core";
 import { getMapGroupsByIds } from "@/helpers/getMapGroupsByIds";
 import { folderRules, maxFolderLength } from "@/common/formConsts";
-import { actionSwipesDefaults, actionSwipesDict } from "@/common/consts";
+import { actionSwipesDefaults, actionSwipesDict, VK_STORAGE } from "@/common/consts";
+import last from "lodash-es/last";
 
 export interface FiltersType {
   folder: string;
@@ -44,7 +39,7 @@ export const groupsSortKeys = Object.keys(GroupsSortEnum).reduce(
     dict.set(GroupsSortEnum[key as any] as any, key);
     return dict;
   },
-  new Map<number, any>(),
+  new Map<number, any>()
 );
 
 export const countersKeys: Set<keyof IGroupCounters> = new Set([
@@ -57,7 +52,7 @@ export const countersKeys: Set<keyof IGroupCounters> = new Set([
   "narratives",
   "addresses",
   "clips",
-  "clips_followers",
+  "clips_followers"
 ]);
 
 export enum OnlyAccessEnum {
@@ -114,12 +109,12 @@ export const useGroups = defineStore("groups", {
         search: "",
         access: OnlyAccessEnum.none,
         sort: GroupsSortEnum.date,
-        sortDesc: false,
+        sortDesc: false
       },
       isInit: false,
       config: { autoSave: true, showCounters: true, gallery: true },
       spaceUsed: 0,
-      cachedGroupsData: {},
+      cachedGroupsData: {}
     };
   },
   actions: {
@@ -135,9 +130,11 @@ export const useGroups = defineStore("groups", {
       watchDebounced(
         () => toStr(this.config),
         () => {
-          return this.saveCurrentGroupsConfig();
+          return useVk().setVkStorageDict({
+            groupsConfig: this.config
+          });
         },
-        { debounce: 500 },
+        { debounce: 500 }
       );
       // если меняется настройка showCounters - очищаем ручное состояние скрытия счётчиков
       watch(
@@ -146,7 +143,7 @@ export const useGroups = defineStore("groups", {
           for (let value of this.groupsMap.values()) {
             delete GroupHelper.getState(value).hideCounters;
           }
-        },
+        }
       );
 
       watch(
@@ -158,7 +155,7 @@ export const useGroups = defineStore("groups", {
 
           this.filters.folder = "";
         },
-        { immediate: true },
+        { immediate: true }
       );
       console.info("groups store init");
     },
@@ -175,7 +172,7 @@ export const useGroups = defineStore("groups", {
         groupsIds.forEach((id) => {
           this.localGroupsArray.push({
             id,
-            folder,
+            folder
           });
         });
       });
@@ -217,6 +214,11 @@ export const useGroups = defineStore("groups", {
       this.groupsMap.set(group.id, group);
       return group;
     },
+    setSpaceUsed(chunksCount: number) {
+      this.spaceUsed = +(
+        chunksCount === 0 ? 0 : chunksCount / (VK_STORAGE.chunksMaxCount * 0.01)
+      ).toFixed(0);
+    },
     getLocalGroupById(id: number): ILocalGroup | undefined {
       return this.localGroups[id];
     },
@@ -227,7 +229,7 @@ export const useGroups = defineStore("groups", {
           dict[folder].push(...this.groupIdsDictByFolderName[folder]);
           return dict;
         },
-        {} as Record<string, number[]>,
+        {} as Record<string, number[]>
       );
       return { groupIdsDictByFolderName };
     },
@@ -244,7 +246,7 @@ export const useGroups = defineStore("groups", {
         data.groupIdsDictByFolderName[folder].forEach((id) => {
           this.addLocalGroup({
             id,
-            folder,
+            folder
           });
         });
       });
@@ -280,7 +282,7 @@ export const useGroups = defineStore("groups", {
       }
 
       const currentIndex = this.localGroupsArray.findIndex(
-        (x) => x.id === localGroup.id,
+        (x) => x.id === localGroup.id
       );
       // если группа уже существует - перезаписываем
       if (currentIndex !== -1) {
@@ -292,7 +294,7 @@ export const useGroups = defineStore("groups", {
     },
     removeLocalGroup(id: number | Set<number>) {
       this.localGroupsArray = this.localGroupsArray.filter((x) =>
-        typeof id === "number" ? x.id !== id : !id.has(x.id),
+        typeof id === "number" ? x.id !== id : !id.has(x.id)
       );
     },
     removeLocalGroups() {
@@ -314,7 +316,7 @@ export const useGroups = defineStore("groups", {
       }
 
       let days = Math.floor(
-        (+new Date() - +new Date(cache.date)) / (1000 * 60 * 60 * 24),
+        (+new Date() - +new Date(cache.date)) / (1000 * 60 * 60 * 24)
       );
       if (days > 3) {
         delete this.cachedGroupsData[group.id];
@@ -338,21 +340,16 @@ export const useGroups = defineStore("groups", {
           method: "groups.getById",
           params: {
             group_id: group.id,
-            fields: "counters",
-          },
+            fields: "counters"
+          }
         })
         .catch(() => [{ counters: {} }] as IGroup[])
         .then(([resultGroup]) => resultGroup?.counters ?? {});
       this.cachedGroupsData[group.id] = {
         date: new Date().toISOString(),
-        data: { counters },
+        data: { counters }
       };
       return counters;
-    },
-    async saveCurrentGroupsConfig() {
-      await useVk().setVkStorageDict({
-        groupsConfig: this.config,
-      });
     },
     async updateGroupsConfig(config?: IGroupsConfig) {
       try {
@@ -378,7 +375,7 @@ export const useGroups = defineStore("groups", {
             data[localGroup.folder].add(localGroup.id);
             return data;
           },
-          {} as Record<string, Set<number>>,
+          {} as Record<string, Set<number>>
         );
         const stringifyStr = JSON.stringify(allData, (_key, value) => {
           return value instanceof Set ? [...value] : value;
@@ -415,6 +412,38 @@ export const useGroups = defineStore("groups", {
       swipes[swipeKey] = value || undefined;
       this.config.swipes = swipes;
     },
+    switchFiltersFolderToNext() {
+      if (!this.filters.folder) {
+        this.filters.folder = this.folders[0] ?? "";
+        return;
+      }
+
+      const currentIndex = this.folders.indexOf(this.filters.folder);
+      if (
+        currentIndex === this.filters.folder.length - 1 ||
+        currentIndex === -1
+      ) {
+        this.filters.folder = "";
+        return;
+      }
+
+      this.filters.folder = this.folders[currentIndex + 1] ?? "";
+    },
+    /** Переключить */
+    switchFiltersFolderToPrev() {
+      if (!this.filters.folder) {
+        this.filters.folder = last(this.folders) ?? "";
+        return;
+      }
+
+      const currentIndex = this.folders.indexOf(this.filters.folder);
+      if (currentIndex === 0 || currentIndex === -1) {
+        this.filters.folder = "";
+        return;
+      }
+
+      this.filters.folder = this.folders[currentIndex - 1];
+    }
   },
   getters: {
     swipesConfig(): Required<GallerySwipesConfig> {
@@ -461,7 +490,7 @@ export const useGroups = defineStore("groups", {
           dict[value.folder].push(value.id);
           return dict;
         },
-        {} as Record<string, number[]>,
+        {} as Record<string, number[]>
       );
     },
     groupIdsByCurrentFolderName(): number[] {
@@ -495,9 +524,9 @@ export const useGroups = defineStore("groups", {
     isGroupCountersSort(): boolean {
       const key = groupsSortKeys.get(this.filters.sort ?? GroupsSortEnum.date);
       return key && countersKeys.has(key);
-    },
+    }
   },
   persist: getPiniaPersist({
-    paths: ["cachedGroupsData", "filters"],
-  }),
+    paths: ["cachedGroupsData", "filters"]
+  })
 });
