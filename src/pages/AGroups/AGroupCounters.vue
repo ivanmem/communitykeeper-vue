@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-import {
-  IGroupCounter,
-  useGroupCounters,
-} from "@/pages/AGroups/useGroupCounters";
+import { IGroupCounter, useGroupCounters } from "@/pages/AGroups/useGroupCounters";
 import { IGroup } from "@/store/groups/types";
 import { ref, toRef, watch } from "vue";
 import ASpinner from "@/components/ASpinner.vue";

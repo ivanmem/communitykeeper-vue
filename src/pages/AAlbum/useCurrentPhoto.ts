@@ -17,7 +17,7 @@ export function useCurrentPhoto(
   ownerId: Ref<string | number>,
   isLoadingPhotos: Ref<boolean>,
   isInit: Ref<boolean>,
-  onMoreLoad: () => void
+  onMoreLoad: () => void,
 ) {
   const router = useRouter();
   const route = useRoute();
@@ -37,13 +37,13 @@ export function useCurrentPhoto(
 
   const setCurrentPhotoId = async (photoId: number | string | undefined) => {
     await router.replace({
-      params: { ...route.params, photoId: photoId ?? "" }
+      params: { ...route.params, photoId: photoId ?? "" },
     });
   };
 
   const setCurrentPhotoIndex = async (
     index: number | undefined,
-    mode?: SwitchPhotoMode
+    mode?: SwitchPhotoMode,
   ) => {
     if (index === undefined) {
       return setCurrentPhotoId(undefined);
@@ -75,7 +75,7 @@ export function useCurrentPhoto(
       }
 
       const photo = photosMap.value?.get(
-        PhotoHelper.getPhotoKey(ownerId.value, photoId.value)
+        PhotoHelper.getPhotoKey(ownerId.value, photoId.value),
       );
       if (photo !== undefined) {
         currentPhotoIndex.value = photo.__state.index;
@@ -89,30 +89,30 @@ export function useCurrentPhoto(
 
       currentPhotoIndex.value = undefined;
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   const activeEl = useActiveElement();
   const activeElSize = useElementDeviceSize(activeEl, undefined, {
-    box: "border-box"
+    box: "border-box",
   });
   // Получить новый индекс для фото в зависимости от mode
   const getSwitchPhotoIndexByMode = (
     currentIndex: number,
-    mode: SwitchPhotoMode
+    mode: SwitchPhotoMode,
   ) => {
     return currentIndex + (mode === "prev" ? -1 : 1);
   };
 
   const getSwitchPhotoBig = async (
     currentIndex: number,
-    mode: SwitchPhotoMode
+    mode: SwitchPhotoMode,
   ) => {
     while (
       getPhotoByIndex(currentIndex) !== undefined &&
       PhotoHelper.isPhotoLessSizeAndNotMaxSize(
         getPhotoByIndex(currentIndex)!,
-        activeElSize
+        activeElSize,
       )
       ) {
       currentIndex = getSwitchPhotoIndexByMode(currentIndex, mode);
@@ -161,6 +161,6 @@ export function useCurrentPhoto(
     getSwitchPhotoBig,
     setCurrentPhotoIndex,
     setCurrentPhotoId,
-    onSwitchPhoto
+    onSwitchPhoto,
   };
 }

@@ -2,7 +2,7 @@
 import { icons } from "@/common/consts";
 import { useVk } from "@/store/vk/vk";
 import AButton from "@/components/AButton/AButton.vue";
-import { computed, onActivated, onBeforeMount, ref } from "vue";
+import { computed, onActivated, ref } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import { useActiveRoute } from "@/composables/useActiveRoute";
@@ -11,11 +11,11 @@ const props = defineProps<{ component: any; forceShow?: boolean }>();
 const vkStore = useVk();
 const groupsStore = useGroups();
 const activeRoute = useActiveRoute();
-const loading = ref(!vkStore.api && !props.forceShow);
+const loading = ref(!vkStore.apiService && !props.forceShow);
 useScreenSpinner(loading);
 
 const onInit = async () => {
-  if (vkStore.api) {
+  if (vkStore.apiService) {
     return;
   }
 
@@ -36,10 +36,10 @@ onActivated(() => {
 });
 
 const isShowBanner = computed(
-  () => !vkStore.api && !loading.value && !props.forceShow,
+  () => !vkStore.apiService && !loading.value && !props.forceShow,
 );
 const isShowComponent = computed(
-  () => props.forceShow || (!loading.value && vkStore.api),
+  () => props.forceShow || (!loading.value && vkStore.apiService),
 );
 </script>
 <template>

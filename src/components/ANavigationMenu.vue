@@ -67,9 +67,8 @@ const tabBarItems: Array<{
   align-content: space-around;
   align-items: center;
   background: var(--navigation-bottom-background);
-  box-shadow:
-    0 0 2px rgba(0, 0, 0, 0.08),
-    0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.08),
+  0 4px 16px rgba(0, 0, 0, 0.08);
   box-shadow: var(--vkui--elevation3);
   display: flex;
   justify-content: space-around;
@@ -95,12 +94,11 @@ const tabBarItems: Array<{
 
     span {
       display: block;
-      font-family:
-        -apple-system,
-        system-ui,
-        Helvetica Neue,
-        Roboto,
-        sans-serif;
+      font-family: -apple-system,
+      system-ui,
+      Helvetica Neue,
+      Roboto,
+      sans-serif;
       font-family: var(--vkui--font_footnote--font_family--regular);
       font-size: 10px;
       font-weight: var(--vkui--font_weight_accent2);

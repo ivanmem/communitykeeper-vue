@@ -152,7 +152,7 @@ onDeactivated(() => {
             </div>
           </div>
           <VTextField
-            v-model.trim="renameDialog.newSettings.folder"
+            v-model.trim="renameDialog!.newSettings.folder"
             :counter="maxFolderLength"
             :rules="folderRules"
             label="Название"
@@ -163,7 +163,7 @@ onDeactivated(() => {
           <VSpacer />
           <VBtn @click="renameDialog = undefined">Закрыть</VBtn>
           <VBtn
-            :disabled="!valid || !renameDialog.newSettings.folder"
+            :disabled="!valid || !renameDialog!.newSettings.folder"
             @click="onSaveSettings"
           >
             Сохранить

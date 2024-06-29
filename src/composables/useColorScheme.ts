@@ -1,14 +1,7 @@
-import bridge, {
-  AnyReceiveMethodName,
-  AppearanceType,
-  VKBridgeEvent,
-} from "@vkontakte/vk-bridge";
+import bridge, { AnyReceiveMethodName, AppearanceType, VKBridgeEvent } from "@vkontakte/vk-bridge";
 import { Platform, platform } from "@vkontakte/vkui";
 import { ref, watch } from "vue";
-import {
-  resolveAppearance,
-  VKBridgeConfigData,
-} from "@vkontakte/vkui/dist/helpers/appearance";
+import { resolveAppearance, VKBridgeConfigData } from "@vkontakte/vkui/dist/helpers/appearance";
 import { generateVKUITokensClassName } from "@vkontakte/vkui/dist/helpers/generateVKUITokensClassName";
 import { darkColorScheme } from "@/common/consts";
 

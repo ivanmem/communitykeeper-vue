@@ -1,11 +1,5 @@
 import { GroupState, IGroup, IGroupMemberStatus } from "@/store/groups/types";
-import {
-  FiltersType,
-  GroupsSortEnum,
-  groupsSortKeys,
-  OnlyAccessEnum,
-  useGroups,
-} from "@/store/groups/groups";
+import { FiltersType, GroupsSortEnum, groupsSortKeys, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
 import { getGroupState } from "@/pages/AGroups/getGroupState";
 import bridge from "@vkontakte/vk-bridge";
 import { from, IEnumerable, NumberComparer } from "linq-to-typescript";
@@ -52,20 +46,14 @@ class GroupHelper {
       if (
         filters.folder.length > 0 &&
         filters.folder.trim().toLowerCase() !=
-          localGroup.folder.trim().toLowerCase()
+        localGroup.folder.trim().toLowerCase()
       ) {
         return false;
       }
 
-      if (
-        search?.length > 0 &&
-        !GroupHelper.getName(group).toLowerCase().includes(search) &&
-        !GroupHelper.getState(group).text.toLowerCase().includes(search)
-      ) {
-        return false;
-      }
-
-      return true;
+      return !search ||
+        GroupHelper.getName(group).toLowerCase().includes(search) ||
+        GroupHelper.getState(group).text.toLowerCase().includes(search);
     });
 
     if (filters.sort !== undefined && filters.sort !== GroupsSortEnum.date) {

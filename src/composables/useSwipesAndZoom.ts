@@ -21,12 +21,12 @@ export function useSwipesAndZoom(
 
   const contextmenu = swipeHandlers["contextmenu"]
     ? (e: MouseEvent | TouchEvent) => {
-        if (isZoomEvent(false)) {
-          return;
-        }
-
-        return swipeHandlers.contextmenu?.(e);
+      if (isZoomEvent(false)) {
+        return;
       }
+
+      return swipeHandlers.contextmenu?.(e);
+    }
     : undefined;
 
   return {
@@ -34,7 +34,7 @@ export function useSwipesAndZoom(
     contextmenu,
     touchstart: (evt: TouchEvent) => {
       if (isZoomEvent(zoomHandlers.touchstart(evt))) {
-        swipeHandlers.touchstart(evt, true)
+        swipeHandlers.touchstart(evt, true);
         return;
       }
 

@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import type { NavigationHookAfter, RouteLocationNormalized } from "vue-router";
-import { MAX_SIZE_ONE_VK_VALUE } from "@/common/consts";
 import { from } from "linq-to-typescript";
 import {
   HistoryItem,
@@ -14,6 +13,7 @@ import {
   HistoryType,
 } from "@/store/history/types";
 import { getPiniaPersist } from "@/helpers/getPiniaPersist";
+import { VK_STORAGE } from "@/common/consts";
 
 function getHistoryKey(historyItem: HistoryItem): HistoryKey {
   switch (historyItem.type) {
@@ -32,7 +32,10 @@ function getHistoryKey(historyItem: HistoryItem): HistoryKey {
 
 export const useHistory = defineStore("history", {
   state: (): HistoryState => {
-    return { history: {}, maxSize: MAX_SIZE_ONE_VK_VALUE * 2 };
+    return {
+      history: {},
+      maxSize: VK_STORAGE.chunkMaxSize * 2,
+    };
   },
   actions: {
     getViewAlbumKey(

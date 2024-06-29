@@ -2,11 +2,7 @@ import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
-import {
-  AlbumsPreviewSizesInitial,
-  getStaticAlbums,
-  wallAlbumStatic,
-} from "@/pages/AAlbums/consts";
+import { AlbumsPreviewSizesInitial, getStaticAlbums, wallAlbumStatic } from "@/pages/AAlbums/consts";
 import { useVk } from "@/store/vk/vk";
 import { useSizesColumns } from "@/composables/useSizesColumns";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
@@ -55,9 +51,11 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       if (+ownerId.value < 0) {
         try {
           group.value = await groupsStore.getGroupByIdOrLoad(-ownerId.value);
-        } catch {}
+        } catch {
+        }
         try {
-          const wallAlbum = await vkStore.createAlbumItem({
+          const apiService = await vkStore.getApiService();
+          const wallAlbum = await apiService.createAlbumItem({
             title: wallAlbumStatic.title,
             album_id: wallAlbumStatic.id,
             owner_id: +ownerId.value,
@@ -87,7 +85,8 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       const count = albumsMaxItems.value - offset - staticAlbumsCount.value;
       if (count > 0) {
         try {
-          const { items } = await vkStore.getAlbums(
+          const apiService = await vkStore.getApiService();
+          const { items } = await apiService.getAlbums(
             ownerId.value,
             offset,
             count,

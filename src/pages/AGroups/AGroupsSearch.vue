@@ -3,11 +3,7 @@ import { ref, watch } from "vue";
 import { icons, styledIcons } from "@/common/consts";
 import { UseGroupSearch } from "@/pages/AGroups/useGroupSearch";
 import AButton from "@/components/AButton/AButton.vue";
-import {
-  GroupsSortEnum,
-  OnlyAccessEnum,
-  useGroups,
-} from "@/store/groups/groups";
+import { GroupsSortEnum, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
 import AGroupsTabs from "@/pages/AGroups/AGroupsTabs.vue";
 import { useApp } from "@/store/app/app";
 import { useDialog } from "@/store/dialog/dialog";

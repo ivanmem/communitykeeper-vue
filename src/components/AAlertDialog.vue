@@ -29,9 +29,9 @@ onBeforeRouteUpdate((to, from, next) => {
 </script>
 <template>
   <VDialog
+    :close-on-back="true"
     :model-value="true"
     :persistent="props.persistent ?? false"
-    :close-on-back="true"
     class="a-alert-dialog"
     max-width="max-content"
     @update:model-value="!$event && emits('close')"

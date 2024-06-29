@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
-import copy from "copy-to-clipboard";
 import { useColorScheme } from "@/composables/useColorScheme";
 import { useApp } from "@/store/app/app";
 import { darkColorScheme, icons } from "@/common/consts";
@@ -142,8 +141,8 @@ watch(
             <VBtn
               v-if="route.path !== '/'"
               :icon="LinkIcon"
-              variant="text"
               title="Скопировать текущую ссылку"
+              variant="text"
               @click="
                 vkService.copyText(`vk.com/app${appStore.appId}#` + route.path);
                 LinkIcon = icons.Icon24CopyOutline;

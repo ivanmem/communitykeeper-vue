@@ -10,9 +10,9 @@
   $at-root: true
 ) {
   $platforms: (
-    vkcom: $vkcom,
-    android: $android,
-    ios: $ios,
+          vkcom: $vkcom,
+          android: $android,
+          ios: $ios,
   );
   $selector: "body";
 
@@ -78,11 +78,11 @@
 /// Аналогично platform-body, но только для светлой темы
 @mixin platform-body-light($property, $vkcom, $android, $ios) {
   @include platform-universal(
-    $property,
-    $vkcom,
-    $android,
-    $ios,
-    "false",
-    false
+                  $property,
+                  $vkcom,
+                  $android,
+                  $ios,
+                  "false",
+                  false
   );
 }

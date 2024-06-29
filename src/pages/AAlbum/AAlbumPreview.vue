@@ -24,7 +24,7 @@ const onOpenPhoto = useOpenPhoto(() => props.photo);
 
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
-   {
+    {
       label: "Перейти к фото",
       icon: h(icons.Icon16LogoVk),
       onClick: onOpenPhoto,

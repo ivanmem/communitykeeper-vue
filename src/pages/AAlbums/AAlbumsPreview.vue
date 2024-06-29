@@ -32,7 +32,7 @@ const onShowContextMenu = (e: MouseEvent) => {
 };
 
 const onOpenAlbum = () => {
-  vkStore.cache.currentAlbum = props.album;
+  vkStore.apiService!.cache!.currentAlbum = props.album;
   return router.push(`/albums/${props.album.owner_id}/${props.album.id}`);
 };
 </script>
@@ -76,9 +76,9 @@ const onOpenAlbum = () => {
 .photos_album_title_wrap {
   background: rgb(2, 0, 36);
   background: linear-gradient(
-    0deg,
-    rgba(2, 0, 36, 0.8968181022408963) 12%,
-    rgba(255, 255, 255, 0) 100%
+      0deg,
+      rgba(2, 0, 36, 0.8968181022408963) 12%,
+      rgba(255, 255, 255, 0) 100%
   );
   bottom: 0;
   box-shadow: -2px -2px 4px 0px rgba(0, 0, 0, 0.4) inset;

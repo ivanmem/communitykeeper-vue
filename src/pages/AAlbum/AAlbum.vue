@@ -10,7 +10,7 @@ import { computed, toRef } from "vue";
 import { router } from "@/router";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useDialog } from "@/store/dialog/dialog";
-import { computedAsync, refDebounced } from "@vueuse/core";
+import { computedAsync } from "@vueuse/core";
 import { IGroup } from "@/store/groups/types";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import GroupHelper from "@/helpers/GroupHelper";
@@ -111,7 +111,7 @@ const onHelp = () => {
         <div
           style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
         >
-          <div class="a-album__position" v-if="album && (position != 0 || album.size === 0)">
+          <div v-if="album && (position != 0 || album.size === 0)" class="a-album__position">
             {{ position }} из {{ album.size }} фото
           </div>
           <code v-if="screenError" class="vkuiFormField--status-error">
@@ -123,9 +123,9 @@ const onHelp = () => {
             v-model="groupsStore.config.reverseOrder"
             :false-icon="styledIcons.Icon24SortOutlineOpacity50"
             :true-icon="icons.Icon24SortOutline"
+            class="a-album__reverse-order"
             hide-details
             label="В обратном порядке"
-            class="a-album__reverse-order"
             style="flex-grow: 0;"
           />
         </div>

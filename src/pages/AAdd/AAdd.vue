@@ -3,7 +3,6 @@ import { computed, reactive, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import toNumber from "lodash-es/toNumber";
 import { icons } from "@/common/consts";
-import { getGroupsByLinksOrIds } from "@/helpers/getGroupsByIds";
 import { IGroup } from "@/store/groups/types";
 import AGroupLink from "/src/pages/AGroups/AGroupLink.vue";
 import { useRoute } from "vue-router";
@@ -16,6 +15,7 @@ import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useActivated } from "@/composables/useActivated";
 import { folderRules, maxFolderLength } from "@/common/formConsts";
 import { watchDebounced } from "@vueuse/core";
+import { useVk } from "@/store/vk/vk";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -84,7 +84,8 @@ const onLinkOrIdChanged = async () => {
     return;
   }
 
-  const groups = await getGroupsByLinksOrIds([newGroup.linkOrId]);
+  const apiService = await useVk().getApiService();
+  const groups = await apiService.getGroupsByLinksOrIds([newGroup.linkOrId]);
   // вк для несуществующих сообществ возвращает объект с пустым именем
   if (groups.length <= 0 || !groups[0].name) {
     currentGroup.value = undefined;

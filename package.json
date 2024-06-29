@@ -3,11 +3,13 @@
   "version": "1.8.3",
   "private": true,
   "scripts": {
-    "build": "vue-tsc && vite build",
-    "deploy": "npm run build && vk-miniapps-deploy",
     "dev": "vite",
     "dev-host": "vite --host",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "deploy": "npm run build && vk-miniapps-deploy",
     "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build --force",
     "vk-tunnel": "vk-tunnel --host=localhost --timeout=10000",
     "dev-tunnel": "concurrently \"npm run vk-tunnel\" \"npm run dev\""
   },

@@ -5,7 +5,8 @@ import { nextTick } from "vue";
 export function showContextMenu(
   e: MouseEvent | TouchEvent,
   items: MenuItem[] | undefined,
-  onClose = () => {},
+  onClose = () => {
+  },
 ) {
   const contextMenuInstance = Vue3ContextMenu.showContextMenu({
     x: e instanceof MouseEvent ? e.x : e.touches[0].clientX,
@@ -34,6 +35,6 @@ export function showContextMenu(
     el.addEventListener("wheel", () => {
       closeListener();
     });
-  });
+  }).then();
   return contextMenuInstance;
 }

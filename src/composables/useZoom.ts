@@ -46,7 +46,7 @@ export function useZoom({ image, key, enabled }: UsableZoomOptions) {
     useInterval(100, {
       callback() {
         onPaneUpdated();
-      }
+      },
     });
 
 

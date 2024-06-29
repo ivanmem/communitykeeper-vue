@@ -102,18 +102,11 @@ router.afterEach(async (to, from) => {
     }
 
     try {
-      // для пользовательских фото метод недоступен
-      const albumId = (
-        await useVk().addRequestToQueue({
-          method: "photos.getById",
-          params: {
-            photos: `${ownerId}_${photoId}`,
-            access_token: useVk().token?.access_token,
-          },
-        })
-      )[0].album_id;
+      const apiService = await useVk().getApiService();
+      const albumId = await apiService.getAlbumIdFromPhotoIdAndOwnerId(ownerId, photoId);
       return { path: `/albums/${ownerId}/${albumId}/${photoId}` };
-    } catch {}
+    } catch {
+    }
   }
 
   if (to.query?.vk_app_id && from.fullPath === "/") {
@@ -124,12 +117,12 @@ router.afterEach((to) => {
   bridge.send("VKWebAppSetLocation", {
     location: to.fullPath,
     replace_state: true,
-  });
+  }).then();
   const historyStore = useHistory();
   historyStore.afterEach(to as NavigationHookAfter & RouteLocationNormalized);
 });
 bridge.subscribe((event) => {
   if (event.detail.type === "VKWebAppChangeFragment") {
-    router.replace(event.detail.data.location);
+    router.replace(event.detail.data.location).then();
   }
 });

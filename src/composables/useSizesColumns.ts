@@ -1,13 +1,4 @@
-import {
-  computed,
-  MaybeRefOrGetter,
-  onMounted,
-  onUnmounted,
-  reactive,
-  ref,
-  toValue,
-  watch,
-} from "vue";
+import { computed, MaybeRefOrGetter, onMounted, onUnmounted, reactive, ref, toValue, watch } from "vue";
 import { unrefElement, useElementSize, useWindowSize } from "@vueuse/core";
 import { useActivated } from "@/composables/useActivated";
 import { useApp } from "@/store/app/app";
@@ -125,7 +116,8 @@ export function useSizesColumns(
     unsubs.forEach((x) => {
       try {
         x();
-      } catch {}
+      } catch {
+      }
     });
   });
 

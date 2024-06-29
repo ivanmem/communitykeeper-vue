@@ -7,7 +7,7 @@ export function useActiveRoute() {
   const route = useRoute();
   const computedRoute = computed(() => ({
     params: route.params,
-    query: route.query
+    query: route.query,
   }));
   return useActiveValue(computedRoute);
 }

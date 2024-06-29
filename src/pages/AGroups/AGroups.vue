@@ -70,8 +70,8 @@ const onHelp = () => {
     </div>
     <template v-else>
       <VList
-        ref="groupsRef"
         :key="groupsStore.filters.folder"
+        ref="groupsRef"
         #default="item"
         :data="groupsOrder"
         class="a-groups__groups"

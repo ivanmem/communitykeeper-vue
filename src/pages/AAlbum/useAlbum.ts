@@ -1,13 +1,7 @@
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { useVk } from "@/store/vk/vk";
 import { AlbumsPreviewSizesInitial } from "@/pages/AAlbums/consts";
-import {
-  computed,
-  MaybeRefOrGetter,
-  ref,
-  toValue,
-  watch,
-} from "vue";
+import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { useCurrentPhoto } from "@/pages/AAlbum/useCurrentPhoto";
 import { useScreenSpinner } from "@/composables/useScreenSpinner";
 import { useSizesColumns } from "@/composables/useSizesColumns";
@@ -21,7 +15,6 @@ import { errorToString } from "@/helpers/errorToString";
 import { useGridArray } from "@/composables/useGridArray";
 // @ts-ignore
 import { VList } from "virtua/vue";
-import { prefetchPhotoFromUrl } from "@/helpers/prefetchPhotoFromUrl";
 import { useApp } from "@/store/app/app";
 
 const countOneLoad = 150;
@@ -42,7 +35,7 @@ export function useAlbum(
   const photo = computed(() =>
     photosMap.value?.get(
       PhotoHelper.getPhotoKeyOrUndefined(ownerId.value, photoId.value) ??
-        ("" as IPhotoKey),
+      ("" as IPhotoKey),
     ),
   );
   const album = ref<IAlbumItem | undefined>();
@@ -126,7 +119,8 @@ export function useAlbum(
   };
 
   const onUpdateAlbum = async () => {
-    album.value = await vkStore
+    const apiService = await vkStore.getApiService();
+    album.value = await apiService
       .getCachedAlbum(ownerId.value, albumId.value)
       .catch((ex) => {
         if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
@@ -153,7 +147,8 @@ export function useAlbum(
     const offset = photos.items.length;
     const count = currentPhotosMaxItems - offset;
     try {
-      const { items }: { items: IPhoto[] } = await vkStore.photosGet({
+      const apiService = await vkStore.getApiService();
+      const { items }: { items: IPhoto[] } = await apiService.photosGet({
         album_id: albumId.value,
         owner_id: ownerId.value,
         offset,

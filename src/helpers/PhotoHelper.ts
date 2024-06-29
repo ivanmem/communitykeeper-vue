@@ -24,7 +24,7 @@ export class PhotoHelper {
 
   static getPreviewSize(
     sizes: IPhotoSize[] | undefined,
-    previewSizes: { width: number; height: number }
+    previewSizes: { width: number; height: number },
   ) {
     if (!sizes?.length) {
       return undefined;
@@ -73,14 +73,14 @@ export class PhotoHelper {
 
   static getPhotoKey(
     ownerId: number | string,
-    photoId: number | string
+    photoId: number | string,
   ): IPhotoKey {
     return `photo${ownerId}_${photoId}`;
   }
 
   static getPhotoKeyOrUndefined(
     ownerId: number | string | undefined,
-    photoId: number | string | undefined
+    photoId: number | string | undefined,
   ): IPhotoKey | undefined {
     if (ownerId === undefined || photoId === undefined) {
       return undefined;
@@ -99,7 +99,7 @@ export class PhotoHelper {
       try {
         await bridge.send("VKWebAppDownloadFile", {
           url: originalSize.url,
-          filename
+          filename,
         });
       } catch (ex: any) {
         // 6 - VKWebAppDownloadFile. Unsupported platform
@@ -122,7 +122,7 @@ export class PhotoHelper {
    * Если хотя бы по одной стороне больше либо равно - возвращается false */
   static isPhotoLessSizeAndNotMaxSize(
     photo: IPhoto,
-    size: { width: ComputedRef<number>; height: ComputedRef<number> }
+    size: { width: ComputedRef<number>; height: ComputedRef<number> },
   ) {
     const originalSize = PhotoHelper.getOriginalSize(photo.sizes)!;
     if (PhotoHelper.isMaxSize(originalSize)) {
