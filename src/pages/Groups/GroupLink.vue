@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { IGroup, IGroupMemberStatus } from "@/store/groups/types";
-import AButton from "@/components/AButton/AButton.vue";
+import BaseButton from "@/components/BaseButton.vue";
 import { openUrl } from "@/shared/helpers/openUrl";
 import GroupCounters from "@/pages/Groups/GroupCounters.vue";
 import { computed, h, ref, watch } from "vue";
@@ -204,7 +204,7 @@ watch(showCounters, () => {
     class="a-button__root"
     @click.right.prevent.stop="onOpenContextMenu"
   >
-    <AButton class="a-group-link a-button__block" @click="openUrl(`//` + link)">
+    <BaseButton class="a-group-link a-button__block" @click="openUrl(`//` + link)">
       <img
         :src="group.photo_200"
         alt=""
@@ -220,12 +220,12 @@ watch(showCounters, () => {
           {{ groupState.text }}
         </span>
       </div>
-      <AButton
+      <BaseButton
         class="a-group-link__context-menu"
         icon="Icon16MoreVertical"
         @click.stop="onOpenContextMenu"
       />
-    </AButton>
+    </BaseButton>
     <GroupCounters v-if="showCounters" :group="group" />
   </div>
 </template>

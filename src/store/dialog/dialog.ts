@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { DialogOpenOptions, DialogState } from "@/store/dialog/types";
 import uniqueId from "lodash-es/uniqueId";
 import { markRaw } from "vue";
-import AAlertDialog, { AAlertDialogProps } from "@/components/AAlertDialog.vue";
+import AlertDialog, { AlertDialogProps } from "@/components/AlertDialog.vue";
 
 export const useDialog = defineStore("dialog", {
   state: (): DialogState => {
@@ -25,17 +25,17 @@ export const useDialog = defineStore("dialog", {
       Object.assign(options.props as any, extendedProps);
       this.windows.set(key, { key, options });
     },
-    alert(props: Exclude<AAlertDialogProps, "mode"> | string) {
+    alert(props: Exclude<AlertDialogProps, "mode"> | string) {
       if (typeof props === "string") {
         props = {
           subtitle: props,
         };
       }
 
-      (props as AAlertDialogProps).mode = "alert";
-      this.open({ component: AAlertDialog, props });
+      (props as AlertDialogProps).mode = "alert";
+      this.open({ component: AlertDialog, props });
     },
-    confirm(props: Exclude<AAlertDialogProps, "mode"> | string) {
+    confirm(props: Exclude<AlertDialogProps, "mode"> | string) {
       if (typeof props === "string") {
         props = {
           subtitle: props,
@@ -47,7 +47,7 @@ export const useDialog = defineStore("dialog", {
           throw new Error();
         }
 
-        const extendedProps: AAlertDialogProps & Record<any, any> = {
+        const extendedProps: AlertDialogProps & Record<any, any> = {
           ...props,
           mode: "confirm",
           onConfirm: () => {
@@ -57,7 +57,7 @@ export const useDialog = defineStore("dialog", {
             resolve(false);
           },
         };
-        this.open({ component: AAlertDialog, props: extendedProps });
+        this.open({ component: AlertDialog, props: extendedProps });
       });
     },
   },

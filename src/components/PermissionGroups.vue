@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { icons } from "@/shared/constants/consts";
 import { useVk } from "@/store/vk/vk";
-import AButton from "@/components/AButton/AButton.vue";
+import BaseButton from "@/components/BaseButton.vue";
 import { computed, onActivated, ref } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
@@ -56,7 +56,7 @@ const isShowComponent = computed(
       <div
         class="a-permission-groups__access-btn"
       >
-        <AButton @click="onInit()">Разрешить</AButton>
+        <BaseButton @click="onInit()">Разрешить</BaseButton>
       </div>
     </VBanner>
   </div>

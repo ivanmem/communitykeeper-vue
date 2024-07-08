@@ -8,7 +8,7 @@ import { IAppInitOptions, useApp } from "@/store/app/app";
 import { useDialog } from "@/store/dialog/dialog";
 import { toStr } from "@/shared/helpers/toStr";
 import { VK_STORAGE } from "@/shared/constants/consts";
-import { VkApiService } from "@/services/VkApiService";
+import { VkApiService } from "@/shared/services/VkApiService";
 import { Raw } from "@vue/reactivity";
 
 export type WebAppConfig = Partial<

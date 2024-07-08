@@ -5,7 +5,7 @@ import GroupLink from "@/pages/Groups/GroupLink.vue";
 import { icons } from "@/shared/constants/consts";
 import FixedTeleport from "@/components/FixedTeleport.vue";
 import { useDialog } from "@/store/dialog/dialog";
-import AButton from "@/components/AButton/AButton.vue";
+import BaseButton from "@/components/BaseButton.vue";
 import { useGroups } from "@/store/groups/groups";
 // @ts-ignore
 import { VList } from "virtua/vue";
@@ -64,7 +64,7 @@ const onHelp = () => {
             justify-content: flex-end;
           "
         >
-          <AButton to="/add/">Добавить</AButton>
+          <BaseButton to="/add/">Добавить</BaseButton>
         </div>
       </VBanner>
     </div>

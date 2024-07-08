@@ -3,7 +3,7 @@ import useClipboard from "vue-clipboard3";
 import { icons, styledIcons } from "@/shared/constants/consts";
 import { computed, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
-import AToolbar from "@/components/AToolbar.vue";
+import BaseToolbar from "@/components/BaseToolbar.vue";
 import { useDialog } from "@/store/dialog/dialog";
 import { useApp } from "@/store/app/app";
 
@@ -57,14 +57,14 @@ onDeactivated(() => {
       </VBtn>
     </template>
     <VCard>
-      <AToolbar>
+      <BaseToolbar>
         <VBtn icon @click="onClose">
           <VIcon>mdi-close</VIcon>
         </VBtn>
         <VToolbarTitle class="navigation-caption">
           Создание резервной копии
         </VToolbarTitle>
-      </AToolbar>
+      </BaseToolbar>
       <VCardText style="font-size: 14px">
         Выберите папки и нажмите на нужную кнопку.
         <template v-if="appStore.isApp">

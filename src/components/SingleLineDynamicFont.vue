@@ -36,7 +36,7 @@ watch(
         div.value.style.fontSize = fontSize + "px";
       }
     } catch (ex) {
-      console.warn("ASingleLineDynamicFont error:", ex);
+      console.warn("SingleLineDynamicFont error:", ex);
     }
   },
 );

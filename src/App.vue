@@ -8,11 +8,11 @@ import { useVk } from "@/store/vk/vk";
 import { onBeforeMount, ref, shallowRef, watch } from "vue";
 import { switchFullscreen } from "@/shared/helpers/switchFullscreen";
 import { VDefaultsProvider, VToolbar } from "vuetify/components";
-import ASpinner from "@/components/ASpinner.vue";
-import ADynamicDialog from "@/components/ADynamicDialog.vue";
-import ANavigationMenu from "@/components/ANavigationMenu.vue";
+import BaseSpinner from "@/components/BaseSpinner.vue";
+import DynamicDialog from "@/components/DynamicDialog.vue";
+import NavigationMenu from "@/components/NavigationMenu.vue";
 import { useUnmounted } from "@/shared/composables/useUnmounted";
-import ASingleLineDynamicFont from "@/components/ASingleLineDynamicFont.vue";
+import SingleLineDynamicFont from "@/components/SingleLineDynamicFont.vue";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -122,19 +122,19 @@ watch(
         tabindex="0"
         @keydown="onKeyDown"
       >
-        <ASpinner v-show="!groupsStore.isInit || appStore.isLoading" />
+        <BaseSpinner v-show="!groupsStore.isInit || appStore.isLoading" />
         <template v-if="groupsStore.isInit">
           <VToolbar
             class="navigation-header navigation-header-height navigation-header-padding-right"
             density="compact"
           >
             <VToolbarTitle style="flex-grow: 5">
-              <ASingleLineDynamicFont
+              <SingleLineDynamicFont
                 id="caption"
                 class="overflow-block navigation-caption"
               >
                 {{ appStore.caption }}
-              </ASingleLineDynamicFont>
+              </SingleLineDynamicFont>
             </VToolbarTitle>
             <VSpacer></VSpacer>
             <div id="navigation-header__right"></div>
@@ -167,8 +167,8 @@ watch(
             </RouterView>
           </div>
 
-          <ANavigationMenu />
-          <ADynamicDialog />
+          <NavigationMenu />
+          <DynamicDialog />
         </template>
       </div>
     </VDefaultsProvider>

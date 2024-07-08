@@ -2,7 +2,7 @@
 import { ref, watch } from "vue";
 import { icons, styledIcons } from "@/shared/constants/consts";
 import { UseGroupSearch } from "@/pages/Groups/useGroupSearch";
-import AButton from "@/components/AButton/AButton.vue";
+import BaseButton from "@/components/BaseButton.vue";
 import { GroupsSortEnum, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
 import GroupsTabs from "@/pages/Groups/GroupsTabs.vue";
 import { useApp } from "@/store/app/app";
@@ -125,21 +125,21 @@ watch(
           margin-right: 10px;
         "
       >
-        <AButton
+        <BaseButton
           :disabled="!groupsStore.filters.search.length"
           class="a-button__opacity"
           @mousedown.stop
           @click.stop="groupsStore.filters.search = ''"
         >
           <Icon16CrossCircleSmall />
-        </AButton>
-        <AButton
+        </BaseButton>
+        <BaseButton
           class="a-button__opacity"
           @mousedown.stop
           @click.stop="showFilters = !showFilters"
         >
           <Icon24Filter />
-        </AButton>
+        </BaseButton>
       </div>
       <VDialog v-model="showFilters">
         <VCard class="overflow-block a-group-filters">

@@ -2,7 +2,7 @@
 import { icons } from "@/shared/constants/consts";
 import { computed, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
-import AToolbar from "@/components/AToolbar.vue";
+import BaseToolbar from "@/components/BaseToolbar.vue";
 import { useDialog } from "@/store/dialog/dialog";
 import { useApp } from "@/store/app/app";
 import { isGroupsExport } from "@/store/groups/isGroupsExport";
@@ -178,14 +178,14 @@ watch(importFolders, () => {
       </VBtn>
     </template>
     <VCard v-if="importData">
-      <AToolbar>
+      <BaseToolbar>
         <VBtn icon @click="onClose">
           <VIcon>mdi-close</VIcon>
         </VBtn>
         <VToolbarTitle class="navigation-caption">
           Загрузка резервной копии
         </VToolbarTitle>
-      </AToolbar>
+      </BaseToolbar>
       <VCardText style="font-size: 14px">
         Выберите нужные папки и нажмите на кнопку сохранения. Названия папок у
         уже существующих групп будут обновлены на новые.

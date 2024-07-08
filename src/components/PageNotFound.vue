@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import AButton from "@/components/AButton/AButton.vue";
+import BaseButton from "@/components/BaseButton.vue";
 import { useAppCaption } from "@/shared/composables/useAppCaption";
-import APageContainer from "@/components/APageContainer/APageContainer.vue";
+import PageContainer from "@/components/PageContainer.vue";
 
 useAppCaption("Ошибка");
 </script>
 <template>
-  <APageContainer>
+  <PageContainer>
     <div>Данной страницы не существует.</div>
-    <AButton to="/">Перейти к группам</AButton>
-  </APageContainer>
+    <BaseButton to="/">Перейти к группам</BaseButton>
+  </PageContainer>
 </template>

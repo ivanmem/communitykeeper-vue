@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
 import { icons } from "@/shared/constants/consts";
-import AButton from "./AButton/AButton.vue";
+import BaseButton from "@/components/BaseButton.vue";
 
 const route = useRoute();
 
@@ -46,14 +46,14 @@ const tabBarItems: Array<{
 <template>
   <div class="navigation">
     <div class="navigation-bottom-buttons">
-      <AButton
+      <BaseButton
         v-for="item of tabBarItems"
         :data-type="item.getDataType?.()"
         :icon="item.icon"
         :to="item.to"
       >
         <span> {{ item.caption }} </span>
-      </AButton>
+      </BaseButton>
     </div>
   </div>
 </template>
