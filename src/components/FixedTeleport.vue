@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useActivated } from "@/composables/useActivated";
+import { useActivated } from "@/shared/composables/useActivated";
 
 const props = defineProps({
   to: { type: String },

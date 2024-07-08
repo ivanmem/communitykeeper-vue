@@ -13,35 +13,35 @@ import { useDialog } from "@/store/dialog/dialog";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    component: () => import("@/pages/AGroups/AGroupsWrapper.vue"),
+    component: () => import("@/pages/Groups/GroupsPageWrapper.vue"),
   },
   {
     path: "/settings/",
-    component: () => import("@/pages/ASettings/ASettings.vue"),
+    component: () => import("@/pages/Settings/SettingsPage.vue"),
   },
   {
     path: "/about/",
-    component: () => import("@/pages/AAbout/AAbout.vue"),
+    component: () => import("@/pages/About/AboutPage.vue"),
   },
   {
     name: "add",
     path: "/add/",
-    component: () => import("@/pages/AAdd/AAddWrapper.vue"),
+    component: () => import("@/pages/Add/AddPageWrapper.vue"),
   },
   {
     path: "/history/",
-    component: () => import("@/pages/AHistory/AHistoryWrapper.vue"),
+    component: () => import("@/pages/History/HistoryPageWrapper.vue"),
   },
   {
     name: "album",
     path: "/albums/:ownerId/:albumId/:photoId?",
-    component: () => import("@/pages/AAlbum/AAlbumWrapper.vue"),
+    component: () => import("@/pages/Album/AlbumPageWrapper.vue"),
     strict: true,
   },
   {
     name: "albums",
     path: "/albums/:ownerId",
-    component: () => import("@/pages/AAlbums/AAlbumsWrapper.vue"),
+    component: () => import("@/pages/Albums/AlbumsWrapper.vue"),
     strict: true,
   },
   {

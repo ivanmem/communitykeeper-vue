@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { VKAPI } from "vkontakte-api";
 import bridge, { MobileUpdateConfigData, MVKUpdateConfigData, VKUpdateConfigData } from "@vkontakte/vk-bridge";
-import { chunkString } from "@/helpers/chunkString";
+import { chunkString } from "@/shared/helpers/chunkString";
 import { markRaw, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { IAppInitOptions, useApp } from "@/store/app/app";
 import { useDialog } from "@/store/dialog/dialog";
-import { toStr } from "@/helpers/toStr";
-import { VK_STORAGE } from "@/common/consts";
+import { toStr } from "@/shared/helpers/toStr";
+import { VK_STORAGE } from "@/shared/constants/consts";
 import { VkApiService } from "@/services/VkApiService";
 import { Raw } from "@vue/reactivity";
 

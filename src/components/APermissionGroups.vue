@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { icons } from "@/common/consts";
+import { icons } from "@/shared/constants/consts";
 import { useVk } from "@/store/vk/vk";
 import AButton from "@/components/AButton/AButton.vue";
 import { computed, onActivated, ref } from "vue";
 import { useGroups } from "@/store/groups/groups";
-import { useScreenSpinner } from "@/composables/useScreenSpinner";
-import { useActiveRoute } from "@/composables/useActiveRoute";
+import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
+import { useActiveRoute } from "@/shared/composables/useActiveRoute";
 
 const props = defineProps<{ component: any; forceShow?: boolean }>();
 const vkStore = useVk();
@@ -43,24 +43,18 @@ const isShowComponent = computed(
 );
 </script>
 <template>
-  <div v-if="isShowBanner">
+  <div v-if="isShowBanner" class="a-permission-groups">
     <VBanner
       :icon="icons.Icon24KeyOutline"
+      class="a-permission-groups__banner"
       color="deep-purple-accent-4"
       lines="one"
-      style="padding-block: 8px"
     >
       <div>
         Требуется доступ. Без него приложение не может корректно отображать информацию о группах!
       </div>
       <div
-        style="
-          display: flex;
-          align-items: center;
-          flex-grow: 1;
-          justify-content: flex-end;
-          margin-left: 5px;
-        "
+        class="a-permission-groups__access-btn"
       >
         <AButton @click="onInit()">Разрешить</AButton>
       </div>
@@ -70,3 +64,16 @@ const isShowComponent = computed(
     <component :is="component" v-bind="activeRoute.params" />
   </template>
 </template>
+<style lang="scss">
+.a-permission-groups__banner {
+  padding-block: 8px;
+}
+
+.a-permission-groups__access-btn {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: flex-end;
+  margin-left: 5px;
+}
+</style>

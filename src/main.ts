@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { createVuetify } from "vuetify";
 import { router } from "@/router";
-import { isDev } from "@/common/consts";
+import { isDev } from "@/shared/constants/consts";
 import Vue3ContextMenu from "@imengyu/vue3-context-menu";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import "vuetify/styles";

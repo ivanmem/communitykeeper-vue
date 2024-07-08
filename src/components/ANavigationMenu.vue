@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
-import { icons } from "@/common/consts";
+import { icons } from "@/shared/constants/consts";
 import AButton from "./AButton/AButton.vue";
 
 const route = useRoute();

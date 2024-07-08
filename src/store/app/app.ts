@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { platform } from "@vkontakte/vkui";
 import { Ref, watch } from "vue";
-import { setEruda } from "@/helpers/setEruda";
+import { setEruda } from "@/shared/helpers/setEruda";
 import { useVk } from "@/store/vk/vk";
 import { IGroupsConfig, useGroups } from "@/store/groups/groups";
-import { imageUrlToBase64 } from "@/helpers/imageUrlToBase64";
+import { imageUrlToBase64 } from "@/shared/helpers/imageUrlToBase64";
 import mainUrl from "@/assets/slides/main.png";
 import bridge, { ShowSlidesSheetRequest } from "@vkontakte/vk-bridge";
-import { toStr } from "@/helpers/toStr";
+import { toStr } from "@/shared/helpers/toStr";
 import { router } from "@/router";
 import { watchDebounced } from "@vueuse/core";
 

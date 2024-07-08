@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
-import { useColorScheme } from "@/composables/useColorScheme";
+import { useColorScheme } from "@/shared/composables/useColorScheme";
 import { useApp } from "@/store/app/app";
-import { darkColorScheme, icons } from "@/common/consts";
+import { darkColorScheme, icons } from "@/shared/constants/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import { onBeforeMount, ref, shallowRef, watch } from "vue";
-import { switchFullscreen } from "@/helpers/switchFullscreen";
+import { switchFullscreen } from "@/shared/helpers/switchFullscreen";
 import { VDefaultsProvider, VToolbar } from "vuetify/components";
 import ASpinner from "@/components/ASpinner.vue";
 import ADynamicDialog from "@/components/ADynamicDialog.vue";
 import ANavigationMenu from "@/components/ANavigationMenu.vue";
-import { useUnmounted } from "@/composables/useUnmounted";
+import { useUnmounted } from "@/shared/composables/useUnmounted";
 import ASingleLineDynamicFont from "@/components/ASingleLineDynamicFont.vue";
 
 const route = useRoute();

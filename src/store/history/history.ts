@@ -12,8 +12,8 @@ import {
   HistoryState,
   HistoryType,
 } from "@/store/history/types";
-import { getPiniaPersist } from "@/helpers/getPiniaPersist";
-import { VK_STORAGE } from "@/common/consts";
+import { getPiniaPersist } from "@/shared/helpers/getPiniaPersist";
+import { VK_STORAGE } from "@/shared/constants/consts";
 
 function getHistoryKey(historyItem: HistoryItem): HistoryKey {
   switch (historyItem.type) {

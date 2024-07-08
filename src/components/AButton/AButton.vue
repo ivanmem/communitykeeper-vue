@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, StyleValue, useSlots, VueElement } from "vue";
-import { icons } from "@/common/consts";
+import { icons } from "@/shared/constants/consts";
 import { RouteLocationRaw, useRoute, useRouter } from "vue-router";
 import isString from "lodash-es/isString";
 

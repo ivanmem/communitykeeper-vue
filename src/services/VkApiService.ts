@@ -1,6 +1,6 @@
 import { VKAPI } from "vkontakte-api";
 import { IRequestConfig } from "vkontakte-api/dist/types/shared";
-import { sleep } from "@/helpers/sleep";
+import { sleep } from "@/shared/helpers/sleep";
 import { useVk } from "@/store/vk/vk";
 import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { IGroup, IPhoto } from "@/store/groups/types";

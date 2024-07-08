@@ -2,17 +2,17 @@ import { defineStore } from "pinia";
 import { GroupState, IGroup, IGroupCounters, IGroupsExport, ILocalGroup } from "@/store/groups/types";
 import toNumber from "lodash-es/toNumber";
 import { useVk } from "@/store/vk/vk";
-import { isGroupBanned } from "@/helpers/isGroupBanned";
+import { isGroupBanned } from "@/shared/helpers/isGroupBanned";
 import { IAppInitOptions, useApp } from "@/store/app/app";
 import { watch } from "vue";
-import GroupHelper from "@/helpers/GroupHelper";
+import GroupHelper from "@/shared/helpers/GroupHelper";
 import { from } from "linq-to-typescript";
-import { getPiniaPersist } from "@/helpers/getPiniaPersist";
+import { getPiniaPersist } from "@/shared/helpers/getPiniaPersist";
 import { saveAs } from "file-saver";
-import { toStr } from "@/helpers/toStr";
+import { toStr } from "@/shared/helpers/toStr";
 import { watchDebounced } from "@vueuse/core";
-import { folderRules, maxFolderLength } from "@/common/formConsts";
-import { actionSwipesDefaults, actionSwipesDict, VK_STORAGE } from "@/common/consts";
+import { folderRules, maxFolderLength } from "@/shared/constants/formConsts";
+import { actionSwipesDefaults, actionSwipesDict, VK_STORAGE } from "@/shared/constants/consts";
 import last from "lodash-es/last";
 
 export interface FiltersType {
