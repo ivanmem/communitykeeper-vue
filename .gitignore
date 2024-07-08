@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 build.zip
+/tsconfig.node.tsbuildinfo
+/vite.config.d.ts
+/vite.config.js
