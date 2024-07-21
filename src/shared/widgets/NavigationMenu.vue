@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
 import { icons } from "@/shared/constants/consts";
-import BaseButton from "@/components/BaseButton.vue";
+import BaseButton from "@/components/BaseButton";
 
 const route = useRoute();
 

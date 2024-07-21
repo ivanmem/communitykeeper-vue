@@ -8,11 +8,11 @@ import { useVk } from "@/store/vk/vk";
 import { onBeforeMount, ref, shallowRef, watch } from "vue";
 import { switchFullscreen } from "@/shared/helpers/switchFullscreen";
 import { VDefaultsProvider, VToolbar } from "vuetify/components";
-import BaseSpinner from "@/components/BaseSpinner.vue";
-import DynamicDialog from "@/components/DynamicDialog.vue";
-import NavigationMenu from "@/components/NavigationMenu.vue";
+import BaseSpinner from "@/components/BaseSpinner";
+import DynamicDialog from "@/shared/widgets/DynamicDialog.vue";
+import NavigationMenu from "@/shared/widgets/NavigationMenu.vue";
 import { useUnmounted } from "@/shared/composables/useUnmounted";
-import SingleLineDynamicFont from "@/components/SingleLineDynamicFont.vue";
+import SingleLineDynamicFont from "@/components/SingleLineDynamicFont/SingleLineDynamicFont.vue";
 
 const route = useRoute();
 const groupsStore = useGroups();

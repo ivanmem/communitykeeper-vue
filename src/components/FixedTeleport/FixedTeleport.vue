@@ -1,11 +1,8 @@
 <script lang="ts" setup>
 import { useActivated } from "@/shared/composables/useActivated";
+import { FixedTeleportProps } from "@/components/FixedTeleport/FixedTeleport";
 
-const props = defineProps({
-  to: { type: String },
-  disabled: Boolean,
-});
-
+const props = defineProps<FixedTeleportProps>();
 const isActivated = useActivated();
 </script>
 <template>

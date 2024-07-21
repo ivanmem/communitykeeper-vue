@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { computed } from "vue";
+import { BaseSpinnerProps } from "@/components/BaseSpinner/BaseSpinner";
 
 const props = withDefaults(
-  defineProps<{
-    absolute?: boolean;
-    zIndex?: number;
-  }>(),
+  defineProps<BaseSpinnerProps>(),
   {
     absolute: true,
     zIndex: 10000,

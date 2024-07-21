@@ -2,7 +2,7 @@
 import { icons } from "@/shared/constants/consts";
 import { computed, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
-import BaseToolbar from "@/components/BaseToolbar.vue";
+import BaseToolbar from "@/components/BaseToolbar";
 import { useDialog } from "@/store/dialog/dialog";
 import { useApp } from "@/store/app/app";
 import { isGroupsExport } from "@/store/groups/isGroupsExport";

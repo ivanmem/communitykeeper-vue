@@ -2,7 +2,7 @@
 import { IGroupCounter, useGroupCounters } from "@/pages/Groups/useGroupCounters";
 import { IGroup } from "@/store/groups/types";
 import { ref, toRef, watch } from "vue";
-import BaseSpinner from "@/components/BaseSpinner.vue";
+import BaseSpinner from "@/components/BaseSpinner";
 import GroupHelper from "@/shared/helpers/GroupHelper";
 import { useGroups } from "@/store/groups/groups";
 import { useHistory } from "@/store/history/history";

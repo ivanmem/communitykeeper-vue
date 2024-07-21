@@ -46,7 +46,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/:catchAll(.*)",
-    component: () => import("../components/PageNotFound.vue"),
+    component: () => import("../shared/widgets/PageNotFound.vue"),
     strict: false,
   },
 ];

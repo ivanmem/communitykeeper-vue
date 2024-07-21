@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import PermissionGroups from "@/components/PermissionGroups.vue";
+import PermissionGroups from "@/shared/widgets/PermissionGroups.vue";
 import { useAppCaption } from "@/shared/composables/useAppCaption";
 import { useGroups } from "@/store/groups/groups";
 import GroupsPage from "@/pages/Groups/GroupsPage.vue";

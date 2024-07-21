@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { IGroup, IGroupMemberStatus } from "@/store/groups/types";
-import BaseButton from "@/components/BaseButton.vue";
+import BaseButton from "@/components/BaseButton";
 import { openUrl } from "@/shared/helpers/openUrl";
 import GroupCounters from "@/pages/Groups/GroupCounters.vue";
 import { computed, h, ref, watch } from "vue";

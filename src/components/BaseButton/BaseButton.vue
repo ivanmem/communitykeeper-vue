@@ -1,18 +1,11 @@
 <script lang="ts" setup>
-import { computed, StyleValue, useSlots, VueElement } from "vue";
+import { computed, useSlots } from "vue";
 import { icons } from "@/shared/constants/consts";
-import { RouteLocationRaw, useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import isString from "lodash-es/isString";
+import { BaseButtonProps } from "@/components/BaseButton/BaseButton";
 
-const props = defineProps<{
-  icon?: VueElement | keyof typeof icons;
-  iconStyle?: StyleValue;
-  to?: RouteLocationRaw;
-  target?: string | undefined;
-  exactActiveDataType?: "accent";
-  dataType?: "accent";
-  hideContent?: boolean;
-}>();
+const props = defineProps<BaseButtonProps>();
 
 const emits = defineEmits<{
   click: [MouseEvent];

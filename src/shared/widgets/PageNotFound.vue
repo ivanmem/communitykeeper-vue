@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import BaseButton from "@/components/BaseButton.vue";
+import BaseButton from "@/components/BaseButton";
 import { useAppCaption } from "@/shared/composables/useAppCaption";
-import PageContainer from "@/components/PageContainer.vue";
+import PageContainer from "@/components/PageContainer";
 
 useAppCaption("Ошибка");
 </script>

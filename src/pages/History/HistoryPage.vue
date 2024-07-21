@@ -4,7 +4,7 @@ import { toRef } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { IGroup } from "@/store/groups/types";
 import { icons } from "@/shared/constants/consts";
-import FixedTeleport from "@/components/FixedTeleport.vue";
+import FixedTeleport from "@/components/FixedTeleport";
 import { from } from "linq-to-typescript";
 import { useDialog } from "@/store/dialog/dialog";
 import { useSmartOpenUrl } from "@/shared/composables/useSmartOpenLink";

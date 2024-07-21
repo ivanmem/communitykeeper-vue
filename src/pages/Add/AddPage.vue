@@ -11,7 +11,7 @@ import { AddPageQueryParams } from "@/pages/Add/types";
 import { useDialog } from "@/store/dialog/dialog";
 import ExportBtn from "@/pages/Add/ExportBtn.vue";
 import ImportBtn from "@/pages/Add/ImportBtn.vue";
-import FixedTeleport from "@/components/FixedTeleport.vue";
+import FixedTeleport from "@/components/FixedTeleport";
 import { useActivated } from "@/shared/composables/useActivated";
 import { folderRules, maxFolderLength } from "@/shared/constants/formConsts";
 import { watchDebounced } from "@vueuse/core";

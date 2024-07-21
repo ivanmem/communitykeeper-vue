@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { useAppCaption } from "@/shared/composables/useAppCaption";
-import { icons, styledIcons, VK_STORAGE } from "@/shared/constants/consts";
+import { buildDateLocaleString, icons, styledIcons, VK_STORAGE } from "@/shared/constants/consts";
 
 useAppCaption(`Проект`);
-const buildDate = new Date(BUILD_DATE).toLocaleString();
 </script>
 
 <template>
@@ -15,7 +14,7 @@ const buildDate = new Date(BUILD_DATE).toLocaleString();
       галерея позволяет смотреть фото в максимальном качестве и листать фото
       нажатиями по краям, как в Telegram. Просматриваемый контент сохраняется в
       историю. <br />
-      Последнее обновление: <b>{{ buildDate }}</b>.
+      Последнее обновление: <b>{{ buildDateLocaleString }}</b>.
     </VCardItem>
     <VDivider style="margin-bottom: 10px" />
     <VCardSubtitle>❗ Важный совет</VCardSubtitle>

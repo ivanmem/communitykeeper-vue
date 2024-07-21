@@ -261,3 +261,4 @@ export const actionSwipesSelectLabels = {
   onRight: "Свайп вправо",
 };
 
+export const buildDateLocaleString = new Date(BUILD_DATE).toLocaleString();

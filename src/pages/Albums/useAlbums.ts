@@ -86,11 +86,11 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       if (count > 0) {
         try {
           const apiService = await vkStore.getApiService();
-          const { items } = await apiService.getAlbums(
-            ownerId.value,
+          const { items } = await apiService.getAlbums({
+            owner_id: ownerId.value,
             offset,
             count,
-          );
+          });
           // if (appStore.isVkCom) {
           //   await Promise.all(
           //     items.map((item) => {

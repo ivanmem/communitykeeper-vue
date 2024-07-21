@@ -11,7 +11,7 @@ import {
 } from "@/shared/constants/consts";
 import { useDialog } from "@/store/dialog/dialog";
 import SettingsDisabledCookies from "@/pages/Settings/SettingsDisabledCookies.vue";
-import FixedTeleport from "@/components/FixedTeleport.vue";
+import FixedTeleport from "@/components/FixedTeleport";
 import { useApp } from "@/store/app/app";
 import PhotoCounter from "@/pages/Album/PhotoCounter.vue";
 import { h } from "vue";

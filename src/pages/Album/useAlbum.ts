@@ -121,7 +121,7 @@ export function useAlbum(
   const onUpdateAlbum = async () => {
     const apiService = await vkStore.getApiService();
     album.value = await apiService
-      .getCachedAlbum(ownerId.value, albumId.value)
+      .getCachedAlbum({ owner_id: ownerId.value, album_id: albumId.value })
       .catch((ex) => {
         if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
           screenError.value = errorToString(ex);

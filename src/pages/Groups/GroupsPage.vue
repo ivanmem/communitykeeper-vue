@@ -3,9 +3,9 @@ import { useGroupSearch } from "@/pages/Groups/useGroupSearch";
 import GroupsSearch from "@/pages/Groups/GroupsSearch.vue";
 import GroupLink from "@/pages/Groups/GroupLink.vue";
 import { icons } from "@/shared/constants/consts";
-import FixedTeleport from "@/components/FixedTeleport.vue";
+import FixedTeleport from "@/components/FixedTeleport";
 import { useDialog } from "@/store/dialog/dialog";
-import BaseButton from "@/components/BaseButton.vue";
+import BaseButton from "@/components/BaseButton";
 import { useGroups } from "@/store/groups/groups";
 // @ts-ignore
 import { VList } from "virtua/vue";

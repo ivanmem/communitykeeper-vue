@@ -1,15 +1,6 @@
 <script lang="ts" setup>
 import { onBeforeRouteUpdate } from "vue-router";
-
-export interface AlertDialogProps {
-  title?: string;
-  subtitle?: string;
-  subtitleStyle?: string;
-  mode?: "alert" | "confirm";
-  confirmTitle?: string;
-  cancelTitle?: string;
-  persistent?: boolean;
-}
+import { AlertDialogProps } from "@/components/AlertDialog/AlertDialog";
 
 const props = withDefaults(defineProps<AlertDialogProps>(), {
   subtitleStyle: "max-width: 450px;",

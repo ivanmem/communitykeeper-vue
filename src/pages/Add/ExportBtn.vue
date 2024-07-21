@@ -3,7 +3,7 @@ import useClipboard from "vue-clipboard3";
 import { icons, styledIcons } from "@/shared/constants/consts";
 import { computed, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
-import BaseToolbar from "@/components/BaseToolbar.vue";
+import BaseToolbar from "@/components/BaseToolbar";
 import { useDialog } from "@/store/dialog/dialog";
 import { useApp } from "@/store/app/app";
 

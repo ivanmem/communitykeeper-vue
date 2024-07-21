@@ -7,7 +7,7 @@ import { useAlbum } from "@/pages/Album/useAlbum";
 import { useGroups } from "@/store/groups/groups";
 import { computed, toRef } from "vue";
 import { router } from "@/router";
-import FixedTeleport from "@/components/FixedTeleport.vue";
+import FixedTeleport from "@/components/FixedTeleport";
 import { useDialog } from "@/store/dialog/dialog";
 import { computedAsync } from "@vueuse/core";
 import { IGroup } from "@/store/groups/types";

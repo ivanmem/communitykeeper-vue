@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { DialogOpenOptions, DialogState } from "@/store/dialog/types";
 import uniqueId from "lodash-es/uniqueId";
 import { markRaw } from "vue";
-import AlertDialog, { AlertDialogProps } from "@/components/AlertDialog.vue";
+import AlertDialog, { AlertDialogProps } from "@/components/AlertDialog";
 
 export const useDialog = defineStore("dialog", {
   state: (): DialogState => {

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { icons } from "@/shared/constants/consts";
 import { useVk } from "@/store/vk/vk";
-import BaseButton from "@/components/BaseButton.vue";
+import BaseButton from "@/components/BaseButton";
 import { computed, onActivated, ref } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";

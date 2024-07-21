@@ -2,7 +2,7 @@
 import { ref, watch } from "vue";
 import { icons, styledIcons } from "@/shared/constants/consts";
 import { UseGroupSearch } from "@/pages/Groups/useGroupSearch";
-import BaseButton from "@/components/BaseButton.vue";
+import BaseButton from "@/components/BaseButton";
 import { GroupsSortEnum, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
 import GroupsTabs from "@/pages/Groups/GroupsTabs.vue";
 import { useApp } from "@/store/app/app";
