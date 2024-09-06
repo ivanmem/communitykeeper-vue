@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@imengyu/vue3-context-menu": "1.4.2",
-    "@vkontakte/icons": "2.124.0",
+    "@vkontakte/icons": "2.137.0",
     "@vkontakte/vk-bridge": "2.15.0",
     "@vkontakte/vkui": "5.10.1",
     "@vueuse/core": "11.0.3",
