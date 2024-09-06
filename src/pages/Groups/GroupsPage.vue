@@ -72,14 +72,14 @@ const onHelp = () => {
       <VList
         :key="groupsStore.filters.folder"
         ref="groupsRef"
-        #default="item"
+        #default="{ item, index }"
         :data="groupsOrder"
         class="a-groups__groups"
         v-on="groupSearch.swipes"
       >
         <div :key="item.id">
           <GroupLink :key="item.id" :group="item" apply-filters />
-          <VDivider v-if="groupsOrder[groupsOrder.length - 1] !== item" />
+          <VDivider v-if="groupsOrder.length - 1 !== index" />
         </div>
       </VList>
     </template>

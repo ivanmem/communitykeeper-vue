@@ -132,7 +132,7 @@ const onHelp = () => {
       </div>
       <VList
         ref="albumRef"
-        #default="indexes"
+        #default="{ item: indexes, index }"
         :data="photos.indexes"
         class="a-album__items"
         @range-change="onScrollerUpdate"

@@ -49,7 +49,7 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
       </div>
       <VList
         ref="albumsRef"
-        #default="indexes"
+        #default="{ item: indexes, index }"
         :data="albums.indexes"
         class="a-albums__items"
         @range-change="onScrollerUpdate"
