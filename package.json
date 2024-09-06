@@ -26,7 +26,7 @@
     "linq-to-typescript": "11.1.0",
     "lodash-es": "4.17.21",
     "pinia": "2.1.7",
-    "pinia-plugin-persistedstate": "3.2.1",
+    "pinia-plugin-persistedstate": "4.0.0",
     "tweakpane": "4.0.4",
     "virtua": "0.34.2",
     "vite-plugin-vuetify": "2.0.3",

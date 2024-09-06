@@ -12,7 +12,6 @@ import {
   HistoryState,
   HistoryType,
 } from "@/store/history/types";
-import { getPiniaPersist } from "@/shared/helpers/getPiniaPersist";
 import { VK_STORAGE } from "@/shared/constants/consts";
 
 function getHistoryKey(historyItem: HistoryItem): HistoryKey {
@@ -114,7 +113,7 @@ export const useHistory = defineStore("history", {
       return this.historyKeys.at(0);
     },
   },
-  persist: getPiniaPersist({
-    paths: ["history"],
-  }),
+  persist: {
+    pick: ["history"],
+  },
 });

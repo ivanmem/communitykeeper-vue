@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { getPiniaPersist } from "@/shared/helpers/getPiniaPersist";
+import { isDisabledCookies } from "@/shared/helpers/isDisabledCookies";
 
-const isDisabledCookies = ref(!getPiniaPersist(true));
+const isDisabledCookiesAlert = ref(isDisabledCookies());
 </script>
 <template>
-  <VCardItem v-if="isDisabledCookies" style="max-width: 400px">
+  <VCardItem v-if="isDisabledCookiesAlert" style="max-width: 400px">
     <VAlert
       :closable="true"
       color="deep-orange-darken-4"
       density="compact"
       type="warning"
-      @click:close="isDisabledCookies = false"
+      @click:close="isDisabledCookiesAlert = false"
     >
       <template #text>
         <a

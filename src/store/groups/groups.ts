@@ -7,7 +7,6 @@ import { IAppInitOptions, useApp } from "@/store/app/app";
 import { watch } from "vue";
 import GroupHelper from "@/shared/helpers/GroupHelper";
 import { from } from "linq-to-typescript";
-import { getPiniaPersist } from "@/shared/helpers/getPiniaPersist";
 import { saveAs } from "file-saver";
 import { toStr } from "@/shared/helpers/toStr";
 import { watchDebounced } from "@vueuse/core";
@@ -522,7 +521,7 @@ export const useGroups = defineStore("groups", {
       return key && countersKeys.has(key);
     },
   },
-  persist: getPiniaPersist({
-    paths: ["cachedGroupsData", "filters"],
-  }),
+  persist: {
+    pick: ["cachedGroupsData", "filters"],
+  },
 });
