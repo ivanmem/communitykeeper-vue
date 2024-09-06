@@ -14,9 +14,9 @@ export function showContextMenu(
     theme: darkColorScheme.value ? "mac dark" : "mac",
     items,
     closeWhenScroll: true,
-    clickCloseClassName: "mx-context-no-clickable",
     onClose,
   });
+
   nextTick(() => {
     const el = document.getElementById("mx-menu-default-container")!;
     el.style.pointerEvents = "all";
@@ -24,17 +24,26 @@ export function showContextMenu(
       el.style.pointerEvents = "none";
       contextMenuInstance.closeMenu();
     };
+
     el.addEventListener("click", (e) => {
+      if (isEventIgnore(e)) return;
       e.preventDefault();
       e.stopPropagation();
       closeListener();
     });
     el.addEventListener("touchmove", () => {
+      if (isEventIgnore(e)) return;
       closeListener();
     });
     el.addEventListener("wheel", () => {
       closeListener();
     });
   }).then();
+
   return contextMenuInstance;
+}
+
+function isEventIgnore(e: Event) {
+  const el = e.target as HTMLElement;
+  return el.classList.contains('mx-right-arrow') || el.classList.contains('mx-context-no-clickable');
 }
