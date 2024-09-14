@@ -15,7 +15,6 @@ import { errorToString } from "@/shared/helpers/errorToString";
 import { useGridArray } from "@/shared/composables/useGridArray";
 // @ts-ignore
 import { VList } from "virtua/vue";
-import { useApp } from "@/store/app/app";
 
 const countOneLoad = 150;
 
@@ -24,7 +23,6 @@ export function useAlbum(
   albumIdGetter: MaybeRefOrGetter<number | string>,
   photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
 ) {
-  const appStore = useApp();
   const photosMap = ref<Map<IPhotoKey, IPhoto>>(new Map());
   const ownerId = computed(() => toValue(ownerIdGetter));
   const albumId = computed(() => {
@@ -35,7 +33,7 @@ export function useAlbum(
   const photo = computed(() =>
     photosMap.value?.get(
       PhotoHelper.getPhotoKeyOrUndefined(ownerId.value, photoId.value) ??
-      ("" as IPhotoKey),
+        ("" as IPhotoKey),
     ),
   );
   const album = ref<IAlbumItem | undefined>();
@@ -88,6 +86,7 @@ export function useAlbum(
     setCurrentPhotoIndex,
     setCurrentPhotoId,
     onSwitchPhoto,
+    imagePreloader,
   } = useCurrentPhoto(
     photos,
     photosMap,
@@ -160,16 +159,6 @@ export function useAlbum(
       if (items.length === 0) {
         isLoadAllPhotos.value = true;
       }
-
-      // подгружаем превью только в том случае, если пользователь не открыл фото
-      // if (currentPhoto.value == null && appStore.isVkCom) {
-      //   await Promise.all(
-      //     items.map((item) => {
-      //       const size = PhotoHelper.getPreviewSize(item.sizes, sizes.value);
-      //       return prefetchPhotoFromUrl(size?.url)?.catch((e) => e);
-      //     }),
-      //   );
-      // }
 
       for (let newPhoto of items) {
         newPhoto.__state = {
@@ -253,6 +242,7 @@ export function useAlbum(
 
   return {
     photos,
+    imagePreloader,
     album,
     albumCount,
     currentPhoto,

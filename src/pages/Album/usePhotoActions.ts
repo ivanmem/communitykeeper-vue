@@ -143,6 +143,7 @@ export function usePhotoActions(
     showContextMenu(e, items, () => toValue(photoDivGetter)?.focus());
   };
 
+  // noinspection JSUnusedGlobalSymbols
   return {
     onSearchOriginal,
     onSwitchOriginalSize,

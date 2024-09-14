@@ -4,11 +4,11 @@ import { useRoute, useRouter } from "vue-router";
 import { useGroups } from "@/store/groups/groups";
 import { useActiveElement } from "@vueuse/core";
 import { useElementDeviceSize } from "@/shared/composables/useElementDeviceSize";
-import { SwitchPhotoMode } from "@/pages/Album/types";
 import { getFirstRefChange } from "@/shared/helpers/getFirstRefChange";
 import { useApp } from "@/store/app/app";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { GridArray } from "@/shared/composables/useGridArray";
+import { useImagePreloader } from "@/shared/composables/useImagePreloader";
 
 export function useCurrentPhoto(
   photos: GridArray<IPhoto>,
@@ -25,6 +25,22 @@ export function useCurrentPhoto(
   const appStore = useApp();
   const currentPhotoIndex = ref<number | undefined>();
   const currentPhoto = computed(() => getPhotoByIndex(currentPhotoIndex.value));
+  const imagePreloader = useImagePreloader();
+  const activeEl = useActiveElement();
+  const activeElSize = useElementDeviceSize(activeEl, undefined, {
+    box: "border-box",
+  });
+
+  const initPreloadPhoto = () => {
+    if (
+      imagePreloader.photos.value.size > 0 ||
+      currentPhotoIndex.value === undefined
+    ) {
+      return;
+    }
+
+    setPreloadPhotoIndex(currentPhotoIndex.value, true).then();
+  };
 
   const getPhotoByIndex = (index?: number) => {
     if (index === undefined) {
@@ -34,36 +50,88 @@ export function useCurrentPhoto(
     return photos.items[index];
   };
 
-
-  const setCurrentPhotoId = async (photoId: number | string | undefined) => {
+  const setCurrentPhotoId = async (newPhotoId: number | string | undefined) => {
     await router.replace({
-      params: { ...route.params, photoId: photoId ?? "" },
+      params: { ...route.params, photoId: newPhotoId ?? "" },
     });
   };
 
   const setCurrentPhotoIndex = async (
     index: number | undefined,
-    mode?: SwitchPhotoMode,
+    next?: boolean,
   ) => {
     if (index === undefined) {
       return setCurrentPhotoId(undefined);
     }
 
-    // кэшируем текущее фото и следующее
-    // if (appStore.isVkCom) {
-    //   prefetchPhoto(getPhotoByIndex(index));
-    //   if (!mode || mode === "next") {
-    //     let prefetchIndex = index + 1;
-    //     if (groupsStore.config.skipLowResolutionPhotos) {
-    //       prefetchIndex = await getSwitchPhotoBig(prefetchIndex, "next");
-    //     }
-    //
-    //     prefetchPhoto(getPhotoByIndex(prefetchIndex));
-    //   }
-    // }
-
     const photo = getPhotoByIndex(index);
-    return setCurrentPhotoId(photo?.id);
+    if (!photo) return;
+    await setCurrentPhotoId(photo?.id);
+    await setPreloadPhotoIndex(index, next ?? true);
+  };
+
+  const setPreloadPhotoIndex = async (index: number, next: boolean) => {
+    let prefetchIndex = getNewIndex(index, next);
+    if (groupsStore.config.skipLowResolutionPhotos) {
+      prefetchIndex = await getSwitchPhotoBig(prefetchIndex, next);
+    }
+
+    const prefetchPhoto = getPhotoByIndex(prefetchIndex);
+    if (!prefetchPhoto) return;
+    const url = PhotoHelper.getOriginalSize(prefetchPhoto.sizes)?.url;
+    if (!url) return;
+    imagePreloader.preloadPhoto(url);
+  };
+
+  // Получить новый индекс для фото в зависимости от `next`
+  const getNewIndex = (currentIndex: number, next: boolean) => {
+    return currentIndex + (next ? 1 : -1);
+  };
+
+  const getSwitchPhotoBig = async (currentIndex: number, next: boolean) => {
+    while (
+      getPhotoByIndex(currentIndex) !== undefined &&
+      PhotoHelper.isPhotoLessSizeAndNotMaxSize(
+        getPhotoByIndex(currentIndex)!,
+        activeElSize,
+      )
+    ) {
+      currentIndex = getNewIndex(currentIndex, next);
+      if (getPhotoByIndex(currentIndex) !== undefined) {
+        continue;
+      }
+
+      await appStore.wrapLoading(async () => {
+        onMoreLoad();
+        await nextTick();
+
+        if (isLoadingPhotos.value) {
+          while (await getFirstRefChange(isLoadingPhotos)) {}
+        }
+
+        await nextTick();
+      })();
+    }
+
+    return currentIndex;
+  };
+
+  const onSwitchPhoto = async (next: boolean) => {
+    if (isLoadingPhotos.value || !isInit.value) {
+      return;
+    }
+
+    let currentIndex = currentPhoto.value?.__state.index;
+    if (currentIndex === undefined) {
+      return;
+    }
+
+    currentIndex = getNewIndex(currentIndex, next);
+    if (groupsStore.config.skipLowResolutionPhotos) {
+      currentIndex = await getSwitchPhotoBig(currentIndex, next);
+    }
+
+    return await setCurrentPhotoIndex(currentIndex, next);
   };
 
   watch(
@@ -92,67 +160,7 @@ export function useCurrentPhoto(
     { immediate: true },
   );
 
-  const activeEl = useActiveElement();
-  const activeElSize = useElementDeviceSize(activeEl, undefined, {
-    box: "border-box",
-  });
-  // Получить новый индекс для фото в зависимости от mode
-  const getSwitchPhotoIndexByMode = (
-    currentIndex: number,
-    mode: SwitchPhotoMode,
-  ) => {
-    return currentIndex + (mode === "prev" ? -1 : 1);
-  };
-
-  const getSwitchPhotoBig = async (
-    currentIndex: number,
-    mode: SwitchPhotoMode,
-  ) => {
-    while (
-      getPhotoByIndex(currentIndex) !== undefined &&
-      PhotoHelper.isPhotoLessSizeAndNotMaxSize(
-        getPhotoByIndex(currentIndex)!,
-        activeElSize,
-      )
-      ) {
-      currentIndex = getSwitchPhotoIndexByMode(currentIndex, mode);
-      if (getPhotoByIndex(currentIndex) !== undefined) {
-        continue;
-      }
-
-      await appStore.wrapLoading(async () => {
-        onMoreLoad();
-        await nextTick();
-
-        if (isLoadingPhotos.value) {
-          while (await getFirstRefChange(isLoadingPhotos)) {
-          }
-        }
-
-        await nextTick();
-      })();
-    }
-
-    return currentIndex;
-  };
-
-  const onSwitchPhoto = async (mode: SwitchPhotoMode) => {
-    if (isLoadingPhotos.value || !isInit.value) {
-      return;
-    }
-
-    let currentIndex = currentPhoto.value?.__state.index;
-    if (currentIndex === undefined) {
-      return;
-    }
-
-    currentIndex = getSwitchPhotoIndexByMode(currentIndex, mode);
-    if (groupsStore.config.skipLowResolutionPhotos) {
-      currentIndex = await getSwitchPhotoBig(currentIndex, mode);
-    }
-
-    return await setCurrentPhotoIndex(currentIndex, mode);
-  };
+  watch(currentPhotoIndex, initPreloadPhoto);
 
   return {
     currentPhoto,
@@ -162,5 +170,6 @@ export function useCurrentPhoto(
     setCurrentPhotoIndex,
     setCurrentPhotoId,
     onSwitchPhoto,
+    imagePreloader,
   };
 }

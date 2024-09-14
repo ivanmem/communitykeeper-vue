@@ -1,10 +1,17 @@
 <script lang="ts" setup>
-import { computed, nextTick, onDeactivated, ref, toRef, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onDeactivated,
+  onWatcherCleanup,
+  ref,
+  toRef,
+  watch,
+} from "vue";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { actionSwipesDict, dateTimeFormatter } from "@/shared/constants/consts";
 import { GallerySwipesConfig, useGroups } from "@/store/groups/groups";
 import { useApp } from "@/store/app/app";
-import { IPhoto } from "@/store/groups/types";
 import useClipboard from "vue-clipboard3/dist/esm/index";
 import { UsableSwipesOptions } from "@/shared/composables/useSwipes";
 import { useDialog } from "@/store/dialog/dialog";
@@ -12,6 +19,7 @@ import { usePhotoActions } from "@/pages/Album/usePhotoActions";
 import { useSwipesAndZoom } from "@/shared/composables/useSwipesAndZoom";
 import { UsableZoomOptions } from "@/shared/composables/useZoom";
 import PhotoCounter from "@/pages/Album/PhotoCounter.vue";
+import { IPhoto } from "@/store/groups/types";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -78,16 +86,18 @@ watch(
   { immediate: true },
 );
 
-let timeoutShowInfo: any = undefined;
-
 watch(
   () => props.photo,
   () => {
-    clearTimeout(timeoutShowInfo);
     showInfo.value = true;
-    timeoutShowInfo = setTimeout(() => {
+
+    const timeoutShowInfo = setTimeout(() => {
       showInfo.value = false;
     }, 2000);
+
+    onWatcherCleanup(() => {
+      clearTimeout(timeoutShowInfo);
+    });
   },
   { immediate: true },
 );
@@ -151,6 +161,7 @@ onDeactivated(() => {
   >
     <img
       v-if="originalSize"
+      :key="originalSize.url"
       ref="imageRef"
       :data-original-size-photo="groupsStore.config.originalSizePhoto"
       :src="originalSize.url"

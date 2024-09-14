@@ -2,6 +2,7 @@
   "name": "communitykeeper-vue",
   "version": "1.8.3",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "dev-host": "vite --host",
@@ -10,7 +11,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "vk-tunnel": "vk-tunnel --host=localhost --timeout=10000",
+    "vk-tunnel": "vk-tunnel --host=localhost --timeout=20000",
     "dev-tunnel": "concurrently \"npm run vk-tunnel\" \"npm run dev\""
   },
   "dependencies": {

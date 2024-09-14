@@ -75,7 +75,6 @@ const titleStyle = computed<CSSProperties | undefined>(() => {
 </template>
 <style lang="scss">
 .photos_row {
-  background-color: var(--placeholder_icon_background);
   background-position: center 35%;
   background-repeat: no-repeat;
   background-size: cover;

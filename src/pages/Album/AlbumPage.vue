@@ -16,6 +16,7 @@ import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import { VList } from "virtua/vue";
 import AlbumPreview from "@/pages/Album/AlbumPreview.vue";
 import AlbumPhoto from "@/pages/Album/AlbumPhoto.vue";
+import ImagePreloader from "@/components/ImagePreloader";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -25,6 +26,7 @@ const props = defineProps<{
 
 const {
   photos,
+  imagePreloader,
   album,
   albumCount,
   currentPhoto,
@@ -34,8 +36,6 @@ const {
   isInit,
   screenError,
   albumRef,
-  gridItems,
-  isLoadingPhotos,
   sizes,
   position,
 } = useAlbum(
@@ -111,7 +111,10 @@ const onHelp = () => {
         <div
           style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
         >
-          <div v-if="album && (position != 0 || album.size === 0)" class="a-album__position">
+          <div
+            v-if="album && (position != 0 || album.size === 0)"
+            class="a-album__position"
+          >
             {{ position }} из {{ album.size }} фото
           </div>
           <code v-if="screenError" class="vkuiFormField--status-error">
@@ -126,7 +129,7 @@ const onHelp = () => {
             class="a-album__reverse-order"
             hide-details
             label="В обратном порядке"
-            style="flex-grow: 0;"
+            style="flex-grow: 0"
           />
         </div>
       </div>
@@ -152,10 +155,11 @@ const onHelp = () => {
         v-if="currentPhoto"
         :count="albumCount"
         :photo="currentPhoto"
-        @photo:prev="onSwitchPhoto('prev')"
-        @photo:next="onSwitchPhoto('next')"
+        @photo:prev="onSwitchPhoto(false)"
+        @photo:next="onSwitchPhoto(true)"
         @photo:exit="setCurrentPhotoIndex(undefined)"
       />
+      <ImagePreloader :photos="imagePreloader.photos.value" />
     </template>
   </div>
 </template>
