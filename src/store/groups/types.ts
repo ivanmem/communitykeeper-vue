@@ -8,7 +8,7 @@ export interface ILocalGroup {
 export interface GroupState {
   /** @description Отображаемый текст под названием группы */
   text: string;
-  /** @description Группа забанена в ВК */
+  /** @description Группа забанена в VK */
   isBanned?: boolean;
   /** @description Требуется отображать кнопку вступления */
   isVisibleJoin: boolean;
