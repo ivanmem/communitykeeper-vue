@@ -39,7 +39,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const albums = useGridArray<IAlbumItem>(columns);
   const endIndex = ref<number>(0);
   const screenError = ref<any>();
-  const previewPreloader = useImagePreloader({ max: countOneLoad * 2 });
+  const previewPreloader = useImagePreloader({ max: () => columns.value * 4 });
 
   useScrollRestore(() => albumsRef.value?.$el);
 

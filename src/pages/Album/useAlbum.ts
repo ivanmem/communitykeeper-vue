@@ -98,7 +98,7 @@ export function useAlbum(
     onMoreLoad,
   );
   const previewPreloader = useImagePreloader({
-    max: countOneLoad * 2,
+    max: () => columns.value * 4,
     freeze: () => Boolean(currentPhoto.value),
   });
 
