@@ -2,7 +2,11 @@ import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
-import { AlbumsPreviewSizesInitial, getStaticAlbums, wallAlbumStatic } from "@/pages/Albums/consts";
+import {
+  AlbumsPreviewSizesInitial,
+  getStaticAlbums,
+  wallAlbumStatic,
+} from "@/pages/Albums/consts";
 import { useVk } from "@/store/vk/vk";
 import { useSizesColumns } from "@/shared/composables/useSizesColumns";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
@@ -11,6 +15,8 @@ import { useScrollRestore } from "@/shared/composables/useScrollRestore";
 import { VList } from "virtua/vue";
 import { useGridArray } from "@/shared/composables/useGridArray";
 import { errorToString } from "@/shared/helpers/errorToString";
+import { useImagePreloader } from "@/shared/composables/useImagePreloader";
+import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 
 const countOneLoad = 100;
 
@@ -26,12 +32,14 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const staticAlbums = computed(() => getStaticAlbums(ownerId.value));
   const staticAlbumsCount = ref(0);
   const albumsRef = ref<InstanceType<typeof VList>>();
-  const { sizes, gridItems } = useSizesColumns(
+  const { sizes, columns } = useSizesColumns(
     albumsRef,
     AlbumsPreviewSizesInitial,
   );
-  const albums = useGridArray<IAlbumItem>(gridItems);
+  const albums = useGridArray<IAlbumItem>(columns);
+  const endIndex = ref<number>(0);
   const screenError = ref<any>();
+  const previewPreloader = useImagePreloader({ max: countOneLoad * 2 });
 
   useScrollRestore(() => albumsRef.value?.$el);
 
@@ -44,6 +52,24 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     screenError.value = undefined;
   };
 
+  const onScrollerUpdate = (_: number, endRowIndex: number) => {
+    endIndex.value = columns.value * endRowIndex;
+    if (endIndex.value + countOneLoad / 3 < albumsMaxItems.value) {
+      return;
+    }
+
+    albumsMaxItems.value += countOneLoad;
+  };
+
+  const preloadNextPreviews = () => {
+    const previewPhotos = albums.items
+      .slice(endIndex.value + columns.value, endIndex.value + columns.value * 2)
+      .map(
+        (album) => PhotoHelper.getPreviewSize(album.sizes, sizes.value)?.url,
+      );
+    previewPreloader.preloadPhoto(previewPhotos);
+  };
+
   watch(
     ownerId,
     async () => {
@@ -51,8 +77,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       if (+ownerId.value < 0) {
         try {
           group.value = await groupsStore.getGroupByIdOrLoad(-ownerId.value);
-        } catch {
-        }
+        } catch {}
         try {
           const apiService = await vkStore.getApiService();
           const wallAlbum = await apiService.createAlbumItem({
@@ -91,17 +116,6 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
             offset,
             count,
           });
-          // if (appStore.isVkCom) {
-          //   await Promise.all(
-          //     items.map((item) => {
-          //       const size = PhotoHelper.getPreviewSize(
-          //         item.sizes,
-          //         sizes.value,
-          //       );
-          //       return prefetchPhotoFromUrl(size?.url)?.catch((e) => e);
-          //     }),
-          //   );
-          // }
           albums.push(...items);
         } catch (ex: any) {
           if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
@@ -117,21 +131,16 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     { immediate: true },
   );
 
-  const onScrollerUpdate = (_: number, endRowIndex: number) => {
-    const endIndex = gridItems.value * endRowIndex;
-    if (endIndex + countOneLoad / 3 < albumsMaxItems.value) {
-      return;
-    }
-
-    albumsMaxItems.value += countOneLoad;
-  };
+  watch(endIndex, (endIndex, prevIndex) => {
+    if (prevIndex >= endIndex) return;
+    preloadNextPreviews();
+  });
 
   return {
     isInit,
     group,
     albums,
-    isLoadingAlbums,
-    gridItems,
+    previewPreloader,
     onScrollerUpdate,
     albumsRef,
     screenError,

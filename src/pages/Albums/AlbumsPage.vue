@@ -7,14 +7,14 @@ import { openUrl } from "@/shared/helpers/openUrl";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 // @ts-ignore
 import { VList } from "virtua/vue";
+import ImagePreloader from "@/components/ImagePreloader";
 
 const props = defineProps<{ ownerId: number | string }>();
 const {
   isInit,
   group,
   albums,
-  isLoadingAlbums,
-  gridItems,
+  previewPreloader,
   onScrollerUpdate,
   albumsRef,
   screenError,
@@ -64,8 +64,7 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
         </div>
       </VList>
     </template>
-
-    <div></div>
+    <ImagePreloader :photos="previewPreloader.photos.value" />
   </div>
 </template>
 

@@ -401,9 +401,7 @@ export const useGroups = defineStore("groups", {
       });
     },
     setSwipeKey(swipeKey: keyof GallerySwipesConfig, value?: string) {
-      console.log(value);
       const swipes = { ...this.config.swipes };
-      console.log(swipes);
       swipes[swipeKey] = value || undefined;
       this.config.swipes = swipes;
     },

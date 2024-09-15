@@ -7,7 +7,7 @@ export function useSizesColumns(
   initialSizes: MaybeRefOrGetter<{ width: number; height: number }>,
   containerIndent = 0,
 ) {
-  const gridItems = ref(0);
+  const columns = ref(0);
   const el = computed(() => {
     return unrefElement(maybeElement) as HTMLElement | undefined;
   });
@@ -41,10 +41,10 @@ export function useSizesColumns(
 
     // обновляем размеры и количество колонок
     sizes.value.width = newColumnWidth;
-    gridItems.value = maxColumns;
+    columns.value = maxColumns;
   };
 
   useResizeObserver(el, update);
 
-  return { sizes, gridItems };
+  return { sizes, columns };
 }

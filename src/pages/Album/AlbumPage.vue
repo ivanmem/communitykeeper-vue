@@ -27,6 +27,7 @@ const props = defineProps<{
 const {
   photos,
   imagePreloader,
+  previewPreloader,
   album,
   albumCount,
   currentPhoto,
@@ -159,6 +160,7 @@ const onHelp = () => {
         @photo:next="onSwitchPhoto(true)"
         @photo:exit="setCurrentPhotoIndex(undefined)"
       />
+      <ImagePreloader :photos="previewPreloader.photos.value" />
       <ImagePreloader :photos="imagePreloader.photos.value" />
     </template>
   </div>

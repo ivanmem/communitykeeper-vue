@@ -25,7 +25,7 @@ export function useCurrentPhoto(
   const appStore = useApp();
   const currentPhotoIndex = ref<number | undefined>();
   const currentPhoto = computed(() => getPhotoByIndex(currentPhotoIndex.value));
-  const imagePreloader = useImagePreloader();
+  const imagePreloader = useImagePreloader({ max: 10 });
   const activeEl = useActiveElement();
   const activeElSize = useElementDeviceSize(activeEl, undefined, {
     box: "border-box",
@@ -79,7 +79,6 @@ export function useCurrentPhoto(
     const prefetchPhoto = getPhotoByIndex(prefetchIndex);
     if (!prefetchPhoto) return;
     const url = PhotoHelper.getOriginalSize(prefetchPhoto.sizes)?.url;
-    if (!url) return;
     imagePreloader.preloadPhoto(url);
   };
 

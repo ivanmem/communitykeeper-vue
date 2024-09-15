@@ -59,6 +59,7 @@ const onClick = (event: MouseEvent) => {
     emit("photo:exit");
     return;
   }
+
   const imageCenterX = imageWidth / 2;
   // Сравниваем координату клика с центром изображения
   if (clickX <= imageCenterX) {

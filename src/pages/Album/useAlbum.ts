@@ -15,6 +15,7 @@ import { errorToString } from "@/shared/helpers/errorToString";
 import { useGridArray } from "@/shared/composables/useGridArray";
 // @ts-ignore
 import { VList } from "virtua/vue";
+import { useImagePreloader } from "@/shared/composables/useImagePreloader";
 
 const countOneLoad = 150;
 
@@ -39,10 +40,10 @@ export function useAlbum(
   const album = ref<IAlbumItem | undefined>();
   const endIndex = ref<number>(0);
   const position = computed<number>(() =>
-    Math.min(+(album.value?.size ?? 0), endIndex.value + gridItems.value),
+    Math.min(+(album.value?.size ?? 0), endIndex.value + columns.value),
   );
   const albumRef = ref<InstanceType<typeof VList>>();
-  const { sizes, gridItems } = useSizesColumns(
+  const { sizes, columns } = useSizesColumns(
     albumRef,
     AlbumsPreviewSizesInitial,
   );
@@ -57,7 +58,7 @@ export function useAlbum(
   const albumHistoryItem = computed(() =>
     historyStore.getViewAlbum(ownerId.value, albumId.value),
   );
-  const photos = useGridArray<IPhoto>(gridItems);
+  const photos = useGridArray<IPhoto>(columns);
   const albumCount = computed(
     () =>
       toNumberOrUndefined(album.value?.size) ??
@@ -96,6 +97,10 @@ export function useAlbum(
     isInit,
     onMoreLoad,
   );
+  const previewPreloader = useImagePreloader({
+    max: countOneLoad * 2,
+    freeze: () => Boolean(currentPhoto.value),
+  });
 
   const onClearPhotos = () => {
     photos.clear();
@@ -178,13 +183,22 @@ export function useAlbum(
   };
 
   const onScrollerUpdate = (_: number, endRowIndex: number) => {
-    endIndex.value = gridItems.value * endRowIndex;
+    endIndex.value = columns.value * endRowIndex;
     if (endIndex.value + countOneLoad / 3 < photosMaxItems.value) {
       return;
     }
 
     onMoreLoad();
   };
+
+  const preloadNextPreviews = () => {
+    const previewPhotos = photos.items
+      .slice(endIndex.value + columns.value, endIndex.value + columns.value * 2)
+      .map(
+        (photo) => PhotoHelper.getPreviewSize(photo.sizes, sizes.value)?.url,
+      );
+    previewPreloader.preloadPhoto(previewPhotos);
+  }
 
   watch([albumHistoryItem, album, currentPhotoIndex], () => {
     if (
@@ -230,7 +244,7 @@ export function useAlbum(
       if (toStr(photoId.value).length && !isLoadingPhotos.value) {
         if (photo.value !== undefined) {
           albumRef.value?.scrollToIndex(
-            Math.floor(photo.value.__state.index / gridItems.value),
+            Math.floor(photo.value.__state.index / columns.value),
           );
         } else if (!screenError.value) {
           onMoreLoad();
@@ -240,9 +254,15 @@ export function useAlbum(
     { immediate: true, deep: true },
   );
 
+  watch(endIndex, (endIndex, prevIndex) => {
+    if (prevIndex >= endIndex) return;
+    preloadNextPreviews()
+  })
+
   return {
     photos,
     imagePreloader,
+    previewPreloader,
     album,
     albumCount,
     currentPhoto,
@@ -255,8 +275,6 @@ export function useAlbum(
     onScrollerUpdate,
     onSwitchPhoto,
     albumRef,
-    gridItems,
-    isLoadAllPhotos,
     sizes,
     position,
   };
