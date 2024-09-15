@@ -85,19 +85,8 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 }
 
 .a-albums__items {
-  display: flex;
   flex-basis: 0;
-  flex-direction: row;
   flex-grow: 1;
-  flex-wrap: wrap;
-  gap: 5px;
-  justify-content: space-evenly;
-  overflow-x: auto;
-  overflow-y: scroll !important;
   padding-block: 10px;
-
-  &::-webkit-scrollbar {
-    width: 0px;
-  }
 }
 </style>
