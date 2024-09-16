@@ -30,7 +30,7 @@ export function useImagePreloader(opts: UseImagePreloaderOpts) {
     const values = freeze.value ? freezePhotos.value : photos.value;
     values.add(photo);
     while (values.size > max.value) {
-      values.delete(photos.value.values().next().value!);
+      values.delete(values.values().next().value!);
     }
   };
 
