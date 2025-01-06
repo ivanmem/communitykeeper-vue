@@ -59,6 +59,7 @@ export function useAlbum(
     historyStore.getViewAlbum(ownerId.value, albumId.value),
   );
   const photos = useGridArray<IPhoto>(columns);
+
   const albumCount = computed(
     () =>
       toNumberOrUndefined(album.value?.size) ??
@@ -180,9 +181,17 @@ export function useAlbum(
     }
     isInit.value = true;
     isLoadingPhotos.value = false;
+    onScrollerUpdate();
   };
 
-  const onScrollerUpdate = (_: number, endRowIndex: number) => {
+  const onScrollerUpdate = () => {
+    if (!albumRef.value) {
+      return;
+    }
+
+    const endRowIndex = Math.round(
+      albumRef.value.scrollOffset / sizes.value.height,
+    );
     endIndex.value = columns.value * endRowIndex;
     if (endIndex.value + countOneLoad / 3 < photosMaxItems.value) {
       return;
@@ -198,7 +207,7 @@ export function useAlbum(
         (photo) => PhotoHelper.getPreviewSize(photo.sizes, sizes.value)?.url,
       );
     previewPreloader.preloadPhoto(previewPhotos);
-  }
+  };
 
   watch([albumHistoryItem, album, currentPhotoIndex], () => {
     if (
@@ -256,8 +265,8 @@ export function useAlbum(
 
   watch(endIndex, (endIndex, prevIndex) => {
     if (prevIndex >= endIndex) return;
-    preloadNextPreviews()
-  })
+    preloadNextPreviews();
+  });
 
   return {
     photos,

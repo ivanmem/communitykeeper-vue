@@ -77,8 +77,8 @@ const onHelp = () => {
         class="a-groups__groups"
         v-on="groupSearch.swipes"
       >
-        <div :key="item.id">
-          <GroupLink :key="item.id" :group="item" apply-filters />
+        <div v-if="item" :key="item?.id ?? index">
+          <GroupLink :group="item" apply-filters />
           <VDivider v-if="groupsOrder.length - 1 !== index" />
         </div>
       </VList>

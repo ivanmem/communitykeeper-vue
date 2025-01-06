@@ -44,6 +44,7 @@ const {
   () => props.albumId,
   () => props.photoId,
 );
+
 const groupsStore = useGroups();
 const dialogStore = useDialog();
 const albumUrl = computed(() =>
@@ -135,13 +136,15 @@ const onHelp = () => {
         </div>
       </div>
       <VList
+        :key="`${photos.items[photos.indexes[0]?.[0]]?.id}`"
         ref="albumRef"
         #default="{ item: indexes, index }"
         :data="photos.indexes"
+        :item-size="sizes.height"
         class="a-album__items"
-        @range-change="onScrollerUpdate"
+        @scroll="onScrollerUpdate()"
       >
-        <div class="a-album-row">
+        <div :key="photos.items[indexes?.[0]]?.id ?? index" class="a-album-row">
           <AlbumPreview
             v-for="index in indexes"
             :key="photos.items[index].id"

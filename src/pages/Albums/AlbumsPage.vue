@@ -51,10 +51,14 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
         ref="albumsRef"
         #default="{ item: indexes, index }"
         :data="albums.indexes"
+        :item-size="sizes.height"
         class="a-albums__items"
-        @range-change="onScrollerUpdate"
+        @scroll="onScrollerUpdate()"
       >
-        <div class="a-albums-row">
+        <div
+          :key="albums.items[indexes?.[0]]?.id ?? index"
+          class="a-albums-row"
+        >
           <AlbumsPreview
             v-for="index in indexes"
             :key="albums.items[index].id"

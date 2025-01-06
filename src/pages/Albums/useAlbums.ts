@@ -52,7 +52,14 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     screenError.value = undefined;
   };
 
-  const onScrollerUpdate = (_: number, endRowIndex: number) => {
+  const onScrollerUpdate = () => {
+    if (!albumsRef.value) {
+      return;
+    }
+
+    const endRowIndex = Math.round(
+      albumsRef.value.scrollOffset / sizes.value.height,
+    );
     endIndex.value = columns.value * endRowIndex;
     if (endIndex.value + countOneLoad / 3 < albumsMaxItems.value) {
       return;

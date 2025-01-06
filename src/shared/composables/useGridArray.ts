@@ -22,13 +22,22 @@ export function useGridArray<T>(columns: Ref<number>): GridArray<T> {
   };
 
   const pushIndexes = (newItems: T[]) => {
-    if (indexes.length === 0) indexes.push([]);
+    if (columns.value === 0) {
+      return;
+    }
+
+    if (indexes.length === 0) {
+      indexes.push([]);
+    }
+
     for (let index = 0; index < newItems.length; index++) {
       const itemsIndex = index + items.length - newItems.length;
       const lastIndexedRow = indexes[indexes.length - 1];
-      if (lastIndexedRow.length < columns.value)
+      if (lastIndexedRow.length < columns.value) {
         lastIndexedRow.push(itemsIndex);
-      else indexes.push([itemsIndex]);
+      } else {
+        indexes.push([itemsIndex]);
+      }
     }
   };
 
