@@ -50,7 +50,7 @@ useAppCaption(`Проект`);
         <VBtn
           :prepend-icon="icons.Icon16MessageOutline"
           color="light-blue-darken-4"
-          href="https://vk.me/join/zIMseEpegiHBPjZq3H2aIOUiBPQQpFWsGu0="
+          href="https://vk.me/join/m50C8H_wh9ioCs9_JbRkbO_zVVTcea86D6M="
           target="_blank"
         >
           Чат
