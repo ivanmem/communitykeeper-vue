@@ -1,17 +1,22 @@
 <script lang="ts" setup>
 import useClipboard from "vue-clipboard3";
-import { icons, styledIcons } from "@/shared/constants/consts";
+import { icons, styledIcons, VK_SHORT_LINK } from "@/shared/constants/consts";
 import { computed, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import BaseToolbar from "@/components/BaseToolbar";
 import { useDialog } from "@/store/dialog/dialog";
 import { useApp } from "@/store/app/app";
+import { useVk } from "@/store/vk/vk";
+import { chunkString } from "@/shared/helpers/chunkString";
+import { compressAndEncodeObject } from "@/shared/helpers/compressAndEncode";
 
 const show = ref(false);
+const showSelectExportMode = ref(false);
 const onClose = () => (show.value = false);
 const onShow = () => (show.value = true);
 const groupsStore = useGroups();
 const appStore = useApp();
+const vkStore = useVk();
 const dialogStore = useDialog();
 const folders = ref(new Set<string>());
 const groupsExport = computed(() =>
@@ -37,6 +42,54 @@ watch(
 onDeactivated(() => {
   show.value = false;
 });
+
+async function onCopyLink(event: any) {
+  const confirm = await dialogStore.confirm({
+    title: "Создание резервной копии в виде публичной ссылки",
+    subtitle:
+      "Приложение от Вашего имени воспользуется сервисом vk.cc для сокращения ссылок. Если Вам будет нужно обнулить ссылку, перейдите на сайт vk.cc и удалите все сокращённые ссылки, ведущие на вымышленный сайт s.vk. Вы подтверждаете создание ссылки?",
+  });
+  if (!confirm) {
+    return;
+  }
+
+  const compressed = compressAndEncodeObject(groupsExport.value);
+  const vk = await vkStore.getApiService();
+  const chunks: string[] = chunkString(
+    compressed,
+    VK_SHORT_LINK.max - VK_SHORT_LINK.exportPrefix.length,
+  );
+  const shortLinkHashes: string[] = [];
+
+  try {
+    for (const chunk of chunks) {
+      const url = VK_SHORT_LINK.exportPrefix + chunk;
+      const { short_url } = await vk.utilsGetShortLink({ private: true, url });
+      const hash = short_url.replace(VK_SHORT_LINK.shortPrefix, "");
+      shortLinkHashes.push(hash);
+    }
+  } catch (ex) {
+    console.warn("Произошла неизвестная ошибка при экспорте данных:", ex);
+    dialogStore.alert("Произошла неизвестная ошибка при экспорте данных.");
+    return;
+  }
+
+  const url = `https://vk.com/app${useApp().appId}#/add/?importHashes=${shortLinkHashes.join(",")}`;
+  await toClipboard(url, event.target);
+  showSelectExportMode.value = false;
+  dialogStore.alert(`Ссылка помещена в буфер обмена:\n${url}`);
+}
+
+async function onDownloadJsonFile() {
+  groupsStore.downloadExport(groupsExport.value);
+  showSelectExportMode.value = false;
+}
+
+async function onCopyJson(event: any) {
+  await toClipboard(JSON.stringify(groupsExport.value), event.target);
+  showSelectExportMode.value = false;
+  dialogStore.alert("Данные для импорта помещены в буфер обмена.");
+}
 </script>
 <template>
   <VDialog
@@ -65,16 +118,8 @@ onDeactivated(() => {
           Создание резервной копии
         </VToolbarTitle>
       </BaseToolbar>
-      <VCardText style="font-size: 14px">
-        Выберите папки и нажмите на нужную кнопку.
-        <template v-if="appStore.isApp">
-          🆘 Создание файла резервной копии не работает с приложения ВКонтакте и
-          пока мы не знаем как это исправить. Воспользуйтесь альтернативным
-          способом. Скопируйте данные в буфер обмена с помощью кнопки
-          копирования и вручную создайте файл с расширением
-          <b>.json</b>, после чего с помощью любого текстового редактора
-          вставьте в него содержимое буфера обмена.
-        </template>
+      <VCardText class="pb-2" style="font-size: 14px">
+        Выберите экспортируемые папки и нажмите на кнопку Создать.
       </VCardText>
       <VList class="mb-2" density="compact" style="flex-grow: 100">
         <VListItem
@@ -121,13 +166,6 @@ onDeactivated(() => {
         class="mx-auto px-4 mb-2 d-flex justify-center align-center"
         style="gap: 10px"
       >
-        <VBtn
-          :disabled="selectedGroupsCount === 0 || appStore.isApp"
-          :icon="icons.Icon24DownloadOutline"
-          title="Скачать"
-          variant="tonal"
-          @click="groupsStore.downloadExport(groupsExport)"
-        />
         <div>
           <VChip
             :disabled="selectedGroupsCount === 0"
@@ -148,16 +186,67 @@ onDeactivated(() => {
 
         <VBtn
           :disabled="selectedGroupsCount === 0"
-          :icon="styledIcons.Icon24CopyOutline"
-          title="Скопировать"
-          variant="tonal"
-          @click="
-            toClipboard(JSON.stringify(groupsExport), $event.target);
-            dialogStore.alert('Данные для импорта помещены в буфер обмена.');
-          "
+          :icon="icons.Icon24DownloadOutline"
+          color="light-blue-darken-4"
+          title="Создать"
+          @click="showSelectExportMode = true"
         />
       </VSheet>
     </VCard>
+
+    <VDialog
+      v-model="showSelectExportMode"
+      close-on-back
+      max-width="max-content"
+    >
+      <VCard>
+        <VCardTitle>Выберите способ экспорта</VCardTitle>
+        <VCardText v-if="appStore.isApp">
+          🆘 Создание ФАЙЛА резервной копии не работает с приложения ВКонтакте.
+          Если вам нужен именно ФАЙЛ, тогда воспользуйтесь кнопкой копирования и
+          вручную создайте файл с расширением <b>.json</b>.
+        </VCardText>
+        <div
+          style="
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+            align-items: flex-start;
+          "
+        >
+          <VBtn
+            :disabled="selectedGroupsCount === 0 || appStore.isApp"
+            :prepend-icon="icons.Icon24DownloadOutline"
+            variant="flat"
+            @click="onDownloadJsonFile"
+          >
+            Скачать JSON файл
+          </VBtn>
+          <VBtn
+            :disabled="selectedGroupsCount === 0"
+            :prepend-icon="styledIcons.Icon24CopyOutline"
+            variant="flat"
+            @click="onCopyJson"
+          >
+            Скопировать в формате JSON
+          </VBtn>
+          <VBtn
+            :disabled="selectedGroupsCount === 0"
+            :prepend-icon="icons.Icon24Linked"
+            variant="flat"
+            @click="onCopyLink"
+          >
+            Создать ссылку
+          </VBtn>
+        </div>
+
+        <VCardActions>
+          <VSpacer />
+          <VBtn @click="showSelectExportMode = false">Закрыть</VBtn>
+        </VCardActions>
+      </VCard>
+    </VDialog>
   </VDialog>
 </template>
 <style lang="scss">

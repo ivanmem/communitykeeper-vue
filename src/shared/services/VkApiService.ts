@@ -6,14 +6,19 @@ import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { IGroup, IPhoto } from "@/store/groups/types";
 import { from } from "linq-to-typescript";
 import isNumber from "lodash-es/isNumber";
+import type {
+  ICheckLinkParams,
+  ICheckLinkResult,
+  IGetShortLinkParams,
+  IGetShortLinkResult,
+} from "vkontakte-api/dist/repositories/UtilsRepository/types";
 
 export class VkApiService {
   cache: {
     currentAlbum?: IAlbumItem;
   } = {};
 
-  constructor(public api: VKAPI) {
-  }
+  constructor(public api: VKAPI) {}
 
   async addRequestToQueue<P extends {} = any, R = any>(
     config: IRequestConfig<P>,
@@ -28,7 +33,6 @@ export class VkApiService {
         // костыль для игнорирования Too many requests per second
         return await this.addRequestToQueue<P, R>(config);
       } else if (errorCode === 5) {
-        // костыль для повторной авторизации
         await useVk().initVk();
         return await this.addRequestToQueue<P, R>(config);
       } else {
@@ -37,13 +41,11 @@ export class VkApiService {
     }
   }
 
-  getAlbums(
-    params: {
-      owner_id: number | string;
-      offset?: number;
-      count?: number;
-    },
-  ): Promise<PhotosGetAlbums> {
+  getAlbums(params: {
+    owner_id: number | string;
+    offset?: number;
+    count?: number;
+  }): Promise<PhotosGetAlbums> {
     return this.addRequestToQueue({
       method: "photos.getAlbums",
       params: {
@@ -55,11 +57,16 @@ export class VkApiService {
     });
   }
 
-  async getCachedAlbum(
-    params: { owner_id: number | string; album_id: number | string; },
-  ): Promise<IAlbumItem | undefined> {
+  async getCachedAlbum(params: {
+    owner_id: number | string;
+    album_id: number | string;
+  }): Promise<IAlbumItem | undefined> {
     const album = this.cache.currentAlbum;
-    if (album && album.owner_id == params.owner_id && album.id == params.album_id) {
+    if (
+      album &&
+      album.owner_id == params.owner_id &&
+      album.id == params.album_id
+    ) {
       return this.cache.currentAlbum;
     }
 
@@ -116,8 +123,11 @@ export class VkApiService {
     };
   }
 
-  /** @description Метод для получения album_id. Метод недоступен доступен только для фото из групп. */
-  async getAlbumIdFromPhotoIdAndOwnerId(ownerId: string | number, photoId: string | number) {
+  /** @description Метод для получения album_id. Метод доступен только для фото из групп. */
+  async getAlbumIdFromPhotoIdAndOwnerId(
+    ownerId: string | number,
+    photoId: string | number,
+  ) {
     const result = await this.addRequestToQueue({
       method: "photos.getById",
       params: {
@@ -185,5 +195,21 @@ export class VkApiService {
       console.warn(ex);
       return new Map();
     }
+  };
+
+  utilsGetShortLink = (
+    params: IGetShortLinkParams,
+  ): Promise<IGetShortLinkResult> => {
+    return this.addRequestToQueue({
+      method: "utils.getShortLink",
+      params,
+    });
+  };
+
+  utilsCheckLink = (params: ICheckLinkParams): Promise<ICheckLinkResult> => {
+    return this.addRequestToQueue({
+      method: "utils.checkLink",
+      params,
+    });
   };
 }

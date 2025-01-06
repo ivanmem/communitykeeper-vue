@@ -10,7 +10,7 @@ import { icons, styledIcons } from "@/shared/constants/consts";
 import { showContextMenu } from "@/shared/helpers/showContextMenu";
 import GroupHelper from "@/shared/helpers/GroupHelper";
 import { MenuItem } from "@imengyu/vue3-context-menu";
-import useClipboard from "vue-clipboard3/dist/esm/index";
+import useClipboard from "vue-clipboard3";
 import { useRouter } from "vue-router";
 import { AddPageQueryParams } from "@/pages/Add/types";
 import { useDialog } from "@/store/dialog/dialog";
@@ -72,7 +72,7 @@ watch(
 
 const link = computed(() => `vk.com/public${props.group.id}`);
 
-const { toClipboard } = useClipboard();
+const { toClipboard } = useClipboard({ appendToBody: true });
 
 const onOpenContextMenu = (e: MouseEvent) => {
   const items: MenuItem[] = [];
@@ -204,7 +204,10 @@ watch(showCounters, () => {
     class="a-button__root"
     @click.right.prevent.stop="onOpenContextMenu"
   >
-    <BaseButton class="a-group-link a-button__block" @click="openUrl(`//` + link)">
+    <BaseButton
+      class="a-group-link a-button__block"
+      @click="openUrl(`//` + link)"
+    >
       <img
         :src="group.photo_200"
         alt=""

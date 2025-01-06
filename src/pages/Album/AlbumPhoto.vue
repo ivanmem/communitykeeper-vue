@@ -12,7 +12,7 @@ import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { actionSwipesDict, dateTimeFormatter } from "@/shared/constants/consts";
 import { GallerySwipesConfig, useGroups } from "@/store/groups/groups";
 import { useApp } from "@/store/app/app";
-import useClipboard from "vue-clipboard3/dist/esm/index";
+import useClipboard from "vue-clipboard3";
 import { UsableSwipesOptions } from "@/shared/composables/useSwipes";
 import { useDialog } from "@/store/dialog/dialog";
 import { usePhotoActions } from "@/pages/Album/usePhotoActions";

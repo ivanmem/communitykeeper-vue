@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { icons } from "@/shared/constants/consts";
+import { icons, VK_SHORT_LINK } from "@/shared/constants/consts";
 import { computed, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import BaseToolbar from "@/components/BaseToolbar";
@@ -7,13 +7,20 @@ import { useDialog } from "@/store/dialog/dialog";
 import { useApp } from "@/store/app/app";
 import { isGroupsExport } from "@/store/groups/isGroupsExport";
 import { IGroupsExport } from "@/store/groups/types";
+import { useRoute, useRouter } from "vue-router";
+import { useVk } from "@/store/vk/vk";
+import { decodeAndDecompressObject } from "@/shared/helpers/decodeAndDecompress";
 
+const router = useRouter();
+const route = useRoute();
 const show = ref(false);
 const onClose = () => (show.value = false);
 const onShow = () => (show.value = true);
 const groupsStore = useGroups();
 const dialogStore = useDialog();
 const appStore = useApp();
+const vkStore = useVk();
+
 // текущие выбранные папки
 const folders = ref(new Set<string>());
 // текущие данные для импорта
@@ -26,6 +33,13 @@ const importFolders = computed(() => {
 
   return Object.keys(importData.value.groupIdsDictByFolderName);
 });
+// импортируемые сокращённые ссылки, содержащие сжатые данные для импорта
+const importShortLinks = computed<string[]>(
+  () =>
+    (route.query.importHashes as string | undefined)
+      ?.split(",")
+      .map((hash) => `${VK_SHORT_LINK.shortPrefix}${hash}`) ?? [],
+);
 // общее количество групп в импортируемых данных
 const importGroupsCount = computed(() =>
   Object.values(importData.value?.groupIdsDictByFolderName ?? {}).reduce(
@@ -73,6 +87,55 @@ const foldersChanged = computed(() => {
     0,
   );
 });
+
+watch(
+  importShortLinks,
+  async (importShortLinks) => {
+    if (!importShortLinks.length) {
+      return;
+    }
+
+    const loadingFinisher = appStore.getLoadingFinisher();
+
+    try {
+      let encodedImportData = "";
+      const vk = await vkStore.getApiService();
+      try {
+        for (const shortLink of importShortLinks) {
+          const { link } = await vk.utilsCheckLink({ url: shortLink });
+          const encodedChunk = link.replace(VK_SHORT_LINK.exportPrefix, "");
+          encodedImportData += encodedChunk;
+        }
+      } catch (ex: any) {
+        console.warn("Данные для импорта не были найдены:", ex);
+        dialogStore.alert({
+          title: "Ошибка",
+          subtitle: `Данные для импорта не были найдены.\nКод ошибки: ${ex.message ?? ex}`,
+        });
+        return;
+      }
+
+      try {
+        importData.value = decodeAndDecompressObject(encodedImportData);
+      } catch (ex: any) {
+        console.warn("Данные для импорта были повреждены:", ex);
+        dialogStore.alert({
+          title: "Ошибка",
+          subtitle: `Данные для импорта были повреждены.\nКод ошибки: ${ex.message ?? ex}`,
+        });
+        return;
+      }
+
+      const query = Object.assign({}, route.query);
+      delete query.importHashes;
+      await router.replace({ query });
+      onShow();
+    } finally {
+      loadingFinisher();
+    }
+  },
+  { immediate: true },
+);
 
 const onImportFileChange = (event: any) => {
   if (!event.target?.files?.length) {
@@ -264,9 +327,9 @@ watch(importFolders, () => {
         </div>
         <VBtn
           :disabled="selectedGroups.length === 0"
-          :prepend-icon="icons.Icon24MemoryCard"
-          text="Сохранить"
-          variant="text"
+          :icon="icons.Icon24MemoryCard"
+          color="light-blue-darken-4"
+          title="Сохранить"
           @click="onSaveImport"
         />
       </VSheet>

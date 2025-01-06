@@ -59,8 +59,7 @@ import Icon16KeyOutline from "@vkontakte/icons/src/svg/16/key_outline_16.svg?com
 import Icon16DeleteOutline from "@vkontakte/icons/src/svg/16/delete_outline_16.svg?component";
 import Icon16MoreVertical from "@vkontakte/icons/src/svg/16/more_vertical_16.svg?component";
 import Icon16FolderOutline from "@vkontakte/icons/src/svg/16/folder_outline_16.svg?component";
-import Icon16DoorEnterArrowRightOutline
-  from "@vkontakte/icons/src/svg/16/door_enter_arrow_right_outline_16.svg?component";
+import Icon16DoorEnterArrowRightOutline from "@vkontakte/icons/src/svg/16/door_enter_arrow_right_outline_16.svg?component";
 import Icon16ChainOutline from "@vkontakte/icons/src/svg/16/chain_outline_16.svg?component";
 import Icon16CrossCircleSmall from "@vkontakte/icons/src/svg/16/cross_circle_small_16.svg?component";
 import Icon16DownloadOutline from "@vkontakte/icons/src/svg/16/download_outline_16.svg?component";
@@ -196,6 +195,12 @@ export const VK_STORAGE = {
   chunksSplitter: "__",
   chunkMaxSize: 2236,
 } as const;
+
+export const VK_SHORT_LINK = {
+  max: 2000,
+  exportPrefix: "http://s.vk/",
+  shortPrefix: "https://vk.cc/",
+};
 
 export const dateTimeFormatter = new Intl.DateTimeFormat("ru", {
   year: "numeric",
