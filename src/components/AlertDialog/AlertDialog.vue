@@ -1,14 +1,26 @@
 <script lang="ts" setup>
 import { onBeforeRouteUpdate } from "vue-router";
 import { AlertDialogProps } from "@/components/AlertDialog/AlertDialog";
+import { computed } from "vue";
 
 const props = withDefaults(defineProps<AlertDialogProps>(), {
   subtitleStyle: "max-width: 450px;",
 });
 const emits = defineEmits<{
   close: [];
-  confirm: [];
+  confirm: [value: any];
 }>();
+
+const confirmButtons = computed(() =>
+  Array.isArray(props.confirmTitle)
+    ? props.confirmTitle
+    : [
+        {
+          id: true,
+          label: props.confirmTitle ?? "Ок",
+        },
+      ],
+);
 
 onBeforeRouteUpdate((to, from, next) => {
   if (!props.persistent) {
@@ -40,12 +52,14 @@ onBeforeRouteUpdate((to, from, next) => {
           {{ props.cancelTitle ?? "Отмена" }}
         </VBtn>
         <VBtn
+          v-for="x of confirmButtons"
+          :key="`${x.id}`"
           @click="
-            mode === 'confirm' && emits('confirm');
+            mode === 'confirm' && emits('confirm', x.id);
             emits('close');
           "
         >
-          {{ props.confirmTitle ?? "Ок" }}
+          {{ x.label }}
         </VBtn>
       </VCardActions>
     </VCard>

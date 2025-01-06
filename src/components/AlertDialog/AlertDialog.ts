@@ -3,7 +3,7 @@ export interface AlertDialogProps {
   subtitle?: string;
   subtitleStyle?: string;
   mode?: "alert" | "confirm";
-  confirmTitle?: string;
+  confirmTitle?: string | { id: string | number | boolean; label: string }[];
   cancelTitle?: string;
   persistent?: boolean;
 }

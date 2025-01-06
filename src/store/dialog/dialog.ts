@@ -42,7 +42,7 @@ export const useDialog = defineStore("dialog", {
         };
       }
 
-      return new Promise<boolean>((resolve) => {
+      return new Promise<any>((resolve) => {
         if (typeof props === "string") {
           throw new Error();
         }
@@ -50,8 +50,8 @@ export const useDialog = defineStore("dialog", {
         const extendedProps: AlertDialogProps & Record<any, any> = {
           ...props,
           mode: "confirm",
-          onConfirm: () => {
-            resolve(true);
+          onConfirm: (value: any) => {
+            resolve(value);
           },
           onClose: () => {
             resolve(false);

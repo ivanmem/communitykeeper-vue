@@ -8,7 +8,9 @@ import { IPhotoEmit } from "@/pages/Album/AlbumPhoto.vue";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { icons, styledIcons } from "@/shared/constants/consts";
 import { showContextMenu } from "@/shared/helpers/showContextMenu";
-import PhotoShareDialog, { PhotoShareDialogProps } from "@/pages/Album/PhotoShareDialog.vue";
+import PhotoShareDialog, {
+  PhotoShareDialogProps,
+} from "@/pages/Album/PhotoShareDialog.vue";
 import { useOpenPhoto } from "@/pages/Album/useOpenPhoto";
 
 export function usePhotoActions(
@@ -25,18 +27,24 @@ export function usePhotoActions(
   );
 
   const onSearchOriginal = async () => {
-    const isUseYandex = await useDialog().confirm({
+    const confirm: "yandex" | "saucenao" | false = await useDialog().confirm({
       title: "Поиск оригинала",
       subtitle: `Выберите поисковую систему:`,
-      confirmTitle: "Yandex",
-      cancelTitle: "SauceNAO",
-      persistent: true,
+      confirmTitle: [
+        { id: "yandex", label: "Yandex" },
+        { id: "saucenao", label: "SauceNAO" },
+      ],
     });
     const url = encodeURIComponent(originalSize.value!.url);
-    if (isUseYandex) {
-      openUrl(`https://yandex.com/images/search?rpt=imageview&url=${url}`);
-    } else {
-      openUrl(`https://saucenao.com/search.php?url=${url}`);
+
+    switch (confirm) {
+      case "yandex": {
+        openUrl(`https://yandex.com/images/search?rpt=imageview&url=${url}`);
+        return;
+      }
+      case "saucenao": {
+        openUrl(`https://saucenao.com/search.php?url=${url}`);
+      }
     }
   };
 
