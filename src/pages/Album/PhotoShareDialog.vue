@@ -21,12 +21,6 @@ const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes),
 );
 
-const onShareWall = () => {
-  bridge.send("VKWebAppShowWallPostBox", {
-    message: "",
-    attachments: PhotoHelper.getPhotoKey(props.photo.owner_id, props.photo.id),
-  });
-};
 const { toClipboard } = useClipboard({ appendToBody: true });
 
 const IconCopyLink = shallowRef(Icon24Linked);
@@ -84,9 +78,6 @@ onDeactivated(() => {
           "
         >
           Прямая ссылка
-        </VBtn>
-        <VBtn :prepend-icon="icons.Icon24Share" flat @click="onShareWall">
-          Поделиться на стене
         </VBtn>
       </div>
       <VCardActions>
