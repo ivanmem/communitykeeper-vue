@@ -58,18 +58,18 @@ const titleStyle = computed<CSSProperties | undefined>(() => {
 </script>
 <template>
   <div
-    class="a-not-dragable-and-not-select photos_row"
+    class="a-not-draggable-and-not-select photos_row"
     @contextmenu.stop.prevent="onShowContextMenu"
   >
     <img
       v-if="previewSize"
       :src="previewSize.url"
       alt=""
-      class="a-not-dragable-and-not-select"
+      class="a-not-draggable-and-not-select"
     />
     <div
       :style="titleStyle"
-      class="a-not-dragable-and-not-select photos_row__title_wrap"
+      class="a-not-draggable-and-not-select photos_row__title_wrap"
     ></div>
   </div>
 </template>

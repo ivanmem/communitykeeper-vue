@@ -14,7 +14,7 @@ const opacity = computed(
 );
 </script>
 <template>
-  <div v-show="showInfo" class="a-not-dragable-and-not-select a-photo-counter">
+  <div v-show="showInfo" class="a-not-draggable-and-not-select a-photo-counter">
     <div class="a-photo__info-date">
       {{ dateTime }}
     </div>

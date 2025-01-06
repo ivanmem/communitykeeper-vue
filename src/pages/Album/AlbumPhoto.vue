@@ -20,6 +20,7 @@ import { useSwipesAndZoom } from "@/shared/composables/useSwipesAndZoom";
 import { UsableZoomOptions } from "@/shared/composables/useZoom";
 import PhotoCounter from "@/pages/Album/PhotoCounter.vue";
 import { IPhoto } from "@/store/groups/types";
+import { useThrottleFn } from "@vueuse/core";
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -34,6 +35,7 @@ const props = defineProps<{
   count?: number | string;
 }>();
 
+const appStore = useApp();
 const dialogStore = useDialog();
 const groupsStore = useGroups();
 const photoDiv = ref<HTMLDivElement>();
@@ -103,14 +105,17 @@ watch(
   { immediate: true },
 );
 
-const onWheel = (e: WheelEvent) => {
-  const delta = e.deltaY || e.detail;
-  if (delta > 0) {
-    actions.onPhotoNext();
-  } else {
-    actions.onPhotoPrev();
-  }
-};
+const onWheel = useThrottleFn(
+  (e: WheelEvent) => {
+    const delta = e.deltaY || e.detail;
+    if (delta > 0) {
+      actions.onPhotoNext();
+    } else {
+      actions.onPhotoPrev();
+    }
+  },
+  20,
+);
 
 const swipesConfig = toRef(() => groupsStore.swipesConfig);
 const swipesOptions: UsableSwipesOptions = {
@@ -149,7 +154,7 @@ onDeactivated(() => {
 <template>
   <div
     ref="photoDiv"
-    class="a-not-dragable-and-not-select a-photo"
+    class="a-not-draggable-and-not-select a-photo"
     tabindex="1"
     @click="onClick"
     v-on="swipes"
@@ -235,6 +240,11 @@ onDeactivated(() => {
   touch-action: none;
   vertical-align: top;
   z-index: 1;
+  scroll-behavior: auto;
+
+  * {
+    scroll-behavior: auto;
+  }
 
   img {
     align-content: center;

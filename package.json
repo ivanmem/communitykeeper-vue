@@ -1,6 +1,6 @@
 {
   "name": "communitykeeper-vue",
-  "version": "1.8.5",
+  "version": "1.8.6",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,7 +15,7 @@
     "dev-tunnel": "concurrently \"npm run vk-tunnel\" \"npm run dev\""
   },
   "dependencies": {
-    "@imengyu/vue3-context-menu": "1.4.3",
+    "@imengyu/vue3-context-menu": "1.4.4",
     "@vkontakte/icons": "2.155.0",
     "@vkontakte/vk-bridge": "^2.15.3",
     "@vkontakte/vkui": "5.10.2",
