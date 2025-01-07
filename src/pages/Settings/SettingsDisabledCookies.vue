@@ -19,7 +19,7 @@ const isDisabledCookiesAlert = ref(isDisabledCookies());
           style="text-decoration: underline"
           target="_blank"
         >
-          В вашем браузере отключены cookie.
+          В Вашем браузере отключены cookie.
         </a>
         <br />
         Они нужны для кэширования:
