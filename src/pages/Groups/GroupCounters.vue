@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-import { IGroupCounter, useGroupCounters } from "@/pages/Groups/useGroupCounters";
+import {
+  IGroupCounter,
+  useGroupCounters,
+} from "@/pages/Groups/useGroupCounters";
 import { IGroup } from "@/store/groups/types";
 import { ref, toRef, watch } from "vue";
 import BaseSpinner from "@/components/BaseSpinner";
@@ -57,7 +60,10 @@ const onClick = (counter: IGroupCounter) => {
     >
       <div class="a-group-counters__counter">
         <component :is="counter.icon" class="a-group-counters__icon" />
-        <div class="a-group-counter__count">
+        <div
+          v-if="loading || counter.label.length"
+          class="a-group-counter__count"
+        >
           <BaseSpinner v-if="loading" :absolute="false" />
           <template v-else> {{ counter.label }}</template>
         </div>
