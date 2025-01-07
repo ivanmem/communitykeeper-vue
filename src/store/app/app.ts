@@ -51,6 +51,59 @@ export const useApp = defineStore("app", {
     };
   },
   getters: {
+    os(): "macos" | "windows" | "linux" | "ios" | "android" | undefined {
+      if (this.platform === "android") {
+        return "android";
+      }
+
+      if (this.platform === "ios") {
+        return "ios";
+      }
+
+      if ("userAgentData" in navigator) {
+        const uaData = (navigator as any).userAgentData;
+        if (uaData.platform.startsWith("Mac")) {
+          return "macos";
+        }
+
+        if (uaData.platform.startsWith("Win")) {
+          return "windows";
+        }
+
+        if (uaData.platform.startsWith("Linux")) {
+          return "linux";
+        }
+      }
+
+      if ("platform" in navigator) {
+        if (navigator.platform.startsWith("Mac")) {
+          return "macos";
+        }
+
+        if (navigator.platform.startsWith("Win")) {
+          return "windows";
+        }
+
+        if (/Linux|X11/.test(navigator.platform)) {
+          return "linux";
+        }
+      }
+
+      const userAgent = navigator.userAgent;
+      if (userAgent.includes("Mac OS")) {
+        return "macos";
+      }
+
+      if (userAgent.includes("Windows")) {
+        return "windows";
+      }
+
+      if (userAgent.includes("Linux")) {
+        return "linux";
+      }
+
+      return undefined;
+    },
     isLoading(): boolean {
       return this.loadingSet.size !== 0 && !this.isLoadingPause;
     },
@@ -62,6 +115,9 @@ export const useApp = defineStore("app", {
     },
     isIos(): boolean {
       return this.platform === "ios";
+    },
+    isMacOS(): boolean {
+      return this.os === "macos";
     },
     isAppIos(): boolean {
       return this.isIos && this.isApp;

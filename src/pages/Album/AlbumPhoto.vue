@@ -114,7 +114,7 @@ const onWheel = useThrottleFn(
       actions.onPhotoPrev();
     }
   },
-  20,
+  () => appStore.isMacOS ? 100 : 20,
 );
 
 const swipesConfig = toRef(() => groupsStore.swipesConfig);
