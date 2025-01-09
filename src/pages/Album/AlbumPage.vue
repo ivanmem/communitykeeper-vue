@@ -18,6 +18,7 @@ import AlbumPreview from "@/pages/Album/AlbumPreview.vue";
 import AlbumPhoto from "@/pages/Album/AlbumPhoto.vue";
 import ImagePreloader from "@/components/ImagePreloader";
 
+const { Icon16ChevronOutline } = icons;
 const props = defineProps<{
   ownerId: number | string;
   albumId: number | string;
@@ -96,13 +97,13 @@ const onHelp = () => {
           <VBreadcrumbsItem style="padding-left: 0" to="/">
             Группы
           </VBreadcrumbsItem>
-          <VIcon icon="mdi-chevron-right" size="small" />
+          <Icon16ChevronOutline />
           <VBreadcrumbsItem
             :href="`https://${ownerUrl}`"
             :title="GroupHelper.getName(group)"
             @click.prevent="router.replace(`/albums/${ownerId}`)"
           />
-          <VIcon icon="mdi-chevron-right" size="small" />
+          <Icon16ChevronOutline />
           <VBreadcrumbsItem
             :href="`https://${albumUrl}`"
             :title="album?.title ?? 'Альбом'"

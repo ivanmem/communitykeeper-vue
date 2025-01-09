@@ -3,11 +3,16 @@ import { ref, watch } from "vue";
 import { icons, styledIcons } from "@/shared/constants/consts";
 import { UseGroupSearch } from "@/pages/Groups/useGroupSearch";
 import BaseButton from "@/components/BaseButton";
-import { GroupsSortEnum, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
+import {
+  GroupsSortEnum,
+  OnlyAccessEnum,
+  useGroups,
+} from "@/store/groups/groups";
 import GroupsTabs from "@/pages/Groups/GroupsTabs.vue";
 import { useApp } from "@/store/app/app";
 import { useDialog } from "@/store/dialog/dialog";
 
+const { Icon24Filter, Icon16CrossCircleSmall } = icons;
 const props = defineProps<{
   groupSearch: UseGroupSearch;
 }>();
@@ -16,8 +21,6 @@ const { showFilters } = props.groupSearch;
 const groupsStore = useGroups();
 const dialogService = useDialog();
 const reference = ref(null);
-
-const { Icon24Filter, Icon16CrossCircleSmall } = icons;
 
 const accessEnumOptions = [
   {

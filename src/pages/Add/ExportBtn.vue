@@ -10,6 +10,7 @@ import { useVk } from "@/store/vk/vk";
 import { chunkString } from "@/shared/helpers/chunkString";
 import { compressAndEncodeObject } from "@/shared/helpers/compressAndEncode";
 
+const { Icon24CancelOutline } = icons;
 const show = ref(false);
 const showSelectExportMode = ref(false);
 const onClose = () => (show.value = false);
@@ -112,7 +113,7 @@ async function onCopyJson(event: any) {
     <VCard>
       <BaseToolbar>
         <VBtn icon @click="onClose">
-          <VIcon>mdi-close</VIcon>
+          <Icon24CancelOutline />
         </VBtn>
         <VToolbarTitle class="navigation-caption">
           Создание резервной копии

@@ -7,6 +7,7 @@ import { icons } from "@/shared/constants/consts";
 import { useDialog } from "@/store/dialog/dialog";
 import { folderRules, maxFolderLength } from "@/shared/constants/formConsts";
 
+const { Icon16FolderOutline } = icons;
 const props = defineProps({
   style: { type: [String, Object, Array] as PropType<StyleValue> },
 });
@@ -99,7 +100,6 @@ const onSaveSettings = async () => {
 };
 
 const valid = ref(false);
-const { Icon16FolderOutline } = icons;
 
 onDeactivated(() => {
   renameDialog.value = undefined;

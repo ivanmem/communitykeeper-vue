@@ -44,6 +44,7 @@ import Icon24SunOutline from "@vkontakte/icons/src/svg/24/sun_outline_24.svg?com
 import Icon24CopyOutline from "@vkontakte/icons/src/svg/24/copy_outline_24.svg?component";
 import Icon24RectrangleHandPointUp from "@vkontakte/icons/src/svg/24/rectrangle_hand_point_up_24.svg?component";
 import Icon24ShadowsOutline from "@vkontakte/icons/src/svg/24/shadows_outline_24.svg?component";
+import Icon24CancelOutline from "@vkontakte/icons/src/svg/24/cancel_outline_24.svg?component";
 
 import Icon20FolderMoveOutline from "@vkontakte/icons/src/svg/20/folder_move_outline_20.svg?component";
 
@@ -71,6 +72,7 @@ import Icon16PictureOutline from "@vkontakte/icons/src/svg/16/picture_outline_16
 import Icon16Users2Outline from "@vkontakte/icons/src/svg/16/users_2_outline_16.svg?component";
 import Icon16MessageOutline from "@vkontakte/icons/src/svg/16/message_outline_16.svg?component";
 import Icon16InfoCircle from "@vkontakte/icons/src/svg/16/info_circle_16.svg?component";
+import Icon16ChevronOutline from "@vkontakte/icons/src/svg/16/chevron_outline_16.svg?component";
 
 import Icon12ErrorCircle from "@vkontakte/icons/src/svg/12/error_circle_12.svg?component";
 import Icon12Tag from "@vkontakte/icons/src/svg/12/tag_12.svg?component";
@@ -130,6 +132,7 @@ export const icons = {
   Icon24CopyOutline,
   Icon24RectrangleHandPointUp,
   Icon24ShadowsOutline,
+  Icon24CancelOutline,
 
   Icon20FolderMoveOutline,
 
@@ -157,6 +160,7 @@ export const icons = {
   Icon16Users2Outline,
   Icon16MessageOutline,
   Icon16InfoCircle,
+  Icon16ChevronOutline,
 
   Icon12ErrorCircle,
   Icon12Tag,

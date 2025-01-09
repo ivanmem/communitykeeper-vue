@@ -9,6 +9,7 @@ import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { VList } from "virtua/vue";
 import ImagePreloader from "@/components/ImagePreloader";
 
+const { Icon16Link, Icon16ChevronOutline } = icons;
 const props = defineProps<{ ownerId: number | string }>();
 const {
   isInit,
@@ -20,14 +21,20 @@ const {
   screenError,
   sizes,
 } = useAlbums(() => props.ownerId);
-const { Icon16Link } = icons;
 const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 </script>
 
 <template>
   <div class="a-albums vkuiGroup__inner Group__inner">
     <template v-if="isInit">
-      <div style="padding-inline: 16px">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          padding-inline: 16px;
+        "
+      >
         <VBreadcrumbs density="compact">
           <VBreadcrumbsItem
             replace
@@ -35,7 +42,7 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
             title="Группы"
             to="/"
           />
-          <VIcon icon="mdi-chevron-right" size="small" />
+          <Icon16ChevronOutline />
           <VBreadcrumbsItem
             :href="`https://${ownerUrl}`"
             :title="group?.name || 'Источник'"

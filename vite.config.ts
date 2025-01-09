@@ -37,6 +37,11 @@ export default defineConfig({
   build: {
     minify: false,
     target: "ES2019",
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true,
+      },
+    },
   },
   define: {
     BUILD_DATE: JSON.stringify(new Date().toISOString()),

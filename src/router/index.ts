@@ -13,40 +13,40 @@ import { useDialog } from "@/store/dialog/dialog";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    component: () => import("@/pages/Groups/GroupsPageWrapper.vue"),
+    component: import("@/pages/Groups/GroupsPageWrapper.vue"),
   },
   {
     path: "/settings/",
-    component: () => import("@/pages/Settings/SettingsPage.vue"),
+    component: import("@/pages/Settings/SettingsPage.vue"),
   },
   {
     path: "/about/",
-    component: () => import("@/pages/About/AboutPage.vue"),
+    component: import("@/pages/About/AboutPage.vue"),
   },
   {
     name: "add",
     path: "/add/",
-    component: () => import("@/pages/Add/AddPageWrapper.vue"),
+    component: import("@/pages/Add/AddPageWrapper.vue"),
   },
   {
     path: "/history/",
-    component: () => import("@/pages/History/HistoryPageWrapper.vue"),
+    component: import("@/pages/History/HistoryPageWrapper.vue"),
   },
   {
     name: "album",
     path: "/albums/:ownerId/:albumId/:photoId?",
-    component: () => import("@/pages/Album/AlbumPageWrapper.vue"),
+    component: import("@/pages/Album/AlbumPageWrapper.vue"),
     strict: true,
   },
   {
     name: "albums",
     path: "/albums/:ownerId",
-    component: () => import("@/pages/Albums/AlbumsWrapper.vue"),
+    component: import("@/pages/Albums/AlbumsWrapper.vue"),
     strict: true,
   },
   {
     path: "/:catchAll(.*)",
-    component: () => import("../shared/widgets/PageNotFound.vue"),
+    component: import("../shared/widgets/PageNotFound.vue"),
     strict: false,
   },
 ];
@@ -103,10 +103,12 @@ router.afterEach(async (to, from) => {
 
     try {
       const apiService = await useVk().getApiService();
-      const albumId = await apiService.getAlbumIdFromPhotoIdAndOwnerId(ownerId, photoId);
+      const albumId = await apiService.getAlbumIdFromPhotoIdAndOwnerId(
+        ownerId,
+        photoId,
+      );
       return { path: `/albums/${ownerId}/${albumId}/${photoId}` };
-    } catch {
-    }
+    } catch {}
   }
 
   if (to.query?.vk_app_id && from.fullPath === "/") {
@@ -114,10 +116,12 @@ router.afterEach(async (to, from) => {
   }
 });
 router.afterEach((to) => {
-  bridge.send("VKWebAppSetLocation", {
-    location: to.fullPath,
-    replace_state: true,
-  }).then();
+  bridge
+    .send("VKWebAppSetLocation", {
+      location: to.fullPath,
+      replace_state: true,
+    })
+    .then();
   const historyStore = useHistory();
   historyStore.afterEach(to as NavigationHookAfter & RouteLocationNormalized);
 });

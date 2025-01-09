@@ -11,6 +11,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useVk } from "@/store/vk/vk";
 import { decodeAndDecompressObject } from "@/shared/helpers/decodeAndDecompress";
 
+const { Icon24CancelOutline } = icons;
 const router = useRouter();
 const route = useRoute();
 const show = ref(false);
@@ -243,7 +244,7 @@ watch(importFolders, () => {
     <VCard v-if="importData">
       <BaseToolbar>
         <VBtn icon @click="onClose">
-          <VIcon>mdi-close</VIcon>
+          <Icon24CancelOutline />
         </VBtn>
         <VToolbarTitle class="navigation-caption">
           Загрузка резервной копии

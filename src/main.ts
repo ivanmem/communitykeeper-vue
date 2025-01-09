@@ -6,7 +6,6 @@ import { isDev } from "@/shared/constants/consts";
 import Vue3ContextMenu from "@imengyu/vue3-context-menu";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import "vuetify/styles";
-import "@mdi/font/css/materialdesignicons.css";
 import "@/styles/icons.scss";
 import "@/styles/inputs.scss";
 import "@/styles/buttons.scss";
@@ -17,9 +16,6 @@ import App from "@/App.vue";
 
 (async () => {
   const vuetify = createVuetify({
-    icons: {
-      defaultSet: "mdi",
-    },
     components: isDev ? await import("vuetify/components") : undefined,
     directives: isDev ? await import("vuetify/directives") : undefined,
   });
