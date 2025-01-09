@@ -1,7 +1,9 @@
-@import "styles/variables";
-@import "styles/helpers";
-@import "styles/animations";
-@import "styles/vuetify";
+@use "sass:meta";
+
+@include meta.load-css("@/styles/variables");
+@include meta.load-css("@/styles/helpers");
+@include meta.load-css("@/styles/vuetify");
+@include meta.load-css("@/styles/inputs");
 
 :root {
   background: var(--vkui--color_background_content);
@@ -33,7 +35,10 @@ pre {
 
 html,
 body {
-  @extend .overflow-block;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
   background: black;
   font-family: var(--vkui--font_text--font_family--regular);
   height: 100vh;
@@ -43,11 +48,15 @@ body {
 body {
   background: var(--vkui--color_background_content);
   margin: 0;
-  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
+    env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
 }
 
 #app {
-  @extend .overflow-block;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
 }
 
 .border {

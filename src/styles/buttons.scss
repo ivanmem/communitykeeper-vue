@@ -1,6 +1,3 @@
-@import "src/styles/helpers";
-@import "src/styles/icons";
-
 @mixin button-pseudo-classes {
   &:hover,
   &[data-pseudo-hover] {
@@ -77,11 +74,9 @@
 }
 
 .a-button__opacity {
-  @extend .a-icon;
-  @extend .pointer;
-
   background: transparent;
   border: none;
+  cursor: pointer;
 }
 
 .a-button__left-content-block {

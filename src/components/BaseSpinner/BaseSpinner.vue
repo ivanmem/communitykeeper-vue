@@ -2,13 +2,10 @@
 import { computed } from "vue";
 import { BaseSpinnerProps } from "@/components/BaseSpinner/BaseSpinner";
 
-const props = withDefaults(
-  defineProps<BaseSpinnerProps>(),
-  {
-    absolute: true,
-    zIndex: 10000,
-  },
-);
+const props = withDefaults(defineProps<BaseSpinnerProps>(), {
+  absolute: true,
+  zIndex: 10000,
+});
 
 const position = computed(() => (props.absolute ? "absolute" : "static"));
 </script>
@@ -41,6 +38,16 @@ const position = computed(() => (props.absolute ? "absolute" : "static"));
     position: v-bind(position);
     top: 50%;
     width: 16px;
+  }
+}
+
+@keyframes round_spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>

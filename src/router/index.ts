@@ -9,44 +9,52 @@ import bridge from "@vkontakte/vk-bridge";
 import { useVk } from "@/store/vk/vk";
 import { useHistory } from "@/store/history/history";
 import { useDialog } from "@/store/dialog/dialog";
+import GroupsPageWrapper from "@/pages/Groups/GroupsPageWrapper.vue";
+import SettingsPage from "@/pages/Settings/SettingsPage.vue";
+import AboutPage from "@/pages/About/AboutPage.vue";
+import AddPageWrapper from "@/pages/Add/AddPageWrapper.vue";
+import HistoryPageWrapper from "@/pages/History/HistoryPageWrapper.vue";
+import AlbumPageWrapper from "@/pages/Album/AlbumPageWrapper.vue";
+import AlbumsWrapper from "@/pages/Albums/AlbumsWrapper.vue";
+import PageNotFound from "@/shared/widgets/PageNotFound.vue";
 
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    component: import("@/pages/Groups/GroupsPageWrapper.vue"),
+    component: GroupsPageWrapper,
   },
   {
     path: "/settings/",
-    component: import("@/pages/Settings/SettingsPage.vue"),
+    component: SettingsPage,
   },
   {
     path: "/about/",
-    component: import("@/pages/About/AboutPage.vue"),
+    component: AboutPage,
   },
   {
     name: "add",
     path: "/add/",
-    component: import("@/pages/Add/AddPageWrapper.vue"),
+    component: AddPageWrapper,
   },
   {
     path: "/history/",
-    component: import("@/pages/History/HistoryPageWrapper.vue"),
+    component: HistoryPageWrapper,
   },
   {
     name: "album",
     path: "/albums/:ownerId/:albumId/:photoId?",
-    component: import("@/pages/Album/AlbumPageWrapper.vue"),
+    component: AlbumPageWrapper,
     strict: true,
   },
   {
     name: "albums",
     path: "/albums/:ownerId",
-    component: import("@/pages/Albums/AlbumsWrapper.vue"),
+    component: AlbumsWrapper,
     strict: true,
   },
   {
     path: "/:catchAll(.*)",
-    component: import("../shared/widgets/PageNotFound.vue"),
+    component: PageNotFound,
     strict: false,
   },
 ];
