@@ -206,6 +206,10 @@ export const VK_SHORT_LINK = {
   shortPrefix: "https://vk.cc/",
 };
 
+export const VK_ERROR_CODE = {
+  accessDenied: 15,
+}
+
 export const dateTimeFormatter = new Intl.DateTimeFormat("ru", {
   year: "numeric",
   month: "numeric",

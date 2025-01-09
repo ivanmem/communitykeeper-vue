@@ -17,6 +17,8 @@ import { useGridArray } from "@/shared/composables/useGridArray";
 import { errorToString } from "@/shared/helpers/errorToString";
 import { useImagePreloader } from "@/shared/composables/useImagePreloader";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
+import { VK_ERROR_CODE } from "@/shared/constants/consts";
+import { isVKError } from "vkontakte-api";
 
 const countOneLoad = 100;
 
@@ -94,9 +96,17 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
           });
           albums.push(wallAlbum);
           staticAlbumsCount.value = 1;
-        } catch {
-          albums.push(...staticAlbums.value);
-          staticAlbumsCount.value = staticAlbums.value.length;
+        } catch (ex: any) {
+          if (
+            isVKError(ex) &&
+            ex.errorInfo.error_code === VK_ERROR_CODE.accessDenied &&
+            ex.message.endsWith("id blocked")
+          ) {
+            screenError.value = errorToString(ex);
+          } else {
+            albums.push(...staticAlbums.value);
+            staticAlbumsCount.value = staticAlbums.value.length;
+          }
         }
       }
 
@@ -113,7 +123,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       }
 
       isLoadingAlbums.value = true;
-      const offset = albums.items.length - staticAlbumsCount.value;
+      const offset = Math.max(0, albums.items.length - staticAlbumsCount.value);
       const count = albumsMaxItems.value - offset - staticAlbumsCount.value;
       if (count > 0) {
         try {

@@ -39,9 +39,13 @@ export function useAlbum(
   );
   const album = ref<IAlbumItem | undefined>();
   const endIndex = ref<number>(0);
-  const position = computed<number>(() =>
-    Math.min(+(album.value?.size ?? 0), endIndex.value + columns.value),
-  );
+  const position = computed<number>(() => {
+    const albumSize = toNumberOrUndefined(album.value?.size) ?? 0
+    return Math.min(
+      albumSize,
+      endIndex.value + columns.value,
+    );
+  });
   const albumRef = ref<InstanceType<typeof VList>>();
   const { sizes, columns } = useSizesColumns(
     albumRef,
