@@ -38,3 +38,10 @@ body {
     pointer-events: none;
   }
 }
+
+.v-icon {
+  svg {
+    width: 1em;
+    height: 1em;
+  }
+}

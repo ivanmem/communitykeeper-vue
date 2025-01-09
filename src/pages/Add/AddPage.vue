@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, reactive, ref, watch } from "vue";
+import { computed, h, reactive, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import toNumber from "lodash-es/toNumber";
 import { icons } from "@/shared/constants/consts";
@@ -17,6 +17,10 @@ import { folderRules, maxFolderLength } from "@/shared/constants/formConsts";
 import { watchDebounced } from "@vueuse/core";
 import { useVk } from "@/store/vk/vk";
 
+const Icon16Link: any = h(icons.Icon16Link, { style: { width: "16px" } });
+const Icon16FolderOutline: any = h(icons.Icon16FolderOutline, {
+  style: { width: "16px" },
+});
 const route = useRoute();
 const groupsStore = useGroups();
 const dialogStore = useDialog();
@@ -147,7 +151,11 @@ const valid = ref(false);
 
 <template>
   <FixedTeleport to="#navigation-header__right">
-    <VBtn :icon="icons.Icon16InfoCircle" variant="text" @click="onHelp" />
+    <VBtn
+      :icon="icons.Icon24InfoCircleOutline"
+      variant="text"
+      @click="onHelp"
+    />
   </FixedTeleport>
   <VCard class="overflow-block a-add">
     <VCardItem style="padding-top: 12px">
@@ -166,7 +174,7 @@ const valid = ref(false);
           🆕 Добавить группу
         </VCardSubtitle>
         <VTextField
-          :append-inner-icon="icons.Icon16Link"
+          :append-inner-icon="Icon16Link"
           :model-value="
             newGroup.linkOrId.length ? newGroup.linkOrId : undefined
           "
@@ -176,7 +184,7 @@ const valid = ref(false);
           @update:model-value="newGroup.linkOrId = $event ?? ''"
         />
         <VCombobox
-          :append-inner-icon="icons.Icon16FolderOutline"
+          :append-inner-icon="Icon16FolderOutline"
           :counter="maxFolderLength"
           :items="groupsStore.folders"
           :model-value="newGroup.folder.trim() || undefined"

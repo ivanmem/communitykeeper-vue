@@ -210,7 +210,6 @@ watch(
 #navigation-header__right {
   align-items: center;
   display: flex;
-  gap: 5px;
 }
 
 .navigation-caption {

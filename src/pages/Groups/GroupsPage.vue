@@ -39,7 +39,11 @@ const onHelp = () => {
 
 <template>
   <FixedTeleport to="#navigation-header__right">
-    <VBtn :icon="icons.Icon16InfoCircle" variant="text" @click="onHelp" />
+    <VBtn
+      :icon="icons.Icon24InfoCircleOutline"
+      variant="text"
+      @click="onHelp"
+    />
   </FixedTeleport>
   <div
     class="a-groups vkuiGroup__inner Group__inner"

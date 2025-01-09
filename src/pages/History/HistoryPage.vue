@@ -109,12 +109,16 @@ const onHelp = () => {
 <template>
   <FixedTeleport to="#navigation-header__right">
     <VBtn
-      :icon="icons.Icon16Delete"
+      :icon="icons.Icon24DeleteOutline"
       title="Очистить историю просмотров"
       variant="text"
       @click="onClear"
     />
-    <VBtn :icon="icons.Icon16InfoCircle" variant="text" @click="onHelp" />
+    <VBtn
+      :icon="icons.Icon24InfoCircleOutline"
+      variant="text"
+      @click="onHelp"
+    />
   </FixedTeleport>
   <VCard v-if="items !== undefined" class="overflow-block">
     <VSheet

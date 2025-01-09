@@ -138,6 +138,10 @@ async function onCopyJson(event: any) {
         >
           <template v-slot:prepend>
             <VCheckbox
+              :indeterminate="
+                groupsStore.folders.length > 0 &&
+                folders.size !== groupsStore.folders.length
+              "
               :model-value="folders.size === groupsStore.folders.length"
               class="pe-2"
               hide-details
