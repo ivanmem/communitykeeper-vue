@@ -50,6 +50,8 @@ import Icon24CheckBoxOn from "@vkontakte/icons/src/svg/24/check_box_on_24.svg?co
 import Icon24CheckBoxIndeterminate from "@vkontakte/icons/src/svg/24/check_box_indeterminate_24.svg?component";
 import Icon24Dropdown from "@vkontakte/icons/src/svg/24/dropdown_24.svg?component";
 import Icon24ChevronDownSmall from "@vkontakte/icons/src/svg/24/chevron_down_small_24.svg?component";
+import Icon24ChevronLeftOutline from "@vkontakte/icons/src/svg/24/chevron_left_outline_24.svg?component";
+import Icon24ChevronRightOutline from "@vkontakte/icons/src/svg/24/chevron_right_outline_24.svg?component";
 
 import Icon20FolderMoveOutline from "@vkontakte/icons/src/svg/20/folder_move_outline_20.svg?component";
 import Icon20Clear from "@vkontakte/icons/src/svg/20/clear_20.svg?component";
@@ -144,6 +146,8 @@ export const icons = {
   Icon24CheckBoxIndeterminate,
   Icon24Dropdown,
   Icon24ChevronDownSmall,
+  Icon24ChevronLeftOutline,
+  Icon24ChevronRightOutline,
 
   Icon20FolderMoveOutline,
   Icon20Clear,
