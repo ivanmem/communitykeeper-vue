@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { VKAPI } from "vkontakte-api";
-import bridge, { MobileUpdateConfigData, MVKUpdateConfigData, VKUpdateConfigData } from "@vkontakte/vk-bridge";
+import bridge, {
+  MobileUpdateConfigData,
+  MVKUpdateConfigData,
+  VKUpdateConfigData,
+} from "@vkontakte/vk-bridge";
 import { chunkString } from "@/shared/helpers/chunkString";
 import { markRaw, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
@@ -22,7 +26,6 @@ interface VkState {
   token?: {
     access_token: string;
   };
-
 }
 
 export const useVk = defineStore("vk", {
@@ -55,7 +58,9 @@ export const useVk = defineStore("vk", {
       const chunks: string[] = [];
 
       const getIndexBySplitKey = (splitKey: string) => {
-        return +splitKey.substring(key.length + VK_STORAGE.chunksSplitter.length);
+        return +splitKey.substring(
+          key.length + VK_STORAGE.chunksSplitter.length,
+        );
       };
 
       const sortComparer = (x: { key: string }, y: { key: string }) => {
@@ -90,12 +95,13 @@ export const useVk = defineStore("vk", {
       return result.keys.reduce((dict, { key, value }) => {
         try {
           (dict as any)[key] = value.length ? JSON.parse(value) : undefined;
-        } catch {
-        }
+        } catch {}
         return dict;
       }, {} as Partial<T>);
     },
-    async getVkStorageObject<T = any, K extends string = string>(key: K): Promise<T | undefined> {
+    async getVkStorageObject<T = any, K extends string = string>(
+      key: K,
+    ): Promise<T | undefined> {
       const dict = await this.getVkStorageDict({ [key]: Object as T });
       return dict[key] as T | undefined;
     },
@@ -138,7 +144,7 @@ export const useVk = defineStore("vk", {
       }
     },
     async initDynamicResize(opts: IAppInitOptions) {
-      if (!bridge.supports("VKWebAppResizeWindow")) {
+      if (!(await bridge.supportsAsync("VKWebAppResizeWindow"))) {
         return;
       }
 

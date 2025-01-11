@@ -78,14 +78,4 @@ import { router } from "@/router";
   } catch (ex: any) {
     console.error("init app", ex);
   }
-
-  // if (isDev) {
-  //   try {
-  //     const devtools = (await import("@vue/devtools")).default;
-  //     devtools.connect("http://localhost", 8098);
-  //     console.info("init devtools");
-  //   } catch (ex) {
-  //     console.error("init devtools", ex);
-  //   }
-  // }
 })();

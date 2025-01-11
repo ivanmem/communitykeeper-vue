@@ -11,8 +11,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "vk-tunnel": "vk-tunnel --host=localhost --timeout=20000",
-    "dev-tunnel": "concurrently \"npm run vk-tunnel\" \"npm run dev\""
+    "vk-tunnel": "vk-tunnel --host=localhost --timeout=20000"
   },
   "dependencies": {
     "@imengyu/vue3-context-menu": "1.4.4",
@@ -45,7 +44,6 @@
     "@vitejs/plugin-vue": "5.2.1",
     "@vkontakte/vk-miniapps-deploy": "0.1.8",
     "@vkontakte/vk-tunnel": "0.2.4",
-    "@vue/devtools": "7.7.0",
     "concurrently": "9.1.0",
     "npm-run-all": "4.1.5",
     "prettier": "3.4.2",
