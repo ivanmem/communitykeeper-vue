@@ -75,6 +75,7 @@ const link = computed(() => `vk.com/public${props.group.id}`);
 const { toClipboard } = useClipboard({ appendToBody: true });
 
 const onOpenContextMenu = (e: MouseEvent) => {
+  const isGroupAdded = groupsStore.groupsMap.has(props.group.id);
   const items: MenuItem[] = [];
   items.push({
     label: "Скопировать ссылку",
@@ -92,6 +93,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
       }
     },
   });
+
   items.push({
     label: "Встроенная галерея",
     icon: h(icons.Icon16PictureOutline),
@@ -99,19 +101,23 @@ const onOpenContextMenu = (e: MouseEvent) => {
       return router.push(`/albums/-${props.group.id}`);
     },
   });
-  items.push({
-    label: "Заменить",
-    icon: h(styledIcons.Icon16FolderMoveOutline),
-    onClick: () => {
-      return router.push({
-        name: "add",
-        query: {
-          groupId: props.group.id.toString(),
-          folder: localGroup.value?.folder,
-        } satisfies AddPageQueryParams,
-      });
-    },
-  });
+  
+  if (isGroupAdded) {
+    items.push({
+      label: "Заменить",
+      icon: h(styledIcons.Icon16FolderMoveOutline),
+      onClick: () => {
+        return router.push({
+          name: "add",
+          query: {
+            groupId: props.group.id.toString(),
+            folder: localGroup.value?.folder,
+          } satisfies AddPageQueryParams,
+        });
+      },
+    });
+  }
+
   if (props.group.is_member) {
     items.push({
       label: "Выйти",
@@ -154,14 +160,16 @@ const onOpenContextMenu = (e: MouseEvent) => {
     }
   }
 
-  items.push({
-    label: "Удалить",
-    icon: h(icons.Icon16DeleteOutline, { style: { color: "red" } }),
-    onClick: async () => {
-      groupsStore.removeLocalGroup(props.group.id);
-      await groupsStore.autoSaveCurrentLocalGroups();
-    },
-  });
+  if (isGroupAdded) {
+    items.push({
+      label: "Удалить",
+      icon: h(icons.Icon16DeleteOutline, { style: { color: "red" } }),
+      onClick: async () => {
+        groupsStore.removeLocalGroup(props.group.id);
+        await groupsStore.autoSaveCurrentLocalGroups();
+      },
+    });
+  }
 
   showContextMenu(e, items);
 };
