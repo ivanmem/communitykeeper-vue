@@ -11,8 +11,6 @@ import { toNumberOrUndefined } from "@/shared/helpers/toNumberOrUndefined";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { errorToString } from "@/shared/helpers/errorToString";
-// @ts-ignore
-import { VList } from "virtua/vue";
 import { useImagePreloader } from "@/shared/composables/useImagePreloader";
 import { useScrollRestore } from "@/shared/composables/useScrollRestore";
 import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
@@ -107,7 +105,7 @@ export function useAlbum(
   );
 
   const onClearPhotos = () => {
-    gallery.grid.clear();
+    gallery.clear();
     photosMap.value.clear();
     photosMaxItems.value = countOneLoad;
     isLoadAllPhotos.value = false;

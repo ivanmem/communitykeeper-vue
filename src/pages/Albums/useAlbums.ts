@@ -44,7 +44,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const onClearComponent = () => {
     isInit.value = false;
     isLoadingAlbums.value = false;
-    gallery.grid.clear();
+    gallery.clear();
     albumsMaxItems.value = 0;
     group.value = undefined;
     screenError.value = undefined;

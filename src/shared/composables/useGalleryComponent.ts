@@ -1,4 +1,11 @@
-import { computed, MaybeRefOrGetter, onActivated, ref, toRef } from "vue";
+import {
+  computed,
+  MaybeRefOrGetter,
+  nextTick,
+  onActivated,
+  ref,
+  toRef,
+} from "vue";
 import type { VList } from "virtua/lib/vue";
 import { useElementSize, useScroll } from "@vueuse/core";
 import { useSizesColumns } from "@/shared/composables/useSizesColumns";
@@ -47,6 +54,13 @@ export function useGalleryComponent<T>(
     return Math.min(grid.items.length, Math.round(minScreen + positionScroll));
   });
 
+  const clear = () => {
+    grid.clear();
+    nextTick(() => {
+      measure();
+    }).then();
+  };
+
   return {
     componentRef,
     el,
@@ -58,5 +72,6 @@ export function useGalleryComponent<T>(
     elSize,
     scrollRows,
     position,
+    clear,
   };
 }
