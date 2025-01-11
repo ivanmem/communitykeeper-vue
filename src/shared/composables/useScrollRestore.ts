@@ -2,7 +2,9 @@ import { onBeforeRouteLeave } from "vue-router";
 import { MaybeRefOrGetter, nextTick, onActivated, toValue } from "vue";
 
 /** @description Восстанавливает позицию scrollTop при повторной активации компонента */
-export function useScrollRestore(elGetter: MaybeRefOrGetter<HTMLElement | undefined>) {
+export function useScrollRestore(
+  elGetter: MaybeRefOrGetter<HTMLElement | undefined>,
+) {
   let lastScrollTop: number | undefined = undefined;
 
   onBeforeRouteLeave(() => {
@@ -17,4 +19,14 @@ export function useScrollRestore(elGetter: MaybeRefOrGetter<HTMLElement | undefi
       }
     });
   });
+
+  // На случай, если понадобится ручное управление.
+  // Например, для сброса сохранённого значения при смене роута.
+  function setLastScrollTop(scrollTop: number | undefined) {
+    lastScrollTop = scrollTop;
+  }
+
+  return {
+    setLastScrollTop,
+  };
 }

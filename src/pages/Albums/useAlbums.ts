@@ -43,7 +43,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const screenError = ref<any>();
   const previewPreloader = useImagePreloader({ max: () => columns.value * 4 });
 
-  useScrollRestore(() => albumsRef.value?.$el);
+  const { setLastScrollTop } = useScrollRestore(() => albumsRef.value?.$el);
 
   const onClearComponent = () => {
     isInit.value = false;
@@ -52,6 +52,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     albumsMaxItems.value = 0;
     group.value = undefined;
     screenError.value = undefined;
+    setLastScrollTop(undefined);
   };
 
   const onScrollerUpdate = () => {

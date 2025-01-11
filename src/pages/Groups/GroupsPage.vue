@@ -9,15 +9,11 @@ import BaseButton from "@/components/BaseButton";
 import { useGroups } from "@/store/groups/groups";
 // @ts-ignore
 import { VList } from "virtua/vue";
-import { ref } from "vue";
-import { useScrollRestore } from "@/shared/composables/useScrollRestore";
 
 const groupSearch = useGroupSearch();
-const { groupsOrder, showFilters } = groupSearch;
+const { groupsRef, groupsOrder, showFilters } = groupSearch;
 const dialogStore = useDialog();
 const groupsStore = useGroups();
-const groupsRef = ref<any>();
-useScrollRestore(() => groupsRef.value?.$el);
 
 const onHelp = () => {
   dialogStore.alert({

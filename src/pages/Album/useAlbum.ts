@@ -16,6 +16,7 @@ import { useGridArray } from "@/shared/composables/useGridArray";
 // @ts-ignore
 import { VList } from "virtua/vue";
 import { useImagePreloader } from "@/shared/composables/useImagePreloader";
+import { useScrollRestore } from "@/shared/composables/useScrollRestore";
 
 const countOneLoad = 150;
 
@@ -40,11 +41,8 @@ export function useAlbum(
   const album = ref<IAlbumItem | undefined>();
   const endIndex = ref<number>(0);
   const position = computed<number>(() => {
-    const albumSize = toNumberOrUndefined(album.value?.size) ?? 0
-    return Math.min(
-      albumSize,
-      endIndex.value + columns.value,
-    );
+    const albumSize = toNumberOrUndefined(album.value?.size) ?? 0;
+    return Math.min(albumSize, endIndex.value + columns.value);
   });
   const albumRef = ref<InstanceType<typeof VList>>();
   const { sizes, columns } = useSizesColumns(
@@ -107,12 +105,15 @@ export function useAlbum(
     freeze: () => Boolean(currentPhoto.value),
   });
 
+  const { setLastScrollTop } = useScrollRestore(() => albumRef.value?.$el);
+
   const onClearPhotos = () => {
     photos.clear();
     photosMap.value.clear();
     endIndex.value = 0;
     photosMaxItems.value = countOneLoad;
     isLoadAllPhotos.value = false;
+    setLastScrollTop(undefined);
   };
 
   const onClearAlbum = () => {
