@@ -30,14 +30,15 @@ const {
   imagePreloader,
   previewPreloader,
   album,
-  albumCount,
+  albumSize,
+  albumIsEmpty,
   currentPhoto,
   setCurrentPhotoIndex,
   onScrollerUpdate,
   onSwitchPhoto,
   isInit,
   screenError,
-  albumRef,
+  componentRef,
   sizes,
   position,
 } = useAlbum(
@@ -115,21 +116,19 @@ const onHelp = () => {
             @click.prevent="openUrl(`//${albumUrl}`)"
           />
         </VBreadcrumbs>
+
         <div
           style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
         >
-          <div
-            v-if="album && (position != 0 || album.size === 0)"
-            class="a-album__position"
-          >
-            {{ position }} из {{ album.size }} фото
+          <div v-if="position !== 0 || !albumIsEmpty" class="a-album__position">
+            {{ position }} из {{ albumSize }} фото
           </div>
           <code v-if="screenError" class="vkuiFormField--status-error">
             {{ screenError }}
           </code>
           <VSpacer />
           <VSwitch
-            v-if="!screenError"
+            v-if="!screenError && !albumIsEmpty"
             v-model="groupsStore.config.reverseOrder"
             :false-icon="styledIcons.Icon24SortOutlineOpacity50"
             :true-icon="icons.Icon24SortOutline"
@@ -139,10 +138,21 @@ const onHelp = () => {
             style="flex-grow: 0"
           />
         </div>
+
+        <VBanner
+          v-if="isInit && !screenError && albumIsEmpty"
+          :icon="icons.Icon24ErrorCircleOutline"
+          color="deep-purple-accent-4"
+          lines="one"
+          style="padding-block: 8px"
+        >
+          <VBannerText>Элементы отсутствуют</VBannerText>
+        </VBanner>
       </div>
+
       <VList
         :key="`${photos.items[photos.indexes[0]?.[0]]?.id}`"
-        ref="albumRef"
+        ref="componentRef"
         #default="{ item: indexes, index }"
         :data="photos.indexes"
         :item-size="sizes.height"
@@ -162,7 +172,7 @@ const onHelp = () => {
       </VList>
       <AlbumPhoto
         v-if="currentPhoto"
-        :count="albumCount"
+        :size="albumSize"
         :photo="currentPhoto"
         @photo:prev="onSwitchPhoto(false)"
         @photo:next="onSwitchPhoto(true)"

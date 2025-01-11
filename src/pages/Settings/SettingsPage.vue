@@ -113,7 +113,7 @@ const dialogStore = useDialog();
         Вы можете установить минимальное значение, чтобы скрыть счётчик.
       </span>
       <PhotoCounter
-        :count="100"
+        :size="100"
         :photo-index="0"
         date-time="01.01.2024, 00:00"
         show-info
@@ -149,9 +149,10 @@ const dialogStore = useDialog();
       />
       <span class="a-mini-text">
         Фото с низким разрешением будет подсвечено красным цветом, а с высоким -
-        зелёным. Разрешение Вашего экрана не влияет - учитывается максимальное разрешение для ВКонтакте ({{
-          VK_MAX_PHOTO_SIZE.width
-        }}x{{ VK_MAX_PHOTO_SIZE.height }}).
+        зелёным. Разрешение Вашего экрана не влияет - учитывается максимальное
+        разрешение для ВКонтакте ({{ VK_MAX_PHOTO_SIZE.width }}x{{
+          VK_MAX_PHOTO_SIZE.height
+        }}).
       </span>
     </VCardItem>
     <VDivider />

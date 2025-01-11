@@ -4,7 +4,6 @@ import { AlbumsPreviewSizesInitial } from "@/pages/Albums/consts";
 import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
 import { useCurrentPhoto } from "@/pages/Album/useCurrentPhoto";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
-import { useSizesColumns } from "@/shared/composables/useSizesColumns";
 import { toStr } from "@/shared/helpers/toStr";
 import { useGroups } from "@/store/groups/groups";
 import { useHistory } from "@/store/history/history";
@@ -12,11 +11,11 @@ import { toNumberOrUndefined } from "@/shared/helpers/toNumberOrUndefined";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { errorToString } from "@/shared/helpers/errorToString";
-import { useGridArray } from "@/shared/composables/useGridArray";
 // @ts-ignore
 import { VList } from "virtua/vue";
 import { useImagePreloader } from "@/shared/composables/useImagePreloader";
 import { useScrollRestore } from "@/shared/composables/useScrollRestore";
+import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
 
 const countOneLoad = 150;
 
@@ -39,16 +38,15 @@ export function useAlbum(
     ),
   );
   const album = ref<IAlbumItem | undefined>();
-  const endIndex = ref<number>(0);
-  const position = computed<number>(() => {
-    const albumSize = toNumberOrUndefined(album.value?.size) ?? 0;
-    return Math.min(albumSize, endIndex.value + columns.value);
-  });
-  const albumRef = ref<InstanceType<typeof VList>>();
-  const { sizes, columns } = useSizesColumns(
-    albumRef,
-    AlbumsPreviewSizesInitial,
+  const gallery = useGalleryComponent<IPhoto>(AlbumsPreviewSizesInitial);
+  const albumSize = computed(
+    () =>
+      toNumberOrUndefined(album.value?.size) ??
+      (isLoadAllPhotos
+        ? gallery.grid.items.length
+        : `${gallery.grid.items.length}+`),
   );
+
   const screenError = ref<any>();
   const isInit = ref(false);
   const isLoadingPhotos = ref(false);
@@ -60,12 +58,11 @@ export function useAlbum(
   const albumHistoryItem = computed(() =>
     historyStore.getViewAlbum(ownerId.value, albumId.value),
   );
-  const photos = useGridArray<IPhoto>(columns);
 
-  const albumCount = computed(
-    () =>
-      toNumberOrUndefined(album.value?.size) ??
-      (isLoadAllPhotos ? photos.items.length : `${photos.items.length}+`),
+  const albumIsEmpty = computed(() =>
+    typeof albumSize.value === "string"
+      ? gallery.grid.items.length === 0
+      : albumSize.value === 0,
   );
 
   useScreenSpinner(() => !isInit.value);
@@ -77,7 +74,7 @@ export function useAlbum(
 
     // защищаем от переполнения
     if (
-      photosMaxItems.value - photos.items.length < 1000 &&
+      photosMaxItems.value - gallery.grid.items.length < 1000 &&
       !isLoadAllPhotos.value
     ) {
       photosMaxItems.value += countOneLoad;
@@ -92,7 +89,7 @@ export function useAlbum(
     onSwitchPhoto,
     imagePreloader,
   } = useCurrentPhoto(
-    photos,
+    gallery.grid,
     photosMap,
     photoId,
     ownerId,
@@ -101,16 +98,17 @@ export function useAlbum(
     onMoreLoad,
   );
   const previewPreloader = useImagePreloader({
-    max: () => columns.value * 4,
+    max: () => gallery.columns.value * 4,
     freeze: () => Boolean(currentPhoto.value),
   });
 
-  const { setLastScrollTop } = useScrollRestore(() => albumRef.value?.$el);
+  const { setLastScrollTop } = useScrollRestore(
+    () => gallery.componentRef.value?.$el,
+  );
 
   const onClearPhotos = () => {
-    photos.clear();
+    gallery.grid.clear();
     photosMap.value.clear();
-    endIndex.value = 0;
     photosMaxItems.value = countOneLoad;
     isLoadAllPhotos.value = false;
     setLastScrollTop(undefined);
@@ -154,7 +152,7 @@ export function useAlbum(
 
     isLoadingPhotos.value = true;
     screenError.value = undefined;
-    const offset = photos.items.length;
+    const offset = gallery.grid.items.length;
     const count = currentPhotosMaxItems - offset;
     try {
       const apiService = await vkStore.getApiService();
@@ -173,13 +171,13 @@ export function useAlbum(
 
       for (let newPhoto of items) {
         newPhoto.__state = {
-          index: photos.items.length,
+          index: gallery.grid.items.length,
         };
         photosMap.value.set(
           PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id),
           newPhoto,
         );
-        photos.push(newPhoto);
+        gallery.grid.push(newPhoto);
       }
     } catch (ex: any) {
       screenError.value = errorToString(ex);
@@ -190,15 +188,11 @@ export function useAlbum(
   };
 
   const onScrollerUpdate = () => {
-    if (!albumRef.value) {
+    if (!gallery.componentRef.value) {
       return;
     }
 
-    const endRowIndex = Math.round(
-      albumRef.value.scrollOffset / sizes.value.height,
-    );
-    endIndex.value = columns.value * endRowIndex;
-    if (endIndex.value + countOneLoad / 3 < photosMaxItems.value) {
+    if (gallery.endIndex.value + countOneLoad / 3 < photosMaxItems.value) {
       return;
     }
 
@@ -206,10 +200,14 @@ export function useAlbum(
   };
 
   const preloadNextPreviews = () => {
-    const previewPhotos = photos.items
-      .slice(endIndex.value + columns.value, endIndex.value + columns.value * 2)
+    const previewPhotos = gallery.grid.items
+      .slice(
+        gallery.endIndex.value + gallery.columns.value,
+        gallery.endIndex.value + gallery.columns.value * 2,
+      )
       .map(
-        (photo) => PhotoHelper.getPreviewSize(photo.sizes, sizes.value)?.url,
+        (photo) =>
+          PhotoHelper.getPreviewSize(photo.sizes, gallery.sizes.value)?.url,
       );
     previewPreloader.preloadPhoto(previewPhotos);
   };
@@ -225,7 +223,7 @@ export function useAlbum(
 
     albumHistoryItem.value.subtitle = `${album.value.title} (${
       currentPhotoIndex.value + 1
-    } из ${albumCount.value})`;
+    } из ${albumSize.value})`;
   });
 
   watch(
@@ -257,8 +255,8 @@ export function useAlbum(
     () => {
       if (toStr(photoId.value).length && !isLoadingPhotos.value) {
         if (photo.value !== undefined) {
-          albumRef.value?.scrollToIndex(
-            Math.floor(photo.value.__state.index / columns.value),
+          gallery.componentRef.value?.scrollToIndex(
+            Math.floor(photo.value.__state.index / gallery.columns.value),
           );
         } else if (!screenError.value) {
           onMoreLoad();
@@ -268,17 +266,21 @@ export function useAlbum(
     { immediate: true, deep: true },
   );
 
-  watch(endIndex, (endIndex, prevIndex) => {
+  watch(gallery.endIndex, (endIndex, prevIndex) => {
     if (prevIndex >= endIndex) return;
     preloadNextPreviews();
   });
 
   return {
-    photos,
+    componentRef: gallery.componentRef,
+    sizes: gallery.sizes,
+    position: gallery.position,
+    photos: gallery.grid,
     imagePreloader,
     previewPreloader,
     album,
-    albumCount,
+    albumSize,
+    albumIsEmpty,
     currentPhoto,
     currentPhotoIndex,
     setCurrentPhotoId,
@@ -288,8 +290,5 @@ export function useAlbum(
     screenError,
     onScrollerUpdate,
     onSwitchPhoto,
-    albumRef,
-    sizes,
-    position,
   };
 }

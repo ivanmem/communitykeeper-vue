@@ -32,7 +32,7 @@ export type IPhotoEmit = typeof emit;
 
 const props = defineProps<{
   photo: IPhoto;
-  count?: number | string;
+  size?: number | string;
 }>();
 
 const appStore = useApp();
@@ -114,7 +114,7 @@ const onWheel = useThrottleFn(
       actions.onPhotoPrev();
     }
   },
-  () => appStore.isMacOS ? 100 : 20,
+  () => (appStore.isMacOS ? 100 : 20),
 );
 
 const swipesConfig = toRef(() => groupsStore.swipesConfig);
@@ -174,7 +174,7 @@ onDeactivated(() => {
       alt=""
     />
     <PhotoCounter
-      :count="count"
+      :size="size"
       :date-time="dateTime"
       :photo-index="photo.__state.index"
       :show-info="showInfo"

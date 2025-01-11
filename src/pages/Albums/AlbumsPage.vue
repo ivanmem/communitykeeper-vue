@@ -17,7 +17,7 @@ const {
   albums,
   previewPreloader,
   onScrollerUpdate,
-  albumsRef,
+  componentRef,
   screenError,
   sizes,
 } = useAlbums(() => props.ownerId);
@@ -55,7 +55,7 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
         </code>
       </div>
       <VList
-        ref="albumsRef"
+        ref="componentRef"
         #default="{ item: indexes, index }"
         :data="albums.indexes"
         :item-size="sizes.height"

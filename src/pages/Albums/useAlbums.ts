@@ -1,4 +1,4 @@
-import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
+import { computed, MaybeRefOrGetter, ref, toRef, toValue, watch } from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
@@ -8,17 +8,14 @@ import {
   wallAlbumStatic,
 } from "@/pages/Albums/consts";
 import { useVk } from "@/store/vk/vk";
-import { useSizesColumns } from "@/shared/composables/useSizesColumns";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import { useScrollRestore } from "@/shared/composables/useScrollRestore";
-// @ts-ignore
-import { VList } from "virtua/vue";
-import { useGridArray } from "@/shared/composables/useGridArray";
 import { errorToString } from "@/shared/helpers/errorToString";
 import { useImagePreloader } from "@/shared/composables/useImagePreloader";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { VK_ERROR_CODE } from "@/shared/constants/consts";
 import { isVKError } from "vkontakte-api";
+import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
 
 const countOneLoad = 100;
 
@@ -33,22 +30,21 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const group = ref<IGroup | undefined>();
   const staticAlbums = computed(() => getStaticAlbums(ownerId.value));
   const staticAlbumsCount = ref(0);
-  const albumsRef = ref<InstanceType<typeof VList>>();
-  const { sizes, columns } = useSizesColumns(
-    albumsRef,
-    AlbumsPreviewSizesInitial,
-  );
-  const albums = useGridArray<IAlbumItem>(columns);
-  const endIndex = ref<number>(0);
-  const screenError = ref<any>();
-  const previewPreloader = useImagePreloader({ max: () => columns.value * 4 });
+  const gallery = useGalleryComponent<IAlbumItem>(AlbumsPreviewSizesInitial);
 
-  const { setLastScrollTop } = useScrollRestore(() => albumsRef.value?.$el);
+  const screenError = ref<any>();
+  const previewPreloader = useImagePreloader({
+    max: () => gallery.columns.value * 4,
+  });
+
+  const { setLastScrollTop } = useScrollRestore(
+    () => gallery.componentRef.value?.$el,
+  );
 
   const onClearComponent = () => {
     isInit.value = false;
     isLoadingAlbums.value = false;
-    albums.clear();
+    gallery.grid.clear();
     albumsMaxItems.value = 0;
     group.value = undefined;
     screenError.value = undefined;
@@ -56,15 +52,11 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   };
 
   const onScrollerUpdate = () => {
-    if (!albumsRef.value) {
+    if (!gallery.componentRef.value) {
       return;
     }
 
-    const endRowIndex = Math.round(
-      albumsRef.value.scrollOffset / sizes.value.height,
-    );
-    endIndex.value = columns.value * endRowIndex;
-    if (endIndex.value + countOneLoad / 3 < albumsMaxItems.value) {
+    if (gallery.endIndex.value + countOneLoad / 3 < albumsMaxItems.value) {
       return;
     }
 
@@ -72,10 +64,14 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   };
 
   const preloadNextPreviews = () => {
-    const previewPhotos = albums.items
-      .slice(endIndex.value + columns.value, endIndex.value + columns.value * 2)
+    const previewPhotos = gallery.grid.items
+      .slice(
+        gallery.endIndex.value + gallery.columns.value,
+        gallery.endIndex.value + gallery.columns.value * 2,
+      )
       .map(
-        (album) => PhotoHelper.getPreviewSize(album.sizes, sizes.value)?.url,
+        (album) =>
+          PhotoHelper.getPreviewSize(album.sizes, gallery.sizes.value)?.url,
       );
     previewPreloader.preloadPhoto(previewPhotos);
   };
@@ -95,7 +91,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
             album_id: wallAlbumStatic.id,
             owner_id: +ownerId.value,
           });
-          albums.push(wallAlbum);
+          gallery.grid.push(wallAlbum);
           staticAlbumsCount.value = 1;
         } catch (ex: any) {
           if (
@@ -105,7 +101,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
           ) {
             screenError.value = errorToString(ex);
           } else {
-            albums.push(...staticAlbums.value);
+            gallery.grid.push(...staticAlbums.value);
             staticAlbumsCount.value = staticAlbums.value.length;
           }
         }
@@ -124,7 +120,10 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       }
 
       isLoadingAlbums.value = true;
-      const offset = Math.max(0, albums.items.length - staticAlbumsCount.value);
+      const offset = Math.max(
+        0,
+        gallery.grid.items.length - staticAlbumsCount.value,
+      );
       const count = albumsMaxItems.value - offset - staticAlbumsCount.value;
       if (count > 0) {
         try {
@@ -134,7 +133,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
             offset,
             count,
           });
-          albums.push(...items);
+          gallery.grid.push(...items);
         } catch (ex: any) {
           if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
             screenError.value = errorToString(ex);
@@ -149,19 +148,19 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     { immediate: true },
   );
 
-  watch(endIndex, (endIndex, prevIndex) => {
+  watch(gallery.endIndex, (endIndex, prevIndex) => {
     if (prevIndex >= endIndex) return;
     preloadNextPreviews();
   });
 
   return {
+    componentRef: gallery.componentRef,
+    sizes: gallery.sizes,
     isInit,
     group,
-    albums,
+    albums: gallery.grid,
     previewPreloader,
     onScrollerUpdate,
-    albumsRef,
     screenError,
-    sizes,
   };
 }
