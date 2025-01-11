@@ -16,6 +16,19 @@ import { router } from "@/router";
   const vuetify = createVuetify({
     components: isDev ? await import("vuetify/components") : undefined,
     directives: isDev ? await import("vuetify/directives") : undefined,
+    defaults: {
+      VLabel: {},
+      VDialog: {
+        closeOnBack: true,
+        scrim: "black",
+      },
+      VSwitch: {
+        color: "primary",
+      },
+      global: {
+        clearable: true,
+      },
+    },
     icons: {
       defaultSet: "custom",
       aliases: {

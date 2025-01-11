@@ -7,7 +7,6 @@ import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import { onBeforeMount, ref, shallowRef, watch } from "vue";
 import { switchFullscreen } from "@/shared/helpers/switchFullscreen";
-import { VDefaultsProvider, VToolbar } from "vuetify/components";
 import BaseSpinner from "@/components/BaseSpinner";
 import DynamicDialog from "@/shared/widgets/DynamicDialog.vue";
 import NavigationMenu from "@/shared/widgets/NavigationMenu.vue";
@@ -23,21 +22,6 @@ let unmounted = useUnmounted();
 useColorScheme();
 const fullscreenElement = ref(document.fullscreenElement);
 const init = ref(false);
-const vuetifyDefaults: VDefaultsProvider["defaults"] = {
-  VLabel: {},
-  VDialog: {
-    closeOnBack: true,
-    scrim: "black",
-  },
-  VSwitch: {
-    color: "primary",
-  },
-  global: {
-    clearable: true,
-  },
-};
-
-const win = window;
 
 const onKeyDown = (e: KeyboardEvent) => {
   if (e.code === "F11" && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
@@ -114,64 +98,62 @@ watch(
 
 <template>
   <VThemeProvider :theme="darkColorScheme ? 'dark' : 'light'">
-    <VDefaultsProvider :defaults="vuetifyDefaults">
-      <div
-        :data-fullscreen="appStore.isFullScreen"
-        :data-platform="appStore.platform"
-        class="overflow-block app"
-        tabindex="0"
-        @keydown="onKeyDown"
-      >
-        <BaseSpinner v-show="!groupsStore.isInit || appStore.isLoading" />
-        <template v-if="groupsStore.isInit">
-          <VToolbar
-            class="navigation-header navigation-header-height navigation-header-padding-right"
-            density="compact"
-          >
-            <VToolbarTitle style="flex-grow: 5">
-              <SingleLineDynamicFont
-                id="caption"
-                class="overflow-block navigation-caption"
-              >
-                {{ appStore.caption }}
-              </SingleLineDynamicFont>
-            </VToolbarTitle>
-            <VSpacer></VSpacer>
-            <div id="navigation-header__right"></div>
-            <VBtn
-              v-if="route.path !== '/'"
-              :icon="LinkIcon"
-              title="Скопировать текущую ссылку"
-              variant="text"
-              @click="
-                vkService.copyText(`vk.com/app${appStore.appId}#` + route.path);
-                LinkIcon = icons.Icon24CopyOutline;
-              "
-            />
-            <VBtn
-              v-if="useApp().isVkCom"
-              :icon="
-                fullscreenElement
-                  ? icons.Icon24FullscreenExit
-                  : icons.Icon24Fullscreen
-              "
-              variant="text"
-              @click="switchFullscreen()"
-            />
-          </VToolbar>
-          <div class="overflow-block route-view">
-            <RouterView v-if="init" v-slot="{ Component }">
-              <KeepAlive :max="3" exclude="AAlbum">
-                <component :is="Component" />
-              </KeepAlive>
-            </RouterView>
-          </div>
+    <div
+      :data-fullscreen="appStore.isFullScreen"
+      :data-platform="appStore.platform"
+      class="overflow-block app"
+      tabindex="0"
+      @keydown="onKeyDown"
+    >
+      <BaseSpinner v-show="!groupsStore.isInit || appStore.isLoading" />
+      <template v-if="groupsStore.isInit">
+        <VToolbar
+          class="navigation-header navigation-header-height navigation-header-padding-right"
+          density="compact"
+        >
+          <VToolbarTitle style="flex-grow: 5">
+            <SingleLineDynamicFont
+              id="caption"
+              class="overflow-block navigation-caption"
+            >
+              {{ appStore.caption }}
+            </SingleLineDynamicFont>
+          </VToolbarTitle>
+          <VSpacer></VSpacer>
+          <div id="navigation-header__right"></div>
+          <VBtn
+            v-if="route.path !== '/'"
+            :icon="LinkIcon"
+            title="Скопировать текущую ссылку"
+            variant="text"
+            @click="
+              vkService.copyText(`vk.com/app${appStore.appId}#` + route.path);
+              LinkIcon = icons.Icon24CopyOutline;
+            "
+          />
+          <VBtn
+            v-if="useApp().isVkCom"
+            :icon="
+              fullscreenElement
+                ? icons.Icon24FullscreenExit
+                : icons.Icon24Fullscreen
+            "
+            variant="text"
+            @click="switchFullscreen()"
+          />
+        </VToolbar>
+        <div class="overflow-block route-view">
+          <RouterView v-if="init" v-slot="{ Component }">
+            <KeepAlive :max="3" exclude="AAlbum">
+              <component :is="Component" />
+            </KeepAlive>
+          </RouterView>
+        </div>
 
-          <NavigationMenu />
-          <DynamicDialog />
-        </template>
-      </div>
-    </VDefaultsProvider>
+        <NavigationMenu />
+        <DynamicDialog />
+      </template>
+    </div>
   </VThemeProvider>
 </template>
 
