@@ -21,16 +21,32 @@ const Icon16Link: any = h(icons.Icon16Link, { style: { width: "16px" } });
 const Icon16FolderOutline: any = h(icons.Icon16FolderOutline, {
   style: { width: "16px" },
 });
+
 const route = useRoute();
 const groupsStore = useGroups();
 const dialogStore = useDialog();
-const queryParams = computed(() => route.query as AddPageQueryParams);
+const isActivated = useActivated();
+
 const newGroup = reactive({
   id: "",
   folder: "",
   linkOrId: "",
 });
-const isActivated = useActivated();
+
+const currentGroup = ref<undefined | IGroup>();
+const valid = ref(false);
+
+const queryParams = computed(() => route.query as AddPageQueryParams);
+const localGroup = computed(() => groupsStore.localGroups[newGroup.id]);
+const isGroupAdded = computed(() => newGroup.id && localGroup.value);
+
+const savedIsEqual = computed(() => {
+  if (!localGroup.value) {
+    return false;
+  }
+
+  return localGroup.value.folder === newGroup.folder;
+});
 
 const addGroup = async () => {
   const id = toNumber(newGroup.id);
@@ -77,12 +93,6 @@ const removeGroup = async () => {
   await groupsStore.autoSaveCurrentLocalGroups();
 };
 
-const isGroupAdded = computed(
-  () => newGroup.id && groupsStore.localGroups[newGroup.id],
-);
-
-const currentGroup = ref<undefined | IGroup>();
-
 const onLinkOrIdChanged = async () => {
   if (toStr(currentGroup.value?.id) === toStr(newGroup.linkOrId)) {
     return;
@@ -109,10 +119,6 @@ const onRemoveAllGroups = async () => {
   }
 };
 
-watch(currentGroup, () => {
-  newGroup.id = currentGroup.value?.id.toString() ?? "";
-});
-
 const onHelp = () => {
   dialogStore.alert({
     title: "💡 Справка",
@@ -121,6 +127,10 @@ const onHelp = () => {
 - создать или применить резервную копию.`,
   });
 };
+
+watch(currentGroup, () => {
+  newGroup.id = currentGroup.value?.id.toString() ?? "";
+});
 
 // для подгрузки текущей группы без смены фокуса на поле используем debounce
 watchDebounced(
@@ -145,8 +155,6 @@ watch(
   },
   { immediate: true },
 );
-
-const valid = ref(false);
 </script>
 
 <template>
@@ -195,7 +203,9 @@ const valid = ref(false);
         />
         <VRow no-gutters style="gap: 10px; margin-top: 10px">
           <VBtn
-            :disabled="!currentGroup || !valid || !newGroup.folder.trim()"
+            :disabled="
+              !currentGroup || !valid || !newGroup.folder.trim() || savedIsEqual
+            "
             :prepend-icon="icons.Icon24AddSquareOutline"
             @click="addGroup"
           >
