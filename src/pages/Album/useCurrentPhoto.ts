@@ -9,6 +9,7 @@ import { useApp } from "@/store/app/app";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { GridArray } from "@/shared/composables/useGridArray";
 import { useImagePreloader } from "@/shared/composables/useImagePreloader";
+import { useDialog } from "@/store/dialog/dialog";
 
 export function useCurrentPhoto(
   photos: GridArray<IPhoto>,
@@ -23,6 +24,7 @@ export function useCurrentPhoto(
   const route = useRoute();
   const groupsStore = useGroups();
   const appStore = useApp();
+  const dialogStore = useDialog();
   const currentPhotoIndex = ref<number | undefined>();
   const currentPhoto = computed(() => getPhotoByIndex(currentPhotoIndex.value));
   const imagePreloader = useImagePreloader({ max: 10 });
@@ -128,6 +130,15 @@ export function useCurrentPhoto(
     currentIndex = getNewIndex(currentIndex, next);
     if (groupsStore.config.skipLowResolutionPhotos) {
       currentIndex = await getSwitchPhotoBig(currentIndex, next);
+      if (!photos.items[currentIndex]) {
+        const disableSkip = await dialogStore.confirm(
+          `Отсутствуют фото с высоким разрешением. Отключить пропуск?`,
+        );
+        if (disableSkip) {
+          groupsStore.switchSkipLowResolutionPhotos();
+          return onSwitchPhoto(next);
+        }
+      }
     }
 
     return await setCurrentPhotoIndex(currentIndex, next);

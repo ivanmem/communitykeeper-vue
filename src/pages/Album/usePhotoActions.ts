@@ -76,11 +76,6 @@ export function usePhotoActions(
     return PhotoHelper.downloadPhoto(photo.value);
   };
 
-  const onSwitchSkipLowResolutionPhotos = () => {
-    groupsStore.config.skipLowResolutionPhotos =
-      !groupsStore.config.skipLowResolutionPhotos;
-  };
-
   const onPhotoExit = () => {
     emit("photo:exit");
   };
@@ -141,7 +136,7 @@ export function usePhotoActions(
           : "Пропускать"
       } фото с маленьким размером`,
       icon: styledIcons.Icon16SkipToAction,
-      onClick: onSwitchSkipLowResolutionPhotos,
+      onClick: groupsStore.switchSkipLowResolutionPhotos,
     });
     items.push({
       label: "Выйти из просмотра фото",
@@ -160,7 +155,7 @@ export function usePhotoActions(
     onOpenOriginalSizePhoto,
     onShare,
     onDownload,
-    onSwitchSkipLowResolutionPhotos,
+    onSwitchSkipLowResolutionPhotos: groupsStore.switchSkipLowResolutionPhotos,
     onPhotoExit,
     onPhotoPrev,
     onPhotoNext,

@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
-import { GroupState, IGroup, IGroupCounters, IGroupsExport, ILocalGroup } from "@/store/groups/types";
+import {
+  GroupState,
+  IGroup,
+  IGroupCounters,
+  IGroupsExport,
+  ILocalGroup,
+} from "@/store/groups/types";
 import toNumber from "lodash-es/toNumber";
 import { useVk } from "@/store/vk/vk";
 import { isGroupBanned } from "@/shared/helpers/isGroupBanned";
@@ -11,7 +17,11 @@ import { saveAs } from "file-saver";
 import { toStr } from "@/shared/helpers/toStr";
 import { watchDebounced } from "@vueuse/core";
 import { folderRules, maxFolderLength } from "@/shared/constants/formConsts";
-import { actionSwipesDefaults, actionSwipesDict, VK_STORAGE } from "@/shared/constants/consts";
+import {
+  actionSwipesDefaults,
+  actionSwipesDict,
+  VK_STORAGE,
+} from "@/shared/constants/consts";
 import last from "lodash-es/last";
 
 export interface FiltersType {
@@ -436,6 +446,10 @@ export const useGroups = defineStore("groups", {
       }
 
       this.filters.folder = this.folders[currentIndex - 1];
+    },
+    switchSkipLowResolutionPhotos() {
+      this.config.skipLowResolutionPhotos =
+        !this.config.skipLowResolutionPhotos;
     },
   },
   getters: {
