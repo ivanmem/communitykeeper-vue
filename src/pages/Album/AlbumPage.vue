@@ -105,8 +105,8 @@ const onHelp = () => {
   </FixedTeleport>
   <div class="a-album vkuiGroup__inner Group__inner">
     <template v-if="isInit && group">
-      <div style="padding-inline: 16px">
-        <VBreadcrumbs density="compact">
+      <div>
+        <VBreadcrumbs density="compact" style="padding-inline: 16px">
           <VBreadcrumbsItem style="padding-left: 0" to="/">
             Группы
           </VBreadcrumbsItem>
@@ -127,10 +127,16 @@ const onHelp = () => {
 
         <div
           v-if="isInit"
-          style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap"
+          style="
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            flex-wrap: wrap;
+            padding-inline: 16px;
+          "
         >
           <div
-            v-if="isInit && !elementsIsEmpty && !isLoadingPhotos"
+            v-if="!elementsIsEmpty && (!albumIsEmpty || !isLoadingPhotos)"
             class="a-album__position"
           >
             {{ position }} из {{ albumSize }} фото
@@ -145,11 +151,9 @@ const onHelp = () => {
             :false-icon="styledIcons.Icon24SortOutlineOpacity50"
             :true-icon="icons.Icon24SortOutline"
             class="a-album__reverse-order"
-            :disabled="isLoadingPhotos"
             hide-details
             label="В обратном порядке"
             style="flex-grow: 0"
-            :loading="isLoadingPhotos"
           />
         </div>
 
@@ -158,7 +162,6 @@ const onHelp = () => {
           :icon="icons.Icon24ErrorCircleOutline"
           color="deep-purple-accent-4"
           lines="one"
-          style="padding-block: 8px"
         >
           <VBannerText>Элементы отсутствуют</VBannerText>
         </VBanner>
