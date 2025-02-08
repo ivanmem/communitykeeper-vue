@@ -13,11 +13,11 @@ const props = defineProps<{
     height: number;
     width: number;
   };
-  componentRef: any;
+  componentRef: InstanceType<typeof VList> | undefined;
 }>();
 
 const emit = defineEmits<{
-  "update:componentRef": [componentRef: any];
+  "update:componentRef": [componentRef: InstanceType<typeof VList> | undefined];
   "update:scroll": [];
   "select:photo": [index: number];
 }>();
