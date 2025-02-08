@@ -9,7 +9,7 @@ import { computed, toRef } from "vue";
 import { router } from "@/router";
 import FixedTeleport from "@/components/FixedTeleport";
 import { useDialog } from "@/store/dialog/dialog";
-import { computedAsync } from "@vueuse/core";
+import { computedAsync, useThrottle } from "@vueuse/core";
 import { IGroup } from "@/store/groups/types";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 // @ts-ignore
@@ -93,6 +93,21 @@ const onHelp = () => {
 Вы можете перейти в полноэкранный режим клавишей F11, либо нажатием по специальной кнопке справа от справки.`,
   });
 };
+
+const positionLabel = useThrottle(
+  computed(() => {
+    if (
+      elementsIsEmpty.value ||
+      isNaN(position.value) ||
+      (albumIsEmpty.value && isLoadingPhotos.value)
+    ) {
+      return undefined;
+    }
+
+    return `${position.value} из ${albumSize.value} фото`;
+  }),
+  1000,
+);
 </script>
 
 <template>
@@ -135,11 +150,8 @@ const onHelp = () => {
             padding-inline: 16px;
           "
         >
-          <div
-            v-if="!elementsIsEmpty && (!albumIsEmpty || !isLoadingPhotos)"
-            class="a-album__position"
-          >
-            {{ position }} из {{ albumSize }} фото
+          <div v-if="positionLabel" class="a-album__position">
+            {{ positionLabel }}
           </div>
           <code v-if="screenError" class="vkuiFormField--status-error">
             {{ screenError }}
