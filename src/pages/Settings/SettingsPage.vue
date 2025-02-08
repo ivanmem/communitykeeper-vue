@@ -5,6 +5,7 @@ import { useVk } from "@/store/vk/vk";
 import {
   actionSwipesDefaults,
   actionSwipesOptions,
+  actionSwipesSelectAppendIcon,
   actionSwipesSelectLabels,
   icons,
   styledIcons,
@@ -134,6 +135,7 @@ const dialogStore = useDialog();
         :label="actionSwipesSelectLabels[swipeKey as never]"
         :model-value="groupsStore.swipesConfig[swipeKey as never]"
         item-title="title"
+        :append-inner-icon="actionSwipesSelectAppendIcon[swipeKey]"
         item-value="value"
         style="max-width: 450px"
         @update:model-value="groupsStore.setSwipeKey(swipeKey as never, $event)"

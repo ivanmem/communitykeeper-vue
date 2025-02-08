@@ -52,7 +52,7 @@ import Icon24Dropdown from "@vkontakte/icons/src/svg/24/dropdown_24.svg?componen
 import Icon24ChevronDownSmall from "@vkontakte/icons/src/svg/24/chevron_down_small_24.svg?component";
 import Icon24ChevronLeftOutline from "@vkontakte/icons/src/svg/24/chevron_left_outline_24.svg?component";
 import Icon24ChevronRightOutline from "@vkontakte/icons/src/svg/24/chevron_right_outline_24.svg?component";
-
+import Icon24ChevronLeftSquareOutline from "@vkontakte/icons/src/svg/24/chevron_left_square_outline_24.svg?component";
 import Icon20FolderMoveOutline from "@vkontakte/icons/src/svg/20/folder_move_outline_20.svg?component";
 import Icon20Clear from "@vkontakte/icons/src/svg/20/clear_20.svg?component";
 
@@ -148,6 +148,7 @@ export const icons = {
   Icon24ChevronDownSmall,
   Icon24ChevronLeftOutline,
   Icon24ChevronRightOutline,
+  Icon24ChevronLeftSquareOutline,
 
   Icon20FolderMoveOutline,
   Icon20Clear,
@@ -198,6 +199,16 @@ export const styledIcons = {
     style: `opacity: 0.5;`,
   }) as any,
   Icon24ClearDataOutline: createStyledIcon(icons.Icon28ClearDataOutline, 24),
+  Icon24ChevronLeftSquareOutline: h(icons.Icon24ChevronLeftSquareOutline, {
+    style: `transform: rotate(180deg);`,
+  }) as any,
+  Icon24ChevronRightSquareOutline: Icon24ChevronLeftSquareOutline,
+  Icon24ChevronUpSquareOutline: h(icons.Icon24ChevronLeftSquareOutline, {
+    style: `transform: rotate(-90deg);`,
+  }) as any,
+  Icon24ChevronDownSquareOutline: h(icons.Icon24ChevronLeftSquareOutline, {
+    style: `transform: rotate(90deg);`,
+  }) as any,
 };
 
 export const darkColorScheme = ref(false);
@@ -288,6 +299,13 @@ export const actionSwipesSelectLabels = {
   onDown: "Свайп вниз",
   onLeft: "Свайп влево",
   onRight: "Свайп вправо",
+};
+
+export const actionSwipesSelectAppendIcon = {
+  onUp: styledIcons.Icon24ChevronUpSquareOutline,
+  onDown: styledIcons.Icon24ChevronDownSquareOutline,
+  onLeft: styledIcons.Icon24ChevronLeftSquareOutline,
+  onRight: styledIcons.Icon24ChevronRightSquareOutline,
 };
 
 export const buildDateLocaleString = new Date(BUILD_DATE).toLocaleString();
