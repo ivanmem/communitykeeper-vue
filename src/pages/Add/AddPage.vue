@@ -1,26 +1,21 @@
 <script lang="ts" setup>
-import { computed, h, reactive, ref, watch } from "vue";
-import { useGroups } from "@/store/groups/groups";
+import { computed, reactive, ref, watch } from "vue";
+import { watchDebounced } from "@vueuse/core";
+import { useRoute } from "vue-router";
 import toNumber from "lodash-es/toNumber";
-import { icons } from "@/shared/constants/consts";
+import { useGroups } from "@/store/groups/groups";
+import { useVk } from "@/store/vk/vk";
+import { useDialog } from "@/store/dialog/dialog";
+import { icons, styledIcons } from "@/shared/constants/consts";
+import { useActivated } from "@/shared/composables/useActivated";
+import { folderRules, maxFolderLength } from "@/shared/constants/formConsts";
+import { toStr } from "@/shared/helpers/toStr";
 import { IGroup } from "@/store/groups/types";
 import GroupLink from "/src/pages/Groups/GroupLink.vue";
-import { useRoute } from "vue-router";
-import { toStr } from "@/shared/helpers/toStr";
 import { AddPageQueryParams } from "@/pages/Add/types";
-import { useDialog } from "@/store/dialog/dialog";
 import ExportBtn from "@/pages/Add/ExportBtn.vue";
 import ImportBtn from "@/pages/Add/ImportBtn.vue";
 import FixedTeleport from "@/components/FixedTeleport";
-import { useActivated } from "@/shared/composables/useActivated";
-import { folderRules, maxFolderLength } from "@/shared/constants/formConsts";
-import { watchDebounced } from "@vueuse/core";
-import { useVk } from "@/store/vk/vk";
-
-const Icon16Link: any = h(icons.Icon16Link, { style: { width: "16px" } });
-const Icon16FolderOutline: any = h(icons.Icon16FolderOutline, {
-  style: { width: "16px" },
-});
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -37,7 +32,7 @@ const currentGroup = ref<undefined | IGroup>();
 const valid = ref(false);
 
 const queryParams = computed(() => route.query as AddPageQueryParams);
-const localGroup = computed(() => groupsStore.localGroups[newGroup.id]);
+const localGroup = computed(() => groupsStore.getLocalGroupById(newGroup.id));
 const isGroupAdded = computed(() => newGroup.id && localGroup.value);
 
 const savedIsEqual = computed(() => {
@@ -182,7 +177,7 @@ watch(
           🆕 Добавить группу
         </VCardSubtitle>
         <VTextField
-          :append-inner-icon="Icon16Link"
+          :append-inner-icon="styledIcons.Icon16Link"
           :model-value="
             newGroup.linkOrId.length ? newGroup.linkOrId : undefined
           "
@@ -192,7 +187,7 @@ watch(
           @update:model-value="newGroup.linkOrId = $event ?? ''"
         />
         <VCombobox
-          :append-inner-icon="Icon16FolderOutline"
+          :append-inner-icon="styledIcons.Icon16FolderOutline"
           :counter="maxFolderLength"
           :items="groupsStore.folders"
           :model-value="newGroup.folder.trim() || undefined"
@@ -220,7 +215,7 @@ watch(
             <span>Удалить</span>
           </VBtn>
           <VBtn
-            :disabled="groupsStore.localGroupsArray.length === 0"
+            :disabled="groupsStore.localGroupsMap.size === 0"
             :prepend-icon="icons.Icon24TrashSmileOutline"
             color="deep-orange"
             @click="onRemoveAllGroups"
@@ -237,7 +232,7 @@ watch(
         data-color="green"
       >
         Группа уже добавлена в папку "{{
-          groupsStore.localGroups[newGroup.id].folder
+          groupsStore.localGroupsMap.get(newGroup.id)!.folder
         }}".
       </VCardText>
     </VCardItem>
@@ -246,7 +241,4 @@ watch(
     </VCardItem>
   </VCard>
 </template>
-<style lang="scss">
-.a-add {
-}
-</style>
+<style lang="scss"></style>

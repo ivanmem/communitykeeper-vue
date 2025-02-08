@@ -10,6 +10,6 @@ const groupsStore = useGroups();
 <template>
   <PermissionGroups
     :component="GroupsPage"
-    :force-show="!groupsStore.localGroupsArray.length"
+    :force-show="!groupsStore.localGroupsMap.size"
   />
 </template>

@@ -189,7 +189,9 @@ export const icons = {
 };
 
 export const styledIcons = {
+  Icon16Link: createStyledIcon(icons.Icon16Link, 16),
   Icon16FolderMoveOutline: createStyledIcon(icons.Icon20FolderMoveOutline, 16),
+  Icon16FolderOutline: createStyledIcon(icons.Icon16FolderOutline, 16),
   Icon16Fullscreen: createStyledIcon(icons.Icon24Fullscreen, 16),
   Icon16FullscreenExit: createStyledIcon(icons.Icon24FullscreenExit, 16),
   Icon16SkipToAction: createStyledIcon(icons.Icon24SkipToAction, 16),

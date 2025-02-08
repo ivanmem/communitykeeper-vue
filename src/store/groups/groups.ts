@@ -23,6 +23,7 @@ import {
   VK_STORAGE,
 } from "@/shared/constants/consts";
 import last from "lodash-es/last";
+import { toNumberOrUndefined } from "@/shared/helpers/toNumberOrUndefined";
 
 export interface FiltersType {
   folder: string;
@@ -71,7 +72,7 @@ export enum OnlyAccessEnum {
 }
 
 interface GroupsState {
-  localGroupsArray: ILocalGroup[];
+  localGroupsMap: Map<number | string, ILocalGroup>;
   groupsMap: Map<number, IGroup>;
   filters: FiltersType;
   isInit: boolean;
@@ -109,7 +110,7 @@ export interface IGroupsConfig {
 export const useGroups = defineStore("groups", {
   state: (): GroupsState => {
     return {
-      localGroupsArray: [],
+      localGroupsMap: new Map(),
       groupsMap: new Map(),
       filters: {
         folder: "",
@@ -167,7 +168,7 @@ export const useGroups = defineStore("groups", {
       console.info("groups store init");
     },
     async updateCurrentLocalGroups() {
-      this.localGroupsArray.length = 0;
+      this.localGroupsMap.clear();
       const dictLocalGroups = await this.getCurrentLocalGroups();
       Object.keys(dictLocalGroups).forEach((folder) => {
         const groupsIds = dictLocalGroups[folder];
@@ -177,7 +178,7 @@ export const useGroups = defineStore("groups", {
         }
 
         groupsIds.forEach((id) => {
-          this.localGroupsArray.push({
+          this.localGroupsMap.set(id, {
             id,
             folder,
           });
@@ -185,7 +186,7 @@ export const useGroups = defineStore("groups", {
       });
     },
     async loadNotLoadGroups() {
-      const ids = from(Object.keys(this.localGroups))
+      const ids = from(this.localGroupsMap.keys())
         .select(toNumber)
         .where((id) => !this.groupsMap.has(id))
         .toArray();
@@ -222,8 +223,16 @@ export const useGroups = defineStore("groups", {
         chunksCount === 0 ? 0 : chunksCount / (VK_STORAGE.chunksMaxCount * 0.01)
       ).toFixed(0);
     },
-    getLocalGroupById(id: number): ILocalGroup | undefined {
-      return this.localGroups[id];
+    getLocalGroupById(id: number | string): ILocalGroup | undefined {
+      const idNum = toNumberOrUndefined(id);
+      if (idNum !== undefined) {
+        const localGroup = this.localGroupsMap.get(idNum);
+        if (localGroup !== undefined) {
+          return localGroup;
+        }
+      }
+
+      return this.localGroupsMap.get(`${id}`);
     },
     getExport(folders: string[]): IGroupsExport {
       const groupIdsDictByFolderName = folders.reduce(
@@ -285,24 +294,20 @@ export const useGroups = defineStore("groups", {
         return;
       }
 
-      const currentIndex = this.localGroupsArray.findIndex(
-        (x) => x.id === localGroup.id,
-      );
-      // если группа уже существует - перезаписываем
-      if (currentIndex !== -1) {
-        this.localGroupsArray[currentIndex] = localGroup;
+      this.localGroupsMap.set(localGroup.id, localGroup);
+    },
+    removeLocalGroup(id: number | Set<number>) {
+      if (id instanceof Set) {
+        for (const idGroup of id) {
+          this.localGroupsMap.delete(idGroup);
+        }
         return;
       }
 
-      this.localGroupsArray.push(localGroup);
-    },
-    removeLocalGroup(id: number | Set<number>) {
-      this.localGroupsArray = this.localGroupsArray.filter((x) =>
-        typeof id === "number" ? x.id !== id : !id.has(x.id),
-      );
+      this.localGroupsMap.delete(id);
     },
     removeLocalGroups() {
-      this.localGroupsArray.length = 0;
+      this.localGroupsMap.clear();
       this.groupsMap.clear();
     },
     async loadGroupCounters(group: IGroup) {
@@ -374,14 +379,13 @@ export const useGroups = defineStore("groups", {
     async saveCurrentLocalGroups() {
       const loadingFinisher = useApp().getLoadingFinisher();
       try {
-        const allData = this.localGroupsArray.reduce(
-          (data, localGroup) => {
-            data[localGroup.folder] ??= new Set();
-            data[localGroup.folder].add(localGroup.id);
-            return data;
-          },
-          {} as Record<string, Set<number>>,
-        );
+        const allData: Record<string, Set<number>> = {};
+
+        this.localGroupsMap.forEach((localGroup) => {
+          allData[localGroup.folder] ??= new Set();
+          allData[localGroup.folder].add(localGroup.id);
+        });
+
         const stringifyStr = JSON.stringify(allData, (_key, value) => {
           return value instanceof Set ? [...value] : value;
         });
@@ -473,7 +477,7 @@ export const useGroups = defineStore("groups", {
       return array;
     },
     folders(): string[] {
-      return from(this.localGroupsArray)
+      return from(this.localGroupsMap.values())
         .select((x) => x.folder)
         .distinct()
         .toArray();
@@ -487,18 +491,13 @@ export const useGroups = defineStore("groups", {
     groupsIdsReverse(): number[] {
       return from(this.groupsMap.keys()).reverse().toArray();
     },
-    localGroups(): Record<number | string, ILocalGroup> {
-      return from(this.localGroupsArray).toObject((x) => x.id);
-    },
     groupIdsDictByFolderName(): Record<string, number[]> {
-      return this.localGroupsArray.reduce(
-        (dict, value) => {
-          dict[value.folder] ??= [];
-          dict[value.folder].push(value.id);
-          return dict;
-        },
-        {} as Record<string, number[]>,
-      );
+      const dict: Record<string, number[]> = {};
+      this.localGroupsMap.forEach((value) => {
+        dict[value.folder] ??= [];
+        dict[value.folder].push(value.id);
+      });
+      return dict;
     },
     groupIdsByCurrentFolderName(): number[] {
       if (!this.filters.folder) {
@@ -511,7 +510,7 @@ export const useGroups = defineStore("groups", {
     isGroupCountersCurrentFolderLoaded(): boolean {
       return !this.groupsIds.some((id) => {
         const group = this.groupsMap.get(id)!;
-        const localGroup = this.localGroups[id];
+        const localGroup = this.localGroupsMap.get(id);
         if (!localGroup) {
           return false;
         }

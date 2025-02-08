@@ -200,11 +200,11 @@ const onImportFileChange = (event: any) => {
 
 const onSaveImport = async () => {
   const foldersChangedValue = foldersChanged.value;
-  const oldGroupsCount = groupsStore.localGroupsArray.length;
+  const oldGroupsCount = groupsStore.localGroupsMap.size;
   groupsStore.saveImport(selectedData.value);
   await groupsStore.autoSaveCurrentLocalGroups();
   await groupsStore.loadNotLoadGroups();
-  const newGroupsCount = groupsStore.localGroupsArray.length;
+  const newGroupsCount = groupsStore.localGroupsMap.size;
   dialogStore.alert({
     title: "Импорт завершён",
     subtitle: `Новых групп: ${

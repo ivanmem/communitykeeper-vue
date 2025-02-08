@@ -75,7 +75,7 @@ const link = computed(() => `vk.com/public${props.group.id}`);
 const { toClipboard } = useClipboard({ appendToBody: true });
 
 const onOpenContextMenu = (e: MouseEvent) => {
-  const isGroupAdded = groupsStore.groupsMap.has(props.group.id);
+  const isGroupAdded = groupsStore.localGroupsMap.has(props.group.id);
   const items: MenuItem[] = [];
   items.push({
     label: "Скопировать ссылку",
@@ -101,7 +101,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
       return router.push(`/albums/-${props.group.id}`);
     },
   });
-  
+
   if (isGroupAdded) {
     items.push({
       label: "Заменить",

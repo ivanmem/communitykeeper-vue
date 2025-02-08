@@ -125,7 +125,7 @@ async function onCopyJson(event: any) {
       <VList class="mb-2" density="compact" style="flex-grow: 100">
         <VListItem
           v-if="groupsStore.folders.length > 1"
-          :subtitle="`Групп: ${groupsStore.localGroupsArray.length}`"
+          :subtitle="`Групп: ${groupsStore.localGroupsMap.size}`"
           :variant="
             folders.size === groupsStore.folders.length ? 'tonal' : 'flat'
           "
