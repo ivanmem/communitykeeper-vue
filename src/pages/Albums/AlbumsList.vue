@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { VList } from "virtua/vue";
-import type { GridArray } from "@/shared/types/grid";
-import type { IAlbumItem } from "@/shared/types/album";
 import AlbumsPreview from "@/pages/Albums/AlbumsPreview.vue";
+import type { GridArray } from "@/shared/composables/useGridArray";
+import type { IAlbumItem } from "@/store/vk/IAlbumItem";
 
 const props = defineProps<{
   albums: GridArray<IAlbumItem>;
@@ -32,7 +32,7 @@ const componentRef = computed({
     :data="albums.indexes"
     :item-size="sizes.height"
     class="a-albums-list"
-    @scroll="emit('scroll')"
+    @scroll="emit('update:scroll')"
   >
     <div
       :key="albums.items[indexes?.[0]]?.id ?? index"

@@ -7,7 +7,6 @@ import FixedTeleport from "@/components/FixedTeleport";
 import { useDialog } from "@/store/dialog/dialog";
 import BaseButton from "@/components/BaseButton";
 import { useGroups } from "@/store/groups/groups";
-// @ts-ignore
 import { VList } from "virtua/vue";
 
 const groupSearch = useGroupSearch();

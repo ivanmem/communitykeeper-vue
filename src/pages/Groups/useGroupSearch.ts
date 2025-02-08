@@ -4,7 +4,6 @@ import GroupHelper from "@/shared/helpers/GroupHelper";
 import { useSwipes } from "@/shared/composables/useSwipes";
 import { useActivated } from "@/shared/composables/useActivated";
 import { useScrollRestore } from "@/shared/composables/useScrollRestore";
-// @ts-ignore
 import type { VList } from "virtua/vue";
 
 export type UseGroupSearch = ReturnType<typeof useGroupSearch>;
