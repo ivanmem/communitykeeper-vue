@@ -2,7 +2,7 @@
 import { computed, useSlots } from "vue";
 import { icons } from "@/shared/constants/consts";
 import { useRoute, useRouter } from "vue-router";
-import isString from "lodash-es/isString";
+import { isString } from "es-toolkit/compat";
 import { BaseButtonProps } from "@/components/BaseButton/BaseButton";
 
 const props = defineProps<BaseButtonProps>();
@@ -58,7 +58,7 @@ const hasContent = computed(() => {
       <component
         :is="
           typeof props.icon === 'string'
-            ? icons[props.icon] ?? props.icon
+            ? (icons[props.icon] ?? props.icon)
             : props.icon
         "
         :data-has-content="hasContent"

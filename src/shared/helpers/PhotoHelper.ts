@@ -1,5 +1,5 @@
 import { IPhotoSize } from "vkontakte-api";
-import last from "lodash-es/last";
+import { last } from "es-toolkit/compat";
 import isNumeric from "@/shared/helpers/isNumeric";
 import { VK_MAX_PHOTO_SIZE } from "@/shared/constants/consts";
 import { ComputedRef } from "vue";

@@ -6,7 +6,7 @@ import {
   IGroupsExport,
   ILocalGroup,
 } from "@/store/groups/types";
-import toNumber from "lodash-es/toNumber";
+import { last, toNumber } from "es-toolkit/compat";
 import { useVk } from "@/store/vk/vk";
 import { isGroupBanned } from "@/shared/helpers/isGroupBanned";
 import { IAppInitOptions, useApp } from "@/store/app/app";
@@ -22,7 +22,6 @@ import {
   actionSwipesDict,
   VK_STORAGE,
 } from "@/shared/constants/consts";
-import last from "lodash-es/last";
 import { toNumberOrUndefined } from "@/shared/helpers/toNumberOrUndefined";
 
 export interface FiltersType {

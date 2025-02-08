@@ -5,7 +5,7 @@ import { useVk } from "@/store/vk/vk";
 import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
 import { IGroup, IPhoto } from "@/store/groups/types";
 import { from } from "linq-to-typescript";
-import isNumber from "lodash-es/isNumber";
+import { isNumber } from "es-toolkit/compat";
 import type {
   ICheckLinkParams,
   ICheckLinkResult,

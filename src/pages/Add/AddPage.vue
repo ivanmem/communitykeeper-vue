@@ -2,7 +2,7 @@
 import { computed, reactive, ref, watch } from "vue";
 import { watchDebounced } from "@vueuse/core";
 import { useRoute } from "vue-router";
-import toNumber from "lodash-es/toNumber";
+import { toNumber } from "es-toolkit/compat";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import { useDialog } from "@/store/dialog/dialog";

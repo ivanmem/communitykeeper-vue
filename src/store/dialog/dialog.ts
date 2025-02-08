@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { DialogOpenOptions, DialogState } from "@/store/dialog/types";
-import uniqueId from "lodash-es/uniqueId";
+import { uniqueId } from "es-toolkit/compat";
 import { markRaw } from "vue";
 import AlertDialog, { AlertDialogProps } from "@/components/AlertDialog";
 
