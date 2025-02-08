@@ -1,24 +1,19 @@
 <script lang="ts" setup>
-import GroupHelper from "@/shared/helpers/GroupHelper";
-import { openUrl } from "@/shared/helpers/openUrl";
-import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
-import { icons, styledIcons } from "@/shared/constants/consts";
 import { useAlbum } from "@/pages/Album/useAlbum";
 import { useGroups } from "@/store/groups/groups";
 import { computed, toRef } from "vue";
-import { router } from "@/router";
 import FixedTeleport from "@/components/FixedTeleport";
 import { useDialog } from "@/store/dialog/dialog";
 import { computedAsync, useThrottle } from "@vueuse/core";
 import { IGroup } from "@/store/groups/types";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
-// @ts-ignore
-import { VList } from "virtua/vue";
-import AlbumPreview from "@/pages/Album/AlbumPreview.vue";
 import AlbumPhoto from "@/pages/Album/AlbumPhoto.vue";
 import ImagePreloader from "@/components/ImagePreloader";
+import { icons } from "@/shared/constants/consts";
+import AlbumBreadcrumbs from "./AlbumBreadcrumbs.vue";
+import AlbumControls from "./AlbumControls.vue";
+import AlbumList from "./AlbumList.vue";
 
-const { Icon16ChevronOutline } = icons;
 const props = defineProps<{
   ownerId: number | string;
   albumId: number | string;
@@ -47,6 +42,7 @@ const {
   () => props.albumId,
   () => props.photoId,
 );
+
 const elementsIsEmpty = computed(
   () =>
     isInit.value &&
@@ -57,10 +53,6 @@ const elementsIsEmpty = computed(
 
 const groupsStore = useGroups();
 const dialogStore = useDialog();
-const albumUrl = computed(() =>
-  PhotoHelper.getAlbumUrl(props.ownerId, props.albumId),
-);
-const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 const group = computedAsync<IGroup | undefined>(
   () => groupsStore.getGroupByIdOrLoad(-props.ownerId),
   undefined,
@@ -121,53 +113,19 @@ const positionLabel = useThrottle(
   <div class="a-album vkuiGroup__inner Group__inner">
     <template v-if="isInit && group">
       <div>
-        <VBreadcrumbs density="compact" style="padding-inline: 16px">
-          <VBreadcrumbsItem style="padding-left: 0" to="/">
-            Группы
-          </VBreadcrumbsItem>
-          <Icon16ChevronOutline />
-          <VBreadcrumbsItem
-            :href="`https://${ownerUrl}`"
-            :title="GroupHelper.getName(group)"
-            @click.prevent="router.replace(`/albums/${ownerId}`)"
-          />
-          <Icon16ChevronOutline />
-          <VBreadcrumbsItem
-            :href="`https://${albumUrl}`"
-            :title="album?.title ?? 'Альбом'"
-            style="opacity: 0.7"
-            @click.prevent="openUrl(`//${albumUrl}`)"
-          />
-        </VBreadcrumbs>
+        <AlbumBreadcrumbs
+          :album-id="albumId"
+          :album-title="album?.title"
+          :group="group"
+          :owner-id="ownerId"
+        />
 
-        <div
-          v-if="isInit"
-          style="
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            flex-wrap: wrap;
-            padding-inline: 16px;
-          "
-        >
-          <div v-if="positionLabel" class="a-album__position">
-            {{ positionLabel }}
-          </div>
-          <code v-if="screenError" class="vkuiFormField--status-error">
-            {{ screenError }}
-          </code>
-          <VSpacer />
-          <VSwitch
-            v-if="!screenError && (isLoadingPhotos || !albumIsEmpty)"
-            v-model="groupsStore.config.reverseOrder"
-            :false-icon="styledIcons.Icon24SortOutlineOpacity50"
-            :true-icon="icons.Icon24SortOutline"
-            class="a-album__reverse-order"
-            hide-details
-            label="В обратном порядке"
-            style="flex-grow: 0"
-          />
-        </div>
+        <AlbumControls
+          :album-is-empty="albumIsEmpty"
+          :is-loading-photos="isLoadingPhotos"
+          :position-label="positionLabel"
+          :screen-error="screenError"
+        />
 
         <VBanner
           v-if="elementsIsEmpty"
@@ -179,26 +137,14 @@ const positionLabel = useThrottle(
         </VBanner>
       </div>
 
-      <VList
-        :key="`${photos.items[photos.indexes[0]?.[0]]?.id}`"
-        ref="componentRef"
-        #default="{ item: indexes, index }"
-        :data="photos.indexes"
-        :item-size="sizes.height"
-        class="a-album__items"
-        @scroll="onScrollerUpdate()"
-      >
-        <div :key="photos.items[indexes?.[0]]?.id ?? index" class="a-album-row">
-          <AlbumPreview
-            v-for="index in indexes"
-            :key="photos.items[index].id"
-            :index="index"
-            :photo="photos.items[index]"
-            :sizes="sizes"
-            @click="setCurrentPhotoIndex(index)"
-          />
-        </div>
-      </VList>
+      <AlbumList
+        v-model:component-ref="componentRef"
+        :photos="photos"
+        :sizes="sizes"
+        @update:scroll="onScrollerUpdate"
+        @select:photo="setCurrentPhotoIndex"
+      />
+
       <AlbumPhoto
         v-if="currentPhoto"
         :photo="currentPhoto"
@@ -222,23 +168,5 @@ const positionLabel = useThrottle(
   flex-grow: 1;
   gap: 5px;
   overflow: auto;
-}
-
-.a-album-row {
-  display: flex;
-}
-
-.a-album__items {
-  flex-grow: 1;
-}
-
-.a-album__position {
-  font-size: 12px;
-}
-
-.a-album__reverse-order {
-  .v-label {
-    font-size: 12px;
-  }
 }
 </style>

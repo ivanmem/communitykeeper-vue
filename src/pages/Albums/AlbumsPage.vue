@@ -9,7 +9,7 @@ import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { VList } from "virtua/vue";
 import ImagePreloader from "@/components/ImagePreloader";
 
-const { Icon16Link, Icon16ChevronOutline } = icons;
+const { Icon16ChevronOutline } = icons;
 const props = defineProps<{ ownerId: number | string }>();
 const {
   isInit,
@@ -46,7 +46,6 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
           <VBreadcrumbsItem
             :href="`https://${ownerUrl}`"
             :title="group?.name || 'Источник'"
-            style="opacity: 0.7"
             @click.prevent="openUrl(`//${ownerUrl}`)"
           />
         </VBreadcrumbs>
