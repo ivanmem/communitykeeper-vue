@@ -117,6 +117,7 @@ watch(
         ref="reference"
         v-model="groupsStore.filters.search"
         class="TopSearch__input"
+        maxlength="50"
         placeholder="Поиск"
       />
       <div
