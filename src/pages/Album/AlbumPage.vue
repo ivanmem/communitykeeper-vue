@@ -35,6 +35,7 @@ const {
   isLoadingPhotos,
   screenError,
   componentRef,
+  albumPhotoRef,
   sizes,
   position,
 } = useAlbum(
@@ -78,7 +79,7 @@ const onHelp = () => {
 - поиск оригинала;
 - отображать в оригинальном размере или расширить на весь экран;
 - информация;
-- пропускать фото с маленьким размером или не пропускать (подстраиваясь под разрешение Вашего экрана).
+- открыть настройки пропуска фото по определённым условиям;
 
 При просмотре фото сделайте свайп вниз, чтобы открыть дополнительную информацию.
 
@@ -147,6 +148,7 @@ const positionLabel = useThrottle(
 
       <AlbumPhoto
         v-if="currentPhoto"
+        ref="albumPhotoRef"
         :photo="currentPhoto"
         :size="albumSize"
         @photo:prev="onSwitchPhoto(false)"

@@ -11,11 +11,13 @@ import { useElementSize, useScroll } from "@vueuse/core";
 import { useSizesColumns } from "@/shared/composables/useSizesColumns";
 import { AlbumsPreviewSizesInitial } from "@/pages/Albums/consts";
 import { useGridArray } from "@/shared/composables/useGridArray";
+import type AlbumPhoto from "@/pages/Album/AlbumPhoto.vue";
 
 export function useGalleryComponent<T>(
   initialSizes: MaybeRefOrGetter<{ width: number; height: number }>,
 ) {
   const componentRef = ref<InstanceType<typeof VList>>();
+  const albumPhotoRef = ref<InstanceType<typeof AlbumPhoto>>();
   const el = toRef(() => componentRef.value?.$el as HTMLDivElement | undefined);
   const { y: elScrollOffset, measure } = useScroll(el);
 
@@ -63,6 +65,7 @@ export function useGalleryComponent<T>(
 
   return {
     componentRef,
+    albumPhotoRef,
     el,
     elScrollOffset,
     endIndex,

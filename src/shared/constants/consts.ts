@@ -268,10 +268,10 @@ export const actionSwipesDict = new Map<string, IActionDictValue>([
   ],
   ["smi", { label: "Информация", name: "onShowMoreInfo" }],
   [
-    "sslrp",
+    "oss",
     {
-      label: "Пропускать фото с маленьким размером",
-      name: "onSwitchSkipLowResolutionPhotos",
+      label: "Настройки пропуска фото",
+      name: "onOpenSkipSettings",
     },
   ],
   ["pe", { label: "Выйти из просмотра фото", name: "onPhotoExit" }],

@@ -100,6 +100,7 @@ export interface IGroupsConfig {
   originalSizePhoto?: boolean;
   reverseOrder?: boolean;
   skipLowResolutionPhotos?: boolean;
+  skipLowLikesPhotos?: boolean;
   gallery?: boolean;
   opacityGalleryCounter?: number;
   swipes?: GallerySwipesConfig;
@@ -453,6 +454,9 @@ export const useGroups = defineStore("groups", {
     switchSkipLowResolutionPhotos() {
       this.config.skipLowResolutionPhotos =
         !this.config.skipLowResolutionPhotos;
+    },
+    switchSkipLowLikesPhotos() {
+      this.config.skipLowLikesPhotos = !this.config.skipLowLikesPhotos;
     },
   },
   getters: {

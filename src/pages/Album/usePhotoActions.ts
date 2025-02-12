@@ -12,6 +12,7 @@ import PhotoShareDialog, {
   PhotoShareDialogProps,
 } from "@/pages/Album/PhotoShareDialog.vue";
 import { useOpenPhoto } from "@/pages/Album/useOpenPhoto";
+import PhotoSkipSettingsDialog from "@/pages/Album/PhotoSkipSettingsDialog.vue";
 
 export function usePhotoActions(
   photoGetter: MaybeRefOrGetter<IPhoto>,
@@ -63,6 +64,13 @@ export function usePhotoActions(
     if (originalSize.value) {
       openUrl(originalSize.value.url);
     }
+  };
+
+  const onOpenSkipSettings = () => {
+    dialogStore.open<PhotoShareDialogProps>({
+      component: PhotoSkipSettingsDialog,
+      props: { photo: photo.value },
+    });
   };
 
   const onShare = () => {
@@ -130,13 +138,9 @@ export function usePhotoActions(
       onClick: onShowMoreInfo,
     });
     items.push({
-      label: `${
-        groupsStore.config.skipLowResolutionPhotos
-          ? "Не пропускать"
-          : "Пропускать"
-      } фото с маленьким размером`,
+      label: "Настройки пропуска",
       icon: styledIcons.Icon16SkipToAction,
-      onClick: groupsStore.switchSkipLowResolutionPhotos,
+      onClick: onOpenSkipSettings,
     });
     items.push({
       label: "Выйти из просмотра фото",
@@ -155,7 +159,7 @@ export function usePhotoActions(
     onOpenOriginalSizePhoto,
     onShare,
     onDownload,
-    onSwitchSkipLowResolutionPhotos: groupsStore.switchSkipLowResolutionPhotos,
+    onOpenSkipSettings,
     onPhotoExit,
     onPhotoPrev,
     onPhotoNext,

@@ -150,6 +150,10 @@ const dateTime = computed(() => {
 onDeactivated(() => {
   showMoreInfo.value = false;
 });
+
+defineExpose({
+  photoDiv,
+});
 </script>
 <template>
   <div

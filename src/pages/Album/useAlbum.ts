@@ -87,6 +87,7 @@ export function useAlbum(
     onSwitchPhoto,
     imagePreloader,
   } = useCurrentPhoto(
+    gallery.albumPhotoRef,
     gallery.grid,
     photosMap,
     photoId,
@@ -271,6 +272,7 @@ export function useAlbum(
 
   return {
     componentRef: gallery.componentRef,
+    albumPhotoRef: gallery.albumPhotoRef,
     sizes: gallery.sizes,
     position: gallery.position,
     photos: gallery.grid,
