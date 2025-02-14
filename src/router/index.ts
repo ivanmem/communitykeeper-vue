@@ -73,7 +73,7 @@ router.beforeResolve((to, from, next) => {
   next();
 });
 
-router.afterEach(async (to, from) => {
+router.beforeEach(async (to, from) => {
   if (to.path.startsWith("/album")) {
     let [ownerIdStr, albumIdStr] = to.path
       .substring("/album".length)
