@@ -6,7 +6,7 @@ import GroupCounters from "@/pages/Groups/GroupCounters.vue";
 import { computed, h, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useElementVisibility } from "@vueuse/core";
-import { icons, styledIcons } from "@/shared/constants/consts";
+import { styledIcons } from "@/shared/constants/consts";
 import { showContextMenu } from "@/shared/helpers/showContextMenu";
 import GroupHelper from "@/shared/helpers/GroupHelper";
 import { MenuItem } from "@imengyu/vue3-context-menu";
@@ -16,6 +16,14 @@ import { AddPageQueryParams } from "@/pages/Add/types";
 import { useDialog } from "@/store/dialog/dialog";
 import { useActivated } from "@/shared/composables/useActivated";
 import { useApp } from "@/store/app/app";
+import {
+  Icon16DeleteOutline,
+  Icon16MoreVertical,
+  Icon16ChainOutline,
+  Icon16PictureOutline,
+  Icon16DoorEnterArrowRightOutline,
+  Icon16AddSquareOutline,
+} from "vue-vkontakte-icons";
 
 const props = defineProps<{
   group: IGroup;
@@ -79,7 +87,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
   const items: MenuItem[] = [];
   items.push({
     label: "Скопировать ссылку",
-    icon: h(icons.Icon16ChainOutline),
+    icon: h(Icon16ChainOutline),
     onClick: async () => {
       try {
         await toClipboard(link.value);
@@ -96,7 +104,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
 
   items.push({
     label: "Встроенная галерея",
-    icon: h(icons.Icon16PictureOutline),
+    icon: h(Icon16PictureOutline),
     onClick: async () => {
       return router.push(`/albums/-${props.group.id}`);
     },
@@ -121,7 +129,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
   if (props.group.is_member) {
     items.push({
       label: "Выйти",
-      icon: h(icons.Icon16DoorEnterArrowRightOutline),
+      icon: h(Icon16DoorEnterArrowRightOutline),
       onClick: async () => {
         let confirm = true;
         if (props.group.is_closed) {
@@ -152,7 +160,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
     ) {
       items.push({
         label: props.group.is_closed ? `Подать заявку` : "Подписаться",
-        icon: h(icons.Icon16AddSquareOutline),
+        icon: h(Icon16AddSquareOutline),
         onClick: async () => {
           return GroupHelper.setIsMember(props.group, true);
         },
@@ -163,7 +171,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
   if (isGroupAdded) {
     items.push({
       label: "Удалить",
-      icon: h(icons.Icon16DeleteOutline, { style: { color: "red" } }),
+      icon: h(Icon16DeleteOutline, { style: { color: "red" } }),
       onClick: async () => {
         groupsStore.removeLocalGroup(props.group.id);
         await groupsStore.autoSaveCurrentLocalGroups();
@@ -233,7 +241,7 @@ watch(showCounters, () => {
       </div>
       <BaseButton
         class="a-group-link__context-menu"
-        icon="Icon16MoreVertical"
+        :icon="Icon16MoreVertical"
         @click.stop="onOpenContextMenu"
       />
     </BaseButton>

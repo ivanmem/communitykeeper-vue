@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import useClipboard from "vue-clipboard3";
-import { icons, styledIcons, VK_SHORT_LINK } from "@/shared/constants/consts";
+import { styledIcons, VK_SHORT_LINK } from "@/shared/constants/consts";
 import { computed, onDeactivated, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import BaseToolbar from "@/components/BaseToolbar";
@@ -9,8 +9,12 @@ import { useApp } from "@/store/app/app";
 import { useVk } from "@/store/vk/vk";
 import { chunkString } from "@/shared/helpers/chunkString";
 import { compressAndEncodeObject } from "@/shared/helpers/compressAndEncode";
+import {
+  Icon24CancelOutline,
+  Icon24DownloadOutline,
+  Icon24Linked,
+} from "vue-vkontakte-icons";
 
-const { Icon24CancelOutline } = icons;
 const show = ref(false);
 const showSelectExportMode = ref(false);
 const onClose = () => (show.value = false);
@@ -103,7 +107,7 @@ async function onCopyJson(event: any) {
   >
     <template v-slot:activator="{ props }">
       <VBtn
-        :prepend-icon="icons.Icon24DownloadOutline"
+        :prepend-icon="Icon24DownloadOutline"
         color="light-blue-darken-4"
         @click="onShow"
       >
@@ -191,7 +195,7 @@ async function onCopyJson(event: any) {
 
         <VBtn
           :disabled="selectedGroupsCount === 0"
-          :icon="icons.Icon24DownloadOutline"
+          :icon="Icon24DownloadOutline"
           color="light-blue-darken-4"
           title="Создать"
           @click="showSelectExportMode = true"
@@ -222,7 +226,7 @@ async function onCopyJson(event: any) {
         >
           <VBtn
             :disabled="selectedGroupsCount === 0 || appStore.isApp"
-            :prepend-icon="icons.Icon24DownloadOutline"
+            :prepend-icon="Icon24DownloadOutline"
             variant="flat"
             @click="onDownloadJsonFile"
           >
@@ -238,7 +242,7 @@ async function onCopyJson(event: any) {
           </VBtn>
           <VBtn
             :disabled="selectedGroupsCount === 0"
-            :prepend-icon="icons.Icon24Linked"
+            :prepend-icon="Icon24Linked"
             variant="flat"
             @click="onCopyLink"
           >

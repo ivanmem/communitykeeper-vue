@@ -4,9 +4,9 @@ import { computed, h } from "vue";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { router } from "@/router";
 import { showContextMenu } from "@/shared/helpers/showContextMenu";
-import { icons } from "@/shared/constants/consts";
 import { openUrl } from "@/shared/helpers/openUrl";
 import { useVk } from "@/store/vk/vk";
+import { Icon16LogoVk } from "vue-vkontakte-icons";
 
 const props = defineProps<{
   album: IAlbumItem;
@@ -21,7 +21,7 @@ const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
     {
       label: "Перейти к альбому",
-      icon: h(icons.Icon16LogoVk),
+      icon: h(Icon16LogoVk),
       onClick: () => {
         openUrl(
           `//${PhotoHelper.getAlbumUrl(props.album.owner_id, props.album.id)}`,
@@ -76,9 +76,9 @@ const onOpenAlbum = () => {
 .photos_album_title_wrap {
   background: rgb(2, 0, 36);
   background: linear-gradient(
-      0deg,
-      rgba(2, 0, 36, 0.8968181022408963) 12%,
-      rgba(255, 255, 255, 0) 100%
+    0deg,
+    rgba(2, 0, 36, 0.8968181022408963) 12%,
+    rgba(255, 255, 255, 0) 100%
   );
   bottom: 0;
   box-shadow: -2px -2px 4px 0px rgba(0, 0, 0, 0.4) inset;

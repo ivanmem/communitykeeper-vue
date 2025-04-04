@@ -2,10 +2,10 @@
 import { useAppCaption } from "@/shared/composables/useAppCaption";
 import {
   buildDateLocaleString,
-  icons,
   styledIcons,
   VK_STORAGE,
 } from "@/shared/constants/consts";
+import { Icon16Users2Outline, Icon16MessageOutline } from "vue-vkontakte-icons";
 
 useAppCaption(`Проект`);
 </script>
@@ -39,7 +39,7 @@ useAppCaption(`Проект`);
     <VCardItem style="max-width: max-content">
       <VRow no-gutters style="gap: 10px">
         <VBtn
-          :prepend-icon="icons.Icon16Users2Outline"
+          :prepend-icon="Icon16Users2Outline"
           color="light-blue-darken-4"
           href="https://vk.com/communitykeeper"
           target="_blank"
@@ -55,7 +55,7 @@ useAppCaption(`Проект`);
           Github
         </VBtn>
         <VBtn
-          :prepend-icon="icons.Icon16MessageOutline"
+          :prepend-icon="Icon16MessageOutline"
           color="light-blue-darken-4"
           href="https://vk.me/join/m50C8H_wh9ioCs9_JbRkbO_zVVTcea86D6M="
           target="_blank"

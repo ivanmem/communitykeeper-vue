@@ -2,12 +2,16 @@
 import { computed, CSSProperties, h } from "vue";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { showContextMenu } from "@/shared/helpers/showContextMenu";
-import { icons } from "@/shared/constants/consts";
 import { openUrl } from "@/shared/helpers/openUrl";
 import { IPhoto } from "@/store/groups/types";
 import { getTitleBoxShadow } from "./getTitleBoxShadow";
 import { useGroups } from "@/store/groups/groups";
 import { useOpenPhoto } from "@/pages/Album/useOpenPhoto";
+import {
+  Icon16DownloadOutline,
+  Icon16Link,
+  Icon16LogoVk,
+} from "vue-vkontakte-icons";
 
 const props = defineProps<{
   photo: IPhoto;
@@ -26,12 +30,12 @@ const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
     {
       label: "Перейти к фото",
-      icon: h(icons.Icon16LogoVk),
+      icon: h(Icon16LogoVk),
       onClick: onOpenPhoto,
     },
     {
       label: `Открыть оригинал (${originalSize.value?.width}x${originalSize.value?.height})`,
-      icon: h(icons.Icon16Link),
+      icon: h(Icon16Link),
       onClick: () => {
         if (originalSize.value) {
           openUrl(originalSize.value.url);
@@ -40,7 +44,7 @@ const onShowContextMenu = (e: MouseEvent) => {
     },
     {
       label: "Скачать",
-      icon: h(icons.Icon16DownloadOutline),
+      icon: h(Icon16DownloadOutline),
       onClick: () => {
         return PhotoHelper.downloadPhoto(props.photo);
       },

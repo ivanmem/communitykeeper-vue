@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { createVuetify } from "vuetify";
-import { icons, isDev } from "@/shared/constants/consts";
+import { isDev } from "@/shared/constants/consts";
 import Vue3ContextMenu from "@imengyu/vue3-context-menu";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import "vuetify/styles";
@@ -11,6 +11,16 @@ import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
 import "@/style.scss";
 import App from "@/App.vue";
 import { router } from "@/router";
+import {
+  Icon16LogoVk,
+  Icon20Clear,
+  Icon24ChevronLeftOutline,
+  Icon24CheckBoxOn,
+  Icon24CheckBoxIndeterminate,
+  Icon24ChevronRightOutline,
+  Icon24CheckBoxOff,
+  Icon24Dropdown,
+} from "vue-vkontakte-icons";
 
 (async () => {
   const vuetify = createVuetify({
@@ -32,45 +42,43 @@ import { router } from "@/router";
     icons: {
       defaultSet: "custom",
       aliases: {
-        collapse: icons.Icon16LogoVk,
-        complete: icons.Icon16LogoVk,
-        cancel: icons.Icon16LogoVk,
-        close: icons.Icon16LogoVk,
-        delete: icons.Icon16LogoVk,
-        clear: icons.Icon20Clear,
-        success: icons.Icon16LogoVk,
-        info: icons.Icon16LogoVk,
-        warning: icons.Icon16LogoVk,
-        error: icons.Icon16LogoVk,
-        prev: icons.Icon24ChevronLeftOutline,
-        next: icons.Icon24ChevronRightOutline,
-        checkboxOn: icons.Icon24CheckBoxOn,
-        checkboxOff: icons.Icon24CheckBoxOff,
-        checkboxIndeterminate: icons.Icon24CheckBoxIndeterminate,
-        delimiter: icons.Icon16LogoVk,
-        sort: icons.Icon16LogoVk,
-        expand: icons.Icon16LogoVk,
-        menu: icons.Icon16LogoVk,
-        subgroup: icons.Icon16LogoVk,
-        dropdown: icons.Icon24Dropdown,
-        radioOn: icons.Icon16LogoVk,
-        radioOff: icons.Icon16LogoVk,
-        edit: icons.Icon16LogoVk,
-        ratingEmpty: icons.Icon16LogoVk,
-        ratingFull: icons.Icon16LogoVk,
-        ratingHalf: icons.Icon16LogoVk,
-        loading: icons.Icon16LogoVk,
-        first: icons.Icon16LogoVk,
-        last: icons.Icon16LogoVk,
-        unfold: icons.Icon16LogoVk,
-        file: icons.Icon16LogoVk,
-        plus: icons.Icon16LogoVk,
-        minus: icons.Icon16LogoVk,
+        collapse: Icon16LogoVk,
+        complete: Icon16LogoVk,
+        cancel: Icon16LogoVk,
+        close: Icon16LogoVk,
+        delete: Icon16LogoVk,
+        clear: Icon20Clear,
+        success: Icon16LogoVk,
+        info: Icon16LogoVk,
+        warning: Icon16LogoVk,
+        error: Icon16LogoVk,
+        prev: Icon24ChevronLeftOutline,
+        next: Icon24ChevronRightOutline,
+        checkboxOn: Icon24CheckBoxOn,
+        checkboxOff: Icon24CheckBoxOff,
+        checkboxIndeterminate: Icon24CheckBoxIndeterminate,
+        delimiter: Icon16LogoVk,
+        sort: Icon16LogoVk,
+        expand: Icon16LogoVk,
+        menu: Icon16LogoVk,
+        subgroup: Icon16LogoVk,
+        dropdown: Icon24Dropdown,
+        radioOn: Icon16LogoVk,
+        radioOff: Icon16LogoVk,
+        edit: Icon16LogoVk,
+        ratingEmpty: Icon16LogoVk,
+        ratingFull: Icon16LogoVk,
+        ratingHalf: Icon16LogoVk,
+        loading: Icon16LogoVk,
+        first: Icon16LogoVk,
+        last: Icon16LogoVk,
+        unfold: Icon16LogoVk,
+        file: Icon16LogoVk,
+        plus: Icon16LogoVk,
+        minus: Icon16LogoVk,
       },
       sets: {
-        custom: {
-          ...(icons as any),
-        },
+        custom: { Icon16LogoVk } as any,
       },
     },
   });

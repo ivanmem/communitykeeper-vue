@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { icons, VK_SHORT_LINK } from "@/shared/constants/consts";
+import { VK_SHORT_LINK } from "@/shared/constants/consts";
 import { computed, ref, watch } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import BaseToolbar from "@/components/BaseToolbar";
@@ -10,8 +10,12 @@ import { IGroupsExport } from "@/store/groups/types";
 import { useRoute, useRouter } from "vue-router";
 import { useVk } from "@/store/vk/vk";
 import { decodeAndDecompressObject } from "@/shared/helpers/decodeAndDecompress";
+import {
+  Icon24CancelOutline,
+  Icon24MemoryCard,
+  Icon24UploadOutline,
+} from "vue-vkontakte-icons";
 
-const { Icon24CancelOutline } = icons;
 const router = useRouter();
 const route = useRoute();
 const show = ref(false);
@@ -228,7 +232,7 @@ watch(importFolders, () => {
     @update:model-value="show = $event"
   >
     <template v-slot:activator="{ props }">
-      <VBtn :prepend-icon="icons.Icon24UploadOutline" color="green-darken-4">
+      <VBtn :prepend-icon="Icon24UploadOutline" color="green-darken-4">
         <label>
           Загрузить
           <input
@@ -328,7 +332,7 @@ watch(importFolders, () => {
         </div>
         <VBtn
           :disabled="selectedGroups.length === 0"
-          :icon="icons.Icon24MemoryCard"
+          :icon="Icon24MemoryCard"
           color="light-blue-darken-4"
           title="Сохранить"
           @click="onSaveImport"

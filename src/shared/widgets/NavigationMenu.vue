@@ -1,7 +1,13 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
-import { icons } from "@/shared/constants/consts";
 import BaseButton from "@/components/BaseButton";
+import {
+  Icon24ArticleBoxOutline,
+  Icon24AddSquareOutline,
+  Icon24HistoryBackwardOutline,
+  Icon24GearOutline,
+  Icon24LightbulbStarOutline,
+} from "vue-vkontakte-icons";
 
 const route = useRoute();
 
@@ -13,7 +19,7 @@ const tabBarItems: Array<{
 }> = [
   {
     caption: "Группы",
-    icon: icons.Icon24ArticleBoxOutline,
+    icon: Icon24ArticleBoxOutline,
     to: "/",
     getDataType: () => {
       return route.path === "/" || route.path.startsWith("/album")
@@ -23,22 +29,22 @@ const tabBarItems: Array<{
   },
   {
     caption: "Добавить",
-    icon: icons.Icon24AddSquareOutline,
+    icon: Icon24AddSquareOutline,
     to: "/add/",
   },
   {
     caption: "История",
-    icon: icons.Icon24HistoryBackwardOutline,
+    icon: Icon24HistoryBackwardOutline,
     to: "/history/",
   },
   {
     caption: "Настройки",
-    icon: icons.Icon24GearOutline,
+    icon: Icon24GearOutline,
     to: "/settings/",
   },
   {
     caption: "Проект",
-    icon: icons.Icon24LightbulbStarOutline,
+    icon: Icon24LightbulbStarOutline,
     to: "/about/",
   },
 ];
@@ -67,8 +73,9 @@ const tabBarItems: Array<{
   align-content: space-around;
   align-items: center;
   background: var(--navigation-bottom-background);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.08),
-  0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 0 2px rgba(0, 0, 0, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.08);
   box-shadow: var(--vkui--elevation3);
   display: flex;
   justify-content: space-around;
@@ -94,11 +101,12 @@ const tabBarItems: Array<{
 
     span {
       display: block;
-      font-family: -apple-system,
-      system-ui,
-      Helvetica Neue,
-      Roboto,
-      sans-serif;
+      font-family:
+        -apple-system,
+        system-ui,
+        Helvetica Neue,
+        Roboto,
+        sans-serif;
       font-family: var(--vkui--font_footnote--font_family--regular);
       font-size: 10px;
       font-weight: var(--vkui--font_weight_accent2);

@@ -6,7 +6,7 @@ import { toNumber } from "es-toolkit/compat";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import { useDialog } from "@/store/dialog/dialog";
-import { icons, styledIcons } from "@/shared/constants/consts";
+import { styledIcons } from "@/shared/constants/consts";
 import { useActivated } from "@/shared/composables/useActivated";
 import { folderRules, maxFolderLength } from "@/shared/constants/formConsts";
 import { toStr } from "@/shared/helpers/toStr";
@@ -16,6 +16,12 @@ import { AddPageQueryParams } from "@/pages/Add/types";
 import ExportBtn from "@/pages/Add/ExportBtn.vue";
 import ImportBtn from "@/pages/Add/ImportBtn.vue";
 import FixedTeleport from "@/components/FixedTeleport";
+import {
+  Icon24AddSquareOutline,
+  Icon24DeleteOutline,
+  Icon24InfoCircleOutline,
+  Icon24TrashSmileOutline,
+} from "vue-vkontakte-icons";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -154,11 +160,7 @@ watch(
 
 <template>
   <FixedTeleport to="#navigation-header__right">
-    <VBtn
-      :icon="icons.Icon24InfoCircleOutline"
-      variant="text"
-      @click="onHelp"
-    />
+    <VBtn :icon="Icon24InfoCircleOutline" variant="text" @click="onHelp" />
   </FixedTeleport>
   <VCard class="overflow-block a-add">
     <VCardItem style="padding-top: 12px">
@@ -201,14 +203,14 @@ watch(
             :disabled="
               !currentGroup || !valid || !newGroup.folder.trim() || savedIsEqual
             "
-            :prepend-icon="icons.Icon24AddSquareOutline"
+            :prepend-icon="Icon24AddSquareOutline"
             @click="addGroup"
           >
             {{ isGroupAdded ? "Заменить" : "Добавить" }}
           </VBtn>
           <VBtn
             :disabled="!isGroupAdded"
-            :prepend-icon="icons.Icon24DeleteOutline"
+            :prepend-icon="Icon24DeleteOutline"
             data-color="red"
             @click="removeGroup"
           >
@@ -216,7 +218,7 @@ watch(
           </VBtn>
           <VBtn
             :disabled="groupsStore.localGroupsMap.size === 0"
-            :prepend-icon="icons.Icon24TrashSmileOutline"
+            :prepend-icon="Icon24TrashSmileOutline"
             color="deep-orange"
             @click="onRemoveAllGroups"
           >

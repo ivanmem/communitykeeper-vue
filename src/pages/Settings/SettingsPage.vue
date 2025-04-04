@@ -7,7 +7,6 @@ import {
   actionSwipesOptions,
   actionSwipesSelectAppendIcon,
   actionSwipesSelectLabels,
-  icons,
   styledIcons,
   VK_MAX_PHOTO_SIZE,
 } from "@/shared/constants/consts";
@@ -17,6 +16,18 @@ import FixedTeleport from "@/components/FixedTeleport";
 import { useApp } from "@/store/app/app";
 import PhotoCounter from "@/pages/Album/PhotoCounter.vue";
 import { h } from "vue";
+import {
+  Icon24SunOutline,
+  Icon12View,
+  Icon24ShadowsOutline,
+  Icon24Bug,
+  Icon24QuestionOutline,
+  Icon24Attachments,
+  Icon240CircleOutline,
+  Icon24MemoryCard,
+  Icon24CloudOutline,
+  Icon24RectangleHandPointUp,
+} from "vue-vkontakte-icons";
 
 useAppCaption("Настройки");
 const appStore = useApp();
@@ -31,7 +42,7 @@ const dialogStore = useDialog();
       :color="
         groupsStore.spaceUsed >= 80 ? 'deep-orange-darken-4' : 'green-darken-3'
       "
-      :icon="icons.Icon24CloudOutline"
+      :icon="Icon24CloudOutline"
       variant="text"
       @click="
         dialogStore.alert(
@@ -46,7 +57,7 @@ const dialogStore = useDialog();
     <div class="d-flex flex-wrap">
       <SettingsDisabledCookies />
     </div>
-    <VCardItem :append-icon="icons.Icon24MemoryCard">
+    <VCardItem :append-icon="Icon24MemoryCard">
       <VSwitch
         v-model="groupsStore.config.autoSave"
         hide-details
@@ -70,7 +81,7 @@ const dialogStore = useDialog();
       </VBtn>
     </VCardItem>
     <VDivider />
-    <VCardItem :append-icon="icons.Icon240CircleOutline">
+    <VCardItem :append-icon="Icon240CircleOutline">
       <VSwitch
         v-model="groupsStore.config.showCounters"
         hide-details
@@ -84,7 +95,7 @@ const dialogStore = useDialog();
     <VDivider />
     <VCardSubtitle style="padding-block: 12px"> 🌅 Галерея</VCardSubtitle>
     <VDivider />
-    <VCardItem :append-icon="icons.Icon24Attachments">
+    <VCardItem :append-icon="Icon24Attachments">
       <VSwitch
         v-model="groupsStore.config.gallery"
         hide-details
@@ -96,16 +107,16 @@ const dialogStore = useDialog();
       </span>
     </VCardItem>
     <VDivider />
-    <VCardItem :append-icon="icons.Icon24SunOutline" style="margin-top: 10px">
+    <VCardItem :append-icon="Icon24SunOutline" style="margin-top: 10px">
       <div style="margin-bottom: 10px">
         Непрозрачность счётчика при просмотре фото
       </div>
       <VSlider
-        :append-icon="icons.Icon12View"
+        :append-icon="Icon12View"
         :max="100"
         :min="0"
         :model-value="groupsStore.config.opacityGalleryCounter ?? 100"
-        :prepend-icon="h(icons.Icon12View, { style: { opacity: 0.1 } }) as any"
+        :prepend-icon="h(Icon12View, { style: { opacity: 0.1 } }) as any"
         hide-details
         thumb-label
         @update:model-value="groupsStore.config.opacityGalleryCounter = $event"
@@ -123,7 +134,7 @@ const dialogStore = useDialog();
     </VCardItem>
     <VDivider />
     <VCardItem
-      :append-icon="icons.Icon24RectrangleHandPointUp"
+      :append-icon="Icon24RectangleHandPointUp"
       style="margin-top: 10px"
     >
       <div style="margin-bottom: 10px">
@@ -143,7 +154,7 @@ const dialogStore = useDialog();
       </VSelect>
     </VCardItem>
     <VDivider />
-    <VCardItem :append-icon="icons.Icon24ShadowsOutline">
+    <VCardItem :append-icon="Icon24ShadowsOutline">
       <VSwitch
         v-model="groupsStore.config.previewSizeShadow"
         hide-details
@@ -160,7 +171,7 @@ const dialogStore = useDialog();
     <VDivider />
     <VCardSubtitle style="padding-block: 12px"> 🐞 Тестирование</VCardSubtitle>
     <VDivider />
-    <VCardItem :append-icon="icons.Icon24Bug">
+    <VCardItem :append-icon="Icon24Bug">
       <VSwitch
         v-model="appStore.config.eruda"
         hide-details
@@ -173,7 +184,7 @@ const dialogStore = useDialog();
         Очистить кэш счётчиков
       </VBtn>
     </VCardItem>
-    <VCardItem :append-icon="icons.Icon24QuestionOutline">
+    <VCardItem :append-icon="Icon24QuestionOutline">
       <VBtn variant="tonal" @click="appStore.initSlides()">
         Повторить приветствие
       </VBtn>

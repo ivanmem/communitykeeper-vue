@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed, useSlots } from "vue";
-import { icons } from "@/shared/constants/consts";
 import { useRoute, useRouter } from "vue-router";
 import { isString } from "es-toolkit/compat";
 import { BaseButtonProps } from "@/components/BaseButton/BaseButton";
@@ -56,11 +55,7 @@ const hasContent = computed(() => {
   <button :data-type="dataType" class="a-button" @click="onClick">
     <template v-if="props.icon">
       <component
-        :is="
-          typeof props.icon === 'string'
-            ? (icons[props.icon] ?? props.icon)
-            : props.icon
-        "
+        :is="props.icon"
         :data-has-content="hasContent"
         :style="props.iconStyle"
         class="a-button__icon"

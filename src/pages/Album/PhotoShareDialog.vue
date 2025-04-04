@@ -1,12 +1,9 @@
 <script lang="ts" setup>
 import useClipboard from "vue-clipboard3";
 import { IPhoto } from "@/store/groups/types";
-import bridge from "@vkontakte/vk-bridge";
 import { computed, onActivated, onDeactivated, shallowRef } from "vue";
-import Icon24CopyOutline from "@vkontakte/icons/src/svg/24/copy_outline_24.svg?component";
-import Icon24Linked from "@vkontakte/icons/src/svg/24/linked_24.svg?component";
-import { icons } from "@/shared/constants/consts";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
+import { Icon24CopyOutline, Icon24Linked } from "vue-vkontakte-icons";
 
 export interface PhotoShareDialogProps {
   photo: IPhoto;

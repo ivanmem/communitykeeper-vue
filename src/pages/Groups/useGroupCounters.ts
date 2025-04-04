@@ -1,8 +1,13 @@
 import { computed, unref } from "vue";
 import { MaybeRef } from "@vueuse/core";
 import { IGroup, IGroupCounters } from "@/store/groups/types";
-import { icons } from "@/shared/constants/consts";
 import { useGroups } from "@/store/groups/groups";
+import {
+  Icon28ArticleOutline,
+  Icon28Attachments,
+  Icon28PictureOutline,
+  Icon28Video,
+} from "vue-vkontakte-icons";
 
 export interface IGroupCounter {
   icon: any;
@@ -11,13 +16,6 @@ export interface IGroupCounter {
   label: string;
   key: keyof IGroupCounters;
 }
-
-const {
-  Icon28PictureOutline,
-  Icon28Attachments,
-  Icon28Video,
-  Icon28ArticleOutline,
-} = icons;
 
 export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
   const groupsStore = useGroups();

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import { icons, styledIcons } from "@/shared/constants/consts";
+import { styledIcons } from "@/shared/constants/consts";
 import { UseGroupSearch } from "@/pages/Groups/useGroupSearch";
 import BaseButton from "@/components/BaseButton";
 import {
@@ -11,8 +11,12 @@ import {
 import GroupsTabs from "@/pages/Groups/GroupsTabs.vue";
 import { useApp } from "@/store/app/app";
 import { useDialog } from "@/store/dialog/dialog";
+import {
+  Icon24SortOutline,
+  Icon24Filter,
+  Icon16CrossCircleSmall,
+} from "vue-vkontakte-icons";
 
-const { Icon24Filter, Icon16CrossCircleSmall } = icons;
 const props = defineProps<{
   groupSearch: UseGroupSearch;
 }>();
@@ -173,7 +177,7 @@ watch(
               <VSwitch
                 v-model="groupsStore.filters.sortDesc"
                 :false-icon="styledIcons.Icon24SortOutlineOpacity50"
-                :true-icon="icons.Icon24SortOutline"
+                :true-icon="Icon24SortOutline"
                 label="В обратном порядке"
               />
               <VBtn

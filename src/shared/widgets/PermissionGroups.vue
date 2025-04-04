@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { icons } from "@/shared/constants/consts";
 import { useVk } from "@/store/vk/vk";
 import BaseButton from "@/components/BaseButton";
 import { computed, onActivated, ref } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import { useActiveRoute } from "@/shared/composables/useActiveRoute";
+import { Icon24KeyOutline } from "vue-vkontakte-icons";
 
 const props = defineProps<{ component: any; forceShow?: boolean }>();
 const vkStore = useVk();
@@ -45,17 +45,16 @@ const isShowComponent = computed(
 <template>
   <div v-if="isShowBanner" class="a-permission-groups">
     <VBanner
-      :icon="icons.Icon24KeyOutline"
+      :icon="Icon24KeyOutline"
       class="a-permission-groups__banner"
       color="deep-purple-accent-4"
       lines="one"
     >
       <div>
-        Требуется доступ. Без него приложение не может корректно отображать информацию о группах!
+        Требуется доступ. Без него приложение не может корректно отображать
+        информацию о группах!
       </div>
-      <div
-        class="a-permission-groups__access-btn"
-      >
+      <div class="a-permission-groups__access-btn">
         <BaseButton @click="onInit()">Разрешить</BaseButton>
       </div>
     </VBanner>

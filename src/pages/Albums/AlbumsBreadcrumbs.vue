@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { icons } from "@/shared/constants/consts";
 import { openUrl } from "@/shared/helpers/openUrl";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
-
-const { Icon16ChevronOutline } = icons;
+import { Icon16ChevronOutline } from "vue-vkontakte-icons";
 
 const props = defineProps<{
   ownerId: number | string;

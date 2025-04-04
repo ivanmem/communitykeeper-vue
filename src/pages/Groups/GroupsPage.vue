@@ -2,12 +2,15 @@
 import { useGroupSearch } from "@/pages/Groups/useGroupSearch";
 import GroupsSearch from "@/pages/Groups/GroupsSearch.vue";
 import GroupLink from "@/pages/Groups/GroupLink.vue";
-import { icons } from "@/shared/constants/consts";
 import FixedTeleport from "@/components/FixedTeleport";
 import { useDialog } from "@/store/dialog/dialog";
 import BaseButton from "@/components/BaseButton";
 import { useGroups } from "@/store/groups/groups";
 import { VList } from "virtua/vue";
+import {
+  Icon24ErrorCircleOutline,
+  Icon24InfoCircleOutline,
+} from "vue-vkontakte-icons";
 
 const groupSearch = useGroupSearch();
 const { groupsRef, groupsOrder, showFilters } = groupSearch;
@@ -34,11 +37,7 @@ const onHelp = () => {
 
 <template>
   <FixedTeleport to="#navigation-header__right">
-    <VBtn
-      :icon="icons.Icon24InfoCircleOutline"
-      variant="text"
-      @click="onHelp"
-    />
+    <VBtn :icon="Icon24InfoCircleOutline" variant="text" @click="onHelp" />
   </FixedTeleport>
   <div
     class="a-groups vkuiGroup__inner Group__inner"
@@ -49,7 +48,7 @@ const onHelp = () => {
     <GroupsSearch :group-search="groupSearch" />
     <div v-if="!groupsOrder.length">
       <VBanner
-        :icon="icons.Icon24ErrorCircleOutline"
+        :icon="Icon24ErrorCircleOutline"
         color="deep-purple-accent-4"
         lines="one"
         style="padding-block: 8px"

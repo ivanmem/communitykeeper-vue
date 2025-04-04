@@ -9,10 +9,13 @@ import { IGroup } from "@/store/groups/types";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import AlbumPhoto from "@/pages/Album/AlbumPhoto.vue";
 import ImagePreloader from "@/components/ImagePreloader";
-import { icons } from "@/shared/constants/consts";
 import AlbumBreadcrumbs from "./AlbumBreadcrumbs.vue";
 import AlbumControls from "./AlbumControls.vue";
 import AlbumList from "./AlbumList.vue";
+import {
+  Icon24ErrorCircleOutline,
+  Icon24InfoCircleOutline,
+} from "vue-vkontakte-icons";
 
 const props = defineProps<{
   ownerId: number | string;
@@ -105,11 +108,7 @@ const positionLabel = useThrottle(
 
 <template>
   <FixedTeleport to="#navigation-header__right">
-    <VBtn
-      :icon="icons.Icon24InfoCircleOutline"
-      variant="text"
-      @click="onHelp"
-    />
+    <VBtn :icon="Icon24InfoCircleOutline" variant="text" @click="onHelp" />
   </FixedTeleport>
   <div class="a-album vkuiGroup__inner Group__inner">
     <template v-if="isInit && group">
@@ -130,7 +129,7 @@ const positionLabel = useThrottle(
 
         <VBanner
           v-if="elementsIsEmpty"
-          :icon="icons.Icon24ErrorCircleOutline"
+          :icon="Icon24ErrorCircleOutline"
           color="deep-purple-accent-4"
           lines="one"
         >

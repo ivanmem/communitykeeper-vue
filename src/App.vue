@@ -2,7 +2,7 @@
 import { useRoute } from "vue-router";
 import { useColorScheme } from "@/shared/composables/useColorScheme";
 import { useApp } from "@/store/app/app";
-import { darkColorScheme, icons } from "@/shared/constants/consts";
+import { darkColorScheme } from "@/shared/constants/consts";
 import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import { onBeforeMount, ref, shallowRef, watch } from "vue";
@@ -12,6 +12,12 @@ import DynamicDialog from "@/shared/widgets/DynamicDialog.vue";
 import NavigationMenu from "@/shared/widgets/NavigationMenu.vue";
 import { useUnmounted } from "@/shared/composables/useUnmounted";
 import SingleLineDynamicFont from "@/components/SingleLineDynamicFont/SingleLineDynamicFont.vue";
+import {
+  Icon24CopyOutline,
+  Icon24Linked,
+  Icon24FullscreenExit,
+  Icon24Fullscreen,
+} from "vue-vkontakte-icons";
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -53,6 +59,7 @@ watch(
   },
   { immediate: true },
 );
+
 watch(
   () => vkStore.webAppConfig,
   () => {
@@ -86,12 +93,12 @@ watch(
   { immediate: true },
 );
 
-const LinkIcon = shallowRef(icons.Icon24Linked);
+const LinkIcon = shallowRef(Icon24Linked);
 
 watch(
   () => route.path,
   () => {
-    LinkIcon.value = icons.Icon24Linked;
+    LinkIcon.value = Icon24Linked;
   },
 );
 </script>
@@ -128,16 +135,12 @@ watch(
             variant="text"
             @click="
               vkService.copyText(`vk.com/app${appStore.appId}#` + route.path);
-              LinkIcon = icons.Icon24CopyOutline;
+              LinkIcon = Icon24CopyOutline;
             "
           />
           <VBtn
             v-if="useApp().isVkCom"
-            :icon="
-              fullscreenElement
-                ? icons.Icon24FullscreenExit
-                : icons.Icon24Fullscreen
-            "
+            :icon="fullscreenElement ? Icon24FullscreenExit : Icon24Fullscreen"
             variant="text"
             @click="switchFullscreen()"
           />

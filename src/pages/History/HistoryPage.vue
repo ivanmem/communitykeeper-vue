@@ -3,7 +3,6 @@ import { useHistory } from "@/store/history/history";
 import { toRef } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { IGroup } from "@/store/groups/types";
-import { icons } from "@/shared/constants/consts";
 import FixedTeleport from "@/components/FixedTeleport";
 import { from } from "linq-to-typescript";
 import { useDialog } from "@/store/dialog/dialog";
@@ -11,6 +10,10 @@ import { useSmartOpenUrl } from "@/shared/composables/useSmartOpenLink";
 import { computedAsync } from "@vueuse/core";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
+import {
+  Icon24DeleteOutline,
+  Icon24InfoCircleOutline,
+} from "vue-vkontakte-icons";
 
 const historyStore = useHistory();
 const groupsStore = useGroups();
@@ -109,16 +112,12 @@ const onHelp = () => {
 <template>
   <FixedTeleport to="#navigation-header__right">
     <VBtn
-      :icon="icons.Icon24DeleteOutline"
+      :icon="Icon24DeleteOutline"
       title="Очистить историю просмотров"
       variant="text"
       @click="onClear"
     />
-    <VBtn
-      :icon="icons.Icon24InfoCircleOutline"
-      variant="text"
-      @click="onHelp"
-    />
+    <VBtn :icon="Icon24InfoCircleOutline" variant="text" @click="onHelp" />
   </FixedTeleport>
   <VCard v-if="items !== undefined" class="overflow-block">
     <VSheet

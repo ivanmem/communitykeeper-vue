@@ -6,13 +6,22 @@ import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { useGroups } from "@/store/groups/groups";
 import { IPhotoEmit } from "@/pages/Album/AlbumPhoto.vue";
 import { MenuItem } from "@imengyu/vue3-context-menu";
-import { icons, styledIcons } from "@/shared/constants/consts";
+import { styledIcons } from "@/shared/constants/consts";
 import { showContextMenu } from "@/shared/helpers/showContextMenu";
 import PhotoShareDialog, {
   PhotoShareDialogProps,
 } from "@/pages/Album/PhotoShareDialog.vue";
 import { useOpenPhoto } from "@/pages/Album/useOpenPhoto";
 import PhotoSkipSettingsDialog from "@/pages/Album/PhotoSkipSettingsDialog.vue";
+import {
+  Icon16ArticleOutline,
+  Icon16DoorEnterArrowRightOutline,
+  Icon16DownloadOutline,
+  Icon16Link,
+  Icon16LogoVk,
+  Icon16SearchStarsOutline,
+  Icon16Share,
+} from "vue-vkontakte-icons";
 
 export function usePhotoActions(
   photoGetter: MaybeRefOrGetter<IPhoto>,
@@ -100,27 +109,27 @@ export function usePhotoActions(
     const items: MenuItem[] = [];
     items.push({
       label: "Перейти к фото",
-      icon: h(icons.Icon16LogoVk),
+      icon: h(Icon16LogoVk),
       onClick: onOpenPhoto,
     });
     items.push({
       label: `Открыть оригинал (${originalSize.value?.width}x${originalSize.value?.height})`,
-      icon: h(icons.Icon16Link),
+      icon: h(Icon16Link),
       onClick: onOpenOriginalSizePhoto,
     });
     items.push({
       label: "Поделиться",
-      icon: h(icons.Icon16Share),
+      icon: h(Icon16Share),
       onClick: onShare,
     });
     items.push({
       label: "Скачать",
-      icon: h(icons.Icon16DownloadOutline),
+      icon: h(Icon16DownloadOutline),
       onClick: onDownload,
     });
     items.push({
       label: "Поиск оригинала",
-      icon: h(icons.Icon16SearchStarsOutline),
+      icon: h(Icon16SearchStarsOutline),
       onClick: onSearchOriginal,
     });
     items.push({
@@ -134,7 +143,7 @@ export function usePhotoActions(
     });
     items.push({
       label: "Информация",
-      icon: h(icons.Icon16ArticleOutline),
+      icon: h(Icon16ArticleOutline),
       onClick: onShowMoreInfo,
     });
     items.push({
@@ -144,7 +153,7 @@ export function usePhotoActions(
     });
     items.push({
       label: "Выйти из просмотра фото",
-      icon: h(icons.Icon16DoorEnterArrowRightOutline),
+      icon: h(Icon16DoorEnterArrowRightOutline),
       onClick: onPhotoExit,
     });
     showContextMenu(e, items, () => toValue(photoDivGetter)?.focus());

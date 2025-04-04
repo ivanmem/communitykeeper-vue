@@ -3,11 +3,14 @@ import { useApp } from "@/store/app/app";
 import { useGroups } from "@/store/groups/groups";
 import { showContextMenu } from "@/shared/helpers/showContextMenu";
 import { h, onDeactivated, PropType, ref, StyleValue } from "vue";
-import { icons } from "@/shared/constants/consts";
 import { useDialog } from "@/store/dialog/dialog";
 import { folderRules, maxFolderLength } from "@/shared/constants/formConsts";
+import {
+  Icon16Pen,
+  Icon16FolderOutline,
+  Icon16DeleteOutline,
+} from "vue-vkontakte-icons";
 
-const { Icon16FolderOutline } = icons;
 const props = defineProps({
   style: { type: [String, Object, Array] as PropType<StyleValue> },
 });
@@ -27,14 +30,14 @@ const onTabContextMenu = (e: MouseEvent, folder: string) => {
   showContextMenu(e, [
     {
       label: "Настройки",
-      icon: h(icons.Icon16Pen),
+      icon: h(Icon16Pen),
       onClick: () => {
         renameDialog.value = { folder, newSettings: { folder } };
       },
     },
     {
       label: "Удалить",
-      icon: h(icons.Icon16DeleteOutline, { style: { color: "red" } }),
+      icon: h(Icon16DeleteOutline, { style: { color: "red" } }),
       onClick: async () => {
         const folderGroupsIds = groupsStore.groupIdsDictByFolderName[folder];
         const isConfirm = await dialogStore.confirm(

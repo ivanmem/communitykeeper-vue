@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { icons, styledIcons } from "@/shared/constants/consts";
+import { styledIcons } from "@/shared/constants/consts";
 import { useGroups } from "@/store/groups/groups";
+import { Icon24SortOutline } from "vue-vkontakte-icons";
 
 const props = defineProps<{
   positionLabel?: string;
@@ -25,7 +26,7 @@ const groupsStore = useGroups();
       v-if="!screenError && (isLoadingPhotos || !albumIsEmpty)"
       v-model="groupsStore.config.reverseOrder"
       :false-icon="styledIcons.Icon24SortOutlineOpacity50"
-      :true-icon="icons.Icon24SortOutline"
+      :true-icon="Icon24SortOutline"
       class="a-album-controls__reverse-order"
       hide-details
       label="В обратном порядке"

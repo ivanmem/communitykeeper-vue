@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { IPhoto } from "@/store/groups/types";
 import { onActivated, onDeactivated, shallowRef } from "vue";
-import Icon24Linked from "@vkontakte/icons/src/svg/24/linked_24.svg?component";
+import { Icon24Linked } from "vue-vkontakte-icons";
 import { useGroups } from "@/store/groups/groups";
 import {
-  currentAverageLikes,
   currentAlbumPhotoElSize,
+  currentAverageLikes,
 } from "@/pages/Album/useCurrentPhoto";
 
 export interface PhotoShareDialogProps {
