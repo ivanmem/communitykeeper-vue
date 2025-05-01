@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { platform } from "@vkontakte/vkui";
 import { Ref, watch } from "vue";
 import { setEruda } from "@/shared/helpers/setEruda";
 import { useVk } from "@/store/vk/vk";
@@ -10,12 +9,13 @@ import bridge, { ShowSlidesSheetRequest } from "@vkontakte/vk-bridge";
 import { toStr } from "@/shared/helpers/toStr";
 import { router } from "@/router";
 import { watchDebounced } from "@vueuse/core";
+import { platform, PlatformType } from "@vkontakte/vkui";
 
 interface AppState {
   caption: string;
   loadingSet: Set<any>;
   isLoadingPause: boolean;
-  platform: "android" | "ios" | "vkcom";
+  platform: PlatformType;
   isFullScreen: boolean;
   urlParams: Record<any, any>;
   config: IAppConfig;
@@ -41,7 +41,7 @@ export const useApp = defineStore("app", {
       caption: "",
       loadingSet: new Set(),
       isLoadingPause: false,
-      platform: platform() as any,
+      platform: platform(),
       isFullScreen: false,
       urlParams: {},
       config: {
