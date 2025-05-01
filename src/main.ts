@@ -6,7 +6,7 @@ import Vue3ContextMenu from "@imengyu/vue3-context-menu";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import "vuetify/styles";
 import "@/styles/buttons.scss";
-import "@vkontakte/vkui/dist/vkui.css";
+import "@/styles/vkui.css";
 import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
 import "@/style.scss";
 import App from "@/App.vue";

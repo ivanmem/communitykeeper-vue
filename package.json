@@ -14,7 +14,7 @@
     "vk-tunnel": "vk-tunnel --host=localhost --timeout=20000"
   },
   "dependencies": {
-    "@imengyu/vue3-context-menu": "1.4.6",
+    "@imengyu/vue3-context-menu": "1.4.8",
     "@vkontakte/vk-bridge": "2.15.6",
     "@vkontakte/vkui": "5.10.2",
     "@vueuse/core": "13.1.0",
