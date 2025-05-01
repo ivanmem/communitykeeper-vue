@@ -3,6 +3,7 @@ import { useAlbums } from "@/pages/Albums/useAlbums";
 import AlbumsBreadcrumbs from "./AlbumsBreadcrumbs.vue";
 import AlbumsList from "./AlbumsList.vue";
 import ImagePreloader from "@/components/ImagePreloader";
+import AError from "@/components/AError";
 
 const props = defineProps<{ ownerId: number | string }>();
 const {
@@ -22,9 +23,7 @@ const {
     <template v-if="isInit">
       <AlbumsBreadcrumbs :group-name="group?.name" :owner-id="ownerId" />
       <div class="a-albums__details">
-        <code v-if="screenError" class="vkuiFormField--status-error">
-          {{ screenError }}
-        </code>
+        <AError v-if="screenError">{{ screenError }}</AError>
       </div>
       <AlbumsList
         v-model:component-ref="componentRef"

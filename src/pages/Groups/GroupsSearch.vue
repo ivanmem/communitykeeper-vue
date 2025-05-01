@@ -16,6 +16,7 @@ import {
   Icon24Filter,
   Icon16CrossCircleSmall,
 } from "vue-vkontakte-icons";
+import ASeparator from "@/components/ASeparator";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
@@ -196,13 +197,7 @@ watch(
         </VCard>
       </VDialog>
     </div>
-    <div
-      aria-hidden="true"
-      class="vkuiSearch__separator Search__separator vkuiSeparator Separator vkuiSeparator--wide Separator--wide"
-      role="separator"
-    >
-      <div class="vkuiSeparator__in Separator__in"></div>
-    </div>
+    <ASeparator />
   </div>
 </template>
 <style lang="scss">

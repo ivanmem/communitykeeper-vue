@@ -110,7 +110,7 @@ const positionLabel = useThrottle(
   <FixedTeleport to="#navigation-header__right">
     <VBtn :icon="Icon24InfoCircleOutline" variant="text" @click="onHelp" />
   </FixedTeleport>
-  <div class="a-album vkuiGroup__inner Group__inner">
+  <div class="a-album">
     <template v-if="isInit && group">
       <div>
         <AlbumBreadcrumbs

@@ -1,5 +1,5 @@
 <template>
-  <div class="a-page-container vkuiGroup__inner Group__inner">
+  <div class="a-page-container">
     <slot />
   </div>
 </template>

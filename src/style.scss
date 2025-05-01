@@ -19,7 +19,7 @@
 
   * {
     box-sizing: border-box;
-    font-family: var(--vkui--font_family_base);
+    font-family: -apple-system, system-ui, "Helvetica Neue", Roboto, sans-serif;
   }
 }
 
@@ -40,7 +40,6 @@ body {
   flex-grow: 1;
   overflow: auto;
   background: black;
-  font-family: var(--vkui--font_text--font_family--regular);
   height: 100vh;
   width: 100vw;
 }
@@ -48,8 +47,7 @@ body {
 body {
   background: var(--vkui--color_background_content);
   margin: 0;
-  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
-    env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
 }
 
 #app {
@@ -94,10 +92,6 @@ a {
   text-overflow: inherit;
   text-transform: inherit;
   white-space: inherit;
-}
-
-code.vkuiFormField--status-error {
-  padding: 10px;
 }
 
 div,

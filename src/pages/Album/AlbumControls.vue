@@ -2,6 +2,7 @@
 import { styledIcons } from "@/shared/constants/consts";
 import { useGroups } from "@/store/groups/groups";
 import { Icon24SortOutline } from "vue-vkontakte-icons";
+import AError from "@/components/AError";
 
 const props = defineProps<{
   positionLabel?: string;
@@ -18,9 +19,7 @@ const groupsStore = useGroups();
     <div v-if="positionLabel" class="a-album-controls__position">
       {{ positionLabel }}
     </div>
-    <code v-if="screenError" class="vkuiFormField--status-error">
-      {{ screenError }}
-    </code>
+    <AError v-if="screenError">{{ screenError }}</AError>
     <VSpacer />
     <VSwitch
       v-if="!screenError && (isLoadingPhotos || !albumIsEmpty)"

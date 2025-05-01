@@ -40,7 +40,7 @@ const onHelp = () => {
     <VBtn :icon="Icon24InfoCircleOutline" variant="text" @click="onHelp" />
   </FixedTeleport>
   <div
-    class="a-groups vkuiGroup__inner Group__inner"
+    class="a-groups"
     @mousedown="showFilters = false"
     @touchstart="showFilters = false"
     @wheel="showFilters = false"
