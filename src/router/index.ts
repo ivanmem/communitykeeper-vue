@@ -17,19 +17,26 @@ import HistoryPageWrapper from "@/pages/History/HistoryPageWrapper.vue";
 import AlbumPageWrapper from "@/pages/Album/AlbumPageWrapper.vue";
 import AlbumsWrapper from "@/pages/Albums/AlbumsWrapper.vue";
 import PageNotFound from "@/shared/widgets/PageNotFound.vue";
+import type {
+  GenerateRoutesMap,
+  NamedRouteRecordRaw,
+} from "vue-routes-to-types";
 
-const routes: RouteRecordRaw[] = [
+const routes = [
   {
     path: "/",
     component: GroupsPageWrapper,
+    name: "groups",
   },
   {
     path: "/settings/",
     component: SettingsPage,
+    name: "settings",
   },
   {
     path: "/about/",
     component: AboutPage,
+    name: "about",
   },
   {
     name: "add",
@@ -37,6 +44,7 @@ const routes: RouteRecordRaw[] = [
     component: AddPageWrapper,
   },
   {
+    name: "history",
     path: "/history/",
     component: HistoryPageWrapper,
   },
@@ -53,11 +61,14 @@ const routes: RouteRecordRaw[] = [
     strict: true,
   },
   {
+    name: "catchAll",
     path: "/:catchAll(.*)",
     component: PageNotFound,
     strict: false,
   },
-];
+] as const satisfies NamedRouteRecordRaw[];
+
+export type RoutesMap = GenerateRoutesMap<typeof routes>;
 
 export const router = createRouter({
   history: createWebHashHistory("https://vk.com/app51658481"),

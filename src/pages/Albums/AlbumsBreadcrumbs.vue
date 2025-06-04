@@ -13,7 +13,7 @@ const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
 </script>
 <template>
   <VBreadcrumbs class="a-albums-breadcrumbs" density="compact">
-    <VBreadcrumbsItem replace title="Группы" to="/" />
+    <VBreadcrumbsItem replace title="Группы" :to="{ name: 'groups' }" />
     <Icon16ChevronOutline />
     <VBreadcrumbsItem
       :href="`https://${ownerUrl}`"

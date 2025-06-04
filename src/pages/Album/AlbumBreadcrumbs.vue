@@ -35,7 +35,7 @@ function openUrlAlbum() {
 </script>
 <template>
   <VBreadcrumbs class="a-album-breadcrumbs" density="compact">
-    <VBreadcrumbsItem to="/"> Группы</VBreadcrumbsItem>
+    <VBreadcrumbsItem :to="{ name: 'groups' }"> Группы </VBreadcrumbsItem>
     <Icon16ChevronOutline />
     <VBreadcrumbsItem
       :href="`https://${ownerUrl}`"

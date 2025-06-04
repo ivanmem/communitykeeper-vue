@@ -8,6 +8,6 @@ useAppCaption("Ошибка");
 <template>
   <PageContainer>
     <div>Данной страницы не существует.</div>
-    <BaseButton to="/">Перейти к группам</BaseButton>
+    <BaseButton :to="{ name: 'groups' }">Перейти к группам</BaseButton>
   </PageContainer>
 </template>

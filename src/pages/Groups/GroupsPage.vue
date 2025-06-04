@@ -62,7 +62,7 @@ const onHelp = () => {
             justify-content: flex-end;
           "
         >
-          <BaseButton to="/add/">Добавить</BaseButton>
+          <BaseButton :to="{ name: 'add' }">Добавить</BaseButton>
         </div>
       </VBanner>
     </div>
