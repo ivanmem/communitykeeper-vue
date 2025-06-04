@@ -17,12 +17,12 @@ import { useDialog } from "@/store/dialog/dialog";
 import { useActivated } from "@/shared/composables/useActivated";
 import { useApp } from "@/store/app/app";
 import {
-  Icon16DeleteOutline,
-  Icon16MoreVertical,
-  Icon16ChainOutline,
-  Icon16PictureOutline,
-  Icon16DoorEnterArrowRightOutline,
   Icon16AddSquareOutline,
+  Icon16ChainOutline,
+  Icon16DeleteOutline,
+  Icon16DoorEnterArrowRightOutline,
+  Icon16MoreVertical,
+  Icon16PictureOutline,
 } from "vue-vkontakte-icons";
 
 const props = defineProps<{
@@ -126,16 +126,18 @@ const onOpenContextMenu = (e: MouseEvent) => {
     });
   }
 
-  if (props.group.is_member) {
+  const requestSent =
+    props.group.member_status === IGroupMemberStatus.JoiningRequestSent;
+  if (props.group.is_member || requestSent) {
     items.push({
-      label: "Выйти",
+      label: requestSent ? "Отменить заявку [не работает]" : "Выйти",
       icon: h(Icon16DoorEnterArrowRightOutline),
       onClick: async () => {
         let confirm = true;
-        if (props.group.is_closed) {
+        if (props.group.is_closed && !requestSent) {
           confirm = await dialogStore.confirm({
             title: "Выход из группы",
-            subtitle: `Вы выходите из закрытой группы "${GroupHelper.getName(
+            subtitle: `Вы ${"выходите из закрытой группы"} "${GroupHelper.getName(
               props.group,
             )}".
 Вас могут не принять обратно. Всё равно хотите выйти?`,
@@ -148,9 +150,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
         }
       },
     });
-  } else if (
-    props.group.member_status !== IGroupMemberStatus.JoiningRequestSent
-  ) {
+  } else {
     // отображаем кнопку только если группа открытая или если это не приложение,
     // так как присоединиться к закрытой группе можно только с vk.com или m.vk.com из-за бага в VK Bridge или Приложении ВКонтакте
     if (

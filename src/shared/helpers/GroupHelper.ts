@@ -1,5 +1,11 @@
 import { GroupState, IGroup, IGroupMemberStatus } from "@/store/groups/types";
-import { FiltersType, GroupsSortEnum, groupsSortKeys, OnlyAccessEnum, useGroups } from "@/store/groups/groups";
+import {
+  FiltersType,
+  GroupsSortEnum,
+  groupsSortKeys,
+  OnlyAccessEnum,
+  useGroups,
+} from "@/store/groups/groups";
 import { getGroupState } from "@/pages/Groups/getGroupState";
 import bridge from "@vkontakte/vk-bridge";
 import { from, IEnumerable, NumberComparer } from "linq-to-typescript";
@@ -46,14 +52,16 @@ class GroupHelper {
       if (
         filters.folder.length > 0 &&
         filters.folder.trim().toLowerCase() !=
-        localGroup.folder.trim().toLowerCase()
+          localGroup.folder.trim().toLowerCase()
       ) {
         return false;
       }
 
-      return !search ||
+      return (
+        !search ||
         GroupHelper.getName(group).toLowerCase().includes(search) ||
-        GroupHelper.getState(group).text.toLowerCase().includes(search);
+        GroupHelper.getState(group).text.toLowerCase().includes(search)
+      );
     });
 
     if (filters.sort !== undefined && filters.sort !== GroupsSortEnum.date) {
@@ -101,6 +109,7 @@ class GroupHelper {
       isMember ? "VKWebAppJoinGroup" : "VKWebAppLeaveGroup",
       { group_id: group.id },
     );
+    
     if (result.result) {
       if (isMember) {
         if (group.is_closed) {
@@ -108,6 +117,7 @@ class GroupHelper {
           group.is_member = false;
         } else {
           group.is_member = true;
+          group.member_status = IGroupMemberStatus.Member;
         }
       } else {
         group.is_member = false;
