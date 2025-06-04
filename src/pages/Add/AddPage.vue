@@ -99,8 +99,10 @@ const onLinkOrIdChanged = async () => {
     return;
   }
 
+  const linkOrId =
+    extractGroupIdFromPostLink(newGroup.linkOrId) ?? newGroup.linkOrId;
   const apiService = await useVk().getApiService();
-  const groups = await apiService.getGroupsByLinksOrIds([newGroup.linkOrId]);
+  const groups = await apiService.getGroupsByLinksOrIds([linkOrId]);
   // вк для несуществующих сообществ возвращает объект с пустым именем
   if (groups.length <= 0 || !groups[0].name) {
     currentGroup.value = undefined;
@@ -156,6 +158,12 @@ watch(
   },
   { immediate: true },
 );
+
+// https://vk.com/wall-178374368_768 -> 178374368
+function extractGroupIdFromPostLink(link: string): string | undefined {
+  const match = link.match(/vk\.com\/wall-(\d+)_\d+/);
+  return match?.[1];
+}
 </script>
 
 <template>
