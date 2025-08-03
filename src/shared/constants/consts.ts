@@ -84,7 +84,8 @@ type IActionDictValue = {
 export const actionSwipesDict = new Map<string, IActionDictValue>([
   ["op", { label: "Перейти к фото", name: "onOpenPhoto" }],
   ["oosp", { label: "Открыть оригинал", name: "onOpenOriginalSizePhoto" }],
-  ["s", { label: "Поделиться", name: "onShare" }],
+  ["cl", { label: "Копировать ссылку", name: "onCopyLink" }],
+  ["cdl", { label: "Копировать прямую ссылку", name: "onCopyDirectLink" }],
   ["d", { label: "Скачать", name: "onDownload" }],
   ["so", { label: "Поиск оригинала", name: "onSearchOriginal" }],
   [

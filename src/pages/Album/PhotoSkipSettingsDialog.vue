@@ -8,11 +8,11 @@ import {
   currentAverageLikes,
 } from "@/pages/Album/useCurrentPhoto";
 
-export interface PhotoShareDialogProps {
+export interface PhotoSkipSettingsDialogProps {
   photo: IPhoto;
 }
 
-const props = defineProps<PhotoShareDialogProps>();
+const props = defineProps<PhotoSkipSettingsDialogProps>();
 const emits = defineEmits<{
   close: [];
 }>();

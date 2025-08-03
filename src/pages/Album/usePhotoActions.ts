@@ -8,20 +8,21 @@ import { IPhotoEmit } from "@/pages/Album/AlbumPhoto.vue";
 import { MenuItem } from "@imengyu/vue3-context-menu";
 import { styledIcons } from "@/shared/constants/consts";
 import { showContextMenu } from "@/shared/helpers/showContextMenu";
-import PhotoShareDialog, {
-  PhotoShareDialogProps,
-} from "@/pages/Album/PhotoShareDialog.vue";
 import { useOpenPhoto } from "@/pages/Album/useOpenPhoto";
-import PhotoSkipSettingsDialog from "@/pages/Album/PhotoSkipSettingsDialog.vue";
+import PhotoSkipSettingsDialog, {
+  PhotoSkipSettingsDialogProps,
+} from "@/pages/Album/PhotoSkipSettingsDialog.vue";
 import {
   Icon16ArticleOutline,
   Icon16DoorEnterArrowRightOutline,
   Icon16DownloadOutline,
   Icon16Link,
+  Icon16Linked,
   Icon16LogoVk,
   Icon16SearchStarsOutline,
   Icon16Share,
 } from "vue-vkontakte-icons";
+import useClipboard from "vue-clipboard3";
 
 export function usePhotoActions(
   photoGetter: MaybeRefOrGetter<IPhoto>,
@@ -35,6 +36,8 @@ export function usePhotoActions(
   const originalSize = computed(() =>
     PhotoHelper.getOriginalSize(photo.value.sizes),
   );
+
+  const { toClipboard } = useClipboard({ appendToBody: true });
 
   const onSearchOriginal = async () => {
     const confirm: "yandex" | "saucenao" | false = await useDialog().confirm({
@@ -76,15 +79,8 @@ export function usePhotoActions(
   };
 
   const onOpenSkipSettings = () => {
-    dialogStore.open<PhotoShareDialogProps>({
+    dialogStore.open<PhotoSkipSettingsDialogProps>({
       component: PhotoSkipSettingsDialog,
-      props: { photo: photo.value },
-    });
-  };
-
-  const onShare = () => {
-    dialogStore.open<PhotoShareDialogProps>({
-      component: PhotoShareDialog,
       props: { photo: photo.value },
     });
   };
@@ -105,6 +101,16 @@ export function usePhotoActions(
     emit("photo:next");
   };
 
+  const onCopyLink = () => {
+    return toClipboard(
+      PhotoHelper.getPhotoUrl(photo.value.owner_id, photo.value.id),
+    );
+  };
+
+  const onCopyDirectLink = () => {
+    return toClipboard(originalSize.value!.url);
+  };
+
   const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
     const items: MenuItem[] = [];
     items.push({
@@ -120,7 +126,19 @@ export function usePhotoActions(
     items.push({
       label: "Поделиться",
       icon: h(Icon16Share),
-      onClick: onShare,
+      children: [
+        {
+          label: "Ссылка",
+          icon: h(Icon16Linked),
+          onClick: onCopyLink,
+        },
+        {
+          label: "Прямая ссылка",
+          icon: h(Icon16Linked),
+          disabled: !originalSize.value,
+          onClick: onCopyDirectLink,
+        },
+      ],
     });
     items.push({
       label: "Скачать",
@@ -166,7 +184,8 @@ export function usePhotoActions(
     onShowMoreInfo,
     onOpenPhoto,
     onOpenOriginalSizePhoto,
-    onShare,
+    onCopyLink,
+    onCopyDirectLink,
     onDownload,
     onOpenSkipSettings,
     onPhotoExit,
