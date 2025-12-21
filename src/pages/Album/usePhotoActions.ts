@@ -23,6 +23,7 @@ import {
   Icon16Share,
 } from "vue-vkontakte-icons";
 import useClipboard from "vue-clipboard3";
+import { t } from "@/i18n";
 
 export function usePhotoActions(
   photoGetter: MaybeRefOrGetter<IPhoto>,
@@ -41,8 +42,8 @@ export function usePhotoActions(
 
   const onSearchOriginal = async () => {
     const confirm: "yandex" | "saucenao" | false = await useDialog().confirm({
-      title: "Поиск оригинала",
-      subtitle: `Выберите поисковую систему:`,
+      title: t("gallery.searchOriginalTitle"),
+      subtitle: t("gallery.searchOriginalSubtitle"),
       confirmTitle: [
         { id: "yandex", label: "Yandex" },
         { id: "saucenao", label: "SauceNAO" },
@@ -114,26 +115,26 @@ export function usePhotoActions(
   const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
     const items: MenuItem[] = [];
     items.push({
-      label: "Перейти к фото",
+      label: t("gallery.goToPhoto"),
       icon: h(Icon16LogoVk),
       onClick: onOpenPhoto,
     });
     items.push({
-      label: `Открыть оригинал (${originalSize.value?.width}x${originalSize.value?.height})`,
+      label: `${t("gallery.openOriginal")} (${originalSize.value?.width}x${originalSize.value?.height})`,
       icon: h(Icon16Link),
       onClick: onOpenOriginalSizePhoto,
     });
     items.push({
-      label: "Поделиться",
+      label: t("gallery.share"),
       icon: h(Icon16Share),
       children: [
         {
-          label: "Ссылка",
+          label: t("gallery.link"),
           icon: h(Icon16Linked),
           onClick: onCopyLink,
         },
         {
-          label: "Прямая ссылка",
+          label: t("gallery.directLink"),
           icon: h(Icon16Linked),
           disabled: !originalSize.value,
           onClick: onCopyDirectLink,
@@ -141,36 +142,36 @@ export function usePhotoActions(
       ],
     });
     items.push({
-      label: "Скачать",
+      label: t("gallery.download"),
       icon: h(Icon16DownloadOutline),
       onClick: onDownload,
     });
     items.push({
-      label: "Поиск оригинала",
+      label: t("gallery.searchOriginal"),
       icon: h(Icon16SearchStarsOutline),
       onClick: onSearchOriginal,
     });
     items.push({
       label: groupsStore.config.originalSizePhoto
-        ? `Расширить на весь экран`
-        : "Отображать в оригинальном размере",
+        ? t("gallery.expandFullscreen")
+        : t("gallery.showOriginalSize"),
       icon: groupsStore.config.originalSizePhoto
         ? styledIcons.Icon16Fullscreen
         : styledIcons.Icon16FullscreenExit,
       onClick: onSwitchOriginalSize,
     });
     items.push({
-      label: "Информация",
+      label: t("gallery.information"),
       icon: h(Icon16ArticleOutline),
       onClick: onShowMoreInfo,
     });
     items.push({
-      label: "Настройки пропуска",
+      label: t("gallery.skipSettings"),
       icon: styledIcons.Icon16SkipToAction,
       onClick: onOpenSkipSettings,
     });
     items.push({
-      label: "Выйти из просмотра фото",
+      label: t("gallery.exitPhotoView"),
       icon: h(Icon16DoorEnterArrowRightOutline),
       onClick: onPhotoExit,
     });

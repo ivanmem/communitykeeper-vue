@@ -3,6 +3,18 @@ import { styledIcons } from "@/shared/constants/consts";
 import { useGroups } from "@/store/groups/groups";
 import { Icon24SortOutline } from "vue-vkontakte-icons";
 import AError from "@/components/AError";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      reverseOrder: "В обратном порядке",
+    },
+    en: {
+      reverseOrder: "Reverse order",
+    },
+  },
+});
 
 const props = defineProps<{
   positionLabel?: string;
@@ -28,7 +40,7 @@ const groupsStore = useGroups();
       :true-icon="Icon24SortOutline"
       class="a-album-controls__reverse-order"
       hide-details
-      label="В обратном порядке"
+      :label="t('reverseOrder')"
       style="flex-grow: 0"
     />
   </div>

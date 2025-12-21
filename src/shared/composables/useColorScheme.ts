@@ -4,13 +4,29 @@ import bridge, {
   VKBridgeEvent,
 } from "@vkontakte/vk-bridge";
 import { Platform, platform } from "@vkontakte/vkui";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import {
   resolveAppearance,
   VKBridgeConfigData,
 } from "@vkontakte/vkui/dist/helpers/appearance";
 import { generateVKUITokensClassName } from "@vkontakte/vkui/dist/helpers/generateVKUITokensClassName";
 import { darkColorScheme } from "@/shared/constants/consts";
+
+export type ThemeSetting = "system" | "light" | "dark";
+
+const systemAppearance = ref<AppearanceType>("dark");
+const themeSetting = ref<ThemeSetting>("system");
+
+const effectiveAppearance = computed<AppearanceType>(() =>
+  themeSetting.value === "system" ? systemAppearance.value : themeSetting.value,
+);
+
+/**
+ * Применяет тему. Вызывается из app store после загрузки конфига.
+ */
+export function applyTheme(theme: ThemeSetting) {
+  themeSetting.value = theme;
+}
 
 export function useColorScheme() {
   const currentClasses = ref("");
@@ -25,7 +41,6 @@ export function useColorScheme() {
     darkColorScheme.value = true;
   }
 
-  let initialAppearance: AppearanceType | null = null;
   if (currentPlatform !== Platform.VKCOM) {
     document.documentElement.style.setProperty(
       "--navigation-header-padding-right",
@@ -33,29 +48,20 @@ export function useColorScheme() {
     );
   }
 
-  function bridgeListener(e: VKBridgeEvent<AnyReceiveMethodName>) {
-    const { type, data } = e.detail;
-    if (type !== "VKWebAppUpdateConfig") {
-      return;
-    }
-
-    initialAppearance = resolveAppearance(data as VKBridgeConfigData);
-    if (!initialAppearance) {
-      return;
-    }
-
-    currentClasses.value = generateVKUITokensClassName(
-      currentPlatform,
-      initialAppearance,
-    );
-    document!.documentElement.style.setProperty(
-      "color-scheme",
-      initialAppearance,
-    );
-    darkColorScheme.value = initialAppearance === "dark";
-  }
-
   bridge.subscribe(bridgeListener);
+
+  watch(
+    effectiveAppearance,
+    (appearance) => {
+      currentClasses.value = generateVKUITokensClassName(
+        currentPlatform,
+        appearance,
+      );
+      document!.documentElement.style.setProperty("color-scheme", appearance);
+      darkColorScheme.value = appearance === "dark";
+    },
+    { immediate: true },
+  );
 
   watch(
     currentClasses,
@@ -72,6 +78,18 @@ export function useColorScheme() {
     },
     { immediate: true },
   );
+
+  function bridgeListener(e: VKBridgeEvent<AnyReceiveMethodName>) {
+    const { type, data } = e.detail;
+    if (type !== "VKWebAppUpdateConfig") {
+      return;
+    }
+
+    const resolved = resolveAppearance(data as VKBridgeConfigData);
+    if (resolved) {
+      systemAppearance.value = resolved;
+    }
+  }
 
   return {
     currentClasses,

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useGroups } from "@/store/groups/groups";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 defineProps<{
   showInfo: boolean;
@@ -8,6 +9,14 @@ defineProps<{
   photoIndex: number;
   size: number | string | undefined;
 }>();
+
+const { t } = useI18n({
+  messages: {
+    ru: { of: "из" },
+    en: { of: "of" },
+  },
+});
+
 const groupsStore = useGroups();
 const opacity = computed(
   () => (groupsStore.config.opacityGalleryCounter ?? 100) / 100,
@@ -19,7 +28,7 @@ const opacity = computed(
       {{ dateTime }}
     </div>
     <div class="a-photo__info-counter">
-      <b>{{ photoIndex + 1 }}</b> из {{ size || "?" }}
+      <b>{{ photoIndex + 1 }}</b> {{ t("of") }} {{ size || "?" }}
     </div>
   </div>
 </template>

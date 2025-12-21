@@ -22,6 +22,54 @@ import {
   Icon24InfoCircleOutline,
   Icon24TrashSmileOutline,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      backup: "💾 Резервная копия",
+      addGroup: "🆕 Добавить группу",
+      link: "Ссылка",
+      folder: "Папка",
+      replace: "Заменить",
+      add: "Добавить",
+      delete: "Удалить",
+      deleteAllGroups: "Удалить все группы",
+      groupAlreadyAdded: 'Группа уже добавлена в папку "{folder}".',
+      addComplete: "Добавление завершено",
+      groupAddedToFolder: 'Группа "{name}" добавлена в папку "{folder}".',
+      dontForgetToSave: 'Не забудьте сохраниться во вкладке "Настройки".',
+      error: "Ошибка",
+      groupNotAdded: "Группа не была добавлена из-за ошибки:\n{error}",
+      confirmDeleteAll: "Вы уверены, что хотите удалить все группы?",
+      helpTitle: "💡 Справка",
+      helpText: `Во вкладке "Добавить" Вы можете:
+- добавить или удалить группы;
+- создать или применить резервную копию.`,
+    },
+    en: {
+      backup: "💾 Backup",
+      addGroup: "🆕 Add group",
+      link: "Link",
+      folder: "Folder",
+      replace: "Replace",
+      add: "Add",
+      delete: "Delete",
+      deleteAllGroups: "Delete all groups",
+      groupAlreadyAdded: 'Group already added to folder "{folder}".',
+      addComplete: "Adding complete",
+      groupAddedToFolder: 'Group "{name}" added to folder "{folder}".',
+      dontForgetToSave: 'Don\'t forget to save in the "Settings" tab.',
+      error: "Error",
+      groupNotAdded: "Group was not added due to error:\n{error}",
+      confirmDeleteAll: "Are you sure you want to delete all groups?",
+      helpTitle: "💡 Help",
+      helpText: `In the "Add" tab you can:
+- add or delete groups;
+- create or apply a backup.`,
+    },
+  },
+});
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -65,19 +113,19 @@ const addGroup = async () => {
     await groupsStore.autoSaveCurrentLocalGroups();
     await groupsStore.loadNotLoadGroups();
     const name = group?.name ?? linkOrId;
-    let subtitle = `Группа "${name}" добавлена в папку "${newGroup.folder}".`;
+    let subtitle = t("groupAddedToFolder", { name, folder: newGroup.folder });
     if (!groupsStore.config.autoSave) {
-      subtitle += `\nНе забудьте сохраниться во вкладке "Настройки".`;
+      subtitle += `\n${t("dontForgetToSave")}`;
     }
 
     dialogStore.alert({
-      title: "Добавление завершено",
+      title: t("addComplete"),
       subtitle,
     });
   } catch (ex: any) {
     dialogStore.alert({
-      title: "Ошибка",
-      subtitle: `Группа не была добавлена из-за ошибки:\n${toStr(ex)}`,
+      title: t("error"),
+      subtitle: t("groupNotAdded", { error: toStr(ex) }),
     });
   }
 };
@@ -113,9 +161,7 @@ const onLinkOrIdChanged = async () => {
 };
 
 const onRemoveAllGroups = async () => {
-  const isConfirm = await dialogStore.confirm(
-    "Вы уверены, что хотите удалить все группы?",
-  );
+  const isConfirm = await dialogStore.confirm(t("confirmDeleteAll"));
   if (isConfirm) {
     groupsStore.removeLocalGroups();
     await groupsStore.autoSaveCurrentLocalGroups();
@@ -124,10 +170,8 @@ const onRemoveAllGroups = async () => {
 
 const onHelp = () => {
   dialogStore.alert({
-    title: "💡 Справка",
-    subtitle: `Во вкладке "Добавить" Вы можете:
-- добавить или удалить группы;
-- создать или применить резервную копию.`,
+    title: t("helpTitle"),
+    subtitle: t("helpText"),
   });
 };
 
@@ -173,7 +217,7 @@ function extractGroupIdFromPostLink(link: string): string | undefined {
   <VCard class="overflow-block a-add">
     <VCardItem style="padding-top: 12px">
       <VCardSubtitle style="margin-bottom: 10px">
-        💾 Резервная копия
+        {{ t("backup") }}
       </VCardSubtitle>
       <VRow no-gutters style="gap: 10px">
         <ImportBtn />
@@ -184,7 +228,7 @@ function extractGroupIdFromPostLink(link: string): string | undefined {
     <VForm v-model="valid">
       <VCardItem style="max-width: max-content">
         <VCardSubtitle style="margin-block: 10px">
-          🆕 Добавить группу
+          {{ t("addGroup") }}
         </VCardSubtitle>
         <VTextField
           :append-inner-icon="styledIcons.Icon16Link"
@@ -192,7 +236,7 @@ function extractGroupIdFromPostLink(link: string): string | undefined {
             newGroup.linkOrId.length ? newGroup.linkOrId : undefined
           "
           hide-details="auto"
-          label="Ссылка"
+          :label="t('link')"
           @blur="onLinkOrIdChanged"
           @update:model-value="newGroup.linkOrId = $event ?? ''"
         />
@@ -202,7 +246,7 @@ function extractGroupIdFromPostLink(link: string): string | undefined {
           :items="groupsStore.folders"
           :model-value="newGroup.folder.trim() || undefined"
           :rules="folderRules"
-          label="Папка"
+          :label="t('folder')"
           required
           @update:model-value="newGroup.folder = ($event ?? '').trim()"
         />
@@ -214,7 +258,7 @@ function extractGroupIdFromPostLink(link: string): string | undefined {
             :prepend-icon="Icon24AddSquareOutline"
             @click="addGroup"
           >
-            {{ isGroupAdded ? "Заменить" : "Добавить" }}
+            {{ isGroupAdded ? t("replace") : t("add") }}
           </VBtn>
           <VBtn
             :disabled="!isGroupAdded"
@@ -222,7 +266,7 @@ function extractGroupIdFromPostLink(link: string): string | undefined {
             data-color="red"
             @click="removeGroup"
           >
-            <span>Удалить</span>
+            <span>{{ t("delete") }}</span>
           </VBtn>
           <VBtn
             :disabled="groupsStore.localGroupsMap.size === 0"
@@ -230,7 +274,7 @@ function extractGroupIdFromPostLink(link: string): string | undefined {
             color="deep-orange"
             @click="onRemoveAllGroups"
           >
-            Удалить все группы
+            {{ t("deleteAllGroups") }}
           </VBtn>
         </VRow>
       </VCardItem>
@@ -241,9 +285,11 @@ function extractGroupIdFromPostLink(link: string): string | undefined {
         class="a-rectangle-block"
         data-color="green"
       >
-        Группа уже добавлена в папку "{{
-          groupsStore.localGroupsMap.get(newGroup.id)!.folder
-        }}".
+        {{
+          t("groupAlreadyAdded", {
+            folder: groupsStore.localGroupsMap.get(newGroup.id)!.folder,
+          })
+        }}
       </VCardText>
     </VCardItem>
     <VCardItem>

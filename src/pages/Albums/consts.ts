@@ -1,6 +1,7 @@
 import { computed } from "vue";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { useApp } from "@/store/app/app";
+import { t } from "@/i18n";
 
 export const AlbumsPreviewSizesInitial = computed(() => {
   return useApp().platform === "vkcom"
@@ -14,8 +15,14 @@ export const AlbumsPreviewSizesInitial = computed(() => {
     };
 });
 
+export function getWallAlbumTitle(): string {
+  return t("albums.communityPhotos");
+}
+
 export const wallAlbumStatic = {
-  title: "Фотографии сообщества",
+  get title() {
+    return getWallAlbumTitle();
+  },
   id: -7,
   size: "?",
 };
@@ -24,6 +31,7 @@ export function getStaticAlbums(owner_id: string | number): IAlbumItem[] {
   return [
     {
       ...wallAlbumStatic,
+      title: getWallAlbumTitle(),
       owner_id: +owner_id,
     },
   ];

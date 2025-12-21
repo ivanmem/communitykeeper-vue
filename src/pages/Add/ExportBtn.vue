@@ -14,6 +14,54 @@ import {
   Icon24DownloadOutline,
   Icon24Linked,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      create: "Создать",
+      createBackup: "Создание резервной копии",
+      selectFolders: "Выберите экспортируемые папки и нажмите на кнопку Создать.",
+      all: "Все",
+      groupsCount: "Групп: {count}",
+      selected: "Выбрано",
+      folders: "Папок",
+      groups: "Групп",
+      selectExportMethod: "Выберите способ экспорта",
+      appWarning: "🆘 Создание ФАЙЛА резервной копии не работает с приложения ВКонтакте. Если вам нужен именно ФАЙЛ, тогда воспользуйтесь кнопкой копирования и вручную создайте файл с расширением .json.",
+      downloadJson: "Скачать JSON файл",
+      copyJson: "Скопировать в формате JSON",
+      createLink: "Создать ссылку",
+      close: "Закрыть",
+      createLinkTitle: "Создание резервной копии в виде публичной ссылки",
+      createLinkConfirm: "Приложение от Вашего имени воспользуется сервисом vk.cc для сокращения ссылок. Если Вам будет нужно обнулить ссылку, перейдите на сайт vk.cc и удалите все сокращённые ссылки, ведущие на вымышленный сайт s.vk. Вы подтверждаете создание ссылки?",
+      exportError: "Произошла неизвестная ошибка при экспорте данных.",
+      linkCopied: "Ссылка помещена в буфер обмена:\n{url}",
+      dataCopied: "Данные для импорта помещены в буфер обмена.",
+    },
+    en: {
+      create: "Create",
+      createBackup: "Create backup",
+      selectFolders: "Select folders to export and click Create button.",
+      all: "All",
+      groupsCount: "Groups: {count}",
+      selected: "Selected",
+      folders: "Folders",
+      groups: "Groups",
+      selectExportMethod: "Select export method",
+      appWarning: "🆘 Creating a backup FILE does not work from the VKontakte app. If you need a FILE, use the copy button and manually create a file with .json extension.",
+      downloadJson: "Download JSON file",
+      copyJson: "Copy as JSON",
+      createLink: "Create link",
+      close: "Close",
+      createLinkTitle: "Create backup as public link",
+      createLinkConfirm: "The app will use vk.cc service on your behalf to shorten links. If you need to reset the link, go to vk.cc and delete all shortened links leading to the fictional site s.vk. Do you confirm link creation?",
+      exportError: "An unknown error occurred while exporting data.",
+      linkCopied: "Link copied to clipboard:\n{url}",
+      dataCopied: "Import data copied to clipboard.",
+    },
+  },
+});
 
 const show = ref(false);
 const showSelectExportMode = ref(false);
@@ -50,9 +98,8 @@ onDeactivated(() => {
 
 async function onCopyLink(event: any) {
   const confirm = await dialogStore.confirm({
-    title: "Создание резервной копии в виде публичной ссылки",
-    subtitle:
-      "Приложение от Вашего имени воспользуется сервисом vk.cc для сокращения ссылок. Если Вам будет нужно обнулить ссылку, перейдите на сайт vk.cc и удалите все сокращённые ссылки, ведущие на вымышленный сайт s.vk. Вы подтверждаете создание ссылки?",
+    title: t("createLinkTitle"),
+    subtitle: t("createLinkConfirm"),
   });
   if (!confirm) {
     return;
@@ -74,15 +121,15 @@ async function onCopyLink(event: any) {
       shortLinkHashes.push(hash);
     }
   } catch (ex) {
-    console.warn("Произошла неизвестная ошибка при экспорте данных:", ex);
-    dialogStore.alert("Произошла неизвестная ошибка при экспорте данных.");
+    console.warn("Export error:", ex);
+    dialogStore.alert(t("exportError"));
     return;
   }
 
   const url = `https://vk.com/app${useApp().appId}#/add/?importHashes=${shortLinkHashes.join(",")}`;
   await toClipboard(url, event.target);
   showSelectExportMode.value = false;
-  dialogStore.alert(`Ссылка помещена в буфер обмена:\n${url}`);
+  dialogStore.alert(t("linkCopied", { url }));
 }
 
 async function onDownloadJsonFile() {
@@ -93,7 +140,7 @@ async function onDownloadJsonFile() {
 async function onCopyJson(event: any) {
   await toClipboard(JSON.stringify(groupsExport.value), event.target);
   showSelectExportMode.value = false;
-  dialogStore.alert("Данные для импорта помещены в буфер обмена.");
+  dialogStore.alert(t("dataCopied"));
 }
 </script>
 <template>
@@ -111,7 +158,7 @@ async function onCopyJson(event: any) {
         color="light-blue-darken-4"
         @click="onShow"
       >
-        Создать
+        {{ t("create") }}
       </VBtn>
     </template>
     <VCard>
@@ -120,20 +167,20 @@ async function onCopyJson(event: any) {
           <Icon24CancelOutline />
         </VBtn>
         <VToolbarTitle class="navigation-caption">
-          Создание резервной копии
+          {{ t("createBackup") }}
         </VToolbarTitle>
       </BaseToolbar>
       <VCardText class="pb-2" style="font-size: 14px">
-        Выберите экспортируемые папки и нажмите на кнопку Создать.
+        {{ t("selectFolders") }}
       </VCardText>
       <VList class="mb-2" density="compact" style="flex-grow: 100">
         <VListItem
           v-if="groupsStore.folders.length > 1"
-          :subtitle="`Групп: ${groupsStore.localGroupsMap.size}`"
+          :subtitle="t('groupsCount', { count: groupsStore.localGroupsMap.size })"
           :variant="
             folders.size === groupsStore.folders.length ? 'tonal' : 'flat'
           "
-          title="Все"
+          :title="t('all')"
           @click="
             folders.size === groupsStore.folders.length
               ? folders.clear()
@@ -155,7 +202,7 @@ async function onCopyJson(event: any) {
         <VListItem
           v-for="folder of groupsStore.folders"
           :key="folder"
-          :subtitle="`Групп: ${groupsStore.groupIdsDictByFolderName[folder].length}`"
+          :subtitle="t('groupsCount', { count: groupsStore.groupIdsDictByFolderName[folder].length })"
           :title="folder"
           :variant="folders.has(folder) ? 'tonal' : 'flat'"
           @click="
@@ -182,11 +229,11 @@ async function onCopyJson(event: any) {
             style="height: auto; padding-inline: 20px"
           >
             <div class="text-center">
-              <h2 class="text-md-h6">Выбрано</h2>
+              <h2 class="text-md-h6">{{ t("selected") }}</h2>
               <span>
-                Папок:
+                {{ t("folders") }}:
                 <b class="a-export__counter">{{ folders.size }}</b> &nbsp;
-                &nbsp; Групп:
+                &nbsp; {{ t("groups") }}:
                 <b class="a-export__counter">{{ selectedGroupsCount }}</b>
               </span>
             </div>
@@ -197,7 +244,7 @@ async function onCopyJson(event: any) {
           :disabled="selectedGroupsCount === 0"
           :icon="Icon24DownloadOutline"
           color="light-blue-darken-4"
-          title="Создать"
+          :title="t('create')"
           @click="showSelectExportMode = true"
         />
       </VSheet>
@@ -209,11 +256,9 @@ async function onCopyJson(event: any) {
       max-width="max-content"
     >
       <VCard>
-        <VCardTitle>Выберите способ экспорта</VCardTitle>
+        <VCardTitle>{{ t("selectExportMethod") }}</VCardTitle>
         <VCardText v-if="appStore.isApp">
-          🆘 Создание ФАЙЛА резервной копии не работает с приложения ВКонтакте.
-          Если вам нужен именно ФАЙЛ, тогда воспользуйтесь кнопкой копирования и
-          вручную создайте файл с расширением <b>.json</b>.
+          {{ t("appWarning") }}
         </VCardText>
         <div
           style="
@@ -230,7 +275,7 @@ async function onCopyJson(event: any) {
             variant="flat"
             @click="onDownloadJsonFile"
           >
-            Скачать JSON файл
+            {{ t("downloadJson") }}
           </VBtn>
           <VBtn
             :disabled="selectedGroupsCount === 0"
@@ -238,7 +283,7 @@ async function onCopyJson(event: any) {
             variant="flat"
             @click="onCopyJson"
           >
-            Скопировать в формате JSON
+            {{ t("copyJson") }}
           </VBtn>
           <VBtn
             :disabled="selectedGroupsCount === 0"
@@ -246,13 +291,13 @@ async function onCopyJson(event: any) {
             variant="flat"
             @click="onCopyLink"
           >
-            Создать ссылку
+            {{ t("createLink") }}
           </VBtn>
         </div>
 
         <VCardActions>
           <VSpacer />
-          <VBtn @click="showSelectExportMode = false">Закрыть</VBtn>
+          <VBtn @click="showSelectExportMode = false">{{ t("close") }}</VBtn>
         </VCardActions>
       </VCard>
     </VDialog>

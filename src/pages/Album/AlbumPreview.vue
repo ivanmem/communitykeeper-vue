@@ -12,6 +12,22 @@ import {
   Icon16Link,
   Icon16LogoVk,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      goToPhoto: "Перейти к фото",
+      openOriginal: "Открыть оригинал ({width}x{height})",
+      download: "Скачать",
+    },
+    en: {
+      goToPhoto: "Go to photo",
+      openOriginal: "Open original ({width}x{height})",
+      download: "Download",
+    },
+  },
+});
 
 const props = defineProps<{
   photo: IPhoto;
@@ -29,12 +45,12 @@ const onOpenPhoto = useOpenPhoto(() => props.photo);
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
     {
-      label: "Перейти к фото",
+      label: t("goToPhoto"),
       icon: h(Icon16LogoVk),
       onClick: onOpenPhoto,
     },
     {
-      label: `Открыть оригинал (${originalSize.value?.width}x${originalSize.value?.height})`,
+      label: t("openOriginal", { width: originalSize.value?.width, height: originalSize.value?.height }),
       icon: h(Icon16Link),
       onClick: () => {
         if (originalSize.value) {
@@ -43,7 +59,7 @@ const onShowContextMenu = (e: MouseEvent) => {
       },
     },
     {
-      label: "Скачать",
+      label: t("download"),
       icon: h(Icon16DownloadOutline),
       onClick: () => {
         return PhotoHelper.downloadPhoto(props.photo);

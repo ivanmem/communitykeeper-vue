@@ -76,60 +76,31 @@ export const dateTimeFormatter = new Intl.DateTimeFormat("ru", {
 });
 
 type IActionDictValue = {
-  label: string;
   name: keyof ReturnType<typeof usePhotoActions>;
 };
 
 // ключи короткие, чтобы меньше места занимать в VK Storage
 export const actionSwipesDict = new Map<string, IActionDictValue>([
-  ["op", { label: "Перейти к фото", name: "onOpenPhoto" }],
-  ["oosp", { label: "Открыть оригинал", name: "onOpenOriginalSizePhoto" }],
-  ["cl", { label: "Копировать ссылку", name: "onCopyLink" }],
-  ["cdl", { label: "Копировать прямую ссылку", name: "onCopyDirectLink" }],
-  ["d", { label: "Скачать", name: "onDownload" }],
-  ["so", { label: "Поиск оригинала", name: "onSearchOriginal" }],
-  [
-    "sos",
-    {
-      label: "Отображать фото в оригинальном размере",
-      name: "onSwitchOriginalSize",
-    },
-  ],
-  ["smi", { label: "Информация", name: "onShowMoreInfo" }],
-  [
-    "oss",
-    {
-      label: "Настройки пропуска фото",
-      name: "onOpenSkipSettings",
-    },
-  ],
-  ["pe", { label: "Выйти из просмотра фото", name: "onPhotoExit" }],
-  ["pp", { label: "Предыдущее фото", name: "onPhotoPrev" }],
-  ["pn", { label: "Следующее фото", name: "onPhotoNext" }],
-  ["passive", { label: "Ничего не делать", name: "onPassive" }],
+  ["op", { name: "onOpenPhoto" }],
+  ["oosp", { name: "onOpenOriginalSizePhoto" }],
+  ["cl", { name: "onCopyLink" }],
+  ["cdl", { name: "onCopyDirectLink" }],
+  ["d", { name: "onDownload" }],
+  ["so", { name: "onSearchOriginal" }],
+  ["sos", { name: "onSwitchOriginalSize" }],
+  ["smi", { name: "onShowMoreInfo" }],
+  ["oss", { name: "onOpenSkipSettings" }],
+  ["pe", { name: "onPhotoExit" }],
+  ["pp", { name: "onPhotoPrev" }],
+  ["pn", { name: "onPhotoNext" }],
+  ["passive", { name: "onPassive" }],
 ]);
-
-export const actionSwipesOptions = Array.from(actionSwipesDict.keys()).map(
-  (value) => {
-    return {
-      title: actionSwipesDict.get(value)!.label,
-      value,
-    };
-  },
-);
 
 export const actionSwipesDefaults: Required<GallerySwipesConfig> = {
   onUp: "pe",
   onDown: "smi",
   onLeft: "pp",
   onRight: "pn",
-};
-
-export const actionSwipesSelectLabels = {
-  onUp: "Свайп вверх",
-  onDown: "Свайп вниз",
-  onLeft: "Свайп влево",
-  onRight: "Свайп вправо",
 };
 
 export const actionSwipesSelectAppendIcon = {

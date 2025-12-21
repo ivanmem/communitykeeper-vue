@@ -8,17 +8,37 @@ import {
   Icon24GearOutline,
   Icon24LightbulbStarOutline,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      groups: "Группы",
+      add: "Добавить",
+      history: "История",
+      settings: "Настройки",
+      about: "Проект",
+    },
+    en: {
+      groups: "Groups",
+      add: "Add",
+      history: "History",
+      settings: "Settings",
+      about: "About",
+    },
+  },
+});
 
 const route = useRoute();
 
 const tabBarItems: Array<{
-  caption: string;
+  captionKey: string;
   icon: any;
   to: string;
   getDataType?: () => "accent" | undefined;
 }> = [
   {
-    caption: "Группы",
+    captionKey: "groups",
     icon: Icon24ArticleBoxOutline,
     to: "/",
     getDataType: () => {
@@ -28,22 +48,22 @@ const tabBarItems: Array<{
     },
   },
   {
-    caption: "Добавить",
+    captionKey: "add",
     icon: Icon24AddSquareOutline,
     to: "/add/",
   },
   {
-    caption: "История",
+    captionKey: "history",
     icon: Icon24HistoryBackwardOutline,
     to: "/history/",
   },
   {
-    caption: "Настройки",
+    captionKey: "settings",
     icon: Icon24GearOutline,
     to: "/settings/",
   },
   {
-    caption: "Проект",
+    captionKey: "about",
     icon: Icon24LightbulbStarOutline,
     to: "/about/",
   },
@@ -58,7 +78,7 @@ const tabBarItems: Array<{
         :icon="item.icon"
         :to="item.to"
       >
-        <span> {{ item.caption }} </span>
+        <span> {{ t(item.captionKey) }} </span>
       </BaseButton>
     </div>
   </div>

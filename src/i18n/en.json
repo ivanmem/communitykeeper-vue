@@ -1,0 +1,59 @@
+{
+  "groups": {
+    "youAreMember": "You are a member",
+    "youAreNotMember": "You are not a member",
+    "notSureWillAttend": "Not sure if you will attend",
+    "declinedInvitation": "You declined the invitation",
+    "requestSent": "Request sent",
+    "youAreInvited": "You are invited",
+    "youAreAdmin": "You are an admin",
+    "youAreAdvertiser": "You are an advertiser",
+    "closed": "Closed",
+    "partiallyBanned": "Partially banned",
+    "banned": "Banned",
+    "privateGroup": "Private group"
+  },
+  "counters": {
+    "photos": "Photos",
+    "albums": "Albums",
+    "videos": "Videos",
+    "articles": "Articles"
+  },
+  "albums": {
+    "communityPhotos": "Community photos"
+  },
+  "gallery": {
+    "goToPhoto": "Go to photo",
+    "openOriginal": "Open original",
+    "share": "Share",
+    "link": "Link",
+    "directLink": "Direct link",
+    "download": "Download",
+    "searchOriginal": "Search original",
+    "expandFullscreen": "Expand to fullscreen",
+    "showOriginalSize": "Show in original size",
+    "information": "Information",
+    "skipSettings": "Skip settings",
+    "exitPhotoView": "Exit photo view",
+    "searchOriginalTitle": "Search original",
+    "searchOriginalSubtitle": "Choose search engine:"
+  },
+  "storage": {
+    "dataLossWarningTitle": "Warning, possible data loss!",
+    "dataLossWarningText": "Data has been saved {count} times in this session. VKontakte allows updating data up to 1000 times per hour, and refuses to save on the 1001st time. Depending on the number of your groups, one save may require several requests. In this case, data will not be fully saved and will be corrupted. If you have auto-save enabled, we recommend disabling it or stopping in time. We recommend creating a backup in the \"Add\" tab.",
+    "saveErrorTitle": "Save error!",
+    "saveErrorText": "Some data could not be saved, so its integrity may be corrupted.\nDo not exit the app and restore internet access or wait an hour, then click OK to retry saving. If you accept the risk and do not want to complete saving - click \"Cancel\", then create a backup just in case."
+  },
+  "welcome": {
+    "title": "Community Keeper",
+    "subtitle": "Groups, folders, sorting, filtering, built-in gallery with viewing history. Continue?"
+  },
+  "errors": {
+    "accessDenied": "Access denied",
+    "tokenError": "Error getting token."
+  },
+  "validation": {
+    "folderNameReserved": "This name is reserved by the system.",
+    "folderMaxLength": "Maximum {max} characters allowed."
+  }
+}

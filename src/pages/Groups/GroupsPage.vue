@@ -11,16 +11,15 @@ import {
   Icon24ErrorCircleOutline,
   Icon24InfoCircleOutline,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
 
-const groupSearch = useGroupSearch();
-const { groupsRef, groupsOrder, showFilters } = groupSearch;
-const dialogStore = useDialog();
-const groupsStore = useGroups();
-
-const onHelp = () => {
-  dialogStore.alert({
-    title: "💡 Справка",
-    subtitle: `Во вкладке "Группы" Вы можете:
+const { t } = useI18n({
+  messages: {
+    ru: {
+      noItems: "Элементы отсутствуют",
+      add: "Добавить",
+      helpTitle: "💡 Справка",
+      helpText: `Во вкладке "Группы" Вы можете:
 - отсортировать и отфильтровать группы;
 - заменить папку у группы;
 - выйти или войти в группу;
@@ -31,6 +30,35 @@ const onHelp = () => {
 - открыть группу во встроенной галерее;
 - переименовать или удалить папку нажатием правой кнопки мыши или удерживанием пальца на экране;
 - найти группу через поиск по названию или статусу (то, что написано мелким шрифтом под названием группы).`,
+    },
+    en: {
+      noItems: "No items",
+      add: "Add",
+      helpTitle: "💡 Help",
+      helpText: `In the "Groups" tab you can:
+- sort and filter groups;
+- change group folder;
+- leave or join a group;
+- delete a group;
+- go to a group by clicking on its name;
+- show or hide counters by clicking on the group avatar;
+- go to a specific counter by clicking on it;
+- open a group in the built-in gallery;
+- rename or delete a folder by right-clicking or long-pressing;
+- find a group by searching by name or status (the small text under the group name).`,
+    },
+  },
+});
+
+const groupSearch = useGroupSearch();
+const { groupsRef, groupsOrder, showFilters } = groupSearch;
+const dialogStore = useDialog();
+const groupsStore = useGroups();
+
+const onHelp = () => {
+  dialogStore.alert({
+    title: t("helpTitle"),
+    subtitle: t("helpText"),
   });
 };
 </script>
@@ -53,7 +81,7 @@ const onHelp = () => {
         lines="one"
         style="padding-block: 8px"
       >
-        <VBannerText>Элементы отсутствуют</VBannerText>
+        <VBannerText>{{ t("noItems") }}</VBannerText>
         <div
           style="
             display: flex;
@@ -62,7 +90,7 @@ const onHelp = () => {
             justify-content: flex-end;
           "
         >
-          <BaseButton :to="{ name: 'add' }">Добавить</BaseButton>
+          <BaseButton :to="{ name: 'add' }">{{ t("add") }}</BaseButton>
         </div>
       </VBanner>
     </div>

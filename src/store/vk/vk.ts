@@ -14,6 +14,7 @@ import { toStr } from "@/shared/helpers/toStr";
 import { VK_STORAGE } from "@/shared/constants/consts";
 import { VkApiService } from "@/shared/services/VkApiService";
 import { Raw } from "@vue/reactivity";
+import { setLocaleFromVk, t } from "@/i18n";
 
 export type WebAppConfig = Partial<
   MobileUpdateConfigData & MVKUpdateConfigData & VKUpdateConfigData
@@ -109,11 +110,19 @@ export const useVk = defineStore("vk", {
       const vkStore = useVk();
       const dialogStore = useDialog();
       try {
+        // Получаем язык из URL параметров (vk_language)
+        const urlParams = new URLSearchParams(window.location.search);
+        const vkLanguage = urlParams.get("vk_language");
+        if (vkLanguage) {
+          setLocaleFromVk(vkLanguage);
+        }
+
         bridge.subscribe((e) => {
-          if (
-            e.detail.type === "VKWebAppUpdateConfig" ||
-            e.detail.type === "VKWebAppGetConfigResult"
-          ) {
+          if (e.detail.type === "VKWebAppUpdateConfig") {
+            vkStore.webAppConfig = e.detail.data;
+            return;
+          }
+          if (e.detail.type === "VKWebAppGetConfigResult") {
             vkStore.webAppConfig = e.detail.data;
             return;
           }
@@ -128,13 +137,8 @@ export const useVk = defineStore("vk", {
             const warnCount = 200;
             if (oldCount < warnCount && count >= warnCount) {
               dialogStore.alert({
-                title: "Внимание, возможна потеря данных!",
-                subtitle: `В текущем сеансе данные сохранились уже ${count} раз.
-              ВКонтакте позволяет обновлять данные до 1000 раз за час, а уже на 1001 раз отказывает в сохранении.
-              В зависимости от количества Ваших групп на одно сохранение может потребоваться несколько запросов.
-              В таком случае данные сохранятся не до конца и будут повреждены.
-              Если у Вас включено автосохранение, советуем его отключить, либо остановиться вовремя.
-              Советуем создать резервную копию на вкладке "Добавить".`,
+                title: t("storage.dataLossWarningTitle"),
+                subtitle: t("storage.dataLossWarningText", { count }),
               });
             }
           },
@@ -237,7 +241,7 @@ export const useVk = defineStore("vk", {
         this.apiService = markRaw(new VkApiService(vkApi));
         return true;
       } catch (ex) {
-        console.warn("Ошибка при получении токена.", ex);
+        console.warn(t("errors.tokenError"), ex);
         return false;
       }
     },
@@ -271,11 +275,8 @@ export const useVk = defineStore("vk", {
             const appStore = useApp();
             appStore.setLoadingPause(true);
             const result = await useDialog().confirm({
-              title: "Ошибка при сохранении!",
-              subtitle:
-                `Часть данных не удалось сохранить, поэтому их целостность может быть повреждена.` +
-                `\nНе выходите из приложения и восстановите доступ к интернету или подождите час, после чего нажмите Ок для повторной попытки сохранения.` +
-                `В случае, если Вы принимаете на себя риск и не хотите завершать сохранение - нажмите "Отмена", после чего на всякий случай создайте резервную копию.`,
+              title: t("storage.saveErrorTitle"),
+              subtitle: t("storage.saveErrorText"),
             });
             appStore.setLoadingPause(false);
             if (!result) {

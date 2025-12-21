@@ -31,12 +31,13 @@
     "virtua": "0.40.4",
     "vite-plugin-vuetify": "2.1.1",
     "vkontakte-api": "3.0.3",
-    "vue": "3.5.13",
+    "vue": "3.5.26",
     "vue-clipboard3": "2.0.0",
-    "vue-router": "4.5.1",
+    "vue-i18n": "11.2.7",
+    "vue-router": "4.6.4",
     "vue-routes-to-types": "0.3.7",
-    "vue-vkontakte-icons": "3.6.0",
-    "vuetify": "3.8.3"
+    "vue-vkontakte-icons": "3.31.0",
+    "vuetify": "3.11.4"
   },
   "devDependencies": {
     "@types/file-saver": "2.0.7",

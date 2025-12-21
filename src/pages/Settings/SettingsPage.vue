@@ -4,9 +4,7 @@ import { useGroups } from "@/store/groups/groups";
 import { useVk } from "@/store/vk/vk";
 import {
   actionSwipesDefaults,
-  actionSwipesOptions,
   actionSwipesSelectAppendIcon,
-  actionSwipesSelectLabels,
   styledIcons,
   VK_MAX_PHOTO_SIZE,
 } from "@/shared/constants/consts";
@@ -15,7 +13,7 @@ import SettingsDisabledCookies from "@/pages/Settings/SettingsDisabledCookies.vu
 import FixedTeleport from "@/components/FixedTeleport";
 import { useApp } from "@/store/app/app";
 import PhotoCounter from "@/pages/Album/PhotoCounter.vue";
-import { h } from "vue";
+import { computed, h, watch } from "vue";
 import {
   Icon24SunOutline,
   Icon12View,
@@ -28,12 +26,188 @@ import {
   Icon24CloudOutline,
   Icon24RectangleHandPointUp,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+import { setLocale } from "@/i18n";
+import { applyTheme } from "@/shared/composables/useColorScheme";
 
-useAppCaption("Настройки");
+const { t } = useI18n({
+  messages: {
+    ru: {
+      title: "Настройки",
+      main: "🔧 Основные",
+      autoSave: "Автосохранение групп",
+      autoSaveHint:
+        "Запросы ограничены до тысячи в час; За этот сеанс Вы уже сделали: {count}. Если Вы попытаетесь сохраниться при лимите - все группы будут утеряны! Этот параметр не влияет на сохранение настроек. Они будут сохраняться автоматически в любом случае.",
+      saveGroups: "Сохранить группы",
+      showCounters: "Отображать счётчики количества фото/видео и так далее",
+      showCountersHint:
+        "Если опция выключена, то Вы можете вручную загрузить счётчики по клику на аватарку группы.",
+      gallery: "🌅 Галерея",
+      builtInGallery: "Встроенная галерея",
+      builtInGalleryHint:
+        "По возможности будет использоваться встроенная галерея. Например, при клике по счётчикам фото/альбомов.",
+      counterOpacity: "Непрозрачность счётчика при просмотре фото",
+      counterOpacityHint:
+        "Вы можете установить минимальное значение, чтобы скрыть счётчик.",
+      swipeActions: "Действия жестов для сенсорного экрана при просмотре фото",
+      previewShadow: "Подсвечивать миниатюры с учётом разрешения фото",
+      previewShadowHint:
+        "Фото с низким разрешением будет подсвечено красным цветом, а с высоким - зелёным. Разрешение Вашего экрана не влияет - учитывается максимальное разрешение для ВКонтакте ({width}x{height}).",
+      testing: "🐞 Тестирование",
+      debug: "Отладка (eruda)",
+      clearCache: "Очистить кэш счётчиков",
+      repeatWelcome: "Повторить приветствие",
+      storageUsed:
+        "У Вас занято {percent}% из доступного для групп места. Если занять более 100%, то данные не смогут сохраниться.",
+      appearance: "🎨 Внешний вид",
+      language: "Язык",
+      langSystem: "Системный",
+      langRu: "Русский",
+      langEn: "English",
+      theme: "Тема",
+      themeSystem: "Системная",
+      themeLight: "Светлая",
+      themeDark: "Тёмная",
+      // Swipe labels
+      swipeUp: "Свайп вверх",
+      swipeDown: "Свайп вниз",
+      swipeLeft: "Свайп влево",
+      swipeRight: "Свайп вправо",
+      // Swipe actions
+      actionGoToPhoto: "Перейти к фото",
+      actionOpenOriginal: "Открыть оригинал",
+      actionCopyLink: "Копировать ссылку",
+      actionCopyDirectLink: "Копировать прямую ссылку",
+      actionDownload: "Скачать",
+      actionSearchOriginal: "Поиск оригинала",
+      actionShowOriginalSize: "Отображать фото в оригинальном размере",
+      actionInfo: "Информация",
+      actionSkipSettings: "Настройки пропуска фото",
+      actionExit: "Выйти из просмотра фото",
+      actionPrev: "Предыдущее фото",
+      actionNext: "Следующее фото",
+      actionNothing: "Ничего не делать",
+    },
+    en: {
+      title: "Settings",
+      main: "🔧 Main",
+      autoSave: "Auto-save groups",
+      autoSaveHint:
+        "Requests are limited to a thousand per hour; This session you have already made: {count}. If you try to save at the limit - all groups will be lost! This setting does not affect saving settings. They will be saved automatically anyway.",
+      saveGroups: "Save groups",
+      showCounters: "Show photo/video counters etc.",
+      showCountersHint:
+        "If disabled, you can manually load counters by clicking on the group avatar.",
+      gallery: "🌅 Gallery",
+      builtInGallery: "Built-in gallery",
+      builtInGalleryHint:
+        "The built-in gallery will be used when possible. For example, when clicking on photo/album counters.",
+      counterOpacity: "Counter opacity when viewing photos",
+      counterOpacityHint: "You can set the minimum value to hide the counter.",
+      swipeActions: "Touch screen gesture actions when viewing photos",
+      previewShadow: "Highlight thumbnails based on photo resolution",
+      previewShadowHint:
+        "Low resolution photos will be highlighted in red, high resolution in green. Your screen resolution does not matter - the maximum resolution for VK ({width}x{height}) is considered.",
+      testing: "🐞 Testing",
+      debug: "Debug (eruda)",
+      clearCache: "Clear counters cache",
+      repeatWelcome: "Repeat welcome",
+      storageUsed:
+        "You have used {percent}% of available space for groups. If you use more than 100%, data cannot be saved.",
+      appearance: "🎨 Appearance",
+      language: "Language",
+      langSystem: "System",
+      langRu: "Русский",
+      langEn: "English",
+      theme: "Theme",
+      themeSystem: "System",
+      themeLight: "Light",
+      themeDark: "Dark",
+      // Swipe labels
+      swipeUp: "Swipe up",
+      swipeDown: "Swipe down",
+      swipeLeft: "Swipe left",
+      swipeRight: "Swipe right",
+      // Swipe actions
+      actionGoToPhoto: "Go to photo",
+      actionOpenOriginal: "Open original",
+      actionCopyLink: "Copy link",
+      actionCopyDirectLink: "Copy direct link",
+      actionDownload: "Download",
+      actionSearchOriginal: "Search original",
+      actionShowOriginalSize: "Show photo in original size",
+      actionInfo: "Information",
+      actionSkipSettings: "Photo skip settings",
+      actionExit: "Exit photo view",
+      actionPrev: "Previous photo",
+      actionNext: "Next photo",
+      actionNothing: "Do nothing",
+    },
+  },
+});
+
+useAppCaption(computed(() => t("title")));
 const appStore = useApp();
 const groupsStore = useGroups();
 const vkStore = useVk();
 const dialogStore = useDialog();
+
+// Язык
+const localeOptions = computed(() => [
+  { title: t("langSystem"), value: "system" },
+  { title: t("langRu"), value: "ru" },
+  { title: t("langEn"), value: "en" },
+]);
+
+const currentLocale = computed({
+  get: () => appStore.config.locale ?? "system",
+  set: (val) => {
+    const locale = val ?? "system";
+    appStore.config.locale = locale;
+    setLocale(locale);
+  },
+});
+
+// Тема
+const themeOptions = computed(() => [
+  { title: t("themeSystem"), value: "system" },
+  { title: t("themeLight"), value: "light" },
+  { title: t("themeDark"), value: "dark" },
+]);
+
+const currentTheme = computed({
+  get: () => appStore.config.theme ?? "system",
+  set: (val) => {
+    const theme = val ?? "system";
+    appStore.config.theme = theme;
+    applyTheme(theme);
+  },
+});
+
+// Локализованные swipe labels
+const swipeLabels = computed(() => ({
+  onUp: t("swipeUp"),
+  onDown: t("swipeDown"),
+  onLeft: t("swipeLeft"),
+  onRight: t("swipeRight"),
+}));
+
+// Локализованные swipe options
+const swipeOptions = computed(() => [
+  { title: t("actionGoToPhoto"), value: "op" },
+  { title: t("actionOpenOriginal"), value: "oosp" },
+  { title: t("actionCopyLink"), value: "cl" },
+  { title: t("actionCopyDirectLink"), value: "cdl" },
+  { title: t("actionDownload"), value: "d" },
+  { title: t("actionSearchOriginal"), value: "so" },
+  { title: t("actionShowOriginalSize"), value: "sos" },
+  { title: t("actionInfo"), value: "smi" },
+  { title: t("actionSkipSettings"), value: "oss" },
+  { title: t("actionExit"), value: "pe" },
+  { title: t("actionPrev"), value: "pp" },
+  { title: t("actionNext"), value: "pn" },
+  { title: t("actionNothing"), value: "passive" },
+]);
 </script>
 
 <template>
@@ -45,31 +219,53 @@ const dialogStore = useDialog();
       :icon="Icon24CloudOutline"
       variant="text"
       @click="
-        dialogStore.alert(
-          `У Вас занято ${groupsStore.spaceUsed}% из доступного для групп места. Если занять более 100%, то данные не смогут сохраниться.`,
-        )
+        dialogStore.alert(t('storageUsed', { percent: groupsStore.spaceUsed }))
       "
     />
   </FixedTeleport>
   <VCard class="overflow-block a-settings">
-    <VCardSubtitle style="padding-block: 12px">🔧 Основные</VCardSubtitle>
-    <VDivider />
     <div class="d-flex flex-wrap">
       <SettingsDisabledCookies />
     </div>
+    <VCardSubtitle style="padding-block: 12px">{{
+      t("appearance")
+    }}</VCardSubtitle>
+    <VDivider />
+    <VCardItem>
+      <VSelect
+        v-model="currentLocale"
+        :items="localeOptions"
+        :label="t('language')"
+        item-title="title"
+        item-value="value"
+        hide-details
+        style="max-width: 300px"
+      />
+    </VCardItem>
+    <VCardItem>
+      <VSelect
+        v-model="currentTheme"
+        :items="themeOptions"
+        :label="t('theme')"
+        item-title="title"
+        item-value="value"
+        hide-details
+        style="max-width: 300px"
+      />
+    </VCardItem>
+    <VDivider />
+    <VCardSubtitle style="padding-block: 12px">
+      {{ t("main") }}
+    </VCardSubtitle>
+    <VDivider />
     <VCardItem :append-icon="Icon24MemoryCard">
       <VSwitch
         v-model="groupsStore.config.autoSave"
         hide-details
-        label="Автосохранение групп"
+        :label="t('autoSave')"
       />
       <span class="a-mini-text">
-        Запросы ограничены до тысячи в час; За этот сеанс Вы уже сделали:
-        {{ vkStore.vkWebAppStorageSetCount }}. Если Вы попытаетесь сохраниться
-        при лимите - все группы будут утеряны!
-        <br />
-        Этот параметр не влияет на сохранение настроек. Они будут сохраняться
-        автоматически в любом случае.
+        {{ t("autoSaveHint", { count: vkStore.vkWebAppStorageSetCount }) }}
       </span>
       <VBtn
         v-if="!groupsStore.config.autoSave"
@@ -77,7 +273,7 @@ const dialogStore = useDialog();
         variant="tonal"
         @click="groupsStore.saveCurrentLocalGroups()"
       >
-        Сохранить группы
+        {{ t("saveGroups") }}
       </VBtn>
     </VCardItem>
     <VDivider />
@@ -85,31 +281,31 @@ const dialogStore = useDialog();
       <VSwitch
         v-model="groupsStore.config.showCounters"
         hide-details
-        label="Отображать счётчики количества фото\видео и так далее"
+        :label="t('showCounters')"
       />
       <span class="a-mini-text">
-        Если опция выключена, то Вы можете вручную загрузить счётчики по клику
-        на аватарку группы.
+        {{ t("showCountersHint") }}
       </span>
     </VCardItem>
     <VDivider />
-    <VCardSubtitle style="padding-block: 12px"> 🌅 Галерея</VCardSubtitle>
+    <VCardSubtitle style="padding-block: 12px">{{
+      t("gallery")
+    }}</VCardSubtitle>
     <VDivider />
     <VCardItem :append-icon="Icon24Attachments">
       <VSwitch
         v-model="groupsStore.config.gallery"
         hide-details
-        label="Встроенная галерея"
+        :label="t('builtInGallery')"
       />
       <span class="a-mini-text">
-        По возможности будет использоваться встроенная галерея. Например, при
-        клике по счётчикам фото/альбомов.
+        {{ t("builtInGalleryHint") }}
       </span>
     </VCardItem>
     <VDivider />
     <VCardItem :append-icon="Icon24SunOutline" style="margin-top: 10px">
       <div style="margin-bottom: 10px">
-        Непрозрачность счётчика при просмотре фото
+        {{ t("counterOpacity") }}
       </div>
       <VSlider
         :append-icon="Icon12View"
@@ -122,7 +318,7 @@ const dialogStore = useDialog();
         @update:model-value="groupsStore.config.opacityGalleryCounter = $event"
       />
       <span class="a-mini-text">
-        Вы можете установить минимальное значение, чтобы скрыть счётчик.
+        {{ t("counterOpacityHint") }}
       </span>
       <PhotoCounter
         :size="100"
@@ -138,12 +334,13 @@ const dialogStore = useDialog();
       style="margin-top: 10px"
     >
       <div style="margin-bottom: 10px">
-        Действия жестов для сенсорного экрана при просмотре фото
+        {{ t("swipeActions") }}
       </div>
       <VSelect
         v-for="swipeKey of Object.keys(actionSwipesDefaults)"
-        :items="actionSwipesOptions"
-        :label="actionSwipesSelectLabels[swipeKey as never]"
+        :key="swipeKey"
+        :items="swipeOptions"
+        :label="swipeLabels[swipeKey as keyof typeof swipeLabels]"
         :model-value="groupsStore.swipesConfig[swipeKey as never]"
         item-title="title"
         :append-inner-icon="actionSwipesSelectAppendIcon[swipeKey as never]"
@@ -158,35 +355,38 @@ const dialogStore = useDialog();
       <VSwitch
         v-model="groupsStore.config.previewSizeShadow"
         hide-details
-        label="Подсвечивать миниатюры с учётом разрешения фото"
+        :label="t('previewShadow')"
       />
       <span class="a-mini-text">
-        Фото с низким разрешением будет подсвечено красным цветом, а с высоким -
-        зелёным. Разрешение Вашего экрана не влияет - учитывается максимальное
-        разрешение для ВКонтакте ({{ VK_MAX_PHOTO_SIZE.width }}x{{
-          VK_MAX_PHOTO_SIZE.height
-        }}).
+        {{
+          t("previewShadowHint", {
+            width: VK_MAX_PHOTO_SIZE.width,
+            height: VK_MAX_PHOTO_SIZE.height,
+          })
+        }}
       </span>
     </VCardItem>
     <VDivider />
-    <VCardSubtitle style="padding-block: 12px"> 🐞 Тестирование</VCardSubtitle>
+    <VCardSubtitle style="padding-block: 12px">{{
+      t("testing")
+    }}</VCardSubtitle>
     <VDivider />
     <VCardItem :append-icon="Icon24Bug">
       <VSwitch
         v-model="appStore.config.eruda"
         hide-details
-        label="Отладка (eruda)"
+        :label="t('debug')"
       />
     </VCardItem>
     <VDivider style="margin-bottom: 10px" />
     <VCardItem :append-icon="styledIcons.Icon24ClearDataOutline">
       <VBtn variant="tonal" @click="groupsStore.clearCachedGroups()">
-        Очистить кэш счётчиков
+        {{ t("clearCache") }}
       </VBtn>
     </VCardItem>
     <VCardItem :append-icon="Icon24QuestionOutline">
       <VBtn variant="tonal" @click="appStore.initSlides()">
-        Повторить приветствие
+        {{ t("repeatWelcome") }}
       </VBtn>
     </VCardItem>
   </VCard>

@@ -24,6 +24,40 @@ import {
   Icon16MoreVertical,
   Icon16PictureOutline,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      copyLink: "Скопировать ссылку",
+      copyLinkError: "Ошибка при копировании ссылки",
+      builtInGallery: "Встроенная галерея",
+      replace: "Заменить",
+      cancelRequest: "Отменить заявку [не работает]",
+      leave: "Выйти",
+      leaveGroupTitle: "Выход из группы",
+      leaveGroupConfirm: 'Вы выходите из закрытой группы "{name}".\nВас могут не принять обратно. Всё равно хотите выйти?',
+      yes: "Да",
+      submitRequest: "Подать заявку",
+      subscribe: "Подписаться",
+      delete: "Удалить",
+    },
+    en: {
+      copyLink: "Copy link",
+      copyLinkError: "Error copying link",
+      builtInGallery: "Built-in gallery",
+      replace: "Replace",
+      cancelRequest: "Cancel request [not working]",
+      leave: "Leave",
+      leaveGroupTitle: "Leave group",
+      leaveGroupConfirm: 'You are leaving a closed group "{name}".\nYou may not be accepted back. Do you still want to leave?',
+      yes: "Yes",
+      submitRequest: "Submit request",
+      subscribe: "Subscribe",
+      delete: "Delete",
+    },
+  },
+});
 
 const props = defineProps<{
   group: IGroup;
@@ -86,13 +120,13 @@ const onOpenContextMenu = (e: MouseEvent) => {
   const isGroupAdded = groupsStore.localGroupsMap.has(props.group.id);
   const items: MenuItem[] = [];
   items.push({
-    label: "Скопировать ссылку",
+    label: t("copyLink"),
     icon: h(Icon16ChainOutline),
     onClick: async () => {
       try {
         await toClipboard(link.value);
       } catch (ex) {
-        const title = "Ошибка при копировании ссылки";
+        const title = t("copyLinkError");
         console.error(title, ex);
         dialogStore.alert({
           title,
@@ -103,7 +137,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
   });
 
   items.push({
-    label: "Встроенная галерея",
+    label: t("builtInGallery"),
     icon: h(Icon16PictureOutline),
     onClick: async () => {
       return router.push(`/albums/-${props.group.id}`);
@@ -112,7 +146,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
 
   if (isGroupAdded) {
     items.push({
-      label: "Заменить",
+      label: t("replace"),
       icon: h(styledIcons.Icon16FolderMoveOutline),
       onClick: () => {
         return router.push({
@@ -130,18 +164,15 @@ const onOpenContextMenu = (e: MouseEvent) => {
     props.group.member_status === IGroupMemberStatus.JoiningRequestSent;
   if (props.group.is_member || requestSent) {
     items.push({
-      label: requestSent ? "Отменить заявку [не работает]" : "Выйти",
+      label: requestSent ? t("cancelRequest") : t("leave"),
       icon: h(Icon16DoorEnterArrowRightOutline),
       onClick: async () => {
         let confirm = true;
         if (props.group.is_closed && !requestSent) {
           confirm = await dialogStore.confirm({
-            title: "Выход из группы",
-            subtitle: `Вы ${"выходите из закрытой группы"} "${GroupHelper.getName(
-              props.group,
-            )}".
-Вас могут не принять обратно. Всё равно хотите выйти?`,
-            confirmTitle: "Да",
+            title: t("leaveGroupTitle"),
+            subtitle: t("leaveGroupConfirm", { name: GroupHelper.getName(props.group) }),
+            confirmTitle: t("yes"),
           });
         }
 
@@ -151,15 +182,13 @@ const onOpenContextMenu = (e: MouseEvent) => {
       },
     });
   } else {
-    // отображаем кнопку только если группа открытая или если это не приложение,
-    // так как присоединиться к закрытой группе можно только с vk.com или m.vk.com из-за бага в VK Bridge или Приложении ВКонтакте
     if (
       !props.group.deactivated &&
       props.group.is_closed !== 2 &&
       (!props.group.is_closed || !appStore.isApp)
     ) {
       items.push({
-        label: props.group.is_closed ? `Подать заявку` : "Подписаться",
+        label: props.group.is_closed ? t("submitRequest") : t("subscribe"),
         icon: h(Icon16AddSquareOutline),
         onClick: async () => {
           return GroupHelper.setIsMember(props.group, true);
@@ -170,7 +199,7 @@ const onOpenContextMenu = (e: MouseEvent) => {
 
   if (isGroupAdded) {
     items.push({
-      label: "Удалить",
+      label: t("delete"),
       icon: h(Icon16DeleteOutline, { style: { color: "red" } }),
       onClick: async () => {
         groupsStore.removeLocalGroup(props.group.id);

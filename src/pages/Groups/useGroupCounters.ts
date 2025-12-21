@@ -8,6 +8,7 @@ import {
   Icon28PictureOutline,
   Icon28Video,
 } from "vue-vkontakte-icons";
+import { t } from "@/i18n";
 
 export interface IGroupCounter {
   icon: any;
@@ -26,7 +27,7 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
     const add = (
       key: keyof IGroupCounters,
       icon: any,
-      name: string,
+      nameKey: "photos" | "albums" | "videos" | "articles",
       link: string,
       galleryLink?: string,
     ) => {
@@ -46,7 +47,7 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
         result.push({
           key,
           icon,
-          name,
+          name: t(`counters.${nameKey}`),
           url: groupsStore.config.gallery && galleryLink ? galleryLink : link,
           label: label,
         });
@@ -56,22 +57,22 @@ export function useGroupCounters(groupRef: MaybeRef<IGroup>) {
     add(
       "photos",
       Icon28PictureOutline,
-      "Фотографий",
+      "photos",
       `//vk.com/album-${group.id}_00`,
       `/albums/-${group.id}/-7`,
     );
     add(
       "albums",
       Icon28Attachments,
-      "Альбомов",
+      "albums",
       `//vk.com/albums-${group.id}`,
       `/albums/-${group.id}`,
     );
-    add("videos", Icon28Video, "Видеозаписей", `//vk.com/videos-${group.id}`);
+    add("videos", Icon28Video, "videos", `//vk.com/videos-${group.id}`);
     add(
       "articles",
       Icon28ArticleOutline,
-      "Статей",
+      "articles",
       `//vk.com/@public${group.id}`,
     );
 

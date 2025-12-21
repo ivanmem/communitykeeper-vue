@@ -1,3 +1,5 @@
+import { t } from "@/i18n";
+
 const blackListFolderNames = new Set(["все", "all"]);
 
 export const maxFolderLength = 30;
@@ -6,13 +8,13 @@ export const folderRules: any[] = [
   (folder: string) => {
     return (
       !blackListFolderNames.has(folder?.trim().toLowerCase()) ||
-      "Это название зарезервировано системой."
+      t("validation.folderNameReserved")
     );
   },
   (folder: string) => {
     return (
       (folder?.trim().length ?? 0) <= maxFolderLength ||
-      `Разрешено до ${maxFolderLength} символов.`
+      t("validation.folderMaxLength", { max: maxFolderLength })
     );
   },
 ];

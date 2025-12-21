@@ -21,6 +21,34 @@ import { UsableZoomOptions } from "@/shared/composables/useZoom";
 import PhotoCounter from "@/pages/Album/PhotoCounter.vue";
 import { IPhoto } from "@/store/groups/types";
 import { useThrottleFn } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      extendedInfo: "Расширенная информация",
+      date: "Дата",
+      description: "Описание",
+      resolution: "Разрешение",
+      likes: "Лайков",
+      comments: "Комментариев",
+      reposts: "Репостов",
+      tags: "Тегов",
+      jsonCopied: "JSON скопирован в буфер.",
+    },
+    en: {
+      extendedInfo: "Extended Information",
+      date: "Date",
+      description: "Description",
+      resolution: "Resolution",
+      likes: "Likes",
+      comments: "Comments",
+      reposts: "Reposts",
+      tags: "Tags",
+      jsonCopied: "JSON copied to clipboard.",
+    },
+  },
+});
 
 const emit = defineEmits<{
   (e: "photo:prev"): void;
@@ -187,28 +215,28 @@ defineExpose({
   </div>
   <VDialog v-model="showMoreInfo" close-on-back>
     <VCard>
-      <VCardTitle>Расширенная информация</VCardTitle>
+      <VCardTitle>{{ t("extendedInfo") }}</VCardTitle>
       <VCardText>
         <div>
-          Дата: <b>{{ dateTime }}</b>
+          {{ t("date") }}: <b>{{ dateTime }}</b>
         </div>
         <div v-if="photo.text">
-          Описание: <b>{{ photo.text }}</b>
+          {{ t("description") }}: <b>{{ photo.text }}</b>
         </div>
         <div v-if="originalSize">
-          Разрешение: <b>{{ originalSize.width }}x{{ originalSize.height }}</b>
+          {{ t("resolution") }}: <b>{{ originalSize.width }}x{{ originalSize.height }}</b>
         </div>
         <div v-if="photo.likes">
-          Лайков: <b>{{ photo.likes.count }}</b>
+          {{ t("likes") }}: <b>{{ photo.likes.count }}</b>
         </div>
         <div v-if="photo.comments">
-          Комментариев: <b>{{ photo.comments.count }}</b>
+          {{ t("comments") }}: <b>{{ photo.comments.count }}</b>
         </div>
         <div v-if="photo.reposts">
-          Репостов: <b>{{ photo.reposts.count }}</b>
+          {{ t("reposts") }}: <b>{{ photo.reposts.count }}</b>
         </div>
         <div v-if="photo.tags">
-          Тегов: <b>{{ photo.tags.count }}</b>
+          {{ t("tags") }}: <b>{{ photo.tags.count }}</b>
         </div>
       </VCardText>
 
@@ -218,7 +246,7 @@ defineExpose({
             <VCode
               @click="
                 toClipboard(JSON.stringify(photo), $event.target);
-                dialogStore.alert('JSON скопирован в буфер.');
+                dialogStore.alert(t('jsonCopied'));
               "
             >
               {{ photo }}

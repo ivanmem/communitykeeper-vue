@@ -7,6 +7,28 @@ import {
   currentAlbumPhotoElSize,
   currentAverageLikes,
 } from "@/pages/Album/useCurrentPhoto";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      skipSettings: "Настройки пропуска",
+      lowResolution: "Низкое разрешение",
+      lowResolutionHint: "Ширина от {width}px, либо высота от {height}px",
+      lowLikes: "Лайков меньше среднего",
+      lowLikesHint: "От {count}",
+      close: "Закрыть",
+    },
+    en: {
+      skipSettings: "Skip settings",
+      lowResolution: "Low resolution",
+      lowResolutionHint: "Width from {width}px or height from {height}px",
+      lowLikes: "Likes below average",
+      lowLikesHint: "From {count}",
+      close: "Close",
+    },
+  },
+});
 
 export interface PhotoSkipSettingsDialogProps {
   photo: IPhoto;
@@ -41,25 +63,25 @@ onDeactivated(() => {
   >
     <VCard>
       <VCardItem>
-        <VCardTitle>Настройки пропуска</VCardTitle>
+        <VCardTitle>{{ t("skipSettings") }}</VCardTitle>
       </VCardItem>
       <VCardText>
         <VSwitch
           v-model="groupsStore.config.skipLowResolutionPhotos"
-          :messages="`Ширина от ${Math.ceil(currentAlbumPhotoElSize.width.value)}px, либо высота от ${Math.ceil(currentAlbumPhotoElSize.height.value)}px`"
-          label="Низкое разрешение"
+          :messages="t('lowResolutionHint', { width: Math.ceil(currentAlbumPhotoElSize.width.value), height: Math.ceil(currentAlbumPhotoElSize.height.value) })"
+          :label="t('lowResolution')"
         />
 
         <VSwitch
           class="mt-2"
           v-model="groupsStore.config.skipLowLikesPhotos"
-          :label="`Лайков меньше среднего`"
-          :messages="`От ${currentAverageLikes}`"
+          :label="t('lowLikes')"
+          :messages="t('lowLikesHint', { count: currentAverageLikes })"
         />
       </VCardText>
       <VCardActions>
         <VSpacer />
-        <VBtn @click="emits('close')">Закрыть</VBtn>
+        <VBtn @click="emits('close')">{{ t("close") }}</VBtn>
       </VCardActions>
     </VCard>
   </VDialog>

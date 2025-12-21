@@ -10,6 +10,8 @@ import { toStr } from "@/shared/helpers/toStr";
 import { router } from "@/router";
 import { watchDebounced } from "@vueuse/core";
 import { platform, PlatformType } from "@vkontakte/vkui";
+import { type LocaleSetting, setLocale, t } from "@/i18n";
+import { type ThemeSetting, applyTheme } from "@/shared/composables/useColorScheme";
 
 interface AppState {
   caption: string;
@@ -24,6 +26,8 @@ interface AppState {
 export interface IAppConfig {
   eruda?: boolean;
   slides?: boolean;
+  locale?: LocaleSetting;
+  theme?: ThemeSetting;
 }
 
 export interface IAppConfigs {
@@ -205,9 +209,8 @@ export const useApp = defineStore("app", {
             blob: main,
             type: "image",
           },
-          title: "Хранитель Групп",
-          subtitle:
-            "Группы, папки, сортировка, фильтрация, встроенная галерея с историей просмотров. Продолжим?",
+          title: t("welcome.title"),
+          subtitle: t("welcome.subtitle"),
         },
       ];
       return await bridge.send("VKWebAppShowSlidesSheet", {
@@ -226,6 +229,9 @@ export const useApp = defineStore("app", {
         if (config && config.eruda !== undefined) {
           this.config = config;
         }
+        // Применяем сохранённые настройки локали и темы
+        setLocale(this.config.locale ?? "system");
+        applyTheme(this.config.theme ?? "system");
       } catch (ex) {
         console.error(ex);
       }

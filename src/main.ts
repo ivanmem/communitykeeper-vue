@@ -12,6 +12,7 @@ import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
 import "@/style.scss";
 import App from "@/App.vue";
 import { router } from "@/router";
+import { i18n } from "@/i18n";
 import {
   Icon16LogoVk,
   Icon20Clear,
@@ -94,6 +95,7 @@ import {
     const app = createApp(App)
       .use(router)
       .use(pinia)
+      .use(i18n)
       .use(Vue3ContextMenu)
       .use(vuetify);
     app.mount("#app");

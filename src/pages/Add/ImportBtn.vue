@@ -15,6 +15,58 @@ import {
   Icon24MemoryCard,
   Icon24UploadOutline,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      load: "Загрузить",
+      loadBackup: "Загрузка резервной копии",
+      selectFolders: "Выберите нужные папки и нажмите на кнопку сохранения. Названия папок у уже существующих групп будут обновлены на новые.",
+      newGroupsSelected: "Выбрано новых групп:",
+      folderUpdatesSelected: "Выбрано обновлений названий папок:",
+      all: "Все",
+      groupsCount: "Групп: {count}",
+      selected: "Выбрано",
+      folders: "Папок",
+      groups: "Групп",
+      save: "Сохранить",
+      error: "Ошибка",
+      importError: "Ошибка импорта",
+      importNotFound: "Данные для импорта не были найдены.\nКод ошибки: {error}",
+      importCorrupted: "Данные для импорта были повреждены.\nКод ошибки: {error}",
+      fileTooLarge: "Слишком большой размер файла. Резервная копия не может быть больше мегабайта.",
+      wrongFormat: "Неверный формат файла. Резервная копия должна быть в формате .json.",
+      fileCorrupted: "Выбранный файл повреждён.",
+      invalidData: "Некорректные данные.",
+      importComplete: "Импорт завершён",
+      importResult: "Новых групп: {newGroups}.\nОбновлений названий папок: {folderUpdates}",
+    },
+    en: {
+      load: "Load",
+      loadBackup: "Load backup",
+      selectFolders: "Select folders and click save button. Folder names for existing groups will be updated.",
+      newGroupsSelected: "New groups selected:",
+      folderUpdatesSelected: "Folder name updates selected:",
+      all: "All",
+      groupsCount: "Groups: {count}",
+      selected: "Selected",
+      folders: "Folders",
+      groups: "Groups",
+      save: "Save",
+      error: "Error",
+      importError: "Import error",
+      importNotFound: "Import data not found.\nError code: {error}",
+      importCorrupted: "Import data is corrupted.\nError code: {error}",
+      fileTooLarge: "File is too large. Backup cannot be larger than 1 MB.",
+      wrongFormat: "Wrong file format. Backup must be in .json format.",
+      fileCorrupted: "Selected file is corrupted.",
+      invalidData: "Invalid data.",
+      importComplete: "Import complete",
+      importResult: "New groups: {newGroups}.\nFolder name updates: {folderUpdates}",
+    },
+  },
+});
 
 const router = useRouter();
 const route = useRoute();
@@ -112,10 +164,10 @@ watch(
           encodedImportData += encodedChunk;
         }
       } catch (ex: any) {
-        console.warn("Данные для импорта не были найдены:", ex);
+        console.warn("Import data not found:", ex);
         dialogStore.alert({
-          title: "Ошибка",
-          subtitle: `Данные для импорта не были найдены.\nКод ошибки: ${ex.message ?? ex}`,
+          title: t("error"),
+          subtitle: t("importNotFound", { error: ex.message ?? ex }),
         });
         return;
       }
@@ -123,10 +175,10 @@ watch(
       try {
         importData.value = decodeAndDecompressObject(encodedImportData);
       } catch (ex: any) {
-        console.warn("Данные для импорта были повреждены:", ex);
+        console.warn("Import data corrupted:", ex);
         dialogStore.alert({
-          title: "Ошибка",
-          subtitle: `Данные для импорта были повреждены.\nКод ошибки: ${ex.message ?? ex}`,
+          title: t("error"),
+          subtitle: t("importCorrupted", { error: ex.message ?? ex }),
         });
         return;
       }
@@ -151,18 +203,16 @@ const onImportFileChange = (event: any) => {
   const mb = file.size / 1000000;
   if (mb > 1) {
     dialogStore.alert({
-      title: "Ошибка",
-      subtitle:
-        "Слишком большой размер файла. Резервная копия не может быть больше мегабайта.",
+      title: t("error"),
+      subtitle: t("fileTooLarge"),
     });
     return;
   }
 
   if (!file.name?.endsWith(".json")) {
     dialogStore.alert({
-      title: "Ошибка",
-      subtitle:
-        "Неверный формат файла. Резервная копия должна быть в формате .json.",
+      title: t("error"),
+      subtitle: t("wrongFormat"),
     });
     return;
   }
@@ -175,16 +225,16 @@ const onImportFileChange = (event: any) => {
       data = JSON.parse(e.target!.result as string);
     } catch {
       dialogStore.alert({
-        title: "Ошибка",
-        subtitle: "Выбранный файл повреждён.",
+        title: t("error"),
+        subtitle: t("fileCorrupted"),
       });
       return;
     }
 
     if (!isGroupsExport(data)) {
       dialogStore.alert({
-        title: "Ошибка импорта",
-        subtitle: "Некорректные данные.",
+        title: t("importError"),
+        subtitle: t("invalidData"),
       });
       return;
     }
@@ -210,10 +260,11 @@ const onSaveImport = async () => {
   await groupsStore.loadNotLoadGroups();
   const newGroupsCount = groupsStore.localGroupsMap.size;
   dialogStore.alert({
-    title: "Импорт завершён",
-    subtitle: `Новых групп: ${
-      newGroupsCount - oldGroupsCount
-    }.\nОбновлений названий папок: ${foldersChangedValue}`,
+    title: t("importComplete"),
+    subtitle: t("importResult", {
+      newGroups: newGroupsCount - oldGroupsCount,
+      folderUpdates: foldersChangedValue,
+    }),
   });
   show.value = false;
 };
@@ -234,7 +285,7 @@ watch(importFolders, () => {
     <template v-slot:activator="{ props }">
       <VBtn :prepend-icon="Icon24UploadOutline" color="green-darken-4">
         <label>
-          Загрузить
+          {{ t("load") }}
           <input
             :key="show ? '1' : '2'"
             accept=".json"
@@ -251,29 +302,28 @@ watch(importFolders, () => {
           <Icon24CancelOutline />
         </VBtn>
         <VToolbarTitle class="navigation-caption">
-          Загрузка резервной копии
+          {{ t("loadBackup") }}
         </VToolbarTitle>
       </BaseToolbar>
       <VCardText style="font-size: 14px">
-        Выберите нужные папки и нажмите на кнопку сохранения. Названия папок у
-        уже существующих групп будут обновлены на новые.
+        {{ t("selectFolders") }}
         <template v-if="selectedGroups.length != selectedNewGroups.length">
-          Выбрано новых групп:
+          {{ t("newGroupsSelected") }}
           <b>{{ selectedNewGroups.length }} </b>.
         </template>
         <template v-if="foldersChanged > 0">
-          Выбрано обновлений названий папок:
+          {{ t("folderUpdatesSelected") }}
           <b>{{ foldersChanged }} </b>.
         </template>
       </VCardText>
       <VList class="mb-2" density="compact" style="flex-grow: 100">
         <VListItem
           v-if="groupsStore.folders.length > 1"
-          :subtitle="`Групп: ${importGroupsCount}`"
+          :subtitle="t('groupsCount', { count: importGroupsCount })"
           :variant="
             folders.size === groupsStore.folders.length ? 'tonal' : 'flat'
           "
-          title="Все"
+          :title="t('all')"
           @click="
             folders.size === importFolders.length
               ? folders.clear()
@@ -291,7 +341,7 @@ watch(importFolders, () => {
         <VListItem
           v-for="folder of importFolders"
           :key="folder"
-          :subtitle="`Групп: ${importData.groupIdsDictByFolderName[folder].length}`"
+          :subtitle="t('groupsCount', { count: importData.groupIdsDictByFolderName[folder].length })"
           :title="folder"
           :variant="folders.has(folder) ? 'tonal' : 'flat'"
           @click="
@@ -318,11 +368,11 @@ watch(importFolders, () => {
             style="height: auto; padding-inline: 20px"
           >
             <div class="text-center">
-              <h2 class="text-md-h6">Выбрано</h2>
+              <h2 class="text-md-h6">{{ t("selected") }}</h2>
               <span>
-                Папок:
+                {{ t("folders") }}:
                 <b class="a-import__counter">{{ folders.size }}</b> &nbsp;
-                &nbsp; Групп:
+                &nbsp; {{ t("groups") }}:
                 <b class="a-import__counter">
                   {{ selectedGroups.length }}
                 </b>
@@ -334,7 +384,7 @@ watch(importFolders, () => {
           :disabled="selectedGroups.length === 0"
           :icon="Icon24MemoryCard"
           color="light-blue-darken-4"
-          title="Сохранить"
+          :title="t('save')"
           @click="onSaveImport"
         />
       </VSheet>

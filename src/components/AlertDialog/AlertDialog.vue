@@ -2,6 +2,20 @@
 import { onBeforeRouteUpdate } from "vue-router";
 import { AlertDialogProps } from "@/components/AlertDialog/AlertDialog";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      ok: "Ок",
+      cancel: "Отмена",
+    },
+    en: {
+      ok: "Ok",
+      cancel: "Cancel",
+    },
+  },
+});
 
 const props = withDefaults(defineProps<AlertDialogProps>(), {
   subtitleStyle: "max-width: 450px;",
@@ -17,7 +31,7 @@ const confirmButtons = computed(() =>
     : [
         {
           id: true,
-          label: props.confirmTitle ?? "Ок",
+          label: props.confirmTitle ?? t("ok"),
         },
       ],
 );
@@ -49,7 +63,7 @@ onBeforeRouteUpdate((to, from, next) => {
       <VCardActions>
         <VSpacer />
         <VBtn v-if="mode === 'confirm'" @click="emits('close')">
-          {{ props.cancelTitle ?? "Отмена" }}
+          {{ props.cancelTitle ?? t("cancel") }}
         </VBtn>
         <VBtn
           v-for="x of confirmButtons"

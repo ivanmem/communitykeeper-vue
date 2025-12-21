@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useHistory } from "@/store/history/history";
-import { toRef } from "vue";
+import { computed, toRef } from "vue";
 import { useGroups } from "@/store/groups/groups";
 import { IGroup } from "@/store/groups/types";
 import FixedTeleport from "@/components/FixedTeleport";
@@ -14,6 +14,53 @@ import {
   Icon24DeleteOutline,
   Icon24InfoCircleOutline,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+import { useAppCaption } from "@/shared/composables/useAppCaption";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      title: "История",
+      clearHistory: "Очистить историю просмотров",
+      noItems: "Элементы отсутствуют",
+      photos: "Фотографии",
+      albums: "Альбомы",
+      videos: "Видеозаписи",
+      articles: "Статьи",
+      clearTitle: "Очистка истории просмотров",
+      clearConfirm: "Вы уверены, что хотите очистить историю просмотров?",
+      helpTitle: "💡 Справка",
+      helpText: `Переключатель "Встроенная галерея" из настроек здесь не применяется. При нажатии запись откроется так же, как была открыта в момент сохранения в историю.
+
+История обнуляется при каждом обновлении приложения, так как VK меняет домен при публикации.
+
+Размер истории ограничен {maxSize} символами (примерно {approxRecords} записей).
+
+История хранится на Вашем устройстве.`,
+    },
+    en: {
+      title: "History",
+      clearHistory: "Clear view history",
+      noItems: "No items",
+      photos: "Photos",
+      albums: "Albums",
+      videos: "Videos",
+      articles: "Articles",
+      clearTitle: "Clear view history",
+      clearConfirm: "Are you sure you want to clear view history?",
+      helpTitle: "💡 Help",
+      helpText: `The "Built-in gallery" toggle from settings does not apply here. When clicked, the entry will open the same way it was opened when saved to history.
+
+History is reset with each app update, as VK changes the domain on publish.
+
+History size is limited to {maxSize} characters (approximately {approxRecords} records).
+
+History is stored on your device.`,
+    },
+  },
+});
+
+useAppCaption(computed(() => t("title")));
 
 const historyStore = useHistory();
 const groupsStore = useGroups();
@@ -56,13 +103,13 @@ const items = computedAsync<HistoryItemComputed[] | undefined>(() =>
         const subtitle = (() => {
           switch (item.counter) {
             case "photos":
-              return "Фотографии";
+              return t("photos");
             case "albums":
-              return "Альбомы";
+              return t("albums");
             case "videos":
-              return "Видеозаписи";
+              return t("videos");
             case "articles":
-              return "Статьи";
+              return t("articles");
             default:
               return item.url.replace("//", "");
           }
@@ -88,8 +135,8 @@ useScreenSpinner(toRef(() => items.value === undefined));
 
 const onClear = async () => {
   const result = await dialogStore.confirm({
-    title: "Очистка истории просмотров",
-    subtitle: "Вы уверены, что хотите очистить историю просмотров?",
+    title: t("clearTitle"),
+    subtitle: t("clearConfirm"),
   });
   if (!result) {
     return;
@@ -100,12 +147,11 @@ const onClear = async () => {
 
 const onHelp = () => {
   dialogStore.alert({
-    title: "💡 Справка",
-    subtitle:
-      `Переключатель "Встроенная галерея" из настроек здесь не применяется. При нажатии запись откроется так же, как была открыта в момент сохранения в историю.` +
-      `\n\nИстория обнуляется при каждом обновлении приложения, так как VK меняет домен при публикации.` +
-      `\n\nРазмер истории ограничен ${historyStore.maxSize} символами (примерно ${Math.floor(historyStore.maxSize / 110)} записей).` +
-      `\n\nИстория хранится на Вашем устройстве.`,
+    title: t("helpTitle"),
+    subtitle: t("helpText", {
+      maxSize: historyStore.maxSize,
+      approxRecords: Math.floor(historyStore.maxSize / 110),
+    }),
   });
 };
 </script>
@@ -113,7 +159,7 @@ const onHelp = () => {
   <FixedTeleport to="#navigation-header__right">
     <VBtn
       :icon="Icon24DeleteOutline"
-      title="Очистить историю просмотров"
+      :title="t('clearHistory')"
       variant="text"
       @click="onClear"
     />
@@ -125,7 +171,7 @@ const onHelp = () => {
       class="pa-4 text-center mx-auto"
       width="100%"
     >
-      <h2 class="text-h5 mb-6">Элементы отсутствуют</h2>
+      <h2 class="text-h5 mb-6">{{ t("noItems") }}</h2>
       <VDivider class="mb-4"></VDivider>
     </VSheet>
     <VList :lines="'two'" density="compact">

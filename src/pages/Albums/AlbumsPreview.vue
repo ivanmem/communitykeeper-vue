@@ -7,6 +7,18 @@ import { showContextMenu } from "@/shared/helpers/showContextMenu";
 import { openUrl } from "@/shared/helpers/openUrl";
 import { useVk } from "@/store/vk/vk";
 import { Icon16LogoVk } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      goToAlbum: "Перейти к альбому",
+    },
+    en: {
+      goToAlbum: "Go to album",
+    },
+  },
+});
 
 const props = defineProps<{
   album: IAlbumItem;
@@ -20,7 +32,7 @@ const vkStore = useVk();
 const onShowContextMenu = (e: MouseEvent) => {
   showContextMenu(e, [
     {
-      label: "Перейти к альбому",
+      label: t("goToAlbum"),
       icon: h(Icon16LogoVk),
       onClick: () => {
         openUrl(

@@ -6,6 +6,20 @@ import { openUrl } from "@/shared/helpers/openUrl";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import type { IGroup } from "@/store/groups/types";
 import { Icon16ChevronOutline } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      groups: "Группы",
+      album: "Альбом",
+    },
+    en: {
+      groups: "Groups",
+      album: "Album",
+    },
+  },
+});
 
 const props = withDefaults(
   defineProps<{
@@ -15,9 +29,11 @@ const props = withDefaults(
     albumTitle?: string;
   }>(),
   {
-    albumTitle: "Альбом",
+    albumTitle: undefined,
   },
 );
+
+const displayAlbumTitle = computed(() => props.albumTitle ?? t("album"));
 
 const albumUrl = computed(() =>
   PhotoHelper.getAlbumUrl(props.ownerId, props.albumId),
@@ -35,7 +51,7 @@ function openUrlAlbum() {
 </script>
 <template>
   <VBreadcrumbs class="a-album-breadcrumbs" density="compact">
-    <VBreadcrumbsItem :to="{ name: 'groups' }"> Группы </VBreadcrumbsItem>
+    <VBreadcrumbsItem :to="{ name: 'groups' }"> {{ t("groups") }} </VBreadcrumbsItem>
     <Icon16ChevronOutline />
     <VBreadcrumbsItem
       :href="`https://${ownerUrl}`"
@@ -45,7 +61,7 @@ function openUrlAlbum() {
     <Icon16ChevronOutline />
     <VBreadcrumbsItem
       :href="`https://${albumUrl}`"
-      :title="albumTitle"
+      :title="displayAlbumTitle"
       @click.prevent="openUrlAlbum"
     />
   </VBreadcrumbs>

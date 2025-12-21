@@ -18,6 +18,18 @@ import {
   Icon24FullscreenExit,
   Icon24Fullscreen,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      copyLink: "Скопировать текущую ссылку",
+    },
+    en: {
+      copyLink: "Copy current link",
+    },
+  },
+});
 
 const route = useRoute();
 const groupsStore = useGroups();
@@ -131,7 +143,7 @@ watch(
           <VBtn
             v-if="route.path !== '/'"
             :icon="LinkIcon"
-            title="Скопировать текущую ссылку"
+            :title="t('copyLink')"
             variant="text"
             @click="
               vkService.copyText(`vk.com/app${appStore.appId}#` + route.path);

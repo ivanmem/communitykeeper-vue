@@ -6,6 +6,22 @@ import { useGroups } from "@/store/groups/groups";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import { useActiveRoute } from "@/shared/composables/useActiveRoute";
 import { Icon24KeyOutline } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      accessRequired:
+        "Требуется доступ. Без него приложение не может корректно отображать информацию о группах!",
+      allow: "Разрешить",
+    },
+    en: {
+      accessRequired:
+        "Access required. Without it, the app cannot correctly display group information!",
+      allow: "Allow",
+    },
+  },
+});
 
 const props = defineProps<{ component: any; forceShow?: boolean }>();
 const vkStore = useVk();
@@ -50,12 +66,9 @@ const isShowComponent = computed(
       color="deep-purple-accent-4"
       lines="one"
     >
-      <div>
-        Требуется доступ. Без него приложение не может корректно отображать
-        информацию о группах!
-      </div>
+      <div>{{ t("accessRequired") }}</div>
       <div class="a-permission-groups__access-btn">
-        <BaseButton @click="onInit()">Разрешить</BaseButton>
+        <BaseButton @click="onInit()">{{ t("allow") }}</BaseButton>
       </div>
     </VBanner>
   </div>

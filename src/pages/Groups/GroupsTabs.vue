@@ -10,6 +10,36 @@ import {
   Icon16FolderOutline,
   Icon16DeleteOutline,
 } from "vue-vkontakte-icons";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({
+  messages: {
+    ru: {
+      all: "Все",
+      settings: "Настройки",
+      delete: "Удалить",
+      confirmDelete: 'Вы уверены что хотите удалить папку "{folder}" с {count} группами?',
+      folderSettings: "Настройки папки",
+      name: "Название",
+      close: "Закрыть",
+      save: "Сохранить",
+      mergeTitle: "Подтверждение слияния папок",
+      mergeConfirm: 'Папка с названием "{folder}" уже существует. Хотите произвести слияние?',
+    },
+    en: {
+      all: "All",
+      settings: "Settings",
+      delete: "Delete",
+      confirmDelete: 'Are you sure you want to delete folder "{folder}" with {count} groups?',
+      folderSettings: "Folder settings",
+      name: "Name",
+      close: "Close",
+      save: "Save",
+      mergeTitle: "Confirm folder merge",
+      mergeConfirm: 'Folder "{folder}" already exists. Do you want to merge?',
+    },
+  },
+});
 
 const props = defineProps({
   style: { type: [String, Object, Array] as PropType<StyleValue> },
@@ -29,19 +59,19 @@ const onTabContextMenu = (e: MouseEvent, folder: string) => {
 
   showContextMenu(e, [
     {
-      label: "Настройки",
+      label: t("settings"),
       icon: h(Icon16Pen),
       onClick: () => {
         renameDialog.value = { folder, newSettings: { folder } };
       },
     },
     {
-      label: "Удалить",
+      label: t("delete"),
       icon: h(Icon16DeleteOutline, { style: { color: "red" } }),
       onClick: async () => {
         const folderGroupsIds = groupsStore.groupIdsDictByFolderName[folder];
         const isConfirm = await dialogStore.confirm(
-          `Вы уверены что хотите удалить папку "${folder}" с ${folderGroupsIds.length} группами?`,
+          t("confirmDelete", { folder, count: folderGroupsIds.length }),
         );
         if (!isConfirm) {
           return;
@@ -66,15 +96,14 @@ const onSaveSettings = async () => {
     (folder) => folder.toLowerCase() === newSettingsFolderLowerCase,
   );
   if (existsFolder) {
-    // костыль для того, чтобы пользователь мог сделать слияние для существующей папки, даже если там отличается кейс
     newSettings.folder = existsFolder;
   }
 
   if (renameDialog.value.folder !== newSettings.folder) {
     if (groupsStore.folders.includes(renameDialog.value.newSettings.folder)) {
       const confirm = await dialogStore.confirm({
-        title: "Подтверждение слияния папок",
-        subtitle: `Папка с названием "${newSettings.folder}" уже существует. Хотите произвести слияние?`,
+        title: t("mergeTitle"),
+        subtitle: t("mergeConfirm", { folder: newSettings.folder }),
       });
       if (!confirm) {
         return;
@@ -118,7 +147,7 @@ onDeactivated(() => {
       grow
       mandatory
     >
-      <VTab value="">Все</VTab>
+      <VTab value="">{{ t("all") }}</VTab>
       <VTab
         v-for="folder of groupsStore.folders"
         :key="folder"
@@ -138,7 +167,7 @@ onDeactivated(() => {
     <VForm v-if="renameDialog" v-model="valid">
       <VCard class="overflow-block a-group-filters">
         <VCardItem>
-          <VCardTitle>Настройки папки</VCardTitle>
+          <VCardTitle>{{ t("folderSettings") }}</VCardTitle>
           <div
             style="
               display: flex;
@@ -158,18 +187,18 @@ onDeactivated(() => {
             v-model.trim="renameDialog!.newSettings.folder"
             :counter="maxFolderLength"
             :rules="folderRules"
-            label="Название"
+            :label="t('name')"
             required
           />
         </VCardItem>
         <VCardActions>
           <VSpacer />
-          <VBtn @click="renameDialog = undefined">Закрыть</VBtn>
+          <VBtn @click="renameDialog = undefined">{{ t("close") }}</VBtn>
           <VBtn
             :disabled="!valid || !renameDialog!.newSettings.folder"
             @click="onSaveSettings"
           >
-            Сохранить
+            {{ t("save") }}
           </VBtn>
         </VCardActions>
       </VCard>
