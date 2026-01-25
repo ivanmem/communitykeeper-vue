@@ -3,7 +3,6 @@ import {
   computed,
   nextTick,
   onDeactivated,
-  onWatcherCleanup,
   ref,
   toRef,
   watch,
@@ -20,7 +19,7 @@ import { useSwipesAndZoom } from "@/shared/composables/useSwipesAndZoom";
 import { UsableZoomOptions } from "@/shared/composables/useZoom";
 import PhotoCounter from "@/pages/Album/PhotoCounter.vue";
 import { IPhoto } from "@/store/groups/types";
-import { useThrottleFn } from "@vueuse/core";
+import { useThrottleFn, useTimeoutFn } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n({
@@ -61,6 +60,7 @@ export type IPhotoEmit = typeof emit;
 const props = defineProps<{
   photo: IPhoto;
   size?: number | string;
+  isLoading?: boolean;
 }>();
 
 const appStore = useApp();
@@ -73,11 +73,23 @@ const showMoreInfo = ref(false);
 const originalSize = computed(() =>
   PhotoHelper.getOriginalSize(props.photo.sizes),
 );
+
+// Единая функция для показа счётчика на 2 секунды с использованием VueUse
+const { start: startHideTimer } = useTimeoutFn(() => {
+  showInfo.value = false;
+}, 2000, { immediate: false });
+
+const showInfoTemporarily = () => {
+  showInfo.value = true;
+  startHideTimer();
+};
+
 const actions = usePhotoActions(
   () => props.photo,
   showMoreInfo,
   emit,
   photoDiv,
+  showInfoTemporarily,
 );
 
 const onClick = (event: MouseEvent) => {
@@ -93,11 +105,11 @@ const onClick = (event: MouseEvent) => {
   const imageCenterX = imageWidth / 2;
   // Сравниваем координату клика с центром изображения
   if (clickX <= imageCenterX) {
-    emit("photo:prev");
+    actions.onPhotoPrev();
     return;
   }
 
-  emit("photo:next");
+  actions.onPhotoNext();
   return;
 };
 
@@ -117,18 +129,14 @@ watch(
   { immediate: true },
 );
 
+// Показываем счётчик при смене фото или изменении isLoading
 watch(
-  () => props.photo,
-  () => {
-    showInfo.value = true;
-
-    const timeoutShowInfo = setTimeout(() => {
-      showInfo.value = false;
-    }, 2000);
-
-    onWatcherCleanup(() => {
-      clearTimeout(timeoutShowInfo);
-    });
+  [() => props.photo, () => props.isLoading],
+  ([newPhoto, isLoading], [oldPhoto]) => {
+    // Показываем при смене фото или при начале загрузки
+    if (newPhoto !== oldPhoto || isLoading) {
+      showInfoTemporarily();
+    }
   },
   { immediate: true },
 );
@@ -192,8 +200,9 @@ defineExpose({
     v-on="swipes"
     @keydown.stop.prevent.esc="emit('photo:exit')"
     @keydown.stop.prevent.space="emit('photo:exit')"
-    @keydown.stop.prevent.left="emit('photo:prev')"
-    @keydown.stop.prevent.right="emit('photo:next')"
+    @keydown.stop.prevent.enter="showInfoTemporarily"
+    @keydown.stop.prevent.left="actions.onPhotoPrev"
+    @keydown.stop.prevent.right="actions.onPhotoNext"
     @wheel.prevent.stop="onWheel"
     @click.middle="emit('photo:exit')"
   >
@@ -210,6 +219,7 @@ defineExpose({
       :date-time="dateTime"
       :photo-index="photo.__state.index"
       :show-info="showInfo"
+      :is-loading="isLoading"
       class="a-photo__info-top-left"
     />
   </div>

@@ -93,6 +93,7 @@ export const actionSwipesDict = new Map<string, IActionDictValue>([
   ["pe", { name: "onPhotoExit" }],
   ["pp", { name: "onPhotoPrev" }],
   ["pn", { name: "onPhotoNext" }],
+  ["sc", { name: "onShowCounter" }],
   ["passive", { name: "onPassive" }],
 ]);
 

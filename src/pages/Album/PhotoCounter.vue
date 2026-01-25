@@ -8,12 +8,13 @@ defineProps<{
   dateTime: string;
   photoIndex: number;
   size: number | string | undefined;
+  isLoading?: boolean;
 }>();
 
 const { t } = useI18n({
   messages: {
-    ru: { of: "из" },
-    en: { of: "of" },
+    ru: { of: "из", loading: "Загрузка..." },
+    en: { of: "of", loading: "Loading..." },
   },
 });
 
@@ -27,7 +28,10 @@ const opacity = computed(
     <div class="a-photo__info-date">
       {{ dateTime }}
     </div>
-    <div class="a-photo__info-counter">
+    <div v-if="isLoading || photoIndex === -1" class="a-photo__info-counter">
+      {{ t("loading") }}
+    </div>
+    <div v-else class="a-photo__info-counter">
       <b>{{ photoIndex + 1 }}</b> {{ t("of") }} {{ size || "?" }}
     </div>
   </div>

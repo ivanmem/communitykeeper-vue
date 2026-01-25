@@ -50,6 +50,8 @@ export function useAlbum(
   const isLoadingPhotos = ref(false);
   const isLoadAllPhotos = ref(false);
   const photosMaxItems = ref(countOneLoad);
+  const directPhoto = ref<IPhoto | undefined>();
+  const isLoadingDirectPhoto = ref(false);
   const historyStore = useHistory();
   const groupsStore = useGroups();
   const vkStore = useVk();
@@ -95,6 +97,7 @@ export function useAlbum(
     isLoadingPhotos,
     isInit,
     onMoreLoad,
+    directPhoto,
   );
   const previewPreloader = useImagePreloader({
     max: () => gallery.columns.value * 4,
@@ -110,6 +113,7 @@ export function useAlbum(
     photosMap.value.clear();
     photosMaxItems.value = countOneLoad;
     isLoadAllPhotos.value = false;
+    directPhoto.value = undefined;
     setLastScrollTop(undefined);
   };
 
@@ -137,6 +141,38 @@ export function useAlbum(
 
         return undefined;
       });
+  };
+
+  const loadDirectPhoto = async () => {
+    if (!photoId.value || isLoadingDirectPhoto.value) {
+      return;
+    }
+
+    isLoadingDirectPhoto.value = true;
+    try {
+      const apiService = await vkStore.getApiService();
+      const photos = await apiService.photosGetById({
+        photos: `${ownerId.value}_${photoId.value}`,
+        extended: 1,
+        photo_sizes: 1,
+      });
+
+      if (photos.length > 0) {
+        const loadedPhoto = photos[0];
+        loadedPhoto.__state = {
+          index: -1, // временный индекс, обновится когда найдём в списке
+        };
+        directPhoto.value = loadedPhoto;
+        
+        // НЕ добавляем в photosMap - это временное фото только для отображения
+        // Оно будет заменено реальным фото из списка когда найдём его
+      }
+    } catch (ex: any) {
+      console.warn("Ошибка загрузки прямого фото:", ex);
+      // Не показываем ошибку, просто продолжим обычную загрузку
+    } finally {
+      isLoadingDirectPhoto.value = false;
+    }
   };
 
   const onLoad = async () => {
@@ -169,13 +205,19 @@ export function useAlbum(
       }
 
       for (let newPhoto of items) {
+        const photoKey = PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id);
+        
         newPhoto.__state = {
           index: gallery.grid.items.length,
         };
-        photosMap.value.set(
-          PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id),
-          newPhoto,
-        );
+        
+        // Если это прямо загруженное фото, очищаем directPhoto
+        if (directPhoto.value && 
+            PhotoHelper.getPhotoKey(directPhoto.value.owner_id, directPhoto.value.id) === photoKey) {
+          directPhoto.value = undefined;
+        }
+        
+        photosMap.value.set(photoKey, newPhoto);
         gallery.grid.push(newPhoto);
       }
     } catch (ex: any) {
@@ -233,6 +275,12 @@ export function useAlbum(
       onClearPhotos();
       onClearAlbum();
       await onUpdateAlbum();
+      
+      // Если есть photoId в URL, загружаем его напрямую
+      if (photoId.value) {
+        await loadDirectPhoto();
+      }
+      
       await onLoad();
     },
     { immediate: true },
@@ -253,13 +301,21 @@ export function useAlbum(
     [photoId, isLoadingPhotos],
     () => {
       if (toStr(photoId.value).length && !isLoadingPhotos.value) {
-        if (photo.value !== undefined) {
+        if (photo.value !== undefined && photo.value.__state.index >= 0) {
           gallery.componentRef.value?.scrollToIndex(
             Math.floor(photo.value.__state.index / gallery.columns.value),
           );
-        } else if (!screenError.value) {
+        } else if (!screenError.value && !directPhoto.value) {
+          // Загружаем больше только если нет прямого фото
           onMoreLoad();
         }
+      }
+      
+      // Очищаем directPhoto если пользователь переключился на другое фото
+      if (directPhoto.value && photoId.value && 
+          PhotoHelper.getPhotoKey(directPhoto.value.owner_id, directPhoto.value.id) !== 
+          PhotoHelper.getPhotoKey(ownerId.value, photoId.value)) {
+        directPhoto.value = undefined;
       }
     },
     { immediate: true, deep: true },
@@ -287,6 +343,8 @@ export function useAlbum(
     setCurrentPhotoIndex,
     isInit,
     isLoadingPhotos,
+    isLoadingDirectPhoto,
+    directPhoto,
     screenError,
     onScrollerUpdate,
     onSwitchPhoto,

@@ -100,6 +100,21 @@ export class VkApiService {
     });
   }
 
+  photosGetById(params: {
+    photos: string; // формат: "owner_id_photo_id"
+    extended?: 1 | 0;
+    photo_sizes?: 1 | 0;
+  }): Promise<IPhoto[]> {
+    return this.addRequestToQueue({
+      method: "photos.getById",
+      params: {
+        ...params,
+        extended: params.extended ?? 1,
+        photo_sizes: params.photo_sizes ?? 1,
+      },
+    });
+  }
+
   async createAlbumItem(params: {
     owner_id: number;
     album_id: number;

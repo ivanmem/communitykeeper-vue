@@ -26,6 +26,7 @@ export function useCurrentPhoto(
   isLoadingPhotos: Ref<boolean>,
   isInit: Ref<boolean>,
   onMoreLoad: () => void,
+  directPhoto?: Ref<IPhoto | undefined>,
 ) {
   const router = useRouter();
   const route = useRoute();
@@ -73,6 +74,11 @@ export function useCurrentPhoto(
   const getPhotoByIndex = (index?: number) => {
     if (index === undefined) {
       return undefined;
+    }
+
+    // Если индекс -1, это прямо загруженное фото
+    if (index === -1 && directPhoto?.value) {
+      return directPhoto.value;
     }
 
     return photos.items[index];
@@ -230,7 +236,7 @@ export function useCurrentPhoto(
     return newIndex;
   };
 
-  const onSwitchPhoto = async (next: boolean) => {
+  const onSwitchPhoto = async (next: boolean, showInfoCallback?: () => void) => {
     if (isLoadingPhotos.value || !isInit.value) {
       return;
     }
@@ -240,24 +246,49 @@ export function useCurrentPhoto(
       return;
     }
 
-    currentIndex = getNewIndex(currentIndex, next);
-    currentIndex = await skipPhotoIndex(currentIndex, next, true);
-    return await setCurrentPhotoIndex(currentIndex, next);
+    // Если текущее фото загружено напрямую (индекс -1), 
+    // не даём листать пока не найдём его в списке
+    if (currentIndex === -1) {
+      // Показываем счётчик при попытке навигации во время загрузки
+      showInfoCallback?.();
+      return;
+    }
+
+    const newIndex = getNewIndex(currentIndex, next);
+    
+    // Не позволяем переходить на индекс -1 или меньше
+    if (newIndex < 0) {
+      // Показываем счётчик при попытке выйти за границы
+      showInfoCallback?.();
+      return;
+    }
+    
+    const skippedIndex = await skipPhotoIndex(newIndex, next, true);
+    return await setCurrentPhotoIndex(skippedIndex, next);
   };
 
   watch(
-    [() => photos.items?.length, photoId, isLoadingPhotos],
+    [() => photos.items?.length, photoId, isLoadingPhotos, () => directPhoto?.value],
     () => {
       if (photoId.value === undefined) {
         currentPhotoIndex.value = undefined;
         return;
       }
 
+      // Сначала проверяем в основном списке
       const photo = photosMap.value?.get(
         PhotoHelper.getPhotoKey(ownerId.value, photoId.value),
       );
       if (photo !== undefined) {
         currentPhotoIndex.value = photo.__state.index;
+        return;
+      }
+
+      // Если не найдено в списке, проверяем directPhoto
+      if (directPhoto?.value && 
+          PhotoHelper.getPhotoKey(directPhoto.value.owner_id, directPhoto.value.id) === 
+          PhotoHelper.getPhotoKey(ownerId.value, photoId.value)) {
+        currentPhotoIndex.value = -1;
         return;
       }
 

@@ -30,6 +30,7 @@ export function usePhotoActions(
   showMoreInfo: Ref<boolean>,
   emit: IPhotoEmit,
   photoDivGetter: MaybeRefOrGetter<HTMLDivElement | undefined>,
+  showInfoCallback?: () => void,
 ) {
   const groupsStore = useGroups();
   const dialogStore = useDialog();
@@ -95,11 +96,17 @@ export function usePhotoActions(
   };
 
   const onPhotoPrev = () => {
+    showInfoCallback?.();
     emit("photo:prev");
   };
 
   const onPhotoNext = () => {
+    showInfoCallback?.();
     emit("photo:next");
+  };
+
+  const onShowCounter = () => {
+    showInfoCallback?.();
   };
 
   const onCopyLink = () => {
@@ -192,6 +199,7 @@ export function usePhotoActions(
     onPhotoExit,
     onPhotoPrev,
     onPhotoNext,
+    onShowCounter,
     onShowContextMenu,
     onPassive: () => void 0,
   };

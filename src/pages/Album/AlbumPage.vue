@@ -92,6 +92,8 @@ const {
   onSwitchPhoto,
   isInit,
   isLoadingPhotos,
+  isLoadingDirectPhoto,
+  directPhoto,
   screenError,
   componentRef,
   albumPhotoRef,
@@ -187,6 +189,7 @@ const positionLabel = useThrottle(
         ref="albumPhotoRef"
         :photo="currentPhoto"
         :size="albumSize"
+        :is-loading="currentPhoto.__state.index === -1"
         @photo:prev="onSwitchPhoto(false)"
         @photo:next="onSwitchPhoto(true)"
         @photo:exit="setCurrentPhotoIndex(undefined)"

@@ -86,6 +86,7 @@ const { t } = useI18n({
       actionExit: "Выйти из просмотра фото",
       actionPrev: "Предыдущее фото",
       actionNext: "Следующее фото",
+      actionShowCounter: "Показать счётчик",
       actionNothing: "Ничего не делать",
     },
     en: {
@@ -141,6 +142,7 @@ const { t } = useI18n({
       actionExit: "Exit photo view",
       actionPrev: "Previous photo",
       actionNext: "Next photo",
+      actionShowCounter: "Show counter",
       actionNothing: "Do nothing",
     },
   },
@@ -206,6 +208,7 @@ const swipeOptions = computed(() => [
   { title: t("actionExit"), value: "pe" },
   { title: t("actionPrev"), value: "pp" },
   { title: t("actionNext"), value: "pn" },
+  { title: t("actionShowCounter"), value: "sc" },
   { title: t("actionNothing"), value: "passive" },
 ]);
 </script>
