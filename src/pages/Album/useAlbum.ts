@@ -10,10 +10,11 @@ import { useHistory } from "@/store/history/history";
 import { toNumberOrUndefined } from "@/shared/helpers/toNumberOrUndefined";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
-import { errorToString } from "@/shared/helpers/errorToString";
 import { useImagePreloader } from "@/shared/composables/useImagePreloader";
 import { useScrollRestore } from "@/shared/composables/useScrollRestore";
 import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
+import { useAlbumPagination } from "@/pages/Album/composables/useAlbumPagination";
+import { useAlbumInfo } from "@/pages/Album/composables/useAlbumInfo";
 
 const countOneLoad = 150;
 
@@ -23,38 +24,53 @@ export function useAlbum(
   photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
 ) {
   const photosMap = ref<Map<IPhotoKey, IPhoto>>(new Map());
+  const screenError = ref<any>();
+
+  // Прямое фото (загруженное по ID из URL, если его нет в списке)
+  const directPhoto = ref<IPhoto | undefined>();
+  const isLoadingDirectPhoto = ref(false);
+
+  const historyStore = useHistory();
+  const groupsStore = useGroups();
+  const vkStore = useVk();
+
   const ownerId = computed(() => toValue(ownerIdGetter));
+  const albumIdRaw = computed(() => toValue(albumIdGetter));
+  // Обработка "wall" -> -7
   const albumId = computed(() => {
-    const value = toValue(albumIdGetter);
+    const value = albumIdRaw.value;
     return value == "wall" ? -7 : value;
   });
   const photoId = computed(() => toValue(photoIdGetter));
+
+  const gallery = useGalleryComponent<IPhoto>(AlbumsPreviewSizesInitial);
+
+  const pagination = useAlbumPagination({
+    ownerId,
+    albumId,
+    galleryGrid: gallery.grid,
+    photosMap: photosMap.value,
+    countOneLoad,
+  });
+
+  const albumInfo = useAlbumInfo(ownerId, albumId);
+
   const photo = computed(() =>
     photosMap.value?.get(
       PhotoHelper.getPhotoKeyOrUndefined(ownerId.value, photoId.value) ??
         ("" as IPhotoKey),
     ),
   );
-  const album = ref<IAlbumItem | undefined>();
-  const gallery = useGalleryComponent<IPhoto>(AlbumsPreviewSizesInitial);
+
   const albumSize = computed(
     () =>
-      toNumberOrUndefined(album.value?.size) ??
-      (isLoadAllPhotos
+      pagination.totalCount.value ??
+      toNumberOrUndefined(albumInfo.album.value?.size) ??
+      (pagination.isAllLoaded.value
         ? gallery.grid.items.length
         : `${gallery.grid.items.length}+`),
   );
 
-  const screenError = ref<any>();
-  const isInit = ref(false);
-  const isLoadingPhotos = ref(false);
-  const isLoadAllPhotos = ref(false);
-  const photosMaxItems = ref(countOneLoad);
-  const directPhoto = ref<IPhoto | undefined>();
-  const isLoadingDirectPhoto = ref(false);
-  const historyStore = useHistory();
-  const groupsStore = useGroups();
-  const vkStore = useVk();
   const albumHistoryItem = computed(() =>
     historyStore.getViewAlbum(ownerId.value, albumId.value),
   );
@@ -65,19 +81,37 @@ export function useAlbum(
       : albumSize.value === 0,
   );
 
-  useScreenSpinner(() => !isInit.value);
+  useScreenSpinner(() => !pagination.isInit.value);
 
-  const onMoreLoad = () => {
-    if (isLoadingPhotos.value) {
+  // Загрузка "прямого" фото
+  const loadDirectPhoto = async () => {
+    if (!photoId.value || isLoadingDirectPhoto.value) {
       return;
     }
 
-    // защищаем от переполнения
-    if (
-      photosMaxItems.value - gallery.grid.items.length < 1000 &&
-      !isLoadAllPhotos.value
-    ) {
-      photosMaxItems.value += countOneLoad;
+    // Если фото уже есть и мы просто перешли на него - не грузим ничего
+    if (photo.value) return;
+
+    isLoadingDirectPhoto.value = true;
+    try {
+      const apiService = await vkStore.getApiService();
+      const photos = await apiService.photosGetById({
+        photos: `${ownerId.value}_${photoId.value}`,
+        extended: 1,
+        photo_sizes: 1,
+      });
+
+      if (photos.length > 0) {
+        const loadedPhoto = photos[0];
+        loadedPhoto.__state = {
+          index: -1, // спец индекс
+        };
+        directPhoto.value = loadedPhoto;
+      }
+    } catch (ex: any) {
+      console.warn("Ошибка загрузки прямого фото:", ex);
+    } finally {
+      isLoadingDirectPhoto.value = false;
     }
   };
 
@@ -94,11 +128,12 @@ export function useAlbum(
     photosMap,
     photoId,
     ownerId,
-    isLoadingPhotos,
-    isInit,
-    onMoreLoad,
+    pagination.isLoading,
+    pagination.isInit,
+    pagination.loadNext,
     directPhoto,
   );
+
   const previewPreloader = useImagePreloader({
     max: () => gallery.columns.value * 4,
     freeze: () => Boolean(currentPhoto.value),
@@ -107,138 +142,6 @@ export function useAlbum(
   const { setLastScrollTop } = useScrollRestore(
     () => gallery.componentRef.value?.$el,
   );
-
-  const onClearPhotos = () => {
-    gallery.clear();
-    photosMap.value.clear();
-    photosMaxItems.value = countOneLoad;
-    isLoadAllPhotos.value = false;
-    directPhoto.value = undefined;
-    setLastScrollTop(undefined);
-  };
-
-  const onClearAlbum = () => {
-    album.value = undefined;
-  };
-
-  const onClearInit = () => {
-    isInit.value = false;
-  };
-
-  const onClearError = () => {
-    screenError.value = undefined;
-  };
-
-  const onUpdateAlbum = async () => {
-    const apiService = await vkStore.getApiService();
-    album.value = await apiService
-      .getCachedAlbum({ owner_id: ownerId.value, album_id: albumId.value })
-      .catch((ex) => {
-        if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
-          screenError.value = errorToString(ex);
-          console.warn("Необработанная ошибка:", ex.errorInfo);
-        }
-
-        return undefined;
-      });
-  };
-
-  const loadDirectPhoto = async () => {
-    if (!photoId.value || isLoadingDirectPhoto.value) {
-      return;
-    }
-
-    isLoadingDirectPhoto.value = true;
-    try {
-      const apiService = await vkStore.getApiService();
-      const photos = await apiService.photosGetById({
-        photos: `${ownerId.value}_${photoId.value}`,
-        extended: 1,
-        photo_sizes: 1,
-      });
-
-      if (photos.length > 0) {
-        const loadedPhoto = photos[0];
-        loadedPhoto.__state = {
-          index: -1, // временный индекс, обновится когда найдём в списке
-        };
-        directPhoto.value = loadedPhoto;
-        
-        // НЕ добавляем в photosMap - это временное фото только для отображения
-        // Оно будет заменено реальным фото из списка когда найдём его
-      }
-    } catch (ex: any) {
-      console.warn("Ошибка загрузки прямого фото:", ex);
-      // Не показываем ошибку, просто продолжим обычную загрузку
-    } finally {
-      isLoadingDirectPhoto.value = false;
-    }
-  };
-
-  const onLoad = async () => {
-    const currentPhotosMaxItems = photosMaxItems.value;
-    if (
-      isLoadingPhotos.value ||
-      currentPhotosMaxItems === 0 ||
-      isLoadAllPhotos.value
-    ) {
-      return;
-    }
-
-    isLoadingPhotos.value = true;
-    screenError.value = undefined;
-    const offset = gallery.grid.items.length;
-    const count = currentPhotosMaxItems - offset;
-    try {
-      const apiService = await vkStore.getApiService();
-      const { items }: { items: IPhoto[] } = await apiService.photosGet({
-        album_id: albumId.value,
-        owner_id: ownerId.value,
-        offset,
-        count,
-        rev: groupsStore.config.reverseOrder ? 1 : 0,
-        extended: 1,
-        photo_sizes: 1,
-      });
-      if (items.length === 0) {
-        isLoadAllPhotos.value = true;
-      }
-
-      for (let newPhoto of items) {
-        const photoKey = PhotoHelper.getPhotoKey(newPhoto.owner_id, newPhoto.id);
-        
-        newPhoto.__state = {
-          index: gallery.grid.items.length,
-        };
-        
-        // Если это прямо загруженное фото, очищаем directPhoto
-        if (directPhoto.value && 
-            PhotoHelper.getPhotoKey(directPhoto.value.owner_id, directPhoto.value.id) === photoKey) {
-          directPhoto.value = undefined;
-        }
-        
-        photosMap.value.set(photoKey, newPhoto);
-        gallery.grid.push(newPhoto);
-      }
-    } catch (ex: any) {
-      screenError.value = errorToString(ex);
-    }
-    isInit.value = true;
-    isLoadingPhotos.value = false;
-    onScrollerUpdate();
-  };
-
-  const onScrollerUpdate = () => {
-    if (!gallery.componentRef.value) {
-      return;
-    }
-
-    if (gallery.endIndex.value + countOneLoad / 3 < photosMaxItems.value) {
-      return;
-    }
-
-    onMoreLoad();
-  };
 
   const preloadNextPreviews = () => {
     const previewPhotos = gallery.grid.items
@@ -253,77 +156,133 @@ export function useAlbum(
     previewPreloader.preloadPhoto(previewPhotos);
   };
 
-  watch([albumHistoryItem, album, currentPhotoIndex], () => {
+  const onScrollerUpdate = () => {
+    if (!gallery.componentRef.value) {
+      return;
+    }
+    // Если мы проскроллили близко к концу (почти нет места), грузим еще
+    // 1/3 страницы запаса
+    if (gallery.endIndex.value + countOneLoad / 3 < gallery.grid.items.length) {
+      return;
+    }
+
+    // В старом коде было photosMaxItems, здесь мы смотрим на реальную длину грида
+    // Если длина грида меньше чем мы думаем что загрузили (тут логика старая была завязана на photosMaxItems)
+    // В новой логике: если мы близко к концу списка, зовем loadNext
+    pagination.loadNext();
+  };
+
+  // Обновление заголовка истории
+  watch([albumHistoryItem, albumInfo.album, currentPhotoIndex], () => {
     if (
       !albumHistoryItem.value ||
-      !album.value ||
+      !albumInfo.album.value ||
       currentPhotoIndex.value === undefined
     ) {
       return;
     }
 
-    albumHistoryItem.value.subtitle = `${album.value.title} (${
+    albumHistoryItem.value.subtitle = `${albumInfo.album.value.title} (${
       currentPhotoIndex.value + 1
     } из ${albumSize.value})`;
   });
 
+  // Инициализация и смена альбома
   watch(
     [ownerId, albumId],
     async () => {
-      onClearInit();
-      onClearError();
-      onClearPhotos();
-      onClearAlbum();
-      await onUpdateAlbum();
-      
-      // Если есть photoId в URL, загружаем его напрямую
+      // Сброс
+      screenError.value = undefined;
+      pagination.reset();
+      albumInfo.reset();
+      setLastScrollTop(undefined);
+      directPhoto.value = undefined;
+
+      // Загрузка
+      // Запускаем параллельно информацию об альбоме и фото
+      const albumPromise = albumInfo.load();
+
+      // Если есть photoId, пробуем загрузить его (если оно не в начале списка)
       if (photoId.value) {
         await loadDirectPhoto();
       }
-      
-      await onLoad();
+
+      const photosPromise = pagination.loadNext();
+
+      await Promise.all([albumPromise, photosPromise]);
+
+      // Ошибки пагинации прокидываем в экран (если критично)
+      if (pagination.error.value) {
+        screenError.value = pagination.error.value;
+      }
+      if (albumInfo.error.value && !screenError.value) {
+        screenError.value = albumInfo.error.value;
+      }
     },
     { immediate: true },
   );
 
+  // Смена порядка сортировки
   watch(
     () => groupsStore.config.reverseOrder,
     async () => {
-      onClearError();
-      onClearPhotos();
-      await onLoad();
+      screenError.value = undefined;
+      pagination.reset();
+      await pagination.loadNext();
     },
   );
 
-  watch(photosMaxItems, onLoad, { immediate: true });
-
+  // Навигация к фото
   watch(
-    [photoId, isLoadingPhotos],
+    [photoId, pagination.isLoading],
     () => {
-      if (toStr(photoId.value).length && !isLoadingPhotos.value) {
+      if (toStr(photoId.value).length && !pagination.isLoading.value) {
         if (photo.value !== undefined && photo.value.__state.index >= 0) {
           gallery.componentRef.value?.scrollToIndex(
             Math.floor(photo.value.__state.index / gallery.columns.value),
           );
         } else if (!screenError.value && !directPhoto.value) {
-          // Загружаем больше только если нет прямого фото
-          onMoreLoad();
+          // Если фото нет, но оно задано, и мы не грузимся - пробуем подгрузить еще
+          // Вдруг оно дальше в списке
+          pagination.loadNext();
         }
       }
-      
-      // Очищаем directPhoto если пользователь переключился на другое фото
-      if (directPhoto.value && photoId.value && 
-          PhotoHelper.getPhotoKey(directPhoto.value.owner_id, directPhoto.value.id) !== 
-          PhotoHelper.getPhotoKey(ownerId.value, photoId.value)) {
-        directPhoto.value = undefined;
+
+      // Очистка directPhoto если нашли фото в основном списке или сменили ID
+      if (directPhoto.value && photoId.value) {
+        const currentKey = PhotoHelper.getPhotoKey(
+          ownerId.value,
+          photoId.value,
+        );
+        const directKey = PhotoHelper.getPhotoKey(
+          directPhoto.value.owner_id,
+          directPhoto.value.id,
+        );
+
+        // Если мы переключились на другое фото
+        if (currentKey !== directKey) {
+          directPhoto.value = undefined;
+        }
+        // Если фото нашлось в списке (например догрузилось), directPhoto уже не нужен?
+        // В оригинале: "Если это прямо загруженное фото, очищаем directPhoto" внутри onLoad при переборе items.
+        // Здесь это делает pagination.loadNext внутри себя? Нет, pagination не знает про directPhoto.
+        // Добавим watcher или логику в pagination?
+        // Лучше здесь. Если фото есть в photosMap, directPhoto убиваем.
+        if (photosMap.value.has(directKey)) {
+          directPhoto.value = undefined;
+        }
       }
     },
     { immediate: true, deep: true },
   );
 
+  // Preload preview images
   watch(gallery.endIndex, (endIndex, prevIndex) => {
     if (prevIndex >= endIndex) return;
     preloadNextPreviews();
+
+    // Также триггерим подгрузку если скроллим вниз
+    onScrollerUpdate();
   });
 
   return {
@@ -334,15 +293,15 @@ export function useAlbum(
     photos: gallery.grid,
     imagePreloader,
     previewPreloader,
-    album,
+    album: albumInfo.album,
     albumSize,
     albumIsEmpty,
     currentPhoto,
     currentPhotoIndex,
     setCurrentPhotoId,
     setCurrentPhotoIndex,
-    isInit,
-    isLoadingPhotos,
+    isInit: pagination.isInit,
+    isLoadingPhotos: pagination.isLoading,
     isLoadingDirectPhoto,
     directPhoto,
     screenError,
