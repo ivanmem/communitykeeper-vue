@@ -21,6 +21,7 @@ const props = defineProps<{
   screenError?: string;
   isLoadingPhotos: boolean;
   albumIsEmpty: boolean;
+  isInit: boolean;
 }>();
 
 const groupsStore = useGroups();
@@ -34,7 +35,7 @@ const groupsStore = useGroups();
     <AError v-if="screenError">{{ screenError }}</AError>
     <VSpacer />
     <VSwitch
-      v-if="!screenError && (isLoadingPhotos || !albumIsEmpty)"
+      v-if="isInit && !screenError && (isLoadingPhotos || !albumIsEmpty)"
       v-model="groupsStore.config.reverseOrder"
       :false-icon="styledIcons.Icon24SortOutlineOpacity50"
       :true-icon="Icon24SortOutline"

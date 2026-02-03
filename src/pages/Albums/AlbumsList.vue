@@ -2,11 +2,11 @@
 import { computed } from "vue";
 import { VList } from "virtua/vue";
 import AlbumsPreview from "@/pages/Albums/AlbumsPreview.vue";
-import type { GridArray } from "@/shared/composables/useGridArray";
 import type { IAlbumItem } from "@/store/vk/IAlbumItem";
 
 const props = defineProps<{
-  albums: GridArray<IAlbumItem>;
+  albums: IAlbumItem[];
+  indexes: ReadonlyArray<ReadonlyArray<number>>;
   sizes: {
     height: number;
     width: number;
@@ -29,19 +29,19 @@ const componentRef = computed({
   <VList
     ref="componentRef"
     #default="{ item: indexes, index }"
-    :data="albums.indexes"
+    :data="indexes"
     :item-size="sizes.height"
     class="a-albums-list"
     @scroll="emit('update:scroll')"
   >
     <div
-      :key="albums.items[indexes?.[0]]?.id ?? index"
+      :key="albums[indexes?.[0]]?.id ?? index"
       class="a-albums-list__row"
     >
       <AlbumsPreview
-        v-for="index in indexes"
-        :key="albums.items[index].id"
-        :album="albums.items[index]"
+        v-for="idx in indexes"
+        :key="albums[idx].id"
+        :album="albums[idx]"
         :sizes="sizes"
       />
     </div>

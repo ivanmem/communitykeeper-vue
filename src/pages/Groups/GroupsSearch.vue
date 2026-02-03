@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { styledIcons } from "@/shared/constants/consts";
 import { UseGroupSearch } from "@/pages/Groups/useGroupSearch";
 import BaseButton from "@/components/BaseButton";
@@ -17,56 +17,7 @@ import {
   Icon16CrossCircleSmall,
 } from "vue-vkontakte-icons";
 import ASeparator from "@/components/ASeparator";
-import { useI18n } from "vue-i18n";
-
-const { t } = useI18n({
-  messages: {
-    ru: {
-      search: "Поиск",
-      filters: "Фильтры",
-      filter: "Фильтрация",
-      sort: "Сортировка",
-      reverseOrder: "В обратном порядке",
-      reshuffle: "Пересортировать",
-      close: "Закрыть",
-      all: "Все",
-      accessible: "Доступные",
-      inaccessible: "Недоступные",
-      open: "Открытые",
-      closed: "Закрытые",
-      recentlyAdded: "Недавно добавленные",
-      randomOrder: "В случайном порядке",
-      photoCount: "Количество изображений",
-      albumCount: "Количество альбомов",
-      articleCount: "Количество статей",
-      videoCount: "Количество видео",
-      loadCountersTitle: "Подтверждение загрузки счётчиков",
-      loadCountersText: "Вы применили сортировку по счётчикам. \nОна будет работать только после загрузки счётчиков от всех групп текущей папки. \nХотите запустить загрузку? \nПри отмене сортировка будет сброшена.",
-    },
-    en: {
-      search: "Search",
-      filters: "Filters",
-      filter: "Filter",
-      sort: "Sort",
-      reverseOrder: "Reverse order",
-      reshuffle: "Reshuffle",
-      close: "Close",
-      all: "All",
-      accessible: "Accessible",
-      inaccessible: "Inaccessible",
-      open: "Open",
-      closed: "Closed",
-      recentlyAdded: "Recently added",
-      randomOrder: "Random order",
-      photoCount: "Photo count",
-      albumCount: "Album count",
-      articleCount: "Article count",
-      videoCount: "Video count",
-      loadCountersTitle: "Confirm counters loading",
-      loadCountersText: "You applied sorting by counters. \nIt will only work after loading counters from all groups in the current folder. \nDo you want to start loading? \nIf cancelled, sorting will be reset.",
-    },
-  },
-});
+import { t } from "@/i18n";
 
 const props = defineProps<{
   groupSearch: UseGroupSearch;
@@ -77,22 +28,22 @@ const groupsStore = useGroups();
 const dialogService = useDialog();
 const reference = ref(null);
 
-const accessEnumOptions = [
-  { title: t("all"), value: OnlyAccessEnum.none },
-  { title: t("accessible"), value: OnlyAccessEnum.access },
-  { title: t("inaccessible"), value: OnlyAccessEnum.noAccess },
-  { title: t("open"), value: OnlyAccessEnum.open },
-  { title: t("closed"), value: OnlyAccessEnum.close },
-];
+const accessEnumOptions = computed(() => [
+  { title: t("common.all"), value: OnlyAccessEnum.none },
+  { title: t("groupsSearch.accessible"), value: OnlyAccessEnum.access },
+  { title: t("groupsSearch.inaccessible"), value: OnlyAccessEnum.noAccess },
+  { title: t("groupsSearch.open"), value: OnlyAccessEnum.open },
+  { title: t("groupsSearch.closed"), value: OnlyAccessEnum.close },
+]);
 
-const sortEnumOptions = [
-  { title: t("recentlyAdded"), value: GroupsSortEnum.date },
-  { title: t("randomOrder"), value: GroupsSortEnum.random },
-  { title: t("photoCount"), value: GroupsSortEnum.photos },
-  { title: t("albumCount"), value: GroupsSortEnum.albums },
-  { title: t("articleCount"), value: GroupsSortEnum.articles },
-  { title: t("videoCount"), value: GroupsSortEnum.videos },
-];
+const sortEnumOptions = computed(() => [
+  { title: t("sorters.groups.date"), value: GroupsSortEnum.date },
+  { title: t("sorters.groups.random"), value: GroupsSortEnum.random },
+  { title: t("sorters.groups.photos"), value: GroupsSortEnum.photos },
+  { title: t("sorters.groups.albums"), value: GroupsSortEnum.albums },
+  { title: t("sorters.groups.articles"), value: GroupsSortEnum.articles },
+  { title: t("sorters.groups.videos"), value: GroupsSortEnum.videos },
+]);
 
 const onLoadFolderCounters = useApp().wrapLoading(async () => {
   for (const groupId of groupsStore.groupIdsByCurrentFolderName) {
@@ -113,8 +64,8 @@ watch(
 
     if (
       !(await dialogService.confirm({
-        title: t("loadCountersTitle"),
-        subtitle: t("loadCountersText"),
+        title: t("groupsSearch.loadCountersTitle"),
+        subtitle: t("groupsSearch.loadCountersText"),
       }))
     ) {
       groupsStore.filters.sort = GroupsSortEnum.date;
@@ -136,7 +87,7 @@ watch(
         v-model="groupsStore.filters.search"
         class="TopSearch__input"
         maxlength="50"
-        :placeholder="t('search')"
+        :placeholder="t('common.search')"
       />
       <div
         style="
@@ -166,13 +117,13 @@ watch(
       <VDialog v-model="showFilters">
         <VCard class="overflow-block a-group-filters">
           <VCardItem>
-            <VCardTitle>{{ t("filters") }}</VCardTitle>
+            <VCardTitle>{{ t("common.filters") }}</VCardTitle>
           </VCardItem>
           <VCardItem>
             <VSelect
               v-model.number="groupsStore.filters.access"
               :items="accessEnumOptions"
-              :label="t('filter')"
+              :label="t('common.filter')"
             />
             <div
               style="
@@ -185,27 +136,27 @@ watch(
               <VSelect
                 v-model.number="groupsStore.filters.sort"
                 :items="sortEnumOptions"
-                :label="t('sort')"
+                :label="t('common.sort')"
                 style="flex-grow: 30"
               />
               <VSwitch
                 v-model="groupsStore.filters.sortDesc"
                 :false-icon="styledIcons.Icon24SortOutlineOpacity50"
                 :true-icon="Icon24SortOutline"
-                :label="t('reverseOrder')"
+                :label="t('common.reverseOrder')"
               />
               <VBtn
                 v-if="groupsStore.filters.sort === GroupsSortEnum.random"
                 style="margin-bottom: 22px"
                 @click="groupsStore.updateRandomIndex()"
               >
-                {{ t("reshuffle") }}
+                {{ t("groupsSearch.reshuffle") }}
               </VBtn>
             </div>
           </VCardItem>
           <VCardActions>
             <VSpacer />
-            <VBtn @click="showFilters = false">{{ t("close") }}</VBtn>
+            <VBtn @click="showFilters = false">{{ t("common.close") }}</VBtn>
           </VCardActions>
         </VCard>
       </VDialog>
@@ -213,6 +164,7 @@ watch(
     <ASeparator />
   </div>
 </template>
+
 <style lang="scss">
 .a-group-filters {
   display: flex;

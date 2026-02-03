@@ -22,6 +22,22 @@
   "albums": {
     "communityPhotos": "Community photos"
   },
+  "sorters": {
+    "albums": {
+      "date": "By order added",
+      "size": "By photo count",
+      "created": "By creation date",
+      "updated": "By update date"
+    },
+    "groups": {
+      "date": "Recently added",
+      "random": "Random order",
+      "photos": "By photo count",
+      "albums": "By album count",
+      "articles": "By article count",
+      "videos": "By video count"
+    }
+  },
   "gallery": {
     "goToPhoto": "Go to photo",
     "openOriginal": "Open original",
@@ -55,5 +71,28 @@
   "validation": {
     "folderNameReserved": "This name is reserved by the system.",
     "folderMaxLength": "Maximum {max} characters allowed."
+  },
+  "common": {
+    "search": "Search",
+    "filters": "Filters",
+    "filter": "Filter",
+    "sort": "Sort",
+    "reverseOrder": "Reverse order",
+    "close": "Close",
+    "all": "All"
+  },
+  "albumsSearch": {
+    "searchPlaceholder": "Search by title and description",
+    "loadAlbumsTitle": "Confirm albums loading",
+    "loadAlbumsText": "You applied sorting that requires loading all albums.\nDo you want to start loading?\nIf cancelled, sorting will be reset."
+  },
+  "groupsSearch": {
+    "reshuffle": "Reshuffle",
+    "accessible": "Accessible",
+    "inaccessible": "Inaccessible",
+    "open": "Open",
+    "closed": "Closed",
+    "loadCountersTitle": "Confirm counters loading",
+    "loadCountersText": "You applied sorting by counters. \nIt will only work after loading counters from all groups in the current folder. \nDo you want to start loading? \nIf cancelled, sorting will be reset."
   }
 }

@@ -113,6 +113,7 @@ export function useAlbumPagination(options: UseAlbumPaginationOptions) {
     } catch (ex: any) {
       error.value = errorToString(ex);
       console.warn("Ошибка загрузки фото:", ex);
+      isInit.value = true; // Устанавливаем isInit даже при ошибке
     } finally {
       isLoading.value = false;
     }

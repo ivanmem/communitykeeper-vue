@@ -219,8 +219,15 @@ export function useAlbum(
         screenError.value = albumInfo.error.value;
       }
     },
-    { immediate: true },
+    { immediate: true, flush: 'sync' },
   );
+
+  // Синхронизация ошибок пагинации с screenError
+  watch(() => pagination.error.value, (error) => {
+    if (error) {
+      screenError.value = error;
+    }
+  }, { immediate: true });
 
   // Смена порядка сортировки
   watch(

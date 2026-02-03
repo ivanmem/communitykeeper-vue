@@ -109,7 +109,7 @@ class GroupHelper {
       isMember ? "VKWebAppJoinGroup" : "VKWebAppLeaveGroup",
       { group_id: group.id },
     );
-    
+
     if (result.result) {
       if (isMember) {
         if (group.is_closed) {

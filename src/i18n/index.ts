@@ -10,8 +10,8 @@ export const i18n = createI18n({
   locale: "en",
   fallbackLocale: "en",
   messages: {
-    ru: {},
-    en: {},
+    ru,
+    en,
   },
 });
 
@@ -31,6 +31,7 @@ function getLocaleFromVk(vkLang: number | string | undefined): Locale {
  */
 export function setLocaleFromVk(vkLang: number | string | undefined) {
   systemLocale = getLocaleFromVk(vkLang);
+
   // Применяем только если не установлен принудительный язык
   if (currentSetting === "system") {
     i18n.global.locale.value = systemLocale;
@@ -45,33 +46,9 @@ export function setLocale(setting: LocaleSetting) {
   i18n.global.locale.value = setting === "system" ? systemLocale : setting;
 }
 
-const globalMessages = { ru, en };
-
-type MessageKeys =
-  | `groups.${keyof typeof en.groups}`
-  | `counters.${keyof typeof en.counters}`
-  | `albums.${keyof typeof en.albums}`
-  | `gallery.${keyof typeof en.gallery}`
-  | `storage.${keyof typeof en.storage}`
-  | `welcome.${keyof typeof en.welcome}`
-  | `errors.${keyof typeof en.errors}`
-  | `validation.${keyof typeof en.validation}`;
-
 export function t(
-  key: MessageKeys,
-  params?: Record<string, string | number>,
+  key: string,
+  params: Record<string, string | number> = {},
 ): string {
-  const locale = i18n.global.locale.value as Locale;
-  const [section, subKey] = key.split(".") as [keyof typeof en, string];
-  const messages = globalMessages[locale] as typeof en;
-  let message =
-    (messages[section] as Record<string, string>)?.[subKey] ||
-    (globalMessages.en[section] as Record<string, string>)?.[subKey] ||
-    key;
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      message = message.replace(new RegExp(`\\{${k}\\}`, "g"), String(v));
-    }
-  }
-  return message;
+  return i18n.global.t(key, params);
 }

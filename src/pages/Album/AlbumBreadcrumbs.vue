@@ -25,10 +25,11 @@ const props = withDefaults(
   defineProps<{
     ownerId: number | string;
     albumId: number | string;
-    group: IGroup;
+    group?: IGroup;
     albumTitle?: string;
   }>(),
   {
+    group: undefined,
     albumTitle: undefined,
   },
 );

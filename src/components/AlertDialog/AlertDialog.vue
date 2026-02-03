@@ -20,6 +20,7 @@ const { t } = useI18n({
 const props = withDefaults(defineProps<AlertDialogProps>(), {
   subtitleStyle: "max-width: 450px;",
 });
+
 const emits = defineEmits<{
   close: [];
   confirm: [value: any];

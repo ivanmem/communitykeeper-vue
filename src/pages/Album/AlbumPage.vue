@@ -92,8 +92,6 @@ const {
   onSwitchPhoto,
   isInit,
   isLoadingPhotos,
-  isLoadingDirectPhoto,
-  directPhoto,
   screenError,
   componentRef,
   albumPhotoRef,
@@ -120,7 +118,7 @@ const group = computedAsync<IGroup | undefined>(
   undefined,
 );
 
-useScreenSpinner(toRef(() => !group.value));
+useScreenSpinner(() => !isInit.value);
 
 const onHelp = () => {
   dialogStore.alert({
@@ -133,13 +131,17 @@ const positionLabel = useThrottle(
   computed(() => {
     if (
       elementsIsEmpty.value ||
+      screenError.value ||
       isNaN(position.value) ||
       (albumIsEmpty.value && isLoadingPhotos.value)
     ) {
       return undefined;
     }
 
-    return t("positionLabel", { position: position.value, total: albumSize.value });
+    return t("positionLabel", {
+      position: position.value,
+      total: albumSize.value,
+    });
   }),
   1000,
 );
@@ -150,7 +152,7 @@ const positionLabel = useThrottle(
     <VBtn :icon="Icon24InfoCircleOutline" variant="text" @click="onHelp" />
   </FixedTeleport>
   <div class="a-album">
-    <template v-if="isInit && group">
+    <template v-if="isInit">
       <div>
         <AlbumBreadcrumbs
           :album-id="albumId"
@@ -162,6 +164,7 @@ const positionLabel = useThrottle(
         <AlbumControls
           :album-is-empty="albumIsEmpty"
           :is-loading-photos="isLoadingPhotos"
+          :is-init="isInit"
           :position-label="positionLabel"
           :screen-error="screenError"
         />

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, Ref } from "vue";
 import { VList } from "virtua/vue";
 import { IPhoto } from "@/store/groups/types";
 import AlbumPreview from "@/pages/Album/AlbumPreview.vue";
@@ -7,7 +7,7 @@ import AlbumPreview from "@/pages/Album/AlbumPreview.vue";
 const props = defineProps<{
   photos: {
     items: IPhoto[];
-    indexes: number[][];
+    indexes: Ref<number[][]>;
   };
   sizes: {
     height: number;
@@ -30,22 +30,22 @@ const componentRef = computed({
 
 <template>
   <VList
-    :key="`${photos.items[photos.indexes[0]?.[0]]?.id}`"
+    :key="`${photos.items[photos.indexes.value[0]?.[0]]?.id}`"
     ref="componentRef"
-    #default="{ item: indexes, index }"
-    :data="photos.indexes"
+    #default="{ item: rowIndexes, index }"
+    :data="photos.indexes.value"
     :item-size="sizes.height"
     class="a-album-list"
     @scroll="$emit('update:scroll')"
   >
-    <div :key="photos.items[indexes?.[0]]?.id ?? index" class="a-album-row">
+    <div :key="photos.items[rowIndexes?.[0]]?.id ?? index" class="a-album-row">
       <AlbumPreview
-        v-for="index in indexes"
-        :key="photos.items[index].id"
-        :index="index"
-        :photo="photos.items[index]"
+        v-for="idx in rowIndexes"
+        :key="photos.items[idx].id"
+        :index="idx"
+        :photo="photos.items[idx]"
         :sizes="sizes"
-        @click="$emit('select:photo', index)"
+        @click="$emit('select:photo', idx)"
       />
     </div>
   </VList>
