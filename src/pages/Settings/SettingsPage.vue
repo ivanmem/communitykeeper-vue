@@ -13,7 +13,7 @@ import SettingsDisabledCookies from "@/pages/Settings/SettingsDisabledCookies.vu
 import FixedTeleport from "@/components/FixedTeleport";
 import { useApp } from "@/store/app/app";
 import PhotoCounter from "@/pages/Album/PhotoCounter.vue";
-import { computed, h, watch } from "vue";
+import { computed, h } from "vue";
 import {
   Icon24SunOutline,
   Icon12View,

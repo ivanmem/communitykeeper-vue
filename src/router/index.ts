@@ -3,7 +3,6 @@ import {
   createWebHashHistory,
   NavigationHookAfter,
   RouteLocationNormalized,
-  RouteRecordRaw,
 } from "vue-router";
 import bridge from "@vkontakte/vk-bridge";
 import { useVk } from "@/store/vk/vk";
@@ -75,13 +74,11 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeResolve((to, from, next) => {
+router.beforeResolve(() => {
   const dialogStore = useDialog();
   if (dialogStore.windows.size > 0) {
     return false;
   }
-
-  next();
 });
 
 router.beforeEach(async (to, from) => {

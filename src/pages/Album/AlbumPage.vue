@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { useAlbum } from "@/pages/Album/useAlbum";
 import { useGroups } from "@/store/groups/groups";
-import { computed, toRef } from "vue";
+import { computed } from "vue";
 import FixedTeleport from "@/components/FixedTeleport";
 import { useDialog } from "@/store/dialog/dialog";
-import { computedAsync, useThrottle } from "@vueuse/core";
+import { computedAsync, refThrottled } from "@vueuse/core";
 import { IGroup } from "@/store/groups/types";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import AlbumPhoto from "@/pages/Album/AlbumPhoto.vue";
@@ -127,7 +127,7 @@ const onHelp = () => {
   });
 };
 
-const positionLabel = useThrottle(
+const positionLabel = refThrottled(
   computed(() => {
     if (
       elementsIsEmpty.value ||

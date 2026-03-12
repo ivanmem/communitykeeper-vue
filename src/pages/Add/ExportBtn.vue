@@ -21,20 +21,23 @@ const { t } = useI18n({
     ru: {
       create: "Создать",
       createBackup: "Создание резервной копии",
-      selectFolders: "Выберите экспортируемые папки и нажмите на кнопку Создать.",
+      selectFolders:
+        "Выберите экспортируемые папки и нажмите на кнопку Создать.",
       all: "Все",
       groupsCount: "Групп: {count}",
       selected: "Выбрано",
       folders: "Папок",
       groups: "Групп",
       selectExportMethod: "Выберите способ экспорта",
-      appWarning: "🆘 Создание ФАЙЛА резервной копии не работает с приложения ВКонтакте. Если вам нужен именно ФАЙЛ, тогда воспользуйтесь кнопкой копирования и вручную создайте файл с расширением .json.",
+      appWarning:
+        "🆘 Создание ФАЙЛА резервной копии не работает с приложения ВКонтакте. Если вам нужен именно ФАЙЛ, тогда воспользуйтесь кнопкой копирования и вручную создайте файл с расширением .json.",
       downloadJson: "Скачать JSON файл",
       copyJson: "Скопировать в формате JSON",
       createLink: "Создать ссылку",
       close: "Закрыть",
       createLinkTitle: "Создание резервной копии в виде публичной ссылки",
-      createLinkConfirm: "Приложение от Вашего имени воспользуется сервисом vk.cc для сокращения ссылок. Если Вам будет нужно обнулить ссылку, перейдите на сайт vk.cc и удалите все сокращённые ссылки, ведущие на вымышленный сайт s.vk. Вы подтверждаете создание ссылки?",
+      createLinkConfirm:
+        "Приложение от Вашего имени воспользуется сервисом vk.cc для сокращения ссылок. Если Вам будет нужно обнулить ссылку, перейдите на сайт vk.cc и удалите все сокращённые ссылки, ведущие на вымышленный сайт s.vk. Вы подтверждаете создание ссылки?",
       exportError: "Произошла неизвестная ошибка при экспорте данных.",
       linkCopied: "Ссылка помещена в буфер обмена:\n{url}",
       dataCopied: "Данные для импорта помещены в буфер обмена.",
@@ -49,13 +52,15 @@ const { t } = useI18n({
       folders: "Folders",
       groups: "Groups",
       selectExportMethod: "Select export method",
-      appWarning: "🆘 Creating a backup FILE does not work from the VKontakte app. If you need a FILE, use the copy button and manually create a file with .json extension.",
+      appWarning:
+        "🆘 Creating a backup FILE does not work from the VKontakte app. If you need a FILE, use the copy button and manually create a file with .json extension.",
       downloadJson: "Download JSON file",
       copyJson: "Copy as JSON",
       createLink: "Create link",
       close: "Close",
       createLinkTitle: "Create backup as public link",
-      createLinkConfirm: "The app will use vk.cc service on your behalf to shorten links. If you need to reset the link, go to vk.cc and delete all shortened links leading to the fictional site s.vk. Do you confirm link creation?",
+      createLinkConfirm:
+        "The app will use vk.cc service on your behalf to shorten links. If you need to reset the link, go to vk.cc and delete all shortened links leading to the fictional site s.vk. Do you confirm link creation?",
       exportError: "An unknown error occurred while exporting data.",
       linkCopied: "Link copied to clipboard:\n{url}",
       dataCopied: "Import data copied to clipboard.",
@@ -82,7 +87,6 @@ const selectedGroupsCount = computed(() => {
   );
 });
 const { toClipboard } = useClipboard({ appendToBody: true });
-const win = window;
 
 watch(
   () => groupsStore.folders,
@@ -176,7 +180,9 @@ async function onCopyJson(event: any) {
       <VList class="mb-2" density="compact" style="flex-grow: 100">
         <VListItem
           v-if="groupsStore.folders.length > 1"
-          :subtitle="t('groupsCount', { count: groupsStore.localGroupsMap.size })"
+          :subtitle="
+            t('groupsCount', { count: groupsStore.localGroupsMap.size })
+          "
           :variant="
             folders.size === groupsStore.folders.length ? 'tonal' : 'flat'
           "
@@ -202,7 +208,11 @@ async function onCopyJson(event: any) {
         <VListItem
           v-for="folder of groupsStore.folders"
           :key="folder"
-          :subtitle="t('groupsCount', { count: groupsStore.groupIdsDictByFolderName[folder].length })"
+          :subtitle="
+            t('groupsCount', {
+              count: groupsStore.groupIdsDictByFolderName[folder].length,
+            })
+          "
           :title="folder"
           :variant="folders.has(folder) ? 'tonal' : 'flat'"
           @click="

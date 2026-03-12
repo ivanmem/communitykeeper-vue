@@ -52,11 +52,13 @@ function openUrlAlbum() {
 </script>
 <template>
   <VBreadcrumbs class="a-album-breadcrumbs" density="compact">
-    <VBreadcrumbsItem :to="{ name: 'groups' }"> {{ t("groups") }} </VBreadcrumbsItem>
+    <VBreadcrumbsItem :to="{ name: 'groups' }">
+      {{ t("groups") }}
+    </VBreadcrumbsItem>
     <Icon16ChevronOutline />
     <VBreadcrumbsItem
       :href="`https://${ownerUrl}`"
-      :title="GroupHelper.getName(group)"
+      :title="group ? GroupHelper.getName(group) : undefined"
       @click.prevent="backToAlbums"
     />
     <Icon16ChevronOutline />

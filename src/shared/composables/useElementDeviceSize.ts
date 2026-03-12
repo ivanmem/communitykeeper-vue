@@ -1,14 +1,13 @@
 import {
   ElementSize,
   MaybeComputedElementRef,
-  MaybeElement,
   useElementSize,
   UseResizeObserverOptions,
 } from "@vueuse/core";
 import { computed } from "vue";
 
 export function useElementDeviceSize(
-  target: MaybeComputedElementRef<MaybeElement>,
+  target: MaybeComputedElementRef,
   initialSize?: ElementSize | undefined,
   options?: UseResizeObserverOptions | undefined,
 ) {

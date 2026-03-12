@@ -7,9 +7,13 @@
   white-space: nowrap;
 }
 
-.v-breadcrumbs.v-breadcrumbs--density-compact {
-  padding-left: 0;
-  padding-top: 12px;
+.v-breadcrumbs {
+  margin: 0;
+
+  &--density-compact {
+    padding-left: 0;
+    padding-top: 12px;
+  }
 }
 
 .v-dialog > .v-overlay__content > .v-card > .v-card-actions,

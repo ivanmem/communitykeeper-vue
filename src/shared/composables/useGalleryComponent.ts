@@ -6,7 +6,7 @@ import {
   ref,
   toRef,
 } from "vue";
-import type { VList } from "virtua/lib/vue";
+import type { VList } from "virtua/vue";
 import { useElementSize, useScroll } from "@vueuse/core";
 import { useSizesColumns } from "@/shared/composables/useSizesColumns";
 import { AlbumsPreviewSizesInitial } from "@/pages/Albums/consts";

@@ -1,5 +1,4 @@
-import { computed, unref } from "vue";
-import { MaybeRef } from "@vueuse/core";
+import { computed, unref, MaybeRef } from "vue";
 import { IGroup, IGroupCounters } from "@/store/groups/types";
 import { useGroups } from "@/store/groups/groups";
 import {

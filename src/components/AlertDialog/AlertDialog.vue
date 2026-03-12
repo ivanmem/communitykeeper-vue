@@ -37,12 +37,12 @@ const confirmButtons = computed(() =>
       ],
 );
 
-onBeforeRouteUpdate((to, from, next) => {
+onBeforeRouteUpdate(() => {
   if (!props.persistent) {
     emits("close");
   }
 
-  next();
+  return true;
 });
 </script>
 <template>

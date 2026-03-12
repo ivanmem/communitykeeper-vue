@@ -1,5 +1,4 @@
 import { IPhotoSize } from "vkontakte-api";
-import { IPhoto } from "@/store/groups/types";
 
 export interface IAlbumItem {
   id: number | string;
@@ -23,9 +22,4 @@ export interface IAlbumItem {
 export interface PhotosGetAlbums {
   count: number;
   items: IAlbumItem[];
-}
-
-export interface PhotosGet {
-  count: number;
-  items: IPhoto[];
 }

@@ -29,19 +29,23 @@ export default defineConfig({
         find: "@",
         replacement: fileURLToPath(new URL("./src", import.meta.url)),
       },
+      {
+        find: "@vkontakte/vk-bridge",
+        replacement: fileURLToPath(
+          new URL(
+            "./node_modules/@vkontakte/vk-bridge/dist/index.es.js",
+            import.meta.url,
+          ),
+        ),
+      },
     ],
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      target: "esnext",
-    },
   },
   build: {
     minify: false,
     target: "ES2019",
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        inlineDynamicImports: true,
+        codeSplitting: false,
       },
     },
   },

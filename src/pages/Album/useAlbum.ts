@@ -1,4 +1,3 @@
-import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { useVk } from "@/store/vk/vk";
 import { AlbumsPreviewSizesInitial } from "@/pages/Albums/consts";
 import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
@@ -219,15 +218,19 @@ export function useAlbum(
         screenError.value = albumInfo.error.value;
       }
     },
-    { immediate: true, flush: 'sync' },
+    { immediate: true, flush: "sync" },
   );
 
   // Синхронизация ошибок пагинации с screenError
-  watch(() => pagination.error.value, (error) => {
-    if (error) {
-      screenError.value = error;
-    }
-  }, { immediate: true });
+  watch(
+    () => pagination.error.value,
+    (error) => {
+      if (error) {
+        screenError.value = error;
+      }
+    },
+    { immediate: true },
+  );
 
   // Смена порядка сортировки
   watch(
