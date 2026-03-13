@@ -52,7 +52,9 @@
     "skipSettings": "Настройки пропуска",
     "exitPhotoView": "Выйти из просмотра фото",
     "searchOriginalTitle": "Поиск оригинала",
-    "searchOriginalSubtitle": "Выберите поисковую систему:"
+    "searchOriginalSubtitle": "Выберите поисковую систему:",
+    "slideshow": "Показ слайдов",
+    "slideshowSeconds": "сек"
   },
   "storage": {
     "dataLossWarningTitle": "Внимание, возможна потеря данных!",

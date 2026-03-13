@@ -105,6 +105,7 @@ export interface IGroupsConfig {
   opacityGalleryCounter?: number;
   swipes?: GallerySwipesConfig;
   previewSizeShadow?: boolean;
+  slideshowInterval?: number;
 }
 
 export const useGroups = defineStore("groups", {

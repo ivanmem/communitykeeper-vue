@@ -1,12 +1,5 @@
 <script lang="ts" setup>
-import {
-  computed,
-  nextTick,
-  onDeactivated,
-  ref,
-  toRef,
-  watch,
-} from "vue";
+import { computed, nextTick, onDeactivated, ref, toRef, watch } from "vue";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { actionSwipesDict, dateTimeFormatter } from "@/shared/constants/consts";
 import { GallerySwipesConfig, useGroups } from "@/store/groups/groups";
@@ -18,8 +11,9 @@ import { usePhotoActions } from "@/pages/Album/usePhotoActions";
 import { useSwipesAndZoom } from "@/shared/composables/useSwipesAndZoom";
 import { UsableZoomOptions } from "@/shared/composables/useZoom";
 import PhotoCounter from "@/pages/Album/PhotoCounter.vue";
+import SlideshowControl from "@/pages/Album/SlideshowControl.vue";
 import { IPhoto } from "@/store/groups/types";
-import { useThrottleFn, useTimeoutFn } from "@vueuse/core";
+import { useIntervalFn, useThrottleFn, useTimeoutFn } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n({
@@ -75,14 +69,32 @@ const originalSize = computed(() =>
 );
 
 // Единая функция для показа счётчика на 2 секунды с использованием VueUse
-const { start: startHideTimer } = useTimeoutFn(() => {
-  showInfo.value = false;
-}, 2000, { immediate: false });
+const { start: startHideTimer } = useTimeoutFn(
+  () => {
+    showInfo.value = false;
+  },
+  2000,
+  { immediate: false },
+);
 
 const showInfoTemporarily = () => {
   showInfo.value = true;
   startHideTimer();
 };
+
+// Логика показа слайдов с использованием VueUse
+const slideshowIntervalMs = computed(() => {
+  const interval = groupsStore.config.slideshowInterval ?? 0;
+  return interval * 1000;
+});
+
+const { pause: pauseSlide, resume: resumeSlide } = useIntervalFn(
+  () => {
+    actions.onPhotoNext();
+  },
+  slideshowIntervalMs,
+  { immediate: false },
+);
 
 const actions = usePhotoActions(
   () => props.photo,
@@ -90,6 +102,8 @@ const actions = usePhotoActions(
   emit,
   photoDiv,
   showInfoTemporarily,
+  pauseSlide,
+  resumeSlide,
 );
 
 const onClick = (event: MouseEvent) => {
@@ -183,8 +197,30 @@ const dateTime = computed(() => {
   return dateTimeFormatter.format(new Date(props.photo.date * 1000));
 });
 
+watch(
+  slideshowIntervalMs,
+  (interval) => {
+    if (interval > 0) {
+      resumeSlide();
+    } else {
+      pauseSlide();
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  () => props.photo,
+  () => {
+    if (slideshowIntervalMs.value > 0) {
+      resumeSlide();
+    }
+  },
+);
+
 onDeactivated(() => {
   showMoreInfo.value = false;
+  pauseSlide();
 });
 
 defineExpose({
@@ -222,6 +258,7 @@ defineExpose({
       :is-loading="isLoading"
       class="a-photo__info-top-left"
     />
+    <SlideshowControl v-if="(groupsStore.config.slideshowInterval ?? 0) > 0" />
   </div>
   <VDialog v-model="showMoreInfo" close-on-back>
     <VCard>
@@ -234,7 +271,8 @@ defineExpose({
           {{ t("description") }}: <b>{{ photo.text }}</b>
         </div>
         <div v-if="originalSize">
-          {{ t("resolution") }}: <b>{{ originalSize.width }}x{{ originalSize.height }}</b>
+          {{ t("resolution") }}:
+          <b>{{ originalSize.width }}x{{ originalSize.height }}</b>
         </div>
         <div v-if="photo.likes">
           {{ t("likes") }}: <b>{{ photo.likes.count }}</b>

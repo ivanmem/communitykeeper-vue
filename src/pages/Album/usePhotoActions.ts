@@ -19,6 +19,8 @@ import {
   Icon16Link,
   Icon16Linked,
   Icon16LogoVk,
+  Icon16Pause,
+  Icon16Play,
   Icon16SearchStarsOutline,
   Icon16Share,
 } from "vue-vkontakte-icons";
@@ -31,6 +33,8 @@ export function usePhotoActions(
   emit: IPhotoEmit,
   photoDivGetter: MaybeRefOrGetter<HTMLDivElement | undefined>,
   showInfoCallback?: () => void,
+  showMenuCallback?: () => void,
+  hideMenuCallback?: () => void,
 ) {
   const groupsStore = useGroups();
   const dialogStore = useDialog();
@@ -119,7 +123,15 @@ export function usePhotoActions(
     return toClipboard(originalSize.value!.url);
   };
 
+  const onToggleSlideshow = () => {
+    // Первое включение - 5 секунд по умолчанию
+    const current = groupsStore.config.slideshowInterval ?? -5;
+    // Выключаем\включаем, сохраняя значение
+    groupsStore.config.slideshowInterval = -current;
+  };
+
   const onShowContextMenu = (e: MouseEvent | TouchEvent) => {
+    showMenuCallback?.();
     const items: MenuItem[] = [];
     items.push({
       label: t("gallery.goToPhoto"),
@@ -178,11 +190,22 @@ export function usePhotoActions(
       onClick: onOpenSkipSettings,
     });
     items.push({
+      label: t("gallery.slideshow"),
+      icon:
+        Math.max(0, groupsStore.config.slideshowInterval ?? 0) !== 0
+          ? h(Icon16Pause)
+          : h(Icon16Play),
+      onClick: onToggleSlideshow,
+    });
+    items.push({
       label: t("gallery.exitPhotoView"),
       icon: h(Icon16DoorEnterArrowRightOutline),
       onClick: onPhotoExit,
     });
-    showContextMenu(e, items, () => toValue(photoDivGetter)?.focus());
+    showContextMenu(e, items, () => {
+      toValue(photoDivGetter)?.focus();
+      hideMenuCallback?.();
+    });
   };
 
   // noinspection JSUnusedGlobalSymbols
@@ -196,6 +219,7 @@ export function usePhotoActions(
     onCopyDirectLink,
     onDownload,
     onOpenSkipSettings,
+    onToggleSlideshow,
     onPhotoExit,
     onPhotoPrev,
     onPhotoNext,
