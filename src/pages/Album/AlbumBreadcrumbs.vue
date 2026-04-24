@@ -7,6 +7,7 @@ import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import type { IGroup } from "@/store/groups/types";
 import { Icon16ChevronOutline } from "vue-vkontakte-icons";
 import { useI18n } from "vue-i18n";
+import { injectAlbumPageContext } from "@/pages/Album/stores";
 
 const { t } = useI18n({
   messages: {
@@ -23,8 +24,6 @@ const { t } = useI18n({
 
 const props = withDefaults(
   defineProps<{
-    ownerId: number | string;
-    albumId: number | string;
     group?: IGroup;
     albumTitle?: string;
   }>(),
@@ -34,16 +33,18 @@ const props = withDefaults(
   },
 );
 
+const { ownerId, albumId } = injectAlbumPageContext()!;
+
 const displayAlbumTitle = computed(() => props.albumTitle ?? t("album"));
 
 const albumUrl = computed(() =>
-  PhotoHelper.getAlbumUrl(props.ownerId, props.albumId),
+  PhotoHelper.getAlbumUrl(ownerId.value, albumId.value),
 );
 
-const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(props.ownerId));
+const ownerUrl = computed(() => PhotoHelper.getOwnerUrl(ownerId.value));
 
 function backToAlbums() {
-  router.replace(`/albums/${props.ownerId}`);
+  router.replace(`/albums/${ownerId.value}`);
 }
 
 function openUrlAlbum() {

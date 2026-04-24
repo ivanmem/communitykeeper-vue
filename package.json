@@ -36,7 +36,7 @@
     "vue-i18n": "11.3.0",
     "vue-router": "5.0.3",
     "vue-routes-to-types": "0.3.8",
-    "vue-vkontakte-icons": "3.43.0",
+    "vue-vkontakte-icons": "3.46.1",
     "vuetify": "4.0.2"
   },
   "devDependencies": {

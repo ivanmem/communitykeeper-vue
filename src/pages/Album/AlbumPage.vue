@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useAlbum } from "@/pages/Album/useAlbum";
 import { useGroups } from "@/store/groups/groups";
-import { computed } from "vue";
+import { computed, toRef, toRefs } from "vue";
 import FixedTeleport from "@/components/FixedTeleport";
 import { useDialog } from "@/store/dialog/dialog";
 import { computedAsync, refThrottled } from "@vueuse/core";
@@ -17,6 +17,10 @@ import {
   Icon24InfoCircleOutline,
 } from "vue-vkontakte-icons";
 import { useI18n } from "vue-i18n";
+import {
+  injectAlbumContext,
+  provideAlbumPageContext,
+} from "@/pages/Album/stores";
 
 const { t } = useI18n({
   messages: {
@@ -79,6 +83,8 @@ const props = defineProps<{
   photoId: number | string | undefined;
 }>();
 
+provideAlbumPageContext(toRefs(props));
+
 const {
   photos,
   imagePreloader,
@@ -86,7 +92,6 @@ const {
   album,
   albumSize,
   albumIsEmpty,
-  currentPhoto,
   setCurrentPhotoIndex,
   onScrollerUpdate,
   onSwitchPhoto,
@@ -97,11 +102,9 @@ const {
   albumPhotoRef,
   sizes,
   position,
-} = useAlbum(
-  () => props.ownerId,
-  () => props.albumId,
-  () => props.photoId,
-);
+} = useAlbum();
+
+const { currentPhoto } = injectAlbumContext()!;
 
 const elementsIsEmpty = computed(
   () =>
@@ -154,12 +157,7 @@ const positionLabel = refThrottled(
   <div class="a-album">
     <template v-if="isInit">
       <div>
-        <AlbumBreadcrumbs
-          :album-id="albumId"
-          :album-title="album?.title"
-          :group="group"
-          :owner-id="ownerId"
-        />
+        <AlbumBreadcrumbs :album-title="album?.title" :group="group" />
 
         <AlbumControls
           :album-is-empty="albumIsEmpty"
@@ -180,6 +178,7 @@ const positionLabel = refThrottled(
       </div>
 
       <AlbumList
+        v-show="!currentPhoto"
         v-model:component-ref="componentRef"
         :photos="photos"
         :sizes="sizes"
@@ -197,7 +196,10 @@ const positionLabel = refThrottled(
         @photo:next="onSwitchPhoto(true)"
         @photo:exit="setCurrentPhotoIndex(undefined)"
       />
-      <ImagePreloader :photos="previewPreloader.photos.value" />
+      <ImagePreloader
+        v-if="!currentPhoto"
+        :photos="previewPreloader.photos.value"
+      />
       <ImagePreloader :photos="imagePreloader.photos.value" />
     </template>
   </div>

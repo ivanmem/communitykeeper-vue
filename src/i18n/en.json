@@ -75,6 +75,7 @@
     "folderMaxLength": "Maximum {max} characters allowed."
   },
   "common": {
+    "copyLink": "Copy current link",
     "search": "Search",
     "filters": "Filters",
     "filter": "Filter",

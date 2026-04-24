@@ -36,7 +36,8 @@ const { t } = useI18n({
       cancelRequest: "Отменить заявку [не работает]",
       leave: "Выйти",
       leaveGroupTitle: "Выход из группы",
-      leaveGroupConfirm: 'Вы выходите из закрытой группы "{name}".\nВас могут не принять обратно. Всё равно хотите выйти?',
+      leaveGroupConfirm:
+        'Вы выходите из закрытой группы "{name}".\nВас могут не принять обратно. Всё равно хотите выйти?',
       yes: "Да",
       submitRequest: "Подать заявку",
       subscribe: "Подписаться",
@@ -50,7 +51,8 @@ const { t } = useI18n({
       cancelRequest: "Cancel request [not working]",
       leave: "Leave",
       leaveGroupTitle: "Leave group",
-      leaveGroupConfirm: 'You are leaving a closed group "{name}".\nYou may not be accepted back. Do you still want to leave?',
+      leaveGroupConfirm:
+        'You are leaving a closed group "{name}".\nYou may not be accepted back. Do you still want to leave?',
       yes: "Yes",
       submitRequest: "Submit request",
       subscribe: "Subscribe",
@@ -116,6 +118,10 @@ const link = computed(() => `vk.com/public${props.group.id}`);
 
 const { toClipboard } = useClipboard({ appendToBody: true });
 
+const openLink = () => {
+  openUrl(`//` + link.value);
+};
+
 const onOpenContextMenu = (e: MouseEvent) => {
   const isGroupAdded = groupsStore.localGroupsMap.has(props.group.id);
   const items: MenuItem[] = [];
@@ -171,7 +177,9 @@ const onOpenContextMenu = (e: MouseEvent) => {
         if (props.group.is_closed && !requestSent) {
           confirm = await dialogStore.confirm({
             title: t("leaveGroupTitle"),
-            subtitle: t("leaveGroupConfirm", { name: GroupHelper.getName(props.group) }),
+            subtitle: t("leaveGroupConfirm", {
+              name: GroupHelper.getName(props.group),
+            }),
             confirmTitle: t("yes"),
           });
         }
@@ -249,17 +257,18 @@ watch(showCounters, () => {
     class="a-button__root"
     @click.right.prevent.stop="onOpenContextMenu"
   >
-    <BaseButton
-      class="a-group-link a-button__block"
-      @click="openUrl(`//` + link)"
-    >
+    <BaseButton class="a-group-link a-button__block" @click="openLink">
       <img
         :src="group.photo_200"
         alt=""
         class="a-group-link__avatar"
         @click.stop="onClickAvatar"
       />
-      <div class="a-group-link__div">
+      <div
+        class="a-group-link__div"
+        @mousedown.middle.prevent
+        @click.middle.prevent="openLink"
+      >
         <span class="a-group-link__name">{{ GroupHelper.getName(group) }}</span>
         <span class="a-group-link__help">
           <template v-if="!isCurrentFolder && localGroup">

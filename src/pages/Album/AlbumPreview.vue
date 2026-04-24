@@ -13,6 +13,7 @@ import {
   Icon16LogoVk,
 } from "vue-vkontakte-icons";
 import { useI18n } from "vue-i18n";
+import { injectAlbumContext } from "@/pages/Album/stores";
 
 const { t } = useI18n({
   messages: {
@@ -50,7 +51,10 @@ const onShowContextMenu = (e: MouseEvent) => {
       onClick: onOpenPhoto,
     },
     {
-      label: t("openOriginal", { width: originalSize.value?.width, height: originalSize.value?.height }),
+      label: t("openOriginal", {
+        width: originalSize.value?.width,
+        height: originalSize.value?.height,
+      }),
       icon: h(Icon16Link),
       onClick: () => {
         if (originalSize.value) {
@@ -75,6 +79,8 @@ const titleStyle = computed<CSSProperties | undefined>(() => {
     boxShadow: getTitleBoxShadow(size),
   };
 });
+
+const { currentPhoto } = injectAlbumContext()!;
 </script>
 <template>
   <div
@@ -83,7 +89,7 @@ const titleStyle = computed<CSSProperties | undefined>(() => {
   >
     <img
       v-if="previewSize"
-      :src="previewSize.url"
+      :src="currentPhoto ? undefined : previewSize.url"
       alt=""
       class="a-not-draggable-and-not-select"
     />

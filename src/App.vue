@@ -19,25 +19,17 @@ import {
   Icon24Fullscreen,
 } from "vue-vkontakte-icons";
 import { useI18n } from "vue-i18n";
+import { useBodyLayout } from "@/shared/composables/useBodyLayout";
 
-const { t } = useI18n({
-  messages: {
-    ru: {
-      copyLink: "Скопировать текущую ссылку",
-    },
-    en: {
-      copyLink: "Copy current link",
-    },
-  },
-});
+const { t } = useI18n();
 
 const route = useRoute();
 const groupsStore = useGroups();
 const vkStore = useVk();
 const appStore = useApp();
-const vkService = useVk();
 let unmounted = useUnmounted();
 useColorScheme();
+useBodyLayout();
 const fullscreenElement = ref(document.fullscreenElement);
 const init = ref(false);
 
@@ -63,47 +55,6 @@ onBeforeMount(async () => {
 watch(fullscreenElement, () => {
   appStore.isFullScreen = !!fullscreenElement.value;
 });
-
-watch(
-  () => appStore.platform,
-  () => {
-    document.body.dataset.platform = appStore.platform;
-  },
-  { immediate: true },
-);
-
-watch(
-  () => vkStore.webAppConfig,
-  () => {
-    if (!vkStore.webAppConfig) {
-      return;
-    }
-
-    document.body.dataset.app = vkStore.webAppConfig.app ? "true" : "false";
-    if (vkStore.webAppConfig.insets) {
-      const { top, left, right, bottom } = vkStore.webAppConfig.insets;
-      document.body.style.padding = `${top}px ${right}px ${bottom}px ${left}px`;
-    } else if (appStore.isAppIos) {
-      document.body.style.paddingBottom = "8px";
-    }
-  },
-  { immediate: true },
-);
-
-watch(
-  () => vkStore.webAppConfig?.app,
-  () => {
-    const { platform } = appStore;
-    const app = vkStore.webAppConfig?.app;
-    const appHeight = platform === "ios" ? "18px" : "20px";
-    const browserHeight = platform === "android" ? "20px" : "16px";
-    document.body.style.setProperty(
-      "--navigation-header-height",
-      `calc(var(--vk-app-buttons-height) + ${app ? appHeight : browserHeight})`,
-    );
-  },
-  { immediate: true },
-);
 
 const LinkIcon = shallowRef(Icon24Linked);
 
@@ -143,15 +94,15 @@ watch(
           <VBtn
             v-if="route.path !== '/'"
             :icon="LinkIcon"
-            :title="t('copyLink')"
+            :title="t('common.copyLink')"
             variant="text"
             @click="
-              vkService.copyText(`vk.com/app${appStore.appId}#` + route.path);
+              vkStore.copyText(`vk.com/app${appStore.appId}#` + route.path);
               LinkIcon = Icon24CopyOutline;
             "
           />
           <VBtn
-            v-if="useApp().isVkCom"
+            v-if="appStore.isVkCom"
             :icon="fullscreenElement ? Icon24FullscreenExit : Icon24Fullscreen"
             variant="text"
             @click="switchFullscreen()"

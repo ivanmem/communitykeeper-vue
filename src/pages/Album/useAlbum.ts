@@ -1,6 +1,6 @@
 import { useVk } from "@/store/vk/vk";
 import { AlbumsPreviewSizesInitial } from "@/pages/Albums/consts";
-import { computed, MaybeRefOrGetter, ref, toValue, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useCurrentPhoto } from "@/pages/Album/useCurrentPhoto";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import { toStr } from "@/shared/helpers/toStr";
@@ -14,14 +14,13 @@ import { useScrollRestore } from "@/shared/composables/useScrollRestore";
 import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
 import { useAlbumPagination } from "@/pages/Album/composables/useAlbumPagination";
 import { useAlbumInfo } from "@/pages/Album/composables/useAlbumInfo";
+import { provideAlbumContext, injectAlbumPageContext } from "@/pages/Album/stores";
 
 const countOneLoad = 150;
 
-export function useAlbum(
-  ownerIdGetter: MaybeRefOrGetter<number | string>,
-  albumIdGetter: MaybeRefOrGetter<number | string>,
-  photoIdGetter: MaybeRefOrGetter<number | string | undefined>,
-) {
+export function useAlbum() {
+  const { ownerId, albumId: albumIdRaw, photoId } = injectAlbumPageContext()!;
+
   const photosMap = ref<Map<IPhotoKey, IPhoto>>(new Map());
   const screenError = ref<any>();
 
@@ -33,14 +32,11 @@ export function useAlbum(
   const groupsStore = useGroups();
   const vkStore = useVk();
 
-  const ownerId = computed(() => toValue(ownerIdGetter));
-  const albumIdRaw = computed(() => toValue(albumIdGetter));
   // Обработка "wall" -> -7
   const albumId = computed(() => {
     const value = albumIdRaw.value;
     return value == "wall" ? -7 : value;
   });
-  const photoId = computed(() => toValue(photoIdGetter));
 
   const gallery = useGalleryComponent<IPhoto>(AlbumsPreviewSizesInitial);
 
@@ -132,6 +128,8 @@ export function useAlbum(
     pagination.loadNext,
     directPhoto,
   );
+
+  provideAlbumContext({ currentPhoto });
 
   const previewPreloader = useImagePreloader({
     max: () => gallery.columns.value * 4,
@@ -306,7 +304,6 @@ export function useAlbum(
     album: albumInfo.album,
     albumSize,
     albumIsEmpty,
-    currentPhoto,
     currentPhotoIndex,
     setCurrentPhotoId,
     setCurrentPhotoIndex,
