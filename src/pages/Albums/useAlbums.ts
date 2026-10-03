@@ -17,6 +17,7 @@ import { VK_ERROR_CODE } from "@/shared/constants/consts";
 import { isVKError } from "vkontakte-api";
 import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
 import { useApp } from "@/store/app/app";
+import { useOffsetPagination } from "@/shared/composables/useOffsetPagination";
 
 const countOneLoad = 100;
 
@@ -26,32 +27,22 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   const appStore = useApp();
   const ownerId = computed(() => toValue(ownerIdGetter));
 
-  const isInit = ref(false);
-  useScreenSpinner(() => !isInit.value);
-  const albumsMaxItems = ref(0);
-  const isLoadingAlbums = ref(false);
   const group = ref<IGroup | undefined>();
   const staticAlbums = computed(() => getStaticAlbums(ownerId.value));
-  const staticAlbumsCount = ref(0);
-  const totalCount = ref<number | undefined>(undefined);
   const gallery = useGalleryComponent<IAlbumItem>(AlbumsPreviewSizesInitial);
-
   const screenError = ref<any>();
+  const pagination = useOffsetPagination<IAlbumItem>({
+    pageSize: countOneLoad,
+    fetchPage: fetchAlbums,
+    onPage: pushAlbums,
+  });
+  // Результаты подготовки предыдущего владельца отбрасываются по этому номеру
+  let ownerChangeId = 0;
+
+  useScreenSpinner(() => !pagination.isInit.value);
+
   const previewPreloader = useImagePreloader({
     max: () => gallery.columns.value * 4,
-  });
-
-  const isAllLoaded = computed(() => {
-    if (totalCount.value === undefined) {
-      return false;
-    }
-
-    const gridItemsCount = gallery.grid.items.length;
-    const staticCount = staticAlbumsCount.value;
-    const loadedCount = gridItemsCount - staticCount;
-    const total = totalCount.value;
-
-    return loadedCount >= total;
   });
 
   const { setLastScrollTop } = useScrollRestore(
@@ -60,53 +51,51 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
 
   watch(ownerId, onOwnerIdChange, { immediate: true });
 
-  watch(albumsMaxItems, onAlbumsMaxItemsChange, { immediate: true });
+  watch(pagination.error, onPaginationError);
 
   watch(gallery.endIndex, onEndIndexChange);
 
   const loadAllAlbums = appStore.wrapLoading(async () => {
-    if (isAllLoaded.value || isLoadingAlbums.value) {
-      return;
-    }
-
-    while (!isAllLoaded.value) {
-      albumsMaxItems.value += countOneLoad;
-
-      // Ждём завершения загрузки текущей порции
-      if (isLoadingAlbums.value || !isAllLoaded.value) {
-        await new Promise<void>((resolve) => {
-          const stop = watch(isLoadingAlbums, (loading) => {
-            if (!loading) {
-              stop();
-              resolve();
-            }
-          });
-        });
-      }
-    }
+    // Останавливаемся на ошибке, чтобы не повторять запрос бесконечно
+    do {
+      await pagination.loadNext();
+    } while (!pagination.isAllLoaded.value && !pagination.error.value);
   });
 
-  function onClearComponent(): void {
-    isInit.value = false;
-    isLoadingAlbums.value = false;
-    gallery.clear();
-    albumsMaxItems.value = 0;
-    group.value = undefined;
-    screenError.value = undefined;
-    totalCount.value = undefined;
-    setLastScrollTop(undefined);
+  function pushAlbums(albums: IAlbumItem[]): void {
+    gallery.grid.push(...albums);
+  }
+
+  async function fetchAlbums(offset: number, count: number) {
+    const apiService = await vkStore.getApiService();
+    try {
+      return await apiService.getAlbums({
+        owner_id: ownerId.value,
+        offset,
+        count,
+      });
+    } catch (ex) {
+      // Нет доступа к альбомам: показываем то, что уже есть, без ошибки
+      if (
+        isVKError(ex) &&
+        ex.errorInfo.error_code === VK_ERROR_CODE.accessDenied
+      ) {
+        return { items: [], count: 0 };
+      }
+
+      throw ex;
+    }
   }
 
   function onScrollerUpdate(): void {
-    if (!gallery.componentRef.value) {
+    if (
+      !gallery.componentRef.value ||
+      gallery.endIndex.value + countOneLoad / 3 < gallery.grid.items.length
+    ) {
       return;
     }
 
-    if (gallery.endIndex.value + countOneLoad / 3 < albumsMaxItems.value) {
-      return;
-    }
-
-    albumsMaxItems.value += countOneLoad;
+    pagination.loadNext();
   }
 
   function preloadNextPreviews(): void {
@@ -124,92 +113,64 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   }
 
   async function onOwnerIdChange(): Promise<void> {
-    onClearComponent();
+    const changeId = ++ownerChangeId;
+    pagination.reset();
+    gallery.clear();
+    group.value = undefined;
+    screenError.value = undefined;
+    setLastScrollTop(undefined);
 
     if (+ownerId.value < 0) {
-      try {
-        group.value = await groupsStore.getGroupByIdOrLoad(-ownerId.value);
-      } catch {}
-
-      try {
-        const apiService = await vkStore.getApiService();
-
-        // Сначала получаем общее количество альбомов
-        const initialFetch = await apiService.getAlbums({
-          owner_id: ownerId.value,
-          count: 0,
-        });
-
-        // Для групп PhotosGetAlbums.count может не учитывать все системные альбомы,
-        // поэтому берем максимум между ним и счетчиком группы.
-        totalCount.value = Math.max(
-          initialFetch.count,
-          group.value?.counters?.albums ?? 0,
-        );
-
-        const wallAlbum = await apiService.createAlbumItem({
-          title: wallAlbumStatic.title,
-          album_id: wallAlbumStatic.id,
-          owner_id: +ownerId.value,
-        });
-
-        gallery.grid.push(wallAlbum);
-        staticAlbumsCount.value = 1;
-      } catch (ex: any) {
-        if (
-          isVKError(ex) &&
-          ex.errorInfo.error_code === VK_ERROR_CODE.accessDenied &&
-          ex.message.endsWith("id blocked")
-        ) {
-          screenError.value = errorToString(ex);
-        } else {
-          gallery.grid.push(...staticAlbums.value);
-          staticAlbumsCount.value = staticAlbums.value.length;
-        }
+      await addGroupStaticAlbums(changeId);
+      if (changeId !== ownerChangeId) {
+        return;
       }
     }
 
-    albumsMaxItems.value = countOneLoad; // это инициирует первую загрузку
+    await pagination.loadNext();
   }
 
-  async function onAlbumsMaxItemsChange(): Promise<void> {
-    if (isLoadingAlbums.value || albumsMaxItems.value === 0) {
+  async function addGroupStaticAlbums(changeId: number): Promise<void> {
+    const loadedGroup = await groupsStore
+      .getGroupByIdOrLoad(-ownerId.value)
+      .catch(() => undefined);
+    if (changeId !== ownerChangeId) {
       return;
     }
 
-    isLoadingAlbums.value = true;
+    group.value = loadedGroup;
 
-    const offset = Math.max(
-      0,
-      gallery.grid.items.length - staticAlbumsCount.value,
-    );
-    const count = albumsMaxItems.value - offset - staticAlbumsCount.value;
+    try {
+      const apiService = await vkStore.getApiService();
+      const wallAlbum = await apiService.createAlbumItem({
+        title: wallAlbumStatic.title,
+        album_id: wallAlbumStatic.id,
+        owner_id: +ownerId.value,
+      });
+      if (changeId === ownerChangeId) {
+        gallery.grid.push(wallAlbum);
+      }
+    } catch (ex) {
+      if (changeId !== ownerChangeId) {
+        return;
+      }
 
-    if (count > 0) {
-      try {
-        const apiService = await vkStore.getApiService();
-        const result = await apiService.getAlbums({
-          owner_id: ownerId.value,
-          offset,
-          count,
-        });
-
-        gallery.grid.push(...result.items);
-
-        // Обновляем totalCount только если он не был задан или если API вернул больше
-        if (result.count > (totalCount.value ?? 0)) {
-          totalCount.value = result.count;
-        }
-      } catch (ex: any) {
-        if (ex?.errorInfo && ex.errorInfo.error_code !== 15) {
-          screenError.value = errorToString(ex);
-          console.warn("Необработанная ошибка:", ex.errorInfo);
-        }
+      if (
+        isVKError(ex) &&
+        ex.errorInfo.error_code === VK_ERROR_CODE.accessDenied &&
+        ex.message.endsWith("id blocked")
+      ) {
+        screenError.value = errorToString(ex);
+      } else {
+        gallery.grid.push(...staticAlbums.value);
       }
     }
+  }
 
-    isLoadingAlbums.value = false;
-    isInit.value = true;
+  function onPaginationError(error: string | undefined): void {
+    if (error) {
+      screenError.value = error;
+    }
   }
 
   function onEndIndexChange(endIndex: number, prevIndex: number): void {
@@ -224,13 +185,13 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     componentRef: gallery.componentRef,
     sizes: gallery.sizes,
     columns: gallery.columns,
-    isInit,
+    isInit: pagination.isInit,
     group,
     albums: gallery.grid,
     previewPreloader,
     onScrollerUpdate,
     screenError,
-    isAllLoaded,
+    isAllLoaded: pagination.isAllLoaded,
     loadAllAlbums,
   };
 }
