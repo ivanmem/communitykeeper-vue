@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
+import { noop, range } from "es-toolkit";
 import { useAlbumPagination } from "@/pages/Album/composables/useAlbumPagination";
 import { useGridArray } from "@/shared/composables/useGridArray";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
@@ -29,7 +30,7 @@ function createPhoto(id: number) {
 }
 
 function createPhotos(fromId: number, count: number) {
-  return Array.from({ length: count }, (_, i) => createPhoto(fromId + i));
+  return range(fromId, fromId + count).map(createPhoto);
 }
 
 function setup(countOneLoad = 3) {
@@ -223,7 +224,7 @@ describe("useAlbumPagination", () => {
   });
 
   it("сохраняет ошибку загрузки и снимает флаг загрузки", async () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const warn = vi.spyOn(console, "warn").mockImplementation(noop);
     photosGet.mockRejectedValueOnce(new Error("network"));
     const { galleryGrid, pagination } = setup();
 
@@ -239,7 +240,7 @@ describe("useAlbumPagination", () => {
   });
 
   it("сбрасывает ошибку при следующей успешной загрузке", async () => {
-    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(noop);
     photosGet
       .mockRejectedValueOnce(new Error("network"))
       .mockResolvedValueOnce({ items: createPhotos(1, 3), count: 10 });

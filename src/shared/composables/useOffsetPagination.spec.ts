@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { noop, range } from "es-toolkit";
 import {
   OffsetPage,
   useOffsetPagination,
@@ -7,8 +8,8 @@ import {
 const fetchPage = vi.fn<(offset: number, count: number) => Promise<OffsetPage<number>>>();
 const onPage = vi.fn<(items: number[]) => void>();
 
-function range(from: number, count: number) {
-  return Array.from({ length: count }, (_, i) => from + i);
+function items(from: number, count: number) {
+  return range(from, from + count);
 }
 
 function setup() {
@@ -33,8 +34,8 @@ describe("useOffsetPagination", () => {
 
   it("сдвигает смещение по количеству полученных элементов", async () => {
     fetchPage
-      .mockResolvedValueOnce({ items: range(1, 3), count: 10 })
-      .mockResolvedValueOnce({ items: range(4, 3), count: 10 });
+      .mockResolvedValueOnce({ items: items(1, 3), count: 10 })
+      .mockResolvedValueOnce({ items: items(4, 3), count: 10 });
     const pagination = setup();
 
     await pagination.loadNext();
@@ -49,7 +50,7 @@ describe("useOffsetPagination", () => {
   });
 
   it("завершает загрузку на короткой порции", async () => {
-    fetchPage.mockResolvedValueOnce({ items: range(1, 2), count: 100 });
+    fetchPage.mockResolvedValueOnce({ items: items(1, 2), count: 100 });
     const pagination = setup();
 
     await pagination.loadNext();
@@ -60,7 +61,7 @@ describe("useOffsetPagination", () => {
   });
 
   it("завершает загрузку, когда смещение достигло общего количества", async () => {
-    fetchPage.mockResolvedValueOnce({ items: range(1, 3), count: 3 });
+    fetchPage.mockResolvedValueOnce({ items: items(1, 3), count: 3 });
     const pagination = setup();
 
     await pagination.loadNext();
@@ -76,7 +77,7 @@ describe("useOffsetPagination", () => {
     const second = pagination.loadNext();
     expect(pagination.isLoading.value).toBe(true);
 
-    resolve({ items: range(1, 3), count: 10 });
+    resolve({ items: items(1, 3), count: 10 });
     await Promise.all([first, second]);
 
     expect(first).toBe(second);
@@ -86,7 +87,7 @@ describe("useOffsetPagination", () => {
 
   it("отбрасывает ответ запроса, начатого до сброса", async () => {
     const resolveStale = deferredPage();
-    fetchPage.mockResolvedValueOnce({ items: range(10, 3), count: 10 });
+    fetchPage.mockResolvedValueOnce({ items: items(10, 3), count: 10 });
     const pagination = setup();
 
     const stale = pagination.loadNext();
@@ -94,7 +95,7 @@ describe("useOffsetPagination", () => {
     expect(pagination.isLoading.value).toBe(false);
 
     await pagination.loadNext();
-    resolveStale({ items: range(1, 3), count: 10 });
+    resolveStale({ items: items(1, 3), count: 10 });
     await stale;
 
     expect(onPage).toHaveBeenCalledOnce();
@@ -114,11 +115,11 @@ describe("useOffsetPagination", () => {
     pagination.reset();
     const fresh = pagination.loadNext();
 
-    resolveStale({ items: range(1, 3), count: 10 });
+    resolveStale({ items: items(1, 3), count: 10 });
     await stale;
     expect(pagination.isLoading.value).toBe(true);
 
-    resolveFresh({ items: range(1, 3), count: 10 });
+    resolveFresh({ items: items(1, 3), count: 10 });
     await fresh;
     expect(pagination.isLoading.value).toBe(false);
   });
@@ -142,10 +143,10 @@ describe("useOffsetPagination", () => {
   });
 
   it("сохраняет ошибку и позволяет повторить загрузку с того же смещения", async () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const warn = vi.spyOn(console, "warn").mockImplementation(noop);
     fetchPage
       .mockRejectedValueOnce(new Error("network"))
-      .mockResolvedValueOnce({ items: range(1, 3), count: 10 });
+      .mockResolvedValueOnce({ items: items(1, 3), count: 10 });
     const pagination = setup();
 
     await pagination.loadNext();
@@ -163,7 +164,7 @@ describe("useOffsetPagination", () => {
   });
 
   it("начинает с нулевого смещения после сброса", async () => {
-    fetchPage.mockResolvedValue({ items: range(1, 2), count: 2 });
+    fetchPage.mockResolvedValue({ items: items(1, 2), count: 2 });
     const pagination = setup();
 
     await pagination.loadNext();

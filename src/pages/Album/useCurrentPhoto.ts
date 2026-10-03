@@ -1,9 +1,8 @@
-import { computed, nextTick, Ref, ref, watch, watchEffect } from "vue";
+import { computed, Ref, ref, watch, watchEffect } from "vue";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { useRoute, useRouter } from "vue-router";
 import { useGroups } from "@/store/groups/groups";
 import { useElementDeviceSize } from "@/shared/composables/useElementDeviceSize";
-import { getFirstRefChange } from "@/shared/helpers/getFirstRefChange";
 import { useApp } from "@/store/app/app";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { GridArray } from "@/shared/composables/useGridArray";
@@ -25,7 +24,7 @@ export function useCurrentPhoto(
   ownerId: Ref<string | number>,
   isLoadingPhotos: Ref<boolean>,
   isInit: Ref<boolean>,
-  onMoreLoad: () => void,
+  onMoreLoad: () => Promise<void>,
   directPhoto?: Ref<IPhoto | undefined>,
 ) {
   const router = useRouter();
@@ -57,7 +56,9 @@ export function useCurrentPhoto(
       likes += item.likes.count;
     }
 
-    currentAverageLikes.value = Math.round(likes / photos.items.length);
+    currentAverageLikes.value = photos.items.length
+      ? Math.round(likes / photos.items.length)
+      : 0;
   });
 
   const initPreloadPhoto = () => {
@@ -140,18 +141,7 @@ export function useCurrentPhoto(
     return currentIndex + (next ? 1 : -1);
   };
 
-  const loadNextPhotos = async () => {
-    await appStore.wrapLoading(async () => {
-      onMoreLoad();
-      await nextTick();
-
-      if (isLoadingPhotos.value) {
-        while (await getFirstRefChange(isLoadingPhotos)) {}
-      }
-
-      await nextTick();
-    })();
-  };
+  const loadNextPhotos = appStore.wrapLoading(onMoreLoad);
 
   const skipLowResolution = async (
     currentIndex: number,

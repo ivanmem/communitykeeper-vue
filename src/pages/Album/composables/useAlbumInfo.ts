@@ -14,14 +14,18 @@ export function useAlbumInfo(
   const album = ref<IAlbumItem | undefined>();
   const error = ref<string | undefined>();
   const isLoading = ref(false);
+  // Ответы запросов, начатых до reset, отбрасываются по номеру поколения
+  let generation = 0;
 
   function reset() {
+    generation++;
     album.value = undefined;
     error.value = undefined;
     isLoading.value = false;
   }
 
   async function load() {
+    const currentGeneration = ++generation;
     isLoading.value = true;
     error.value = undefined;
 
@@ -38,15 +42,23 @@ export function useAlbumInfo(
           return undefined;
         });
 
-      album.value = result;
+      if (currentGeneration === generation) {
+        album.value = result;
+      }
     } catch (ex: any) {
+      if (currentGeneration !== generation) {
+        return;
+      }
+
       error.value = errorToString(ex);
       console.warn(
         "Необработанная ошибка получения альбома:",
         ex.errorInfo || ex,
       );
     } finally {
-      isLoading.value = false;
+      if (currentGeneration === generation) {
+        isLoading.value = false;
+      }
     }
   }
 

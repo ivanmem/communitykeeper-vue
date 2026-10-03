@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, EffectScope, ref } from "vue";
 import { VKError } from "vkontakte-api";
+import { delay, noop, range } from "es-toolkit";
 import { useAlbums } from "@/pages/Albums/useAlbums";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
@@ -80,13 +81,12 @@ vi.mock("@/shared/composables/useGalleryComponent", async () => {
 });
 
 function createAlbums(fromId: number, count: number, ownerId = 1) {
-  return Array.from(
-    { length: count },
-    (_, i): IAlbumItem => ({
-      id: fromId + i,
+  return range(fromId, fromId + count).map(
+    (id): IAlbumItem => ({
+      id,
       owner_id: ownerId,
       size: 1,
-      title: `Альбом ${fromId + i}`,
+      title: `Альбом ${id}`,
     }),
   );
 }
@@ -100,11 +100,6 @@ function createVkError(errorCode: number, message: string) {
     errorInfo: { error_code: errorCode, error_msg: message, request_params: [] },
     config: { method: "photos.getAlbums", params: {} },
   });
-}
-
-// Даёт отработать цепочке watch → async-обработчик → мок API
-function flush() {
-  return new Promise((resolve) => setTimeout(resolve));
 }
 
 let scope: EffectScope;
@@ -138,7 +133,7 @@ describe("useAlbums: пагинация", () => {
         count: 250,
       });
       const { albums } = setup(1);
-      await flush();
+      await delay(0);
 
       expect(api.getAlbums).toHaveBeenCalledOnce();
       expect(api.getAlbums).toHaveBeenCalledWith({
@@ -157,7 +152,7 @@ describe("useAlbums: пагинация", () => {
         count: 5,
       });
       const { albums } = setup(1);
-      await flush();
+      await delay(0);
 
       expect(albums.isAllLoaded.value).toBe(true);
     });
@@ -180,7 +175,7 @@ describe("useAlbums: пагинация", () => {
         count: 3,
       });
       const { albums } = setup(-5);
-      await flush();
+      await delay(0);
 
       expect(getGroupByIdOrLoad).toHaveBeenCalledWith(5);
       expect(api.createAlbumItem).toHaveBeenCalledWith({
@@ -206,7 +201,7 @@ describe("useAlbums: пагинация", () => {
         count: 2,
       });
       const { albums } = setup(-5);
-      await flush();
+      await delay(0);
 
       expect(getAlbumIds()).toEqual([-7, 1, 2]);
       expect(albums.group.value).toBeUndefined();
@@ -220,7 +215,7 @@ describe("useAlbums: пагинация", () => {
       );
       api.getAlbums.mockRejectedValueOnce(createVkError(15, "Access denied"));
       const { albums } = setup(-5);
-      await flush();
+      await delay(0);
 
       expect(albums.screenError.value).toBeTruthy();
       expect(albums.isInit.value).toBe(true);
@@ -235,7 +230,7 @@ describe("useAlbums: пагинация", () => {
         count: 250,
       });
       const result = setup(1);
-      await flush();
+      await delay(0);
       gallery.componentRef.value = {};
       return result;
     }
@@ -246,11 +241,11 @@ describe("useAlbums: пагинация", () => {
         count: 250,
       });
       const { albums } = setup(1);
-      await flush();
+      await delay(0);
       gallery.endIndex.value = 99;
 
       albums.onScrollerUpdate();
-      await flush();
+      await delay(0);
 
       expect(api.getAlbums).toHaveBeenCalledOnce();
     });
@@ -260,7 +255,7 @@ describe("useAlbums: пагинация", () => {
       gallery.endIndex.value = 10;
 
       albums.onScrollerUpdate();
-      await flush();
+      await delay(0);
 
       expect(api.getAlbums).toHaveBeenCalledOnce();
     });
@@ -274,7 +269,7 @@ describe("useAlbums: пагинация", () => {
       gallery.endIndex.value = 80;
 
       albums.onScrollerUpdate();
-      await flush();
+      await delay(0);
 
       expect(api.getAlbums).toHaveBeenLastCalledWith({
         owner_id: 1,
@@ -294,7 +289,7 @@ describe("useAlbums: пагинация", () => {
 
       albums.onScrollerUpdate();
       albums.onScrollerUpdate();
-      await flush();
+      await delay(0);
 
       expect(api.getAlbums).toHaveBeenCalledTimes(2);
     });
@@ -304,7 +299,7 @@ describe("useAlbums: пагинация", () => {
     it("считает альбомы загруженными при ошибке доступа", async () => {
       api.getAlbums.mockRejectedValueOnce(createVkError(15, "Access denied"));
       const { albums } = setup(1);
-      await flush();
+      await delay(0);
 
       expect(albums.screenError.value).toBeUndefined();
       expect(albums.isInit.value).toBe(true);
@@ -312,10 +307,10 @@ describe("useAlbums: пагинация", () => {
     });
 
     it("показывает остальные ошибки", async () => {
-      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const warn = vi.spyOn(console, "warn").mockImplementation(noop);
       api.getAlbums.mockRejectedValueOnce(createVkError(10, "Internal error"));
       const { albums } = setup(1);
-      await flush();
+      await delay(0);
 
       expect(albums.screenError.value).toBeTruthy();
       expect(albums.isInit.value).toBe(true);
@@ -330,7 +325,7 @@ describe("useAlbums: пагинация", () => {
         .mockResolvedValueOnce({ items: createAlbums(101, 100), count: 230 })
         .mockResolvedValueOnce({ items: createAlbums(201, 30), count: 230 });
       const { albums } = setup(1);
-      await flush();
+      await delay(0);
 
       await albums.loadAllAlbums();
 
@@ -353,7 +348,7 @@ describe("useAlbums: пагинация", () => {
         )
         .mockResolvedValueOnce({ items: createAlbums(101, 10), count: 110 });
       const { albums } = setup(1);
-      await flush();
+      await delay(0);
 
       const loading = albums.loadAllAlbums();
       resolveFirst({ items: createAlbums(1, 100), count: 110 });
@@ -369,7 +364,7 @@ describe("useAlbums: пагинация", () => {
         count: 5,
       });
       const { albums } = setup(1);
-      await flush();
+      await delay(0);
 
       await albums.loadAllAlbums();
 
@@ -377,12 +372,12 @@ describe("useAlbums: пагинация", () => {
     });
 
     it("останавливается на ошибке, а не повторяет запрос бесконечно", async () => {
-      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const warn = vi.spyOn(console, "warn").mockImplementation(noop);
       api.getAlbums
         .mockResolvedValueOnce({ items: createAlbums(1, 100), count: 300 })
         .mockRejectedValue(new Error("network"));
       const { albums } = setup(1);
-      await flush();
+      await delay(0);
 
       await albums.loadAllAlbums();
 
@@ -398,10 +393,10 @@ describe("useAlbums: пагинация", () => {
         .mockResolvedValueOnce({ items: createAlbums(1, 5), count: 5 })
         .mockResolvedValueOnce({ items: createAlbums(50, 2, 2), count: 2 });
       const { owner } = setup(1);
-      await flush();
+      await delay(0);
 
       owner.value = 2;
-      await flush();
+      await delay(0);
 
       expect(api.getAlbums).toHaveBeenLastCalledWith({
         owner_id: 2,
@@ -420,10 +415,10 @@ describe("useAlbums: пагинация", () => {
         .mockResolvedValueOnce({ items: createAlbums(1, 5, -1), count: 5 })
         .mockResolvedValueOnce({ items: createAlbums(50, 2, -2), count: 2 });
       const { owner } = setup(-1);
-      await flush();
+      await delay(0);
 
       owner.value = -2;
-      await flush();
+      await delay(0);
 
       expect(gallery.grid.items.map((album: IAlbumItem) => album.owner_id))
         .toEqual([-2, -2, -2]);
@@ -439,12 +434,12 @@ describe("useAlbums: пагинация", () => {
         )
         .mockResolvedValueOnce({ items: createAlbums(50, 2, 2), count: 2 });
       const { owner, albums } = setup(1);
-      await flush();
+      await delay(0);
 
       owner.value = 2;
-      await flush();
+      await delay(0);
       resolveStale({ items: createAlbums(1, 5), count: 5 });
-      await flush();
+      await delay(0);
 
       expect(getAlbumIds()).toEqual([50, 51]);
       expect(albums.isAllLoaded.value).toBe(true);
@@ -465,12 +460,12 @@ describe("useAlbums: пагинация", () => {
         count: 2,
       });
       const { owner } = setup(-1);
-      await flush();
+      await delay(0);
 
       owner.value = -2;
-      await flush();
+      await delay(0);
       resolveStaleWall(createWallAlbum(-1));
-      await flush();
+      await delay(0);
 
       expect(gallery.grid.items.map((album: IAlbumItem) => album.owner_id))
         .toEqual([-2, -2, -2]);
