@@ -103,9 +103,7 @@ export function useAlbum() {
     Boolean(currentPhoto.value),
   );
 
-  const { setLastScrollTop } = useScrollRestore(
-    () => gallery.componentRef.value?.$el,
-  );
+  const { setLastScrollTop } = useScrollRestore(gallery.el);
 
   // Обновление заголовка истории
   watch([albumHistoryItem, albumInfo.album, currentPhotoIndex], () => {

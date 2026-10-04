@@ -6,7 +6,7 @@ import {
   ref,
   toRef,
 } from "vue";
-import type { VList } from "virtua/vue";
+import type { VListComponent } from "@/shared/types/VListComponent";
 import { useElementSize, useScroll } from "@vueuse/core";
 import { useSizesColumns } from "@/shared/composables/useSizesColumns";
 import { AlbumsPreviewSizesInitial } from "@/pages/Albums/consts";
@@ -16,7 +16,7 @@ import type AlbumPhoto from "@/pages/Album/AlbumPhoto.vue";
 export function useGalleryComponent<T>(
   initialSizes: MaybeRefOrGetter<{ width: number; height: number }>,
 ) {
-  const componentRef = ref<InstanceType<typeof VList>>();
+  const componentRef = ref<VListComponent>();
   const albumPhotoRef = ref<InstanceType<typeof AlbumPhoto>>();
   const el = toRef(() => componentRef.value?.$el as HTMLDivElement | undefined);
   const { y: elScrollOffset, measure } = useScroll(el);

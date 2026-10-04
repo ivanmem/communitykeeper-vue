@@ -43,9 +43,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
 
   const previewPreloader = useGalleryPreviewPreloader(gallery);
 
-  const { setLastScrollTop } = useScrollRestore(
-    () => gallery.componentRef.value?.$el,
-  );
+  const { setLastScrollTop } = useScrollRestore(gallery.el);
 
   watch(ownerId, onOwnerIdChange, { immediate: true });
 

@@ -3,19 +3,20 @@ import { computed } from "vue";
 import { VList } from "virtua/vue";
 import AlbumsPreview from "@/pages/Albums/AlbumsPreview.vue";
 import type { IAlbumItem } from "@/store/vk/IAlbumItem";
+import type { VListComponent } from "@/shared/types/VListComponent";
 
 const props = defineProps<{
   albums: IAlbumItem[];
-  indexes: ReadonlyArray<ReadonlyArray<number>>;
+  indexes: number[][];
   sizes: {
     height: number;
     width: number;
   };
-  componentRef: InstanceType<typeof VList> | undefined;
+  componentRef: VListComponent | undefined;
 }>();
 
 const emit = defineEmits<{
-  "update:componentRef": [componentRef: InstanceType<typeof VList> | undefined];
+  "update:componentRef": [componentRef: VListComponent | undefined];
 }>();
 
 const componentRef = computed({

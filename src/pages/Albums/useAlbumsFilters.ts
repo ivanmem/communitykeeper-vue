@@ -27,7 +27,7 @@ export interface UseAlbumsFiltersResult {
   filters: AlbumsFilters;
   showFilters: Ref<boolean>;
   filteredAlbums: Ref<IAlbumItem[]>;
-  filteredIndexes: Ref<ReadonlyArray<ReadonlyArray<number>>>;
+  filteredIndexes: ReturnType<typeof useGridIndexes>;
   needsAllLoaded: Ref<boolean>;
 }
 

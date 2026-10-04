@@ -4,7 +4,7 @@ import GroupHelper from "@/shared/helpers/GroupHelper";
 import { useSwipes } from "@/shared/composables/useSwipes";
 import { useActivated } from "@/shared/composables/useActivated";
 import { useScrollRestore } from "@/shared/composables/useScrollRestore";
-import type { VList } from "virtua/vue";
+import type { VListComponent } from "@/shared/types/VListComponent";
 
 export type UseGroupSearch = ReturnType<typeof useGroupSearch>;
 
@@ -19,7 +19,7 @@ export function useGroupSearch() {
     onRight: groupsStore.switchFiltersFolderToNext,
   });
   const isActivated = useActivated();
-  const groupsRef = ref<InstanceType<typeof VList>>();
+  const groupsRef = ref<VListComponent>();
 
   useScrollRestore(() => groupsRef.value?.$el);
 
