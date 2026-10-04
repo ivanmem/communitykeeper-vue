@@ -92,7 +92,6 @@ vi.mock("@/shared/composables/useGalleryComponent", async () => {
       Object.assign(gallery, {
         componentRef: vueRef({ scrollToIndex: vi.fn() }),
         albumPhotoRef: vueRef(),
-        endIndex: vueRef(0),
         position: vueRef(0),
         sizes: vueRef({ width: 100, height: 100 }),
         columns,

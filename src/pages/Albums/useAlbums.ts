@@ -11,8 +11,7 @@ import { useVk } from "@/store/vk/vk";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import { useScrollRestore } from "@/shared/composables/useScrollRestore";
 import { errorToString } from "@/shared/helpers/errorToString";
-import { useImagePreloader } from "@/shared/composables/useImagePreloader";
-import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
+import { useGalleryPreviewPreloader } from "@/shared/composables/useGalleryPreviewPreloader";
 import { VK_ERROR_CODE } from "@/shared/constants/consts";
 import { isVKError } from "vkontakte-api";
 import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
@@ -42,9 +41,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
 
   useScreenSpinner(() => !pagination.isInit.value);
 
-  const previewPreloader = useImagePreloader({
-    max: () => gallery.columns.value * 4,
-  });
+  const previewPreloader = useGalleryPreviewPreloader(gallery);
 
   const { setLastScrollTop } = useScrollRestore(
     () => gallery.componentRef.value?.$el,
@@ -53,8 +50,6 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
   watch(ownerId, onOwnerIdChange, { immediate: true });
 
   watch(pagination.error, onPaginationError);
-
-  watch(gallery.endIndex, onEndIndexChange);
 
   useGalleryInfiniteScroll(gallery.el, pagination);
 
@@ -88,20 +83,6 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
 
       throw ex;
     }
-  }
-
-  function preloadNextPreviews(): void {
-    const previewPhotos = gallery.grid.items
-      .slice(
-        gallery.endIndex.value + gallery.columns.value,
-        gallery.endIndex.value + gallery.columns.value * 2,
-      )
-      .map(
-        (album) =>
-          PhotoHelper.getPreviewSize(album.sizes, gallery.sizes.value)?.url,
-      );
-
-    previewPreloader.preloadPhoto(previewPhotos);
   }
 
   async function onOwnerIdChange(): Promise<void> {
@@ -163,14 +144,6 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     if (error) {
       screenError.value = error;
     }
-  }
-
-  function onEndIndexChange(endIndex: number, prevIndex: number): void {
-    if (prevIndex >= endIndex) {
-      return;
-    }
-
-    preloadNextPreviews();
   }
 
   return {

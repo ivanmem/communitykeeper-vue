@@ -78,7 +78,7 @@ vi.mock("@/shared/composables/useGalleryComponent", async () => {
       Object.assign(gallery, {
         el: vueRef<HTMLElement>(),
         componentRef: vueRef<object | undefined>(),
-        endIndex: vueRef(0),
+        position: vueRef(0),
         sizes: vueRef({ width: 100, height: 100 }),
         columns,
         grid,

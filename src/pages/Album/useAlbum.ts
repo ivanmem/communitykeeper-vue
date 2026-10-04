@@ -8,7 +8,7 @@ import { useHistory } from "@/store/history/history";
 import { toNumberOrUndefined } from "@/shared/helpers/toNumberOrUndefined";
 import { IPhoto, IPhotoKey } from "@/store/groups/types";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
-import { useImagePreloader } from "@/shared/composables/useImagePreloader";
+import { useGalleryPreviewPreloader } from "@/shared/composables/useGalleryPreviewPreloader";
 import { useScrollRestore } from "@/shared/composables/useScrollRestore";
 import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
 import { useAlbumPagination } from "@/pages/Album/composables/useAlbumPagination";
@@ -98,10 +98,10 @@ export function useAlbum() {
 
   provideAlbumContext({ currentPhoto });
 
-  const previewPreloader = useImagePreloader({
-    max: () => gallery.columns.value * 4,
-    freeze: () => Boolean(currentPhoto.value),
-  });
+  // Пока открыто фото, миниатюры не предзагружаем
+  const previewPreloader = useGalleryPreviewPreloader(gallery, () =>
+    Boolean(currentPhoto.value),
+  );
 
   const { setLastScrollTop } = useScrollRestore(
     () => gallery.componentRef.value?.$el,
@@ -140,29 +140,7 @@ export function useAlbum() {
     immediate: true,
   });
 
-  // Preload preview images
-  watch(gallery.endIndex, (endIndex, prevIndex) => {
-    if (prevIndex >= endIndex) {
-      return;
-    }
-
-    preloadNextPreviews();
-  });
-
   useGalleryInfiniteScroll(gallery.el, pagination);
-
-  function preloadNextPreviews() {
-    const previewPhotos = gallery.grid.items
-      .slice(
-        gallery.endIndex.value + gallery.columns.value,
-        gallery.endIndex.value + gallery.columns.value * 2,
-      )
-      .map(
-        (photo) =>
-          PhotoHelper.getPreviewSize(photo.sizes, gallery.sizes.value)?.url,
-      );
-    previewPreloader.preloadPhoto(previewPhotos);
-  }
 
   async function onAlbumChange() {
     screenError.value = undefined;

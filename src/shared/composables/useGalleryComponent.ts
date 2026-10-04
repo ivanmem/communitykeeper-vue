@@ -32,27 +32,31 @@ export function useGalleryComponent<T>(
   );
   const grid = useGridArray<T>(columns);
 
-  const endIndex = computed(() => {
+  // Индекс первого элемента верхней видимой строки (по прокрутке)
+  const firstVisibleIndex = computed(() => {
     if (!componentRef.value) {
       return 0;
     }
 
-    const endRowIndex = elScrollOffset.value / sizes.value.height;
-    const endIndexScroll = Math.round(columns.value * endRowIndex);
-    const remainder = endIndexScroll % columns.value;
+    const topRowIndex = elScrollOffset.value / sizes.value.height;
+    const indexScroll = Math.round(columns.value * topRowIndex);
+    const remainder = indexScroll % columns.value;
     return Math.round(
-      endIndexScroll - remainder + (remainder > 0 ? columns.value : 0),
+      indexScroll - remainder + (remainder > 0 ? columns.value : 0),
     );
   });
 
   const elSize = useElementSize(el);
   const scrollRows = computed(() => elSize.height.value / sizes.value.height);
 
+  // Количество элементов до нижнего края экрана: индекс следующего за видимыми
   const position = computed<number>(() => {
-    const remainder = endIndex.value % columns.value;
+    const remainder = firstVisibleIndex.value % columns.value;
     const minScreen = scrollRows.value * columns.value;
     const positionScroll =
-      endIndex.value - remainder + (remainder > 0 ? columns.value : 0);
+      firstVisibleIndex.value -
+      remainder +
+      (remainder > 0 ? columns.value : 0);
     return Math.min(grid.items.length, Math.round(minScreen + positionScroll));
   });
 
@@ -68,7 +72,6 @@ export function useGalleryComponent<T>(
     albumPhotoRef,
     el,
     elScrollOffset,
-    endIndex,
     sizes,
     columns,
     grid,
