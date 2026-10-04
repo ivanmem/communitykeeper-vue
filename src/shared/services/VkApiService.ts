@@ -12,6 +12,10 @@ import type {
   IGetShortLinkParams,
   IGetShortLinkResult,
 } from "vkontakte-api/dist/repositories/UtilsRepository/types";
+import { VkTransportError } from "@/shared/services/createJsonpSendRequest";
+
+// Сколько раз повторяем запрос, который не дошёл до сервера
+const maxTransportRetries = 2;
 
 export class VkApiService {
   cache: {
@@ -22,13 +26,20 @@ export class VkApiService {
 
   async addRequestToQueue<P extends {} = any, R = any>(
     config: IRequestConfig<P>,
+    transportAttempt = 0,
   ): Promise<R> {
     try {
       return await this.api.addRequestToQueue<P, R>(config);
     } catch (ex: any) {
       console.warn("api error", { config, ex });
       const errorCode = ex?.errorInfo?.error_code;
-      if (errorCode === 6) {
+      if (
+        ex instanceof VkTransportError &&
+        transportAttempt < maxTransportRetries
+      ) {
+        await sleep(1000);
+        return await this.addRequestToQueue<P, R>(config, transportAttempt + 1);
+      } else if (errorCode === 6) {
         await sleep(2000);
         // костыль для игнорирования Too many requests per second
         return await this.addRequestToQueue<P, R>(config);

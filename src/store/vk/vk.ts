@@ -13,6 +13,7 @@ import { useDialog } from "@/store/dialog/dialog";
 import { toStr } from "@/shared/helpers/toStr";
 import { VK_STORAGE } from "@/shared/constants/consts";
 import { VkApiService } from "@/shared/services/VkApiService";
+import { createJsonpSendRequest } from "@/shared/services/createJsonpSendRequest";
 import { Raw } from "@vue/reactivity";
 import { setLocaleFromVk, t } from "@/i18n";
 
@@ -231,12 +232,15 @@ export const useVk = defineStore("vk", {
             app_id: useApp().appId,
           });
         }
-        const vkApi = new VKAPI({
-          rps: 3,
+        const apiConfig = {
           accessToken: this.token!.access_token,
           lang: "ru",
           v: "5.131",
-          isBrowser: true,
+        } as const;
+        const vkApi = new VKAPI({ rps: 3, isBrowser: true, ...apiConfig });
+        vkApi.sendRequest = createJsonpSendRequest({
+          baseUrl: vkApi.baseUrl,
+          ...apiConfig,
         });
         this.apiService = markRaw(new VkApiService(vkApi));
         return true;
