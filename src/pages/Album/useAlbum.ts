@@ -15,6 +15,7 @@ import { useAlbumPagination } from "@/pages/Album/composables/useAlbumPagination
 import { useAlbumInfo } from "@/pages/Album/composables/useAlbumInfo";
 import { useDirectPhoto } from "@/pages/Album/composables/useDirectPhoto";
 import { useGalleryInfiniteScroll } from "@/shared/composables/useGalleryInfiniteScroll";
+import { useOpenedPhotoSync } from "@/pages/Album/composables/useOpenedPhotoSync";
 import { provideAlbumContext, injectAlbumPageContext } from "@/pages/Album/stores";
 
 const countOneLoad = 150;
@@ -139,6 +140,9 @@ export function useAlbum() {
   });
 
   useGalleryInfiniteScroll(gallery.el, pagination);
+
+  // Подгружаем заранее, когда до конца остаётся меньше трети порции
+  useOpenedPhotoSync(currentPhotoIndex, gallery, pagination, countOneLoad / 3);
 
   async function onAlbumChange() {
     screenError.value = undefined;

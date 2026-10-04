@@ -257,6 +257,40 @@ describe("useAlbum: загрузка фото", () => {
     });
   });
 
+  describe("листание открытого фото", () => {
+    it("подгружает следующую порцию, когда открытое фото близко к концу", async () => {
+      api.photosGet
+        .mockResolvedValueOnce({ items: createPhotos(1, 150), count: 1000 })
+        .mockResolvedValueOnce({ items: createPhotos(151, 150), count: 1000 });
+      const { album } = setup(1);
+      await delay(0);
+
+      album.currentPhotoIndex.value = 120;
+      await delay(0);
+
+      expect(api.photosGet).toHaveBeenLastCalledWith(
+        expect.objectContaining({ offset: 150 }),
+      );
+      expect(gallery.grid.items).toHaveLength(300);
+    });
+
+    it("после закрытия фото прокручивает список к нему", async () => {
+      api.photosGet.mockResolvedValueOnce({
+        items: createPhotos(1, 150),
+        count: 1000,
+      });
+      const { album } = setup(1);
+      await delay(0);
+      album.currentPhotoIndex.value = 30;
+      await delay(0);
+
+      album.currentPhotoIndex.value = undefined;
+      await delay(0);
+
+      expect(gallery.componentRef.value.scrollToIndex).toHaveBeenLastCalledWith(10);
+    });
+  });
+
   describe("ошибки", () => {
     it("показывает ошибку загрузки фото и сбрасывает её при смене альбома", async () => {
       vi.spyOn(console, "warn").mockImplementation(noop);
