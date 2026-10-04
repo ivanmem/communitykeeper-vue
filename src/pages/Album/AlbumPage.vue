@@ -4,7 +4,8 @@ import { useGroups } from "@/store/groups/groups";
 import { computed, toRef, toRefs } from "vue";
 import FixedTeleport from "@/components/FixedTeleport";
 import { useDialog } from "@/store/dialog/dialog";
-import { computedAsync, refThrottled } from "@vueuse/core";
+import { computedAsync } from "@vueuse/core";
+import { useThrottledLabel } from "@/shared/composables/useThrottledLabel";
 import { IGroup } from "@/store/groups/types";
 import { useScreenSpinner } from "@/shared/composables/useScreenSpinner";
 import AlbumPhoto from "@/pages/Album/AlbumPhoto.vue";
@@ -129,22 +130,14 @@ const onHelp = () => {
   });
 };
 
-const positionLabel = refThrottled(
-  computed(() => {
-    if (
-      elementsIsEmpty.value ||
-      screenError.value ||
-      isNaN(position.value) ||
-      (albumIsEmpty.value && isLoadingPhotos.value)
-    ) {
-      return undefined;
-    }
-
-    return t("positionLabel", {
-      position: position.value,
-      total: albumSize.value,
-    });
-  }),
+// Счётчик меняется при каждой прокрутке, поэтому текст обновляем не чаще раза в секунду
+const positionLabel = useThrottledLabel(
+  () => t("positionLabel", { position: position.value, total: albumSize.value }),
+  () =>
+    elementsIsEmpty.value ||
+    Boolean(screenError.value) ||
+    isNaN(position.value) ||
+    (albumIsEmpty.value && isLoadingPhotos.value),
   1000,
 );
 </script>
