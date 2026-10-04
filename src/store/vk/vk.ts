@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { VKAPI } from "vkontakte-api";
 import bridge, {
   MobileUpdateConfigData,
   MVKUpdateConfigData,
@@ -13,7 +12,7 @@ import { useDialog } from "@/store/dialog/dialog";
 import { toStr } from "@/shared/helpers/toStr";
 import { VK_STORAGE } from "@/shared/constants/consts";
 import { VkApiService } from "@/shared/services/VkApiService";
-import { createJsonpSendRequest } from "@/shared/services/createJsonpSendRequest";
+import { createVkApi } from "@/shared/services/createVkApi";
 import { Raw } from "@vue/reactivity";
 import { setLocaleFromVk, t } from "@/i18n";
 
@@ -232,17 +231,9 @@ export const useVk = defineStore("vk", {
             app_id: useApp().appId,
           });
         }
-        const apiConfig = {
-          accessToken: this.token!.access_token,
-          lang: "ru",
-          v: "5.131",
-        } as const;
-        const vkApi = new VKAPI({ rps: 3, isBrowser: true, ...apiConfig });
-        vkApi.sendRequest = createJsonpSendRequest({
-          baseUrl: vkApi.baseUrl,
-          ...apiConfig,
-        });
-        this.apiService = markRaw(new VkApiService(vkApi));
+        this.apiService = markRaw(
+          new VkApiService(createVkApi(this.token!.access_token)),
+        );
         return true;
       } catch (ex) {
         console.warn(t("errors.tokenError"), ex);

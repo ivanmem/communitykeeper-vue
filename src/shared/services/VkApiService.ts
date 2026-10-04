@@ -22,7 +22,7 @@ export class VkApiService {
     currentAlbum?: IAlbumItem;
   } = {};
 
-  constructor(public api: VKAPI) {}
+  constructor(public api: Pick<VKAPI, "addRequestToQueue">) {}
 
   async addRequestToQueue<P extends {} = any, R = any>(
     config: IRequestConfig<P>,
