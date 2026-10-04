@@ -13,7 +13,7 @@ import { useScrollRestore } from "@/shared/composables/useScrollRestore";
 import { errorToString } from "@/shared/helpers/errorToString";
 import { useGalleryPreviewPreloader } from "@/shared/composables/useGalleryPreviewPreloader";
 import { VK_ERROR_CODE } from "@/shared/constants/consts";
-import { isVKError } from "vkontakte-api";
+import { VkApiError } from "@/shared/services/vkApiErrors";
 import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
 import { useApp } from "@/store/app/app";
 import { useOffsetPagination } from "@/shared/composables/useOffsetPagination";
@@ -75,7 +75,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     } catch (ex) {
       // Нет доступа к альбомам: показываем то, что уже есть, без ошибки
       if (
-        isVKError(ex) &&
+        ex instanceof VkApiError &&
         ex.errorInfo.error_code === VK_ERROR_CODE.accessDenied
       ) {
         return { items: [], count: 0 };
@@ -129,7 +129,7 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
       }
 
       if (
-        isVKError(ex) &&
+        ex instanceof VkApiError &&
         ex.errorInfo.error_code === VK_ERROR_CODE.accessDenied &&
         ex.message.endsWith("id blocked")
       ) {

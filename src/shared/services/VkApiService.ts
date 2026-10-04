@@ -1,5 +1,3 @@
-import { VKAPI } from "vkontakte-api";
-import { IRequestConfig } from "vkontakte-api/dist/types/shared";
 import { sleep } from "@/shared/helpers/sleep";
 import { useVk } from "@/store/vk/vk";
 import { IAlbumItem, PhotosGetAlbums } from "@/store/vk/IAlbumItem";
@@ -12,7 +10,8 @@ import type {
   UtilsLinkChecked,
   UtilsShortLink,
 } from "@vkontakte/api-schema-typescript";
-import { VkTransportError } from "@/shared/services/createJsonpSendRequest";
+import { VkTransportError } from "@/shared/services/vkApiErrors";
+import { createVkApi, VkApiRequest } from "@/shared/services/createVkApi";
 
 // Сколько раз повторяем запрос, который не дошёл до сервера
 const maxTransportRetries = 2;
@@ -31,10 +30,10 @@ export class VkApiService {
     currentAlbum?: IAlbumItem;
   } = {};
 
-  constructor(public api: Pick<VKAPI, "addRequestToQueue">) {}
+  constructor(public api: ReturnType<typeof createVkApi>) {}
 
   async addRequestToQueue<P extends {} = any, R = any>(
-    config: IRequestConfig<P>,
+    config: VkApiRequest<P>,
     transportAttempt = 0,
   ): Promise<R> {
     try {

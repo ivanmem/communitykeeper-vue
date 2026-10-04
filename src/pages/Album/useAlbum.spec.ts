@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, EffectScope, nextTick, ref, Ref } from "vue";
 import { delay, noop, range } from "es-toolkit";
-import { VKError } from "vkontakte-api";
+import { VkApiError } from "@/shared/services/vkApiErrors";
 import { useAlbum } from "@/pages/Album/useAlbum";
 import { IPhoto } from "@/store/groups/types";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
@@ -278,9 +278,10 @@ describe("useAlbum: загрузка фото", () => {
     it("показывает ошибку получения информации об альбоме", async () => {
       vi.spyOn(console, "warn").mockImplementation(noop);
       api.getCachedAlbum.mockRejectedValueOnce(
-        new VKError({
-          errorInfo: { error_code: 10, error_msg: "Internal error", request_params: [] },
-          config: { method: "photos.getAlbums", params: {} },
+        new VkApiError({
+          error_code: 10,
+          error_msg: "Internal error",
+          request_params: [],
         }),
       );
       api.photosGet.mockResolvedValueOnce({

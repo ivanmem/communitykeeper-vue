@@ -1,51 +1,56 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { noop } from "es-toolkit";
 import { createVkApi } from "@/shared/services/createVkApi";
-import { VkTransportError } from "@/shared/services/createJsonpSendRequest";
+import { VkApiError, VkTransportError } from "@/shared/services/vkApiErrors";
+
+const { send } = vi.hoisted(() => ({ send: vi.fn() }));
+
+vi.mock("@vkontakte/vk-bridge", () => ({ default: { send } }));
 
 // Способ доставки запроса скрыт за этими помощниками: тесты ниже описывают поведение клиента
 
-class FakeScript {
-  src = "";
-  fetchPriority = "";
-  onerror: (() => void) | null = null;
-  remove = vi.fn();
-}
-
-let scripts: FakeScript[];
+let pending: {
+  resolve: (value: unknown) => void;
+  reject: (reason: unknown) => void;
+}[];
 
 function sentRequests() {
-  return scripts.map((script) => {
-    const url = new URL(script.src);
-    const { callback, ...params } = Object.fromEntries(url.searchParams);
-    return { method: url.pathname.replace("/method/", ""), params };
-  });
+  return send.mock.calls.map(([, props]) => props);
 }
 
-function respond(index: number, response: unknown) {
-  const callback = new URL(scripts[index]!.src).searchParams.get("callback")!;
-  Reflect.get(window, callback)(response);
+// Имитирует ответ сервера: тело ответа VK API ({ response } или { error })
+function respond(index: number, body: { response?: unknown; error?: unknown }) {
+  if ("error" in body) {
+    // Клиент VK отдаёт ошибку API внутри error_reason
+    pending[index]!.reject({
+      error_type: "client_error",
+      error_data: { error_code: 1, error_reason: body.error },
+    });
+    return;
+  }
+
+  pending[index]!.resolve(body);
 }
 
 function failDelivery(index: number) {
-  scripts[index]!.onerror!();
+  pending[index]!.reject({
+    error_type: "client_error",
+    error_data: { error_code: 3, error_reason: "Connection lost" },
+  });
 }
 
 describe("createVkApi", () => {
   beforeEach(() => {
-    scripts = [];
+    pending = [];
     vi.useFakeTimers();
-    vi.stubGlobal("window", globalThis);
-    vi.stubGlobal("document", {
-      createElement: () => new FakeScript(),
-      head: { append: (script: FakeScript) => scripts.push(script) },
-    });
+    send.mockReset().mockImplementation(
+      () => new Promise((resolve, reject) => pending.push({ resolve, reject })),
+    );
     vi.spyOn(console, "log").mockImplementation(noop);
     vi.spyOn(console, "warn").mockImplementation(noop);
   });
 
   afterEach(() => {
-    vi.unstubAllGlobals();
     vi.restoreAllMocks();
     vi.useRealTimers();
   });
@@ -84,13 +89,13 @@ describe("createVkApi", () => {
     }
 
     await vi.advanceTimersByTimeAsync(0);
-    expect(scripts).toHaveLength(1);
+    expect(sentRequests()).toHaveLength(1);
     await vi.advanceTimersByTimeAsync(334);
-    expect(scripts).toHaveLength(2);
+    expect(sentRequests()).toHaveLength(2);
     await vi.advanceTimersByTimeAsync(334);
-    expect(scripts).toHaveLength(3);
+    expect(sentRequests()).toHaveLength(3);
     await vi.advanceTimersByTimeAsync(334);
-    expect(scripts).toHaveLength(4);
+    expect(sentRequests()).toHaveLength(4);
   });
 
   it("превращает ошибку VK в ошибку с errorInfo", async () => {
@@ -120,5 +125,41 @@ describe("createVkApi", () => {
     failDelivery(0);
 
     await expect(request).rejects.toBeInstanceOf(VkTransportError);
+  });
+
+  describe("форматы ошибок vk-bridge", () => {
+    async function rejectWith(error: unknown) {
+      const api = createVkApi("token");
+      const request = api.addRequestToQueue({ method: "photos.get", params: {} });
+      await vi.advanceTimersByTimeAsync(0);
+      pending[0]!.reject(error);
+      return request.catch((ex: unknown) => ex);
+    }
+
+    it("распознаёт ошибку API в error_data", async () => {
+      const error = await rejectWith({
+        error_type: "api_error",
+        error_data: { error_code: 6, error_msg: "Too many", request_params: [] },
+      });
+
+      expect(error).toBeInstanceOf(VkApiError);
+      expect(error).toMatchObject({ errorInfo: { error_code: 6 } });
+    });
+
+    it("считает ошибкой доставки отказ без данных об ошибке API", async () => {
+      const error = await rejectWith({
+        error_type: "auth_error",
+        error_data: { error_code: 4, error_reason: "User denied" },
+      });
+
+      expect(error).toBeInstanceOf(VkTransportError);
+    });
+
+    it("считает ошибкой доставки исключение самого vk-bridge", async () => {
+      const error = await rejectWith(new Error("Bridge is not initialized"));
+
+      expect(error).toBeInstanceOf(VkTransportError);
+      expect(error).toMatchObject({ message: "Bridge is not initialized" });
+    });
   });
 });

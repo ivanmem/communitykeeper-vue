@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { noop, range } from "es-toolkit";
 import { VkApiService } from "@/shared/services/VkApiService";
-import { VkTransportError } from "@/shared/services/createJsonpSendRequest";
+import { VkTransportError } from "@/shared/services/vkApiErrors";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 
 const { sleep, initVk, vkStore } = vi.hoisted(() => ({

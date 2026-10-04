@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, EffectScope, ref } from "vue";
-import { VKError } from "vkontakte-api";
+import { VkApiError } from "@/shared/services/vkApiErrors";
 import { delay, noop, range } from "es-toolkit";
 import { useAlbums } from "@/pages/Albums/useAlbums";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
@@ -105,9 +105,10 @@ function createWallAlbum(ownerId: number): IAlbumItem {
 }
 
 function createVkError(errorCode: number, message: string) {
-  return new VKError({
-    errorInfo: { error_code: errorCode, error_msg: message, request_params: [] },
-    config: { method: "photos.getAlbums", params: {} },
+  return new VkApiError({
+    error_code: errorCode,
+    error_msg: message,
+    request_params: [],
   });
 }
 
