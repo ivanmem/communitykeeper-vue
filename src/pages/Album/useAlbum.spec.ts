@@ -60,6 +60,11 @@ vi.mock("@/shared/composables/useImagePreloader", () => ({
   useImagePreloader: () => ({ preloadPhoto: () => {} }),
 }));
 
+// Прокрутка проверяется в тесте useGalleryInfiniteScroll
+vi.mock("@/shared/composables/useGalleryInfiniteScroll", () => ({
+  useGalleryInfiniteScroll: () => {},
+}));
+
 // Листание фото проверяется отдельно, здесь нужен только его интерфейс
 vi.mock("@/pages/Album/useCurrentPhoto", async () => {
   const { computed, ref: vueRef } = await import("vue");

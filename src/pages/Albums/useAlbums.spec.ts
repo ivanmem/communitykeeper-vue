@@ -6,16 +6,24 @@ import { useAlbums } from "@/pages/Albums/useAlbums";
 import { IAlbumItem } from "@/store/vk/IAlbumItem";
 import { IGroup } from "@/store/groups/types";
 
-const { api, getGroupByIdOrLoad, gallery } = vi.hoisted(() => ({
+const { api, getGroupByIdOrLoad, gallery, infiniteScroll } = vi.hoisted(() => ({
   api: {
     getAlbums: vi.fn(),
     createAlbumItem: vi.fn(),
   },
   getGroupByIdOrLoad: vi.fn(),
   gallery: {} as Record<string, any>,
+  infiniteScroll: {} as Record<string, any>,
 }));
 
 vi.mock("@vkontakte/vk-bridge", () => ({ default: {} }));
+
+// Прокрутка проверяется в тесте useGalleryInfiniteScroll, здесь запоминаем, к чему её подключили
+vi.mock("@/shared/composables/useGalleryInfiniteScroll", () => ({
+  useGalleryInfiniteScroll: (el: unknown, pagination: unknown) => {
+    Object.assign(infiniteScroll, { el, pagination });
+  },
+}));
 
 vi.mock("@/store/vk/vk", () => ({
   useVk: () => ({ getApiService: async () => api }),
@@ -68,6 +76,7 @@ vi.mock("@/shared/composables/useGalleryComponent", async () => {
       const columns = vueRef(4);
       const grid = useGridArray(columns);
       Object.assign(gallery, {
+        el: vueRef<HTMLElement>(),
         componentRef: vueRef<object | undefined>(),
         endIndex: vueRef(0),
         sizes: vueRef({ width: 100, height: 100 }),
@@ -231,45 +240,23 @@ describe("useAlbums: пагинация", () => {
       });
       const result = setup(1);
       await delay(0);
-      gallery.componentRef.value = {};
       return result;
     }
 
-    it("ничего не грузит без компонента списка", async () => {
-      api.getAlbums.mockResolvedValueOnce({
-        items: createAlbums(1, 100),
-        count: 250,
-      });
-      const { albums } = setup(1);
-      await delay(0);
-      gallery.endIndex.value = 99;
+    it("подключает бесконечную прокрутку к списку галереи", async () => {
+      await setupLoaded();
 
-      albums.onScrollerUpdate();
-      await delay(0);
-
-      expect(api.getAlbums).toHaveBeenCalledOnce();
-    });
-
-    it("ничего не грузит, пока до конца далеко", async () => {
-      const { albums } = await setupLoaded();
-      gallery.endIndex.value = 10;
-
-      albums.onScrollerUpdate();
-      await delay(0);
-
-      expect(api.getAlbums).toHaveBeenCalledOnce();
+      expect(infiniteScroll.el).toBe(gallery.el);
     });
 
     it("грузит следующую порцию со смещением по полученным альбомам", async () => {
-      const { albums } = await setupLoaded();
+      await setupLoaded();
       api.getAlbums.mockResolvedValueOnce({
         items: createAlbums(101, 100),
         count: 250,
       });
-      gallery.endIndex.value = 80;
 
-      albums.onScrollerUpdate();
-      await delay(0);
+      await infiniteScroll.pagination.loadNext();
 
       expect(api.getAlbums).toHaveBeenLastCalledWith({
         owner_id: 1,
@@ -280,16 +267,16 @@ describe("useAlbums: пагинация", () => {
     });
 
     it("не дублирует запрос при частых событиях прокрутки", async () => {
-      const { albums } = await setupLoaded();
+      await setupLoaded();
       api.getAlbums.mockResolvedValueOnce({
         items: createAlbums(101, 100),
         count: 250,
       });
-      gallery.endIndex.value = 80;
 
-      albums.onScrollerUpdate();
-      albums.onScrollerUpdate();
-      await delay(0);
+      await Promise.all([
+        infiniteScroll.pagination.loadNext(),
+        infiniteScroll.pagination.loadNext(),
+      ]);
 
       expect(api.getAlbums).toHaveBeenCalledTimes(2);
     });

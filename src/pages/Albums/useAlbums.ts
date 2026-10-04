@@ -18,6 +18,7 @@ import { isVKError } from "vkontakte-api";
 import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
 import { useApp } from "@/store/app/app";
 import { useOffsetPagination } from "@/shared/composables/useOffsetPagination";
+import { useGalleryInfiniteScroll } from "@/shared/composables/useGalleryInfiniteScroll";
 
 const countOneLoad = 100;
 
@@ -55,6 +56,8 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
 
   watch(gallery.endIndex, onEndIndexChange);
 
+  useGalleryInfiniteScroll(gallery.el, pagination);
+
   const loadAllAlbums = appStore.wrapLoading(async () => {
     // Останавливаемся на ошибке, чтобы не повторять запрос бесконечно
     do {
@@ -85,17 +88,6 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
 
       throw ex;
     }
-  }
-
-  function onScrollerUpdate(): void {
-    if (
-      !gallery.componentRef.value ||
-      gallery.endIndex.value + countOneLoad / 3 < gallery.grid.items.length
-    ) {
-      return;
-    }
-
-    pagination.loadNext();
   }
 
   function preloadNextPreviews(): void {
@@ -189,7 +181,6 @@ export function useAlbums(ownerIdGetter: MaybeRefOrGetter<number | string>) {
     group,
     albums: gallery.grid,
     previewPreloader,
-    onScrollerUpdate,
     screenError,
     isAllLoaded: pagination.isAllLoaded,
     loadAllAlbums,

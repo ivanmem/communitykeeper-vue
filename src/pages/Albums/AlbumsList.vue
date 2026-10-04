@@ -15,7 +15,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  "update:scroll": [];
   "update:componentRef": [componentRef: InstanceType<typeof VList> | undefined];
 }>();
 
@@ -32,7 +31,6 @@ const componentRef = computed({
     :data="indexes"
     :item-size="sizes.height"
     class="a-albums-list"
-    @scroll="emit('update:scroll')"
   >
     <div
       :key="albums[indexes?.[0]]?.id ?? index"

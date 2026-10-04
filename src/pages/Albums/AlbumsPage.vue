@@ -28,7 +28,6 @@ const {
   group,
   albums,
   previewPreloader,
-  onScrollerUpdate,
   componentRef,
   screenError,
   sizes,
@@ -83,7 +82,6 @@ async function onLoadNeedsConfirmation(): Promise<void> {
         :albums="filteredAlbums"
         :indexes="filteredIndexes"
         :sizes="sizes"
-        @scroll="onScrollerUpdate"
       />
     </template>
     <ImagePreloader :photos="previewPreloader.photos.value" />

@@ -93,7 +93,6 @@ const {
   albumSize,
   albumIsEmpty,
   setCurrentPhotoIndex,
-  onScrollerUpdate,
   onSwitchPhoto,
   isInit,
   isLoadingPhotos,
@@ -182,7 +181,6 @@ const positionLabel = refThrottled(
         v-model:component-ref="componentRef"
         :photos="photos"
         :sizes="sizes"
-        @update:scroll="onScrollerUpdate"
         @select:photo="setCurrentPhotoIndex"
       />
 

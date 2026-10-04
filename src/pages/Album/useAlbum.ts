@@ -14,6 +14,7 @@ import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
 import { useAlbumPagination } from "@/pages/Album/composables/useAlbumPagination";
 import { useAlbumInfo } from "@/pages/Album/composables/useAlbumInfo";
 import { useDirectPhoto } from "@/pages/Album/composables/useDirectPhoto";
+import { useGalleryInfiniteScroll } from "@/shared/composables/useGalleryInfiniteScroll";
 import { provideAlbumContext, injectAlbumPageContext } from "@/pages/Album/stores";
 
 const countOneLoad = 150;
@@ -146,10 +147,9 @@ export function useAlbum() {
     }
 
     preloadNextPreviews();
-
-    // Также триггерим подгрузку если скроллим вниз
-    onScrollerUpdate();
   });
+
+  useGalleryInfiniteScroll(gallery.el, pagination);
 
   function preloadNextPreviews() {
     const previewPhotos = gallery.grid.items
@@ -162,18 +162,6 @@ export function useAlbum() {
           PhotoHelper.getPreviewSize(photo.sizes, gallery.sizes.value)?.url,
       );
     previewPreloader.preloadPhoto(previewPhotos);
-  }
-
-  function onScrollerUpdate() {
-    // Если мы проскроллили близко к концу (осталось меньше 1/3 порции), грузим ещё
-    if (
-      !gallery.componentRef.value ||
-      gallery.endIndex.value + countOneLoad / 3 < gallery.grid.items.length
-    ) {
-      return;
-    }
-
-    pagination.loadNext();
   }
 
   async function onAlbumChange() {
@@ -239,7 +227,6 @@ export function useAlbum() {
     isLoadingDirectPhoto: directPhoto.isLoading,
     directPhoto: directPhoto.photo,
     screenError,
-    onScrollerUpdate,
     onSwitchPhoto,
   };
 }
