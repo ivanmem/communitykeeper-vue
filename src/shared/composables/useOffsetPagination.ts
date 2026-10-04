@@ -62,12 +62,16 @@ export function useOffsetPagination<T>({
         return;
       }
 
-      console.log("[Пагинация] порция", {
-        offset,
-        requested: pageSize,
-        received: page.items.length,
-        total: page.count,
-      });
+      // Отладочный лог: в прод-сборку не попадает
+      if (import.meta.env.DEV) {
+        console.log("[Пагинация] порция", {
+          offset,
+          requested: pageSize,
+          received: page.items.length,
+          total: page.count,
+        });
+      }
+
       offset += page.items.length;
       totalCount.value = page.count;
       isAllLoaded.value =

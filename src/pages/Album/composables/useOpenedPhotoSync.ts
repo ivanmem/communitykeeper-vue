@@ -36,10 +36,14 @@ export function useOpenedPhotoSync(
 
     // Индекс -1 у фото, открытого по ссылке вне списка
     if (index >= 0 && index + loadAheadCount >= grid.items.length) {
-      console.log("[Альбом] открытое фото близко к концу списка", {
-        index,
-        loaded: grid.items.length,
-      });
+      // Отладочный лог: в прод-сборку не попадает
+      if (import.meta.env.DEV) {
+        console.log("[Альбом] открытое фото близко к концу списка", {
+          index,
+          loaded: grid.items.length,
+        });
+      }
+
       loadNext();
     }
   }
@@ -50,7 +54,13 @@ export function useOpenedPhotoSync(
     }
 
     const row = Math.floor(index / columns.value);
-    console.log("[Альбом] фото закрыто, прокрутка списка к нему", { index, row });
+    if (import.meta.env.DEV) {
+      console.log("[Альбом] фото закрыто, прокрутка списка к нему", {
+        index,
+        row,
+      });
+    }
+
     componentRef.value?.scrollToIndex(row);
   }
 }

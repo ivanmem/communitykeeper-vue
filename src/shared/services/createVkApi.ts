@@ -35,17 +35,24 @@ export function createVkApi(accessToken: string) {
           ...toBridgeParams(params),
         },
       });
-      console.log("[VK API]", method, {
-        ms: Math.round(performance.now() - startedAt),
-        params,
-      });
+      // Отладочные логи: в прод-сборку не попадают
+      if (import.meta.env.DEV) {
+        console.log("[VK API]", method, {
+          ms: Math.round(performance.now() - startedAt),
+          params,
+        });
+      }
+
       return response;
     } catch (ex) {
-      console.warn("[VK API]", method, {
-        ms: Math.round(performance.now() - startedAt),
-        params,
-        ex,
-      });
+      if (import.meta.env.DEV) {
+        console.warn("[VK API]", method, {
+          ms: Math.round(performance.now() - startedAt),
+          params,
+          ex,
+        });
+      }
+
       throw fromBridgeError(ex);
     }
   }
