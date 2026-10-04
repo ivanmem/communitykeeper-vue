@@ -194,8 +194,10 @@ const positionLabel = refThrottled(
         @photo:next="onSwitchPhoto(true)"
         @photo:exit="setCurrentPhotoIndex(undefined)"
       />
+      <!-- Заготовленные наперёд миниатюры не должны задерживать видимые -->
       <ImagePreloader
         v-if="!currentPhoto"
+        fetch-priority="low"
         :photos="previewPreloader.photos.value"
       />
       <ImagePreloader :photos="imagePreloader.photos.value" />

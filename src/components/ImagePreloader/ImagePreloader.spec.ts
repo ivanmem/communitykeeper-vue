@@ -23,6 +23,14 @@ describe("ImagePreloader", () => {
     expect(html).toContain('<link href="a.jpg" as="image" rel="preload">');
   });
 
+  it("передаёт приоритет загрузки", async () => {
+    const html = await render({ photos: ["a.jpg"], fetchPriority: "low" });
+
+    expect(html).toContain(
+      '<link href="a.jpg" as="image" rel="preload" fetchpriority="low">',
+    );
+  });
+
   it("ничего не выводит без картинок", async () => {
     const html = await render({ photos: [] });
 

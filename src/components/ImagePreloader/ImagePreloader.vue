@@ -1,6 +1,6 @@
 <template>
   <template v-for="photo in photos" :key="photo">
-    <link :href="photo" as="image" rel="preload" />
+    <link :href="photo" as="image" rel="preload" :fetchpriority="fetchPriority" />
   </template>
 </template>
 

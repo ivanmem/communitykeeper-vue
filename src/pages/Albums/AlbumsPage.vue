@@ -84,7 +84,8 @@ async function onLoadNeedsConfirmation(): Promise<void> {
         :sizes="sizes"
       />
     </template>
-    <ImagePreloader :photos="previewPreloader.photos.value" />
+    <!-- Заготовленные наперёд миниатюры не должны задерживать видимые -->
+    <ImagePreloader fetch-priority="low" :photos="previewPreloader.photos.value" />
   </div>
 </template>
 
