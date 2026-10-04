@@ -1,4 +1,4 @@
-import { IPhotoSize } from "vkontakte-api";
+import { IPhotoSize } from "@/store/vk/vkObjects";
 
 export interface IAlbumItem {
   id: number | string;

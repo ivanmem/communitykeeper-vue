@@ -7,15 +7,24 @@ import { IGroup, IPhoto } from "@/store/groups/types";
 import { from } from "linq-to-typescript";
 import { isNumber } from "es-toolkit/compat";
 import type {
-  ICheckLinkParams,
-  ICheckLinkResult,
-  IGetShortLinkParams,
-  IGetShortLinkResult,
-} from "vkontakte-api/dist/repositories/UtilsRepository/types";
+  UtilsCheckLinkParams,
+  UtilsGetShortLinkParams,
+  UtilsLinkChecked,
+  UtilsShortLink,
+} from "@vkontakte/api-schema-typescript";
 import { VkTransportError } from "@/shared/services/createJsonpSendRequest";
 
 // Сколько раз повторяем запрос, который не дошёл до сервера
 const maxTransportRetries = 2;
+
+// private передаётся флагом, как и раньше
+type GetShortLinkParams = Omit<UtilsGetShortLinkParams, "private"> & {
+  private?: boolean;
+};
+
+// В схеме VK API все поля ответа необязательные, а эти приходят всегда
+type ShortLink = Required<Omit<UtilsShortLink, "access_key">> &
+  Pick<UtilsShortLink, "access_key">;
 
 export class VkApiService {
   cache: {
@@ -223,16 +232,16 @@ export class VkApiService {
     }
   };
 
-  utilsGetShortLink = (
-    params: IGetShortLinkParams,
-  ): Promise<IGetShortLinkResult> => {
+  utilsGetShortLink = (params: GetShortLinkParams): Promise<ShortLink> => {
     return this.addRequestToQueue({
       method: "utils.getShortLink",
       params,
     });
   };
 
-  utilsCheckLink = (params: ICheckLinkParams): Promise<ICheckLinkResult> => {
+  utilsCheckLink = (
+    params: UtilsCheckLinkParams,
+  ): Promise<Required<UtilsLinkChecked>> => {
     return this.addRequestToQueue({
       method: "utils.checkLink",
       params,

@@ -1,4 +1,4 @@
-import { IPhotoSize } from "vkontakte-api";
+import { IPhotoSize } from "@/store/vk/vkObjects";
 import { last } from "es-toolkit/compat";
 import isNumeric from "@/shared/helpers/isNumeric";
 import { VK_MAX_PHOTO_SIZE } from "@/shared/constants/consts";

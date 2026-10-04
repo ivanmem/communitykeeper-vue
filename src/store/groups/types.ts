@@ -1,7 +1,4 @@
-import {
-  IObjectSharedProps,
-  IPhotoSize,
-} from "vkontakte-api/dist/types/objects/shared";
+import { IObjectSharedProps, IPhotoSize } from "@/store/vk/vkObjects";
 
 export interface ILocalGroup {
   id: number;

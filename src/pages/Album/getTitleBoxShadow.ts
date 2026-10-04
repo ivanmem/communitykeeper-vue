@@ -1,4 +1,4 @@
-import { IPhotoSize } from "vkontakte-api";
+import { IPhotoSize } from "@/store/vk/vkObjects";
 import { VK_MAX_PHOTO_SIZE } from "@/shared/constants/consts";
 
 export function getTitleBoxShadow(size: IPhotoSize): string {

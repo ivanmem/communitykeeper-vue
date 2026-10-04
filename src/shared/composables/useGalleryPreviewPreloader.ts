@@ -1,5 +1,5 @@
 import { MaybeRefOrGetter, watch } from "vue";
-import { IPhotoSize } from "vkontakte-api";
+import { IPhotoSize } from "@/store/vk/vkObjects";
 import { PhotoHelper } from "@/shared/helpers/PhotoHelper";
 import { useImagePreloader } from "@/shared/composables/useImagePreloader";
 import { useGalleryComponent } from "@/shared/composables/useGalleryComponent";
