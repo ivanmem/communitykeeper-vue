@@ -80,7 +80,7 @@ You can enter fullscreen mode with F11 key or by clicking the button to the righ
 const props = defineProps<{
   ownerId: number | string;
   albumId: number | string;
-  photoId: number | string | undefined;
+  photoId?: number | string;
 }>();
 
 provideAlbumPageContext(toRefs(props));
